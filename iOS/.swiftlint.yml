@@ -1,0 +1,12 @@
+disabled_rules:
+- shorthand_operator
+- todo
+- trailing_whitespace
+
+opt_in_rules:
+- force_unwrapping
+
+excluded:
+- traveline/Sources/App/AppDelegate.swift
+- traveline/Sources/App/SceneDelegate.swift
+- Tuist
