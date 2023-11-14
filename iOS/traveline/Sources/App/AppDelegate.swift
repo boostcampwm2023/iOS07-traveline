@@ -1,8 +1,9 @@
 //
 //  AppDelegate.swift
-//  OnbanApp
+//  traveline
 //
-//  Created by 박동재 on 2023/10/16.
+//  Created by KiWoong Hong on 2023/11/14.
+//  Copyright © 2023 traveline. All rights reserved.
 //
 
 import UIKit
