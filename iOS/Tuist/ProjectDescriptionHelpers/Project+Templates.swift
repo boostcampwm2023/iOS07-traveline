@@ -34,6 +34,7 @@ extension Project {
             infoPlist: .extendingDefault(with: infoPlist),
             sources: ["\(name)/Sources/**"],
             resources: ["\(name)/Resources/**"],
+            scripts: [.swiftLintShell],
             dependencies: dependencies
         )
 
