@@ -24,11 +24,13 @@ class TLBottomSheet: UIViewController {
     private enum HeaderSize {
         static let height: CGFloat = 60
         static let yOffset: CGFloat = 4
+        static let lineWidth: CGFloat = 1
     }
     
     private let header: UIView = .init()
     private let headerLabel: UILabel = .init()
     private let headerButton: UIButton = .init()
+    private let headerLine: UIView = .init()
     /// 상속받은 ViewController에서 사용할 뷰를 여기에 추가합니다.
     let main: UIView = .init()
     
@@ -87,8 +89,11 @@ private extension TLBottomSheet {
         headerButton.titleLabel?.font = TravelineFont.subtitle2.font
         headerButton.addTarget(self, action: #selector(headerButtonTapped), for: .touchUpInside)
         
+        headerLine.translatesAutoresizingMaskIntoConstraints = false
+        headerLine.backgroundColor = TravelineColor.lineGray
+        
         main.translatesAutoresizingMaskIntoConstraints = false
-        main.backgroundColor = .green
+        main.backgroundColor = TravelineColor.black
     }
     
     func setupLayout() {
@@ -97,6 +102,7 @@ private extension TLBottomSheet {
         
         header.addSubview(headerLabel)
         header.addSubview(headerButton)
+        header.addSubview(headerLine)
         
         if let sheetPresentationController = sheetPresentationController {
             sheetPresentationController.detents = [.medium()]
@@ -112,6 +118,10 @@ private extension TLBottomSheet {
             headerLabel.centerYAnchor.constraint(equalTo: header.centerYAnchor, constant: HeaderSize.yOffset),
             headerButton.centerYAnchor.constraint(equalTo: header.centerYAnchor, constant: HeaderSize.yOffset),
             headerButton.trailingAnchor.constraint(equalTo: header.trailingAnchor, constant: Margin.negative),
+            headerLine.leadingAnchor.constraint(equalTo: header.leadingAnchor),
+            headerLine.trailingAnchor.constraint(equalTo: header.trailingAnchor),
+            headerLine.bottomAnchor.constraint(equalTo: header.bottomAnchor),
+            headerLine.heightAnchor.constraint(equalToConstant: HeaderSize.lineWidth),
             main.topAnchor.constraint(equalTo: header.bottomAnchor),
             main.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             main.trailingAnchor.constraint(equalTo: view.trailingAnchor),
