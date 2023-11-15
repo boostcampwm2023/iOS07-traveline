@@ -1,13 +1,8 @@
 import { Controller, Get, Body, Param, Put, Query } from '@nestjs/common';
+import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import {
-  ApiOkResponse,
-  ApiOperation,
-  ApiResponseProperty,
-  ApiTags,
-} from '@nestjs/swagger';
-import { User } from './entities/user.entity';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CheckDuplicatedNameResponseDto } from './dto/check-duplicated-name-response.dto';
 
 @Controller('users')
