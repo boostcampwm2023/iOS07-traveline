@@ -6,7 +6,6 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryColumn,
-  Timestamp,
 } from 'typeorm';
 import { Liked } from './liked.entity';
 import { Report } from './report.entity';
@@ -25,7 +24,7 @@ export class Posting {
   title: string;
 
   @CreateDateColumn({ type: 'timestamp' })
-  created_at: Timestamp;
+  created_at: Date;
 
   @Column({ length: 255, nullable: true })
   thumnail: string;

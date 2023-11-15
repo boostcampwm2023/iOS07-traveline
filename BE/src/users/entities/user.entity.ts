@@ -14,6 +14,9 @@ export class User {
   @Column({ length: 255, nullable: true })
   avatar: string;
 
+  @Column({ length: 50, unique: true })
+  email: string;
+
   @OneToMany(() => Liked, (liked) => liked.users)
   likeds: Liked[];
 

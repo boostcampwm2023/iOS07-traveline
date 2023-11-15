@@ -31,7 +31,7 @@ export class Timeline {
   place: string;
 
   @Column({ type: 'timestamp' })
-  time: string;
+  time: Date;
 
   @Column({ type: 'char', length: 36 })
   posting: string;
