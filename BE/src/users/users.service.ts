@@ -4,6 +4,12 @@ import { CreateAuthDto } from 'src/auth/dto/create-auth.dto';
 
 @Injectable()
 export class UsersService {
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>
+  ) {
+    this.userRepository = userRepository;
+  }
+
   create(createAuthDto: CreateAuthDto) {
     return 'This action adds a new user';
   }
