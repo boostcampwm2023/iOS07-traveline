@@ -1,5 +1,5 @@
 //
-//  TravelineColor.swift
+//  TLColor.swift
 //  traveline
 //
 //  Created by KiWoong Hong on 2023/11/14.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum TravelineColor {
+enum TLColor {
     static let main = TravelineAsset.main.color
     static let lightMain = TravelineAsset.lightMain.color
     static let black = TravelineAsset.black.color
