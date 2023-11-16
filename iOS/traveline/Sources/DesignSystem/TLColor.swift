@@ -9,27 +9,27 @@
 import Foundation
 
 enum TLColor {
-    static let main = TravelineAsset.main.color
-    static let lightMain = TravelineAsset.lightMain.color
-    static let black = TravelineAsset.black.color
-    static let gray = TravelineAsset.gray.color
-    static let lightGray = TravelineAsset.lightGray.color
-    static let white = TravelineAsset.white.color
-    static let backgroundGray = TravelineAsset.backgroundGray.color
-    static let lineGray = TravelineAsset.lineGray.color
-    static let dimmed = TravelineAsset.dimmed.color
-    static let success = TravelineAsset.success.color
-    static let warning = TravelineAsset.warning.color
-    static let error = TravelineAsset.error.color
+    static let main = TravelineAsset.Colors.main.color
+    static let lightMain = TravelineAsset.Colors.lightMain.color
+    static let black = TravelineAsset.Colors.black.color
+    static let gray = TravelineAsset.Colors.gray.color
+    static let lightGray = TravelineAsset.Colors.lightGray.color
+    static let white = TravelineAsset.Colors.white.color
+    static let backgroundGray = TravelineAsset.Colors.backgroundGray.color
+    static let lineGray = TravelineAsset.Colors.lineGray.color
+    static let dimmed = TravelineAsset.Colors.dimmed.color
+    static let success = TravelineAsset.Colors.success.color
+    static let warning = TravelineAsset.Colors.warning.color
+    static let error = TravelineAsset.Colors.error.color
     
     enum Tag {
-        static let location = TravelineAsset.locaction.color
-        static let cost = TravelineAsset.cost.color
-        static let period = TravelineAsset.period.color
-        static let people = TravelineAsset.people.color
-        static let transportation = TravelineAsset.transportation.color
-        static let theme = TravelineAsset.theme.color
-        static let with = TravelineAsset.with.color
-        static let season = TravelineAsset.season.color
+        static let location = TravelineAsset.Colors.locaction.color
+        static let cost = TravelineAsset.Colors.cost.color
+        static let period = TravelineAsset.Colors.period.color
+        static let people = TravelineAsset.Colors.people.color
+        static let transportation = TravelineAsset.Colors.transportation.color
+        static let theme = TravelineAsset.Colors.theme.color
+        static let with = TravelineAsset.Colors.with.color
+        static let season = TravelineAsset.Colors.season.color
     }
 }
