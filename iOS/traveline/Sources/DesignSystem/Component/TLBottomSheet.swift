@@ -28,9 +28,13 @@ class TLBottomSheet: UIViewController {
     }
     
     private let header: UIView = .init()
-    private let headerLabel: UILabel = .init()
     private let headerButton: UIButton = .init()
     private let headerLine: UIView = .init()
+    private let headerLabel: TLLabel = .init(
+        font: .subtitle2,
+        text: "",
+        color: TLColor.white
+    )
     /// 상속받은 ViewController에서 사용할 뷰를 여기에 추가합니다.
     let main: UIView = .init()
     
@@ -74,26 +78,24 @@ class TLBottomSheet: UIViewController {
 
 private extension TLBottomSheet {
     func setupAttributes() {
-        view.backgroundColor = TravelineColor.black
+        view.backgroundColor = TLColor.black
         
         header.translatesAutoresizingMaskIntoConstraints = false
         
         headerLabel.translatesAutoresizingMaskIntoConstraints = false
-        headerLabel.font = TravelineFont.subtitle2.font
-        headerLabel.textColor = TravelineColor.white
         headerLabel.text = titleText
         
         headerButton.translatesAutoresizingMaskIntoConstraints = false
         headerButton.setTitle("완료", for: .normal)
-        headerButton.setTitleColor(TravelineColor.main, for: .normal)
-        headerButton.titleLabel?.font = TravelineFont.subtitle2.font
+        headerButton.setTitleColor(TLColor.main, for: .normal)
+        headerButton.titleLabel?.font = TLFont.subtitle2.font
         headerButton.addTarget(self, action: #selector(headerButtonTapped), for: .touchUpInside)
         
         headerLine.translatesAutoresizingMaskIntoConstraints = false
-        headerLine.backgroundColor = TravelineColor.lineGray
+        headerLine.backgroundColor = TLColor.lineGray
         
         main.translatesAutoresizingMaskIntoConstraints = false
-        main.backgroundColor = TravelineColor.black
+        main.backgroundColor = TLColor.black
     }
     
     func setupLayout() {
