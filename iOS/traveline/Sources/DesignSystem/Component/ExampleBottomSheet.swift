@@ -27,7 +27,7 @@ final class ExampleBottomSheet: TLBottomSheetVC {
     
     override func completeAction() {
         let text = textFiled.text
-        delegate?.bottomSheet(data: text)
+        delegate?.bottomSheetDidDisappear(data: text)
     }
 }
 

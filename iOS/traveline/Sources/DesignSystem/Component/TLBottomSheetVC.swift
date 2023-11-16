@@ -9,7 +9,7 @@
 import UIKit
 
 protocol TLBottomSheetDelegate: AnyObject {
-    func bottomSheet(data: Any)
+    func bottomSheetDidDisappear(data: Any)
 }
 
 class TLBottomSheetVC: UIViewController {
@@ -42,13 +42,15 @@ class TLBottomSheetVC: UIViewController {
     
     private let titleText: String
     private var hasCompleteButton: Bool
+    private var detentHeight: CGFloat?
     weak var delegate: TLBottomSheetDelegate?
     
     // MARK: - Life Cycle
     
-    init(title: String, hasCompleteButton: Bool = true) {
+    init(title: String, hasCompleteButton: Bool = true, detentHeight: CGFloat? = nil) {
         self.titleText = title
         self.hasCompleteButton = hasCompleteButton
+        self.detentHeight = detentHeight
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -59,6 +61,7 @@ class TLBottomSheetVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setupBotomSheet()
         setupAttributes()
         setupLayout()
     }
@@ -71,6 +74,15 @@ class TLBottomSheetVC: UIViewController {
         }
     }
     
+    private func bottomSheetDetent() -> [UISheetPresentationController.Detent] {
+        guard let detentHeight = detentHeight else { return [.medium()] }
+        let detentIdentifier = UISheetPresentationController.Detent.Identifier("customDetent")
+        let customDetent = UISheetPresentationController.Detent.custom(identifier: detentIdentifier) { _ in
+            return detentHeight
+        }
+        return [customDetent]
+    }
+    
     /// 상속받은 ViewController에서 완료 버튼이 탭될 때 액션을 정의합니다.
     func completeAction() { }
     
@@ -79,45 +91,48 @@ class TLBottomSheetVC: UIViewController {
 // MARK: - Setup Functions
 
 private extension TLBottomSheetVC {
-    func setupAttributes() {
-        view.backgroundColor = TLColor.black
-        
-        header.translatesAutoresizingMaskIntoConstraints = false
-        
-        headerLabel.translatesAutoresizingMaskIntoConstraints = false
-        headerLabel.text = titleText
-        
-        if hasCompleteButton {
-            setupHeaderButton()
+    
+    private func setupBotomSheet() {
+        if let sheetPresentationController = sheetPresentationController {
+            sheetPresentationController.detents = bottomSheetDetent()
+            sheetPresentationController.prefersGrabberVisible = true
+        }
+    }
+    
+    private func setupAttributes() {
+        [
+            header,
+            headerLine,
+            headerLabel,
+            headerButton,
+            main
+        ].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
-        headerLine.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = TLColor.black
         headerLine.backgroundColor = TLColor.lineGray
-        
-        main.translatesAutoresizingMaskIntoConstraints = false
         main.backgroundColor = TLColor.black
+        headerLabel.text = titleText
+        setupHeaderButton()
     }
     
     private func setupHeaderButton() {
-        headerButton.translatesAutoresizingMaskIntoConstraints = false
-        headerButton.setTitle("완료", for: .normal)
-        headerButton.setTitleColor(TLColor.main, for: .normal)
-        headerButton.titleLabel?.font = TLFont.subtitle2.font
-        headerButton.addTarget(self, action: #selector(headerButtonTapped), for: .touchUpInside)
+        if hasCompleteButton {
+            headerButton.setTitle("완료", for: .normal)
+            headerButton.setTitleColor(TLColor.main, for: .normal)
+            headerButton.titleLabel?.font = TLFont.subtitle2.font
+            headerButton.addTarget(self, action: #selector(headerButtonTapped), for: .touchUpInside)
+        }
     }
     
-    func setupLayout() {
+    private func setupLayout() {
         view.addSubview(header)
         view.addSubview(main)
         
         header.addSubview(headerLabel)
         header.addSubview(headerButton)
         header.addSubview(headerLine)
-        
-        if let sheetPresentationController = sheetPresentationController {
-            sheetPresentationController.detents = [.medium()]
-            sheetPresentationController.prefersGrabberVisible = true
-        }
         
         NSLayoutConstraint.activate([
             header.topAnchor.constraint(equalTo: view.topAnchor),
