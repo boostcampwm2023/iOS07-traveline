@@ -51,7 +51,7 @@ private extension HomeVC {
     }
     
     func setupLayout() {
-        view.addSubViews(homeListView)
+        view.addSubviews(homeListView)
         
         view.subviews.forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
