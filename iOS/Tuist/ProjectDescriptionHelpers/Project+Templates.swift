@@ -31,6 +31,7 @@ extension Project {
             platform: platform,
             product: .app,
             bundleId: "\(Environmnet.bundleName)",
+            deploymentTarget: Environmnet.deploymentTarget,
             infoPlist: .extendingDefault(with: infoPlist),
             sources: ["\(name)/Sources/**"],
             resources: ["\(name)/Resources/**"],
