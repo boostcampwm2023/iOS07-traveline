@@ -10,7 +10,7 @@ import UIKit
 
 final class TLLabel: UILabel {
 
-    private let travelineFont: TLFont
+    private var travelineFont: TLFont
     private let alignment: NSTextAlignment
     private var travelineColor: UIColor
     private var labelText: String
@@ -82,6 +82,11 @@ final class TLLabel: UILabel {
     
     func setColor(to color: UIColor) {
         travelineColor = color
+        setupAttributes()
+    }
+    
+    func setFont(to font: TLFont) {
+        travelineFont = font
         setupAttributes()
     }
     

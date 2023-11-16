@@ -62,7 +62,6 @@ final class TLTag: UIButton {
     private var style: TLTagStyle
     private let tagColor: UIColor
     private let defaultColor: UIColor = TLColor.lightGray
-    private let defaultHeight: CGFloat = 34.0
 
     // MARK: - Initialize
     
@@ -75,6 +74,7 @@ final class TLTag: UIButton {
         self.style = style
         self.tagColor = color
         tagTitleLabel.setText(to: name)
+        tagTitleLabel.setFont(to: style.font)
         
         super.init(frame: frame)
         
@@ -117,7 +117,7 @@ private extension TLTag {
         }
         
         layer.masksToBounds = false
-        innerView.layer.cornerRadius = defaultHeight / 2
+        innerView.layer.cornerRadius = style.height / 2
     }
     
     func setupLayout() {
@@ -132,7 +132,7 @@ private extension TLTag {
             innerView.leadingAnchor.constraint(equalTo: leadingAnchor),
             innerView.trailingAnchor.constraint(equalTo: trailingAnchor),
             innerView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            innerView.heightAnchor.constraint(equalToConstant: defaultHeight),
+            innerView.heightAnchor.constraint(equalToConstant: style.height),
             
             stackView.topAnchor.constraint(equalTo: innerView.topAnchor, constant: style.verticalInset),
             stackView.leadingAnchor.constraint(equalTo: innerView.leadingAnchor, constant: style.horizontalInset),

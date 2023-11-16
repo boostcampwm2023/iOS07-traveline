@@ -15,6 +15,24 @@ enum TLTagStyle {
 }
 
 extension TLTagStyle {
+    var font: TLFont {
+        switch self {
+        case .normal, .cancellable:
+            return .caption
+        case .selectable:
+            return .body2
+        }
+    }
+    
+    var height: CGFloat {
+        switch self {
+        case .normal, .cancellable:
+            return 30.0
+        case .selectable:
+            return 34.0
+        }
+    }
+    
     var horizontalInset: CGFloat {
         switch self {
         case .normal, .selectable:
