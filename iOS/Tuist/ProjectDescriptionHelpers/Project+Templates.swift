@@ -1,5 +1,6 @@
 import ProjectDescription
-import MyPlugin
+import EnvPlugin
+import ConfigPlugin
 
 extension Project {
     public static func app(
@@ -7,7 +8,7 @@ extension Project {
         platform: Platform,
         additionalTargets: [String]
     ) -> Project {
-        var targets = makeAppTargets(
+        let targets = makeAppTargets(
             name: name,
             platform: platform,
             dependencies: additionalTargets.map { TargetDependency.target(name: $0) }
@@ -36,7 +37,11 @@ extension Project {
             sources: ["\(name)/Sources/**"],
             resources: ["\(name)/Resources/**"],
             scripts: [.swiftLintShell],
-            dependencies: dependencies
+            dependencies: dependencies,
+            settings: .settings(
+                base: ["DEVELOPMENT_TEAM": "$(DEVELOPMENT_TEAM)"],
+                configurations: XCConfig.project
+            )
         )
 
         let testTarget = Target(
