@@ -20,7 +20,7 @@ export class UsersController {
     type: User,
   })
   findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+    return this.usersService.findOne(id);
   }
 
   @Put(':id')
@@ -32,7 +32,7 @@ export class UsersController {
     description: 'OK',
   })
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+    return this.usersService.update(id, updateUserDto);
   }
 
   @Get('duplicate')
@@ -45,8 +45,10 @@ export class UsersController {
     type: CheckDuplicatedNameResponseDto,
   })
   checkDuplicatedName(@Query('name') name: string) {
-    return {
-      isDuplicated: false,
-    };
+    this.usersService.checkDuplicatedName(name).then((result) => {
+      return {
+        isDuplicated: result,
+      };
+    });
   }
 }
