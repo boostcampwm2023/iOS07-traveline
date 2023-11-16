@@ -1,5 +1,5 @@
 //
-//  TLBottomSheet.swift
+//  TLBottomSheetVC.swift
 //  traveline
 //
 //  Created by KiWoong Hong on 2023/11/16.
@@ -12,7 +12,7 @@ protocol TLBottomSheetDelegate: AnyObject {
     func bottomSheet(data: Any)
 }
 
-class TLBottomSheet: UIViewController {
+class TLBottomSheetVC: UIViewController {
     
     // MARK: - UI Components
     
@@ -41,12 +41,14 @@ class TLBottomSheet: UIViewController {
     // MARK: - Properties
     
     private let titleText: String
+    private var hasCompleteButton: Bool
     weak var delegate: TLBottomSheetDelegate?
     
     // MARK: - Life Cycle
     
-    init(title: String) {
+    init(title: String, hasCompleteButton: Bool = true) {
         self.titleText = title
+        self.hasCompleteButton = hasCompleteButton
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -65,18 +67,18 @@ class TLBottomSheet: UIViewController {
     
     @objc private func headerButtonTapped() {
         self.dismiss(animated: true) {
-            self.doneAction()
+            self.completeAction()
         }
     }
     
     /// 상속받은 ViewController에서 완료 버튼이 탭될 때 액션을 정의합니다.
-    func doneAction() { }
+    func completeAction() { }
     
 }
 
 // MARK: - Setup Functions
 
-private extension TLBottomSheet {
+private extension TLBottomSheetVC {
     func setupAttributes() {
         view.backgroundColor = TLColor.black
         
@@ -85,17 +87,23 @@ private extension TLBottomSheet {
         headerLabel.translatesAutoresizingMaskIntoConstraints = false
         headerLabel.text = titleText
         
-        headerButton.translatesAutoresizingMaskIntoConstraints = false
-        headerButton.setTitle("완료", for: .normal)
-        headerButton.setTitleColor(TLColor.main, for: .normal)
-        headerButton.titleLabel?.font = TLFont.subtitle2.font
-        headerButton.addTarget(self, action: #selector(headerButtonTapped), for: .touchUpInside)
+        if hasCompleteButton {
+            setupHeaderButton()
+        }
         
         headerLine.translatesAutoresizingMaskIntoConstraints = false
         headerLine.backgroundColor = TLColor.lineGray
         
         main.translatesAutoresizingMaskIntoConstraints = false
         main.backgroundColor = TLColor.black
+    }
+    
+    private func setupHeaderButton() {
+        headerButton.translatesAutoresizingMaskIntoConstraints = false
+        headerButton.setTitle("완료", for: .normal)
+        headerButton.setTitleColor(TLColor.main, for: .normal)
+        headerButton.titleLabel?.font = TLFont.subtitle2.font
+        headerButton.addTarget(self, action: #selector(headerButtonTapped), for: .touchUpInside)
     }
     
     func setupLayout() {
@@ -116,14 +124,18 @@ private extension TLBottomSheet {
             header.heightAnchor.constraint(equalToConstant: HeaderSize.height),
             header.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             header.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
             headerLabel.centerXAnchor.constraint(equalTo: header.centerXAnchor),
             headerLabel.centerYAnchor.constraint(equalTo: header.centerYAnchor, constant: HeaderSize.yOffset),
+            
             headerButton.centerYAnchor.constraint(equalTo: header.centerYAnchor, constant: HeaderSize.yOffset),
             headerButton.trailingAnchor.constraint(equalTo: header.trailingAnchor, constant: Margin.negative),
+            
             headerLine.leadingAnchor.constraint(equalTo: header.leadingAnchor),
             headerLine.trailingAnchor.constraint(equalTo: header.trailingAnchor),
             headerLine.bottomAnchor.constraint(equalTo: header.bottomAnchor),
             headerLine.heightAnchor.constraint(equalToConstant: HeaderSize.lineWidth),
+            
             main.topAnchor.constraint(equalTo: header.bottomAnchor),
             main.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             main.trailingAnchor.constraint(equalTo: view.trailingAnchor),

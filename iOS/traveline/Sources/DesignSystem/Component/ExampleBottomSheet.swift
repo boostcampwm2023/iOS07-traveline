@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class ExampleBottomSheet: TLBottomSheet {
+final class ExampleBottomSheet: TLBottomSheetVC {
     
     // MARK: - UI Components
     
@@ -25,7 +25,7 @@ final class ExampleBottomSheet: TLBottomSheet {
     
     // MARK: - Functions
     
-    override func doneAction() {
+    override func completeAction() {
         let text = textFiled.text
         delegate?.bottomSheet(data: text)
     }
