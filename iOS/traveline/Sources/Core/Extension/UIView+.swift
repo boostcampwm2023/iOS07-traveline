@@ -10,6 +10,11 @@ import UIKit
 
 extension UIView {
     
+    /// 여러 view를 순서대로 addSubview
+    func addSubviews(_ views: UIView...) {
+        views.forEach { addSubview($0) }
+    }
+    
     /// view에 그림자 추가
     func addShadow(
         xOffset: CGFloat,
