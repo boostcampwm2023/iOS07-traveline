@@ -87,6 +87,17 @@ final class TLTag: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {        
+        if style == .cancellable {
+            let width = bounds.width
+            let touchArea = bounds.inset(by: UIEdgeInsets(top: 0, left: width - 30, bottom: 0, right: 0))
+            
+            return touchArea.contains(point)
+        }
+        
+        return super.point(inside: point, with: event)
+    }
+    
     // MARK: - Functions
     
     private func updateTagSelected() {
