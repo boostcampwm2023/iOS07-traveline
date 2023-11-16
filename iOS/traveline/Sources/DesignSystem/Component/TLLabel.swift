@@ -10,11 +10,13 @@ import UIKit
 
 final class TLLabel: UILabel {
 
-    private let travelineFont: TLFont
+    private var travelineFont: TLFont
     private let alignment: NSTextAlignment
-    private let travelineColor: UIColor
-    private let labelText: String
+    private var travelineColor: UIColor
+    private var labelText: String
 
+    // MARK: - Initialize
+    
     init(
         frame: CGRect = .zero,
         font: TLFont,
@@ -36,6 +38,8 @@ final class TLLabel: UILabel {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Functions
+    
     private func setupAttributes() {
         let attributedString = NSMutableAttributedString(string: labelText)
         let range = (labelText as NSString).range(of: labelText)
@@ -71,4 +75,19 @@ final class TLLabel: UILabel {
         attributedText = attributedString
     }
 
+    func setText(to text: String) {
+        labelText = text
+        setupAttributes()
+    }
+    
+    func setColor(to color: UIColor) {
+        travelineColor = color
+        setupAttributes()
+    }
+    
+    func setFont(to font: TLFont) {
+        travelineFont = font
+        setupAttributes()
+    }
+    
 }
