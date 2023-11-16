@@ -9,4 +9,5 @@ opt_in_rules:
 excluded:
 - traveline/Sources/App/AppDelegate.swift
 - traveline/Sources/App/SceneDelegate.swift
-- Tuist
+- "Tuist"
+- "Plugins"

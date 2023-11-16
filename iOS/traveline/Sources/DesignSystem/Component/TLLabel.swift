@@ -1,5 +1,5 @@
 //
-//  TravelineLabel.swift
+//  TLLabel.swift
 //  traveline
 //
 //  Created by 김영인 on 2023/11/15.
@@ -8,16 +8,16 @@
 
 import UIKit
 
-final class TravelineLabel: UILabel {
+final class TLLabel: UILabel {
 
-    private let travelineFont: TravelineFont
+    private let travelineFont: TLFont
     private let alignment: NSTextAlignment
     private let travelineColor: UIColor
     private let labelText: String
 
     init(
         frame: CGRect = .zero,
-        font: TravelineFont,
+        font: TLFont,
         text: String,
         alignment: NSTextAlignment = .left,
         color: UIColor

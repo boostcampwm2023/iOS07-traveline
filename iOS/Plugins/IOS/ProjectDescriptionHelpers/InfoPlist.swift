@@ -13,6 +13,7 @@ public extension Project {
         "CFBundleVersion": "1",
         "UIMainStoryboardFile": "",
         "UILaunchStoryboardName": "LaunchScreen",
+        "UIUserInterfaceStyle": "Dark",
         "UIApplicationSceneManifest": [
             "UIApplicationSupportsMultipleScenes": false,
             "UISceneConfigurations": [

@@ -1,5 +1,5 @@
 //
-//  TravelineFont.swift
+//  TLFont.swift
 //  traveline
 //
 //  Created by 김태현 on 2023/11/15.
@@ -7,7 +7,7 @@
 //
 import UIKit
 
-enum TravelineFont {
+enum TLFont {
     case heading1
     case heading2
     case subtitle1
@@ -21,7 +21,7 @@ enum TravelineFont {
     case toolTip
 }
 
-extension TravelineFont {
+extension TLFont {
 
     var font: UIFont {
         switch self {
