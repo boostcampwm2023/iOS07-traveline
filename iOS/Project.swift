@@ -1,6 +1,6 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
-import MyPlugin
+import EnvPlugin
 
 // MARK: - Project
 

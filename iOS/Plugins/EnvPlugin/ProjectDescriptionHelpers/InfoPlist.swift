@@ -1,6 +1,6 @@
 //
 //  InfoPlist.swift
-//  MyPlugin
+//  EnvPlugin
 //
 //  Created by KiWoong Hong on 2023/11/14.
 //
@@ -25,5 +25,6 @@ public extension Project {
                 ]
             ]
         ],
+        
     ]
 }
