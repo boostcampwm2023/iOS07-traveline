@@ -73,15 +73,26 @@ export class PostingsController {
   async findOne(@Param('id') id: string) {
     const posting = await this.postingsService.findOne(id);
     return {
-      ...posting,
+      id: posting.id,
+      writer: posting.writer,
+      title: posting.title,
+      createdAt: posting.created_at,
+      thumbnail: posting.thumbnail,
+      startDate: posting.start_date,
+      endDate: posting.end_date,
+      days: posting.days,
       period: periods[posting.period] || null,
       headcount: headcounts[posting.headcount] || null,
       budget: budgets[posting.budget] || null,
       location: locations[posting.location],
       season: seasons[posting.season],
       vehicle: vehicles[posting.vehicle] || null,
-      theme: posting.theme.map((e) => themes[e]),
-      with_who: posting.with_who.map((e) => withWhos[e]),
+      theme: posting.theme ? posting.theme.map((e) => themes[e]) : null,
+      withWho: posting.with_who
+        ? posting.with_who.map((e) => withWhos[e])
+        : null,
+      report: posting.report,
+      liked: posting.liked,
       isOwner: false, // TODO: JWT에 있는 사용자와 writer가 동일한지 확인하기
     };
   }
