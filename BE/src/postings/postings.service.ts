@@ -53,8 +53,8 @@ export class PostingsService {
     return `This action returns all postings`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} posting`;
+  async findOne(id: string) {
+    return this.postingsRepository.findOneBy({ id: id });
   }
 
   update(id: number, updatePostingDto: UpdatePostingDto) {

@@ -20,6 +20,16 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Posting } from './entities/posting.entity';
+import {
+  budgets,
+  headcounts,
+  locations,
+  periods,
+  seasons,
+  themes,
+  vehicles,
+  withWhos,
+} from './postings.types';
 
 @Controller('postings')
 @ApiTags('Postings API')
@@ -60,8 +70,20 @@ export class PostingsController {
     description: 'id 값에 해당되는 포스팅을 반환한다.',
   })
   @ApiOkResponse({ description: 'OK', type: Posting })
-  findOne(@Param('id') id: string) {
-    return this.postingsService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const posting = await this.postingsService.findOne(id);
+    return {
+      ...posting,
+      period: periods[posting.period] || null,
+      headcount: headcounts[posting.headcount] || null,
+      budget: budgets[posting.budget] || null,
+      location: locations[posting.location],
+      season: seasons[posting.season],
+      vehicle: vehicles[posting.vehicle] || null,
+      theme: posting.theme.map((e) => themes[e]),
+      with_who: posting.with_who.map((e) => withWhos[e]),
+      isOwner: false, // TODO: JWT에 있는 사용자와 writer가 동일한지 확인하기
+    };
   }
 
   @Put(':id')
