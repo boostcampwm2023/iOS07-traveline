@@ -136,4 +136,15 @@ export class PostingsService {
       ? 2
       : 3;
   }
+
+  createDaysList(startDate: Date, days: number) {
+    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+    const standardDate = new Date(startDate);
+
+    return Array.from({ length: days }, (_, index) => {
+      const date = new Date(startDate);
+      date.setDate(standardDate.getDate() + index);
+      return `${date.getDate()}${weekdays[date.getDay()]}`;
+    });
+  }
 }

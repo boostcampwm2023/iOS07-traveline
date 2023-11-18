@@ -80,7 +80,10 @@ export class PostingsController {
       thumbnail: posting.thumbnail,
       startDate: posting.start_date,
       endDate: posting.end_date,
-      days: posting.days,
+      days: this.postingsService.createDaysList(
+        posting.start_date,
+        posting.days
+      ),
       period: periods[posting.period] || null,
       headcount: headcounts[posting.headcount] || null,
       budget: budgets[posting.budget] || null,
