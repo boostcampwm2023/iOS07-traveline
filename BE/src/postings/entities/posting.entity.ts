@@ -26,8 +26,8 @@ export class Posting {
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 
-  @Column({ length: 255, nullable: true })
-  thumnail: string;
+  @Column({ length: 255, nullable: true, default: null })
+  thumbnail: string | null;
 
   @Column({ type: 'int', default: 0 })
   liked: number;
