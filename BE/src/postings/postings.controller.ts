@@ -7,6 +7,7 @@ import {
   Delete,
   Query,
   Put,
+  BadRequestException,
 } from '@nestjs/common';
 import { PostingsService } from './postings.service';
 import { CreatePostingDto } from './dto/create-posting.dto';
@@ -31,7 +32,15 @@ export class PostingsController {
     description: '새로운 포스팅을 작성한다.',
   })
   @ApiOkResponse({ description: 'OK', type: Posting })
-  create(@Body() createPostingDto: CreatePostingDto) {
+  async create(@Body() createPostingDto: CreatePostingDto) {
+    if (
+      new Date(createPostingDto.endDate) < new Date(createPostingDto.startDate)
+    ) {
+      throw new BadRequestException(
+        'endDate는 startDate와 같거나 더 나중의 날짜여야 합니다.'
+      );
+    }
+
     return this.postingsService.create(createPostingDto);
   }
 
