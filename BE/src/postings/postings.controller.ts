@@ -136,21 +136,16 @@ export class PostingsController {
   @Post(':id/like')
   @ApiOperation({
     summary: '포스팅 좋아요 API',
-    description: 'id 값에 해당되는 포스팅에 좋아요를 추가한다.',
+    description:
+      'id 값에 해당되는 포스팅에 좋아요가 추가되거나 삭제된다. (토글)',
   })
   @ApiOkResponse({ description: 'OK' })
-  addLike(@Param('id') id: string) {
-    //return this.postingsService.addLike(+id);
-  }
-
-  @Delete(':id/like')
-  @ApiOperation({
-    summary: '포스팅 좋아요 취소 API',
-    description: 'id 값에 해당되는 포스팅의 좋아요를 취소한다.',
-  })
-  @ApiOkResponse({ description: 'OK' })
-  removeLike(@Param('id') id: string) {
-    //return this.postingsService.removeLike(+id);
+  toggleLike(@Param('id') id: string) {
+    // TODO: JWT에서 사용자 ID 가져오기
+    return this.postingsService.toggleLike(
+      id,
+      '123456789012345678901234567890123456'
+    );
   }
 
   @Post(':id/report')

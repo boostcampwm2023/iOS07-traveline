@@ -4,7 +4,7 @@ import { UpdatePostingDto } from './dto/update-posting.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { Repository } from 'typeorm';
 import { Posting } from './entities/posting.entity';
-import { POSTINGS_REPOSITORY } from './postings.constants';
+import { LIKED_REPOSITORY, POSTINGS_REPOSITORY } from './postings.constants';
 import {
   headcounts,
   budgets,
@@ -13,12 +13,15 @@ import {
   vehicles,
   withWhos,
 } from './postings.types';
+import { Liked } from './entities/liked.entity';
 
 @Injectable()
 export class PostingsService {
   constructor(
     @Inject(POSTINGS_REPOSITORY)
-    private readonly postingsRepository: Repository<Posting>
+    private readonly postingsRepository: Repository<Posting>,
+    @Inject(LIKED_REPOSITORY)
+    private readonly likedRepository: Repository<Liked>
   ) {}
 
   async create(createPostingDto: CreatePostingDto) {
@@ -104,6 +107,23 @@ export class PostingsService {
     }
 
     return this.postingsRepository.delete({ id: postingId });
+  }
+
+  async toggleLike(postingId: string, userId) {
+    const liked = await this.likedRepository.findOneBy({
+      posting: postingId,
+      user: userId,
+    });
+
+    if (liked) {
+      return this.likedRepository.delete({ posting: postingId, user: userId });
+    }
+
+    const newLiked = new Liked();
+    newLiked.posting = postingId;
+    newLiked.user = userId;
+
+    return this.likedRepository.save(newLiked);
   }
 
   private calculateDays(startDate: Date, endDate: Date): number {

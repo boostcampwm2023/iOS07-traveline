@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryColumn,
+  RelationId,
 } from 'typeorm';
 import { Liked } from './liked.entity';
 import { Report } from './report.entity';
@@ -29,8 +30,8 @@ export class Posting {
   @Column({ length: 255, nullable: true, default: null })
   thumbnail: string;
 
-  @Column({ type: 'int', default: 0 })
-  liked: number;
+  @RelationId((posting: Posting) => posting.likeds)
+  liked: { user: string; posting: string }[];
 
   @Column({ type: 'date' })
   start_date: Date;
