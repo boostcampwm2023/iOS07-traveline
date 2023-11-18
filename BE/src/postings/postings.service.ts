@@ -57,11 +57,14 @@ export class PostingsService {
     return this.postingsRepository.findOneBy({ id });
   }
 
-  async update(id: string, updatePostingDto: UpdatePostingDto) {
-    const user = ''; // TODO: JWT에서 사용자 ID 가져오기
-    const posting = await this.postingsRepository.findOneBy({ id });
+  async update(
+    postingId: string,
+    userId: string,
+    updatePostingDto: UpdatePostingDto
+  ) {
+    const posting = await this.postingsRepository.findOneBy({ id: postingId });
 
-    if (posting && posting.writer !== user) {
+    if (posting && posting.writer !== userId) {
       throw new ForbiddenException(
         '본인이 작성한 게시글만 수정할 수 있습니다.'
       );
@@ -71,7 +74,7 @@ export class PostingsService {
     const endDate = new Date(updatePostingDto.endDate);
     const days = this.calculateDays(startDate, endDate);
 
-    return this.postingsRepository.update(id, {
+    return this.postingsRepository.update(postingId, {
       title: updatePostingDto.title,
       start_date: startDate,
       end_date: endDate,
@@ -91,17 +94,16 @@ export class PostingsService {
     });
   }
 
-  async remove(id: string) {
-    const user = ''; // TODO: JWT에서 사용자 ID 가져오기
-    const posting = await this.postingsRepository.findOneBy({ id });
+  async remove(postingId: string, userId: string) {
+    const posting = await this.postingsRepository.findOneBy({ id: postingId });
 
-    if (posting && posting.writer !== user) {
+    if (posting && posting.writer !== userId) {
       throw new ForbiddenException(
         '본인이 작성한 게시글만 삭제할 수 있습니다.'
       );
     }
 
-    return this.postingsRepository.delete({ id });
+    return this.postingsRepository.delete({ id: postingId });
   }
 
   private calculateDays(startDate: Date, endDate: Date): number {

@@ -107,7 +107,8 @@ export class PostingsController {
   })
   @ApiOkResponse({ description: 'OK' })
   update(@Param('id') id: string, @Body() updatePostingDto: UpdatePostingDto) {
-    return this.postingsService.update(id, updatePostingDto);
+    // TODO: JWT에서 user id 가져오기
+    return this.postingsService.update(id, '', updatePostingDto);
   }
 
   @Delete(':id')
@@ -117,7 +118,8 @@ export class PostingsController {
   })
   @ApiOkResponse({ description: 'OK' })
   remove(@Param('id') id: string) {
-    return this.postingsService.remove(id);
+    // TODO: JWT에서 user id 가져오기
+    return this.postingsService.remove(id, '');
   }
 
   @Get('/titles')
