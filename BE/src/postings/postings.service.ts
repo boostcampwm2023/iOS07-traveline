@@ -37,11 +37,12 @@ export class PostingsService {
     );
     posting.budget = this.customIndexOf(budgets, createPostingDto.budget);
     posting.location = this.customIndexOf(locations, createPostingDto.location);
-    posting.theme = this.transformToTagObject(themes, createPostingDto.theme);
-    posting.with_who = this.transformToTagObject(
-      withWhos,
-      createPostingDto.withWho
-    );
+    posting.theme = createPostingDto.theme
+      ? createPostingDto.theme.map((e) => themes.indexOf(e))
+      : null;
+    posting.with_who = createPostingDto.withWho
+      ? createPostingDto.withWho.map((e) => withWhos.indexOf(e))
+      : null;
     posting.season = this.calculateSeason(posting.start_date);
     posting.vehicle = this.customIndexOf(vehicles, createPostingDto.vehicle);
 
@@ -95,28 +96,5 @@ export class PostingsService {
       : month >= 10 && month <= 11
       ? 2
       : 3;
-  }
-
-  private transformToTagObject(tags: string[], selectedTags: string[]) {
-    return this.updateTagObject(this.createTagObject(tags), selectedTags);
-  }
-
-  private updateTagObject(
-    object: { [key: string]: boolean },
-    selectedTags: string[]
-  ): { [key: string]: boolean } {
-    return !!selectedTags
-      ? {
-          ...object,
-          ...Object.fromEntries(selectedTags.map((e) => [e, true])),
-        }
-      : object;
-  }
-
-  private createTagObject(tags: string[]): { [key: string]: boolean } {
-    return tags.reduce((result, e) => {
-      result[e] = false;
-      return result;
-    }, {});
   }
 }

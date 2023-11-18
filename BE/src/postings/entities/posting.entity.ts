@@ -27,7 +27,7 @@ export class Posting {
   created_at: Date;
 
   @Column({ length: 255, nullable: true, default: null })
-  thumbnail: string | null;
+  thumbnail: string;
 
   @Column({ type: 'int', default: 0 })
   liked: number;
@@ -53,11 +53,11 @@ export class Posting {
   @Column({ type: 'int' })
   location: number;
 
-  @Column({ type: 'json', nullable: true })
-  theme: { [key: number]: boolean };
+  @Column({ type: 'json', nullable: true, default: null })
+  theme: number[];
 
-  @Column({ type: 'json', nullable: true })
-  with_who: { [key: number]: boolean };
+  @Column({ type: 'json', nullable: true, default: null })
+  with_who: number[];
 
   @Column({ type: 'int' })
   season: number;
