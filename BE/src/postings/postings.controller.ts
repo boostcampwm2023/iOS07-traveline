@@ -72,6 +72,7 @@ export class PostingsController {
   @ApiOkResponse({ description: 'OK', type: Posting })
   async findOne(@Param('id') id: string) {
     const posting = await this.postingsService.findOne(id);
+    const userId = ''; // TODO: JWT에서 userID 가져오기
     return {
       id: posting.id,
       writer: posting.writer,
@@ -96,7 +97,8 @@ export class PostingsController {
         : null,
       report: posting.report,
       liked: posting.liked,
-      isOwner: false, // TODO: JWT에 있는 사용자와 writer가 동일한지 확인하기
+      isLiked: posting.liked.some((liked) => liked.user === userId),
+      isOwner: posting.writer === userId,
     };
   }
 
