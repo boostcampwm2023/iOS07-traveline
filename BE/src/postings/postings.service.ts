@@ -57,8 +57,38 @@ export class PostingsService {
     return this.postingsRepository.findOneBy({ id });
   }
 
-  update(id: number, updatePostingDto: UpdatePostingDto) {
-    return `This action updates a #${id} posting`;
+  async update(id: string, updatePostingDto: UpdatePostingDto) {
+    const user = ''; // TODO: JWT에서 사용자 ID 가져오기
+    const posting = await this.postingsRepository.findOneBy({ id });
+
+    if (posting && posting.writer !== user) {
+      throw new ForbiddenException(
+        '본인이 작성한 게시글만 수정할 수 있습니다.'
+      );
+    }
+
+    const startDate = new Date(updatePostingDto.startDate);
+    const endDate = new Date(updatePostingDto.endDate);
+    const days = this.calculateDays(startDate, endDate);
+
+    return this.postingsRepository.update(id, {
+      title: updatePostingDto.title,
+      start_date: startDate,
+      end_date: endDate,
+      days: days,
+      period: this.selectPeriod(days),
+      headcount: this.customIndexOf(headcounts, updatePostingDto.headcount),
+      budget: this.customIndexOf(budgets, updatePostingDto.budget),
+      location: this.customIndexOf(locations, updatePostingDto.location),
+      theme: updatePostingDto.theme
+        ? updatePostingDto.theme.map((e) => themes.indexOf(e))
+        : null,
+      with_who: updatePostingDto.withWho
+        ? updatePostingDto.withWho.map((e) => withWhos.indexOf(e))
+        : null,
+      season: this.calculateSeason(new Date(updatePostingDto.startDate)),
+      vehicle: this.customIndexOf(vehicles, updatePostingDto.vehicle),
+    });
   }
 
   async remove(id: string) {

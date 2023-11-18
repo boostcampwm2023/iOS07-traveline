@@ -93,7 +93,7 @@ export class PostingsController {
   })
   @ApiOkResponse({ description: 'OK' })
   update(@Param('id') id: string, @Body() updatePostingDto: UpdatePostingDto) {
-    return this.postingsService.update(+id, updatePostingDto);
+    return this.postingsService.update(id, updatePostingDto);
   }
 
   @Delete(':id')
