@@ -1,3 +1,11 @@
+export const periods = [
+  '당일치기',
+  '1박 2일',
+  '2박 3일',
+  '3박 ~',
+  '일주일 ~',
+  '한 달 ~',
+];
 export const headcounts = ['1인', '2인', '3인', '4인', '5인 이상'];
 export const budgets = [
   '0 - 10만 원',

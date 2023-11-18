@@ -39,6 +39,9 @@ export class Posting {
   end_date: Date;
 
   @Column({ type: 'int' })
+  days: number;
+
+  @Column({ type: 'int' })
   period: number;
 
   @Column({ type: 'int', nullable: true })

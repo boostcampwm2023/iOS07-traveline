@@ -29,7 +29,8 @@ export class PostingsService {
     posting.created_at = new Date();
     posting.start_date = new Date(createPostingDto.startDate);
     posting.end_date = new Date(createPostingDto.endDate);
-    posting.period = this.calculateDays(posting.start_date, posting.end_date); //
+    posting.days = this.calculateDays(posting.start_date, posting.end_date);
+    posting.period = this.selectPeriod(posting.days);
     posting.headcount = this.customIndexOf(
       headcounts,
       createPostingDto.headcount
@@ -63,8 +64,22 @@ export class PostingsService {
     return `This action removes a #${id} posting`;
   }
 
-  private calculateDays(startDate: Date, endDate: Date) {
+  private calculateDays(startDate: Date, endDate: Date): number {
     return (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) + 1;
+  }
+
+  private selectPeriod(days: number): number {
+    return days === 1
+      ? 0
+      : days === 2
+      ? 1
+      : days === 3
+      ? 2
+      : days < 7
+      ? 3
+      : days < 30
+      ? 4
+      : 5;
   }
 
   private customIndexOf(list: string[], value: string): number | null {
