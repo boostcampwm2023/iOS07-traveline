@@ -103,7 +103,7 @@ export class PostingsController {
   })
   @ApiOkResponse({ description: 'OK' })
   remove(@Param('id') id: string) {
-    return this.postingsService.remove(+id);
+    return this.postingsService.remove(id);
   }
 
   @Get('/titles')

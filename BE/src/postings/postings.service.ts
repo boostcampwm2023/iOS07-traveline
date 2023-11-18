@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { CreatePostingDto } from './dto/create-posting.dto';
 import { UpdatePostingDto } from './dto/update-posting.dto';
 import { v4 as uuidv4 } from 'uuid';
@@ -54,15 +54,24 @@ export class PostingsService {
   }
 
   async findOne(id: string) {
-    return this.postingsRepository.findOneBy({ id: id });
+    return this.postingsRepository.findOneBy({ id });
   }
 
   update(id: number, updatePostingDto: UpdatePostingDto) {
     return `This action updates a #${id} posting`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} posting`;
+  async remove(id: string) {
+    const user = ''; // TODO: JWT에서 사용자 ID 가져오기
+    const posting = await this.postingsRepository.findOneBy({ id });
+
+    if (posting && posting.writer !== user) {
+      throw new ForbiddenException(
+        '본인이 작성한 게시글만 삭제할 수 있습니다.'
+      );
+    }
+
+    return this.postingsRepository.delete({ id });
   }
 
   private calculateDays(startDate: Date, endDate: Date): number {
