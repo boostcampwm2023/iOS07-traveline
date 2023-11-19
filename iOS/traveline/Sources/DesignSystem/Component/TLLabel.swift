@@ -1,5 +1,5 @@
 //
-//  TravelineLabel.swift
+//  TLLabel.swift
 //  traveline
 //
 //  Created by 김영인 on 2023/11/15.
@@ -8,16 +8,18 @@
 
 import UIKit
 
-final class TravelineLabel: UILabel {
+final class TLLabel: UILabel {
 
-    private let travelineFont: TravelineFont
+    private var travelineFont: TLFont
     private let alignment: NSTextAlignment
-    private let travelineColor: UIColor
-    private let labelText: String
+    private var travelineColor: UIColor
+    private var labelText: String
 
+    // MARK: - Initialize
+    
     init(
         frame: CGRect = .zero,
-        font: TravelineFont,
+        font: TLFont,
         text: String,
         alignment: NSTextAlignment = .left,
         color: UIColor
@@ -36,6 +38,8 @@ final class TravelineLabel: UILabel {
         fatalError("init(coder:) has not been implemented")
     }
 
+    // MARK: - Functions
+    
     private func setupAttributes() {
         let attributedString = NSMutableAttributedString(string: labelText)
         let range = (labelText as NSString).range(of: labelText)
@@ -71,4 +75,19 @@ final class TravelineLabel: UILabel {
         attributedText = attributedString
     }
 
+    func setText(to text: String) {
+        labelText = text
+        setupAttributes()
+    }
+    
+    func setColor(to color: UIColor) {
+        travelineColor = color
+        setupAttributes()
+    }
+    
+    func setFont(to font: TLFont) {
+        travelineFont = font
+        setupAttributes()
+    }
+    
 }

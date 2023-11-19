@@ -31,7 +31,7 @@ extension LoginEndPoint: EndPoint {
         return nil
     }
     
-    var header: [String : String] {
+    var header: [String: String] {
         return [:]
     }
     
