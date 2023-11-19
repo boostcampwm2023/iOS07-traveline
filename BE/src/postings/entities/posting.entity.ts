@@ -66,8 +66,8 @@ export class Posting {
   @Column({ type: 'int', nullable: true })
   vehicle: number;
 
-  @Column({ type: 'int', default: 0 })
-  report: number;
+  @RelationId((posting: Posting) => posting.reports)
+  report: { reporter: string; posting: string }[];
 
   @ManyToOne(() => User, (user) => user.postings, {
     onDelete: 'SET NULL',

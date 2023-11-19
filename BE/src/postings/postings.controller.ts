@@ -95,8 +95,8 @@ export class PostingsController {
       withWho: posting.with_who
         ? posting.with_who.map((e) => withWhos[e])
         : null,
-      report: posting.report,
-      liked: posting.liked,
+      report: posting.report.length,
+      liked: posting.liked.length,
       isLiked: posting.liked.some((liked) => liked.user === userId),
       isOwner: posting.writer === userId,
     };
@@ -144,10 +144,7 @@ export class PostingsController {
   @ApiOkResponse({ description: 'OK' })
   toggleLike(@Param('id') id: string) {
     // TODO: JWT에서 사용자 ID 가져오기
-    return this.postingsService.toggleLike(
-      id,
-      '123456789012345678901234567890123456'
-    );
+    return this.postingsService.toggleLike(id, '');
   }
 
   @Post(':id/report')
@@ -159,6 +156,7 @@ export class PostingsController {
     description: 'OK',
   })
   report(@Param('id') id: string) {
-    //return this.postingsService.report(+id);
+    // TODO: JWT에서 사용자 ID 가져오기
+    return this.postingsService.report(id, '');
   }
 }
