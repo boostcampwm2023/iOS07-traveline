@@ -72,6 +72,7 @@ export class PostingsController {
   @ApiOkResponse({ description: 'OK', type: Posting })
   async findOne(@Param('id') id: string) {
     const posting = await this.postingsService.findOne(id);
+    const userId = ''; // TODO: JWT에서 userID 가져오기
     return {
       id: posting.id,
       writer: posting.writer,
@@ -94,9 +95,10 @@ export class PostingsController {
       withWho: posting.with_who
         ? posting.with_who.map((e) => withWhos[e])
         : null,
-      report: posting.report,
-      liked: posting.liked,
-      isOwner: false, // TODO: JWT에 있는 사용자와 writer가 동일한지 확인하기
+      report: posting.report.length,
+      liked: posting.liked.length,
+      isLiked: posting.liked.some((liked) => liked.user === userId),
+      isOwner: posting.writer === userId,
     };
   }
 
@@ -136,21 +138,13 @@ export class PostingsController {
   @Post(':id/like')
   @ApiOperation({
     summary: '포스팅 좋아요 API',
-    description: 'id 값에 해당되는 포스팅에 좋아요를 추가한다.',
+    description:
+      'id 값에 해당되는 포스팅에 좋아요가 추가되거나 삭제된다. (토글)',
   })
   @ApiOkResponse({ description: 'OK' })
-  addLike(@Param('id') id: string) {
-    //return this.postingsService.addLike(+id);
-  }
-
-  @Delete(':id/like')
-  @ApiOperation({
-    summary: '포스팅 좋아요 취소 API',
-    description: 'id 값에 해당되는 포스팅의 좋아요를 취소한다.',
-  })
-  @ApiOkResponse({ description: 'OK' })
-  removeLike(@Param('id') id: string) {
-    //return this.postingsService.removeLike(+id);
+  toggleLike(@Param('id') id: string) {
+    // TODO: JWT에서 사용자 ID 가져오기
+    return this.postingsService.toggleLike(id, '');
   }
 
   @Post(':id/report')
@@ -162,6 +156,7 @@ export class PostingsController {
     description: 'OK',
   })
   report(@Param('id') id: string) {
-    //return this.postingsService.report(+id);
+    // TODO: JWT에서 사용자 ID 가져오기
+    return this.postingsService.report(id, '');
   }
 }

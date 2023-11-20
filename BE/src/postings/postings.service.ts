@@ -1,10 +1,19 @@
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { CreatePostingDto } from './dto/create-posting.dto';
 import { UpdatePostingDto } from './dto/update-posting.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { Repository } from 'typeorm';
 import { Posting } from './entities/posting.entity';
-import { POSTINGS_REPOSITORY } from './postings.constants';
+import {
+  LIKEDS_REPOSITORY,
+  POSTINGS_REPOSITORY,
+  REPORTS_REPOSITORY,
+} from './postings.constants';
 import {
   headcounts,
   budgets,
@@ -13,12 +22,18 @@ import {
   vehicles,
   withWhos,
 } from './postings.types';
+import { Liked } from './entities/liked.entity';
+import { Report } from './entities/report.entity';
 
 @Injectable()
 export class PostingsService {
   constructor(
     @Inject(POSTINGS_REPOSITORY)
-    private readonly postingsRepository: Repository<Posting>
+    private readonly postingsRepository: Repository<Posting>,
+    @Inject(LIKEDS_REPOSITORY)
+    private readonly likedsRepository: Repository<Liked>,
+    @Inject(REPORTS_REPOSITORY)
+    private readonly reportsRepository: Repository<Report>
   ) {}
 
   async create(createPostingDto: CreatePostingDto) {
@@ -104,6 +119,40 @@ export class PostingsService {
     }
 
     return this.postingsRepository.delete({ id: postingId });
+  }
+
+  async toggleLike(postingId: string, userId: string) {
+    const liked = await this.likedsRepository.findOneBy({
+      posting: postingId,
+      user: userId,
+    });
+
+    if (liked) {
+      return this.likedsRepository.delete({ posting: postingId, user: userId });
+    }
+
+    const newLiked = new Liked();
+    newLiked.posting = postingId;
+    newLiked.user = userId;
+
+    return this.likedsRepository.save(newLiked);
+  }
+
+  async report(postingId: string, userId: string) {
+    const report = await this.reportsRepository.findOneBy({
+      posting: postingId,
+      reporter: userId,
+    });
+
+    if (report) {
+      throw new ConflictException('이미 신고한 게시글입니다.');
+    }
+
+    const newReport = new Report();
+    newReport.posting = postingId;
+    newReport.reporter = userId;
+
+    return this.reportsRepository.save(newReport);
   }
 
   private calculateDays(startDate: Date, endDate: Date): number {
