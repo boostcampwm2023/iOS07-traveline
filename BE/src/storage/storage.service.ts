@@ -20,10 +20,10 @@ export class StorageService {
     return `${uniqueId}.${extension}`;
   }
 
-  async upload(file: Express.Multer.File) {
+  async upload(path: string, file: Express.Multer.File) {
     const uploadParams = {
       Bucket: this.bucketName,
-      Key: this.generateFilename(file.originalname),
+      Key: path + this.generateFilename(file.originalname),
       Body: file.buffer,
       ACL: 'public-read',
     };
