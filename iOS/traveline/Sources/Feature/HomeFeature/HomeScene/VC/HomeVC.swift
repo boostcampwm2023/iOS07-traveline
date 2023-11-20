@@ -12,6 +12,10 @@ import OSLog
 
 final class HomeVC: UIViewController {
     
+    private enum Metric {
+        static let topInset: CGFloat = 24
+    }
+    
     private enum Constants {
         static let title: String = "traveline"
         static let searchTravel: String = "여행 검색"
@@ -60,11 +64,14 @@ private extension HomeVC {
         
         navigationItem.searchController = searchController
         navigationItem.title = Constants.title
+        navigationItem.hidesSearchBarWhenScrolling = false
         
         navigationController?.navigationBar.titleTextAttributes = [
             .foregroundColor: TLColor.white,
             .font: TLFont.subtitle1.font
         ]
+        
+        homeListView.setData(items: TravelListSample.make())
     }
     
     func setupLayout() {
@@ -110,6 +117,7 @@ extension HomeVC: UISearchBarDelegate {
     }
 }
 
+@available(iOS 17, *)
 #Preview("HomeVC") {
     let homeViewModel = HomeViewModel()
     let homeVC = HomeVC(viewModel: homeViewModel)

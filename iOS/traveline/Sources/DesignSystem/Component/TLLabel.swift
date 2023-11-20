@@ -20,7 +20,7 @@ final class TLLabel: UILabel {
     init(
         frame: CGRect = .zero,
         font: TLFont,
-        text: String,
+        text: String = "",
         alignment: NSTextAlignment = .left,
         color: UIColor
     ) {
