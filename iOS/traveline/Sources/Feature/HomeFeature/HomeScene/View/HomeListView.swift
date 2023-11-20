@@ -69,12 +69,12 @@ final class HomeListView: UIView {
             ) as? TLListCVC else {
                 return nil
             }
-            cell.config(item: travelInfo)
+            cell.setData(item: travelInfo)
             return cell
         }
     }
     
-    func setupData(items: TravelList) {
+    func setData(items: TravelList) {
         var snapshot = NSDiffableDataSourceSnapshot<HomeListType, TravelListInfo>()
         snapshot.appendSections([.travelInfo])
         snapshot.appendItems(items)
@@ -102,6 +102,6 @@ private extension HomeListView {
 @available(iOS 17, *)
 #Preview("HomeListView") {
     let homeListView = HomeListView()
-    homeListView.setupData(items: TravelListSample.make())
+    homeListView.setData(items: TravelListSample.make())
     return homeListView
 }

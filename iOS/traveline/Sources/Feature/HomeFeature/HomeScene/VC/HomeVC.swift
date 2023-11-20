@@ -71,7 +71,7 @@ private extension HomeVC {
             .font: TLFont.subtitle1.font
         ]
         
-        homeListView.setupData(items: TravelListSample.make())
+        homeListView.setData(items: TravelListSample.make())
     }
     
     func setupLayout() {

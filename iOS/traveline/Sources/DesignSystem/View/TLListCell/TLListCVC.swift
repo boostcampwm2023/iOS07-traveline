@@ -23,7 +23,7 @@ final class TLListCVC: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func config(item: TravelListInfo) {
+    func setData(item: TravelListInfo) {
         tlInfoView.setData(item: item)
     }
 }
