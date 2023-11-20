@@ -58,12 +58,31 @@ final class SettingVC: UIViewController {
     // MARK: - Functions
     
     @objc private func logoutButtonTapped() {
-        // action..
+        showLogoutAlert()
     }
     
     @objc private func withdrawalButtonTapped() {
         // action..
     }
+    
+    private func showLogoutAlert() {
+        let alert = TLAlertController(
+            title: "로그아웃",
+            message: "정말 로그아웃하시겠습니까?",
+            preferredStyle: .alert
+        )
+        alert.addActions([
+            UIAlertAction(title: "취소", style: .cancel) { _ in
+                // cancel action
+            },
+            UIAlertAction(title: "로그아웃", style: .destructive) { _ in
+                // logout action
+            }
+        ])
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
 }
 
 // MARK: - Setup Functions
@@ -71,6 +90,7 @@ final class SettingVC: UIViewController {
 extension SettingVC {
     
     private func setupAttributes() {
+        self.navigationItem.title = "설정"
         logoutButton.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
         withdrawalButton.addTarget(self, action: #selector(withdrawalButtonTapped), for: .touchUpInside)
     }
