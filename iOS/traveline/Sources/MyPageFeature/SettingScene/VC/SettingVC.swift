@@ -7,6 +7,32 @@
 //
 
 import UIKit
+import SafariServices
+
+enum ServiceGuideType: String, CaseIterable {
+    case license = "라이센스"
+    case termsOfUse = "이용약관"
+    case privacyPolicy = "개인정보 처리방침"
+    
+    var link: String {
+        switch self {
+        case .license: return "https://www.apple.com"
+        case .termsOfUse: return "https://www.naver.com"
+        case .privacyPolicy: return "https://www.daum.net"
+        }
+    }
+    
+    func button() -> UIButton {
+        let button = UIButton()
+        button.setTitle(self.rawValue, for: .normal)
+        button.setTitleColor(TLColor.white, for: .normal)
+        
+        return button
+    }
+    
+}
+
+// MARK: - Setting VC
 
 final class SettingVC: UIViewController {
     // MARK: - UI Components
@@ -22,9 +48,11 @@ final class SettingVC: UIViewController {
         return stackView
     }()
     
-    let license = ServiceGuideItem.license.view()
-    let termsOfUse = ServiceGuideItem.termsOfUse.view()
-    let privacyPolicy = ServiceGuideItem.privacyPolicy.view()
+    let serviceGuides: [ServiceGuideType: UIButton] = {
+        return ServiceGuideType.allCases.reduce(into: [:]) { result, key in
+            result[key] = key.button()
+        }
+    }()
     
     let line: UIView = {
         let line = UIView()
@@ -107,14 +135,28 @@ extension SettingVC {
         self.navigationItem.title = "설정"
         logoutButton.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
         withdrawalButton.addTarget(self, action: #selector(withdrawalButtonTapped), for: .touchUpInside)
+        setupServiceGuideButton()
+    }
+    
+    private func setupServiceGuideButton() {
+        serviceGuides.forEach { type, button in
+            let action = UIAction(handler: { _ in
+                guard let url = URL(string: type.link) else { return }
+                guard UIApplication.shared.canOpenURL(url) else { return }
+                
+                let safariVC = SFSafariViewController(url: url)
+                self.present(safariVC, animated: true)
+            })
+            button.addAction(action, for: .touchUpInside)
+        }
     }
     
     private func setupLayout() {
         view.addSubview(stackView)
         [
-            license,
-            termsOfUse,
-            privacyPolicy,
+            serviceGuides[.license] ?? UIButton(),
+            serviceGuides[.termsOfUse] ?? UIButton(),
+            serviceGuides[.privacyPolicy] ?? UIButton(),
             line,
             logoutButton,
             withdrawalButton
