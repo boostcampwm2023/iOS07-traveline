@@ -3,9 +3,20 @@ import {
   IsString,
   MinLength,
   MaxLength,
-  IsDate,
   IsOptional,
+  IsIn,
+  ArrayMaxSize,
+  IsArray,
+  IsDateString,
 } from 'class-validator';
+import {
+  budgets,
+  headcounts,
+  locations,
+  themes,
+  vehicles,
+  withWhos,
+} from '../postings.types';
 
 export class CreatePostingDto {
   @ApiProperty()
@@ -15,37 +26,49 @@ export class CreatePostingDto {
   title: string;
 
   @ApiProperty()
-  @IsDate()
-  startDate: Date;
+  @IsDateString()
+  startDate: string;
 
   @ApiProperty()
-  @IsDate()
-  endDate: Date;
+  @IsDateString()
+  endDate: string;
 
   @ApiProperty()
   @IsOptional()
   @IsString()
+  @IsIn(headcounts)
   headcount: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
+  @IsIn(budgets)
   budget: string;
 
   @ApiProperty()
   @IsString()
+  @IsIn(locations)
   location: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString({ each: true })
+  @ArrayMaxSize(3)
+  @IsArray()
+  @IsIn(themes, { each: true })
   theme: string[];
 
   @ApiProperty()
   @IsOptional()
   @IsString({ each: true })
+  @ArrayMaxSize(3)
+  @IsArray()
+  @IsIn(withWhos, { each: true })
   withWho: string[];
 
   @ApiProperty()
   @IsOptional()
   @IsString()
-  veihicle: string;
+  @IsIn(vehicles)
+  vehicle: string;
 }
