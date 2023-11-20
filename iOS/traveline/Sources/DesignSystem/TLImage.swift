@@ -12,4 +12,9 @@ enum TLImage {
     enum Tag {
         static let close = TravelineAsset.Images.close.image
     }
+    
+    enum Common {
+        static let likeUnselected = TravelineAsset.Images.likeUnselected.image
+        static let likeSelected = TravelineAsset.Images.likeSelected.image
+    }
 }
