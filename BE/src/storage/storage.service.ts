@@ -32,6 +32,7 @@ export class StorageService {
 
     return {
       imageUrl: result.Location,
+      path: uploadParams.Key,
     };
   }
 }
