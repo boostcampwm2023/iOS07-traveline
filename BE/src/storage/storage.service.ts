@@ -35,4 +35,14 @@ export class StorageService {
       path: uploadParams.Key,
     };
   }
+
+  async getImageUrl(key: string): Promise<string> {
+    const params: AWS.S3.GetObjectRequest = {
+      Bucket: this.bucketName,
+      Key: key,
+    };
+
+    const signedUrl = await this.s3.getSignedUrlPromise('getObject', params);
+    return signedUrl;
+  }
 }
