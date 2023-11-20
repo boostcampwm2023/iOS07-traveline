@@ -37,7 +37,7 @@ final class TLTag: UIButton {
     
     private let tagTitleLabel: TLLabel = TLLabel(
         font: .body2,
-        text: .empty,
+        text: Literal.empty,
         color: TLColor.lightGray
     )
     
