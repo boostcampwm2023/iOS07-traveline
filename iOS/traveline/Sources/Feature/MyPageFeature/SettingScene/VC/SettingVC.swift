@@ -26,6 +26,7 @@ enum ServiceGuideType: String, CaseIterable {
         let button = UIButton()
         button.setTitle(self.rawValue, for: .normal)
         button.setTitleColor(TLColor.white, for: .normal)
+        button.titleLabel?.font = TLFont.subtitle2.font
         
         return button
     }
@@ -35,10 +36,12 @@ enum ServiceGuideType: String, CaseIterable {
 // MARK: - Setting VC
 
 final class SettingVC: UIViewController {
+    
     // MARK: - UI Components
+    
     private let lineWidth: CGFloat = 1
     
-    let stackView: UIStackView = {
+    private let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
@@ -48,29 +51,31 @@ final class SettingVC: UIViewController {
         return stackView
     }()
     
-    let serviceGuides: [ServiceGuideType: UIButton] = {
+    private let serviceGuides: [ServiceGuideType: UIButton] = {
         return ServiceGuideType.allCases.reduce(into: [:]) { result, key in
             result[key] = key.button()
         }
     }()
     
-    let line: UIView = {
+    private let line: UIView = {
         let line = UIView()
         line.backgroundColor = TLColor.lineGray
         return line
     }()
     
-    let logoutButton: UIButton = {
+    private let logoutButton: UIButton = {
         let button = UIButton()
         button.setTitle("로그아웃", for: .normal)
         button.setTitleColor(TLColor.white, for: .normal)
+        button.titleLabel?.font = TLFont.subtitle2.font
         return button
     }()
     
-    let withdrawalButton: UIButton = {
+    private let withdrawalButton: UIButton = {
         let button = UIButton()
         button.setTitle("탈퇴하기", for: .normal)
         button.setTitleColor(TLColor.white, for: .normal)
+        button.titleLabel?.font = TLFont.subtitle2.font
         return button
     }()
     
@@ -140,9 +145,10 @@ extension SettingVC {
     
     private func setupServiceGuideButton() {
         serviceGuides.forEach { type, button in
-            let action = UIAction(handler: { _ in
-                guard let url = URL(string: type.link) else { return }
-                guard UIApplication.shared.canOpenURL(url) else { return }
+            let action = UIAction(handler: { [weak self] _ in
+                guard let url = URL(string: type.link),
+                      UIApplication.shared.canOpenURL(url),
+                      let self = self else { return }
                 
                 let safariVC = SFSafariViewController(url: url)
                 self.present(safariVC, animated: true)
