@@ -8,6 +8,7 @@
 
 import Combine
 import UIKit
+import OSLog
 
 final class HomeVC: UIViewController {
     
@@ -19,8 +20,23 @@ final class HomeVC: UIViewController {
     // MARK: - UI Components
     
     private let searchController = TLSearchController.init(placeholder: Constants.searchTravel)
-    
     private let homeListView: HomeListView = .init()
+    
+    // MARK: - Properties
+    
+    private var cancellables: Set<AnyCancellable> = .init()
+    private let viewModel: HomeViewModel
+    
+    // MARK: - Initializer
+    
+    init(viewModel: HomeViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Life Cycle
     
@@ -29,6 +45,7 @@ final class HomeVC: UIViewController {
         
         setupAttributes()
         setupLayout()
+        bind()
     }
 }
 
@@ -64,6 +81,15 @@ private extension HomeVC {
             homeListView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
+    
+    func bind() {
+        viewModel.$state
+            .map(\.value)
+            .sink { value in
+                os_log("\(value)")
+            }
+            .store(in: &cancellables)
+    }
 }
 
 // MARK: - UISearchResultsUpdating
@@ -71,17 +97,22 @@ private extension HomeVC {
 extension HomeVC: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         // TODO: - 최근검색어 및 자동완성어
+        guard let text = searchController.searchBar.searchTextField.text else { return }
+        viewModel.sendAction(.searchStart(text))
     }
 }
 
 extension HomeVC: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         // TODO: - 검색결과
+        guard let text = searchBar.text else { return }
+        viewModel.sendAction(.searchDone(text))
     }
 }
 
 #Preview("HomeVC") {
-    let homeVC = HomeVC()
+    let homeViewModel = HomeViewModel()
+    let homeVC = HomeVC(viewModel: homeViewModel)
     let homeNV = UINavigationController(rootViewController: homeVC)
     return homeNV
 }
