@@ -62,7 +62,7 @@ final class SettingVC: UIViewController {
     }
     
     @objc private func withdrawalButtonTapped() {
-        // action..
+        showWithdrawalAlert()
     }
     
     private func showLogoutAlert() {
@@ -71,18 +71,32 @@ final class SettingVC: UIViewController {
             message: "정말 로그아웃하시겠습니까?",
             preferredStyle: .alert
         )
-        alert.addActions([
-            UIAlertAction(title: "취소", style: .cancel) { _ in
-                // cancel action
-            },
-            UIAlertAction(title: "로그아웃", style: .destructive) { _ in
-                // logout action
-            }
-        ])
+        let cancel = UIAlertAction(title: "취소", style: .cancel)
+        let logout = UIAlertAction(title: "로그아웃", style: .destructive) { _ in
+            // logout action
+        }
+        
+        alert.addActions([cancel, logout])
         
         present(alert, animated: true, completion: nil)
     }
     
+    private func showWithdrawalAlert() {
+        let alert = TLAlertController(
+            title: "정말 탈퇴하시겠습니까?",
+            message: "작성한 글들을 다시 볼 수 없습니다.",
+            preferredStyle: .alert
+        )
+        let cancel = UIAlertAction(title: "취소", style: .default)
+        let withdrawal = UIAlertAction(title: "탈퇴하기", style: .destructive) { _ in
+            // withdrawal action
+        }
+        
+        alert.addActions([withdrawal, cancel])
+        cancel.setValue(TLColor.gray, forKey: "titleTextColor")
+        
+        present(alert, animated: true, completion: nil)
+    }
 }
 
 // MARK: - Setup Functions
