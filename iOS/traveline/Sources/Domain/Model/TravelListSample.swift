@@ -18,10 +18,22 @@ enum TravelListSample {
         ]
     }
     
+    static func makeInfo() -> TravelListInfo {
+        return
+            .init(id: "1",
+                  imageURL: "",
+                  title: "부산여행",
+                  profile: Profile(id: "1", imageURL: "", name: "영인"),
+                  like: 10,
+                  isLiked: false,
+                  tags: TravelListSample.makeTags()
+            )
+    }
+    
     static func make() -> TravelList {
         return [
             .init(id: "1",
-                  imageURL: "", 
+                  imageURL: "",
                   title: "부산여행",
                   profile: Profile(id: "1", imageURL: "", name: "영인"),
                   like: 10,

@@ -168,3 +168,10 @@ private extension TLInfoView {
         ])
     }
 }
+
+@available(iOS 17, *)
+#Preview("TLInfoView") {
+    let tlInfoView = TLInfoView()
+    tlInfoView.setData(item: TravelListSample.makeInfo())
+    return tlInfoView
+}
