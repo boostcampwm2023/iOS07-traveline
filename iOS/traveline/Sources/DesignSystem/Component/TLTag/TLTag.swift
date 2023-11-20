@@ -112,6 +112,9 @@ final class TLTag: UIButton {
         }
     }
     
+    func updateTag(text: String) {
+        tagTitleLabel.setText(to: text)
+    }
 }
 
 // MARK: - Setup Functions
