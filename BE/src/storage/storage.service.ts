@@ -20,10 +20,10 @@ export class StorageService {
     return `${uniqueId}.${extension}`;
   }
 
-  async upload(file: Express.Multer.File) {
+  async upload(path: string, file: Express.Multer.File) {
     const uploadParams = {
       Bucket: this.bucketName,
-      Key: this.generateFilename(file.originalname),
+      Key: path + this.generateFilename(file.originalname),
       Body: file.buffer,
       ACL: 'public-read',
     };
@@ -32,6 +32,17 @@ export class StorageService {
 
     return {
       imageUrl: result.Location,
+      path: uploadParams.Key,
     };
+  }
+
+  async getImageUrl(key: string): Promise<string> {
+    const params: AWS.S3.GetObjectRequest = {
+      Bucket: this.bucketName,
+      Key: key,
+    };
+
+    const signedUrl = await this.s3.getSignedUrlPromise('getObject', params);
+    return signedUrl;
   }
 }
