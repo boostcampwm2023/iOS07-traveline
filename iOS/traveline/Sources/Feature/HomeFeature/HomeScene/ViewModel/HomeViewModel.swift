@@ -9,11 +9,21 @@
 import Foundation
 import Combine
 
-final class HomeViewModel: BaseViewModel<HomeViewModelType> {
-    
-    func sendAction(_ action: Action) {
-        super.actions.send(action)
-    }
+enum HomeAction: BaseAction {
+    case searchStart(String)
+    case searchDone(String)
+}
+
+enum HomeSideEffect: BaseSideEffect {
+    case fetchSearchAPI
+    case fetchSearchResultAPI
+}
+
+struct HomeState: BaseState {
+    var value: Int = 0
+}
+
+final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> {
     
     override func transform(action: Action) -> SideEffectPublisher {
         switch action {
