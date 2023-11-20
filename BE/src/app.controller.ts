@@ -24,6 +24,6 @@ export class AppController {
   @Post('/upload')
   @UseInterceptors(FileInterceptor('file'))
   async upload(@UploadedFile() file: Express.Multer.File) {
-    return this.storageService.upload(file);
+    return this.storageService.upload('', file);
   }
 }
