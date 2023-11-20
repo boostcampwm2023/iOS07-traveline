@@ -9,13 +9,13 @@
 import Combine
 import Foundation
 
-class BaseViewModel<T: ViewModelType> {
+class BaseViewModel<Action: BaseAction, SideEffect: BaseSideEffect, State: BaseState> {
     
     // MARK: - Types
     
-    typealias Action = T.Action
-    typealias SideEffect = T.SideEffect
-    typealias State = T.State
+    typealias Action = Action
+    typealias SideEffect = SideEffect
+    typealias State = State
     typealias SideEffectPublisher = AnyPublisher<SideEffect, Never>
     
     // MARK: - Properties
@@ -24,7 +24,7 @@ class BaseViewModel<T: ViewModelType> {
     
     // MARK: - Binding Properties
     
-    var actions = PassthroughSubject<Action, Never>()
+    private var actions = PassthroughSubject<Action, Never>()
     private var sideEffects = PassthroughSubject<SideEffect, Never>()
     
     @Published private(set) var state: State = .init()
@@ -48,6 +48,10 @@ class BaseViewModel<T: ViewModelType> {
             .receive(on: DispatchQueue.main)
             .assign(to: \.state, on: self)
             .store(in: &cancellables)
+    }
+    
+    func sendAction(_ action: Action) {
+        actions.send(action)
     }
     
     func transform(action: Action) -> SideEffectPublisher {
