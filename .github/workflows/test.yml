@@ -27,12 +27,12 @@ jobs:
       - name: Build Docker
         run: |
           cd BE
-          pwd
-          ls
-          docker build -f Dockerfile -t traveline-docker .
+          docker build -f Dockerfile -t traveline/traveline-docker .
 
       - name: Push Docker
-        run: docker push traveline/traveline-repo:latest
+        run: |
+          cd BE
+          docker push traveline/traveline-docker:latest
 
       - name: SSH Login
         uses: appleboy/ssh-action@master
@@ -45,4 +45,4 @@ jobs:
             docker pull traveline/traveline-repo
             docker stop traveline-docker || true
             docker rm traveline-docker || true
-            docker run -e DB_HOST=${{ secrets.DB_HOST }} -e DB_PORT=${{ secrets.DB_PORT }} -e DB_USER=${{ secrets.DB_USER }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} -e DB_DATABASE=${{ secrets.DB_DATABASE }} -e AWST_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} -e AWS_REGION=${{ secrets.AWS_REGION }} -d -p 4817:3000 --name traveline-docker traveline/traveline-repo
+            docker run -e DB_HOST=${{ secrets.DB_HOST }} -e DB_PORT=${{ secrets.DB_PORT }} -e DB_USER=${{ secrets.DB_USER }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} -e DB_DATABASE=${{ secrets.DB_DATABASE }} -e AWST_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }} -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} -e AWS_REGION=${{ secrets.AWS_REGION }} -d -p 4817:3000 --name traveline-repo traveline/traveline-docker
