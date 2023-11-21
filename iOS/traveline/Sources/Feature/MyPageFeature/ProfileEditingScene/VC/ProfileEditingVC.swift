@@ -37,7 +37,6 @@ final class ProfileEditingVC: UIViewController {
     
     private let imageView: UIImageView = {
         let view = UIImageView()
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = Metric.imageWidth / 2
         view.backgroundColor = TLColor.backgroundGray
         view.clipsToBounds = true
@@ -46,7 +45,6 @@ final class ProfileEditingVC: UIViewController {
     
     private let imageEditButton: UIButton = {
         let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(TLImage.Common.camera, for: .normal)
         button.tintColor = TLColor.black
         button.layer.cornerRadius = Metric.buttonWidth / 2
@@ -57,7 +55,6 @@ final class ProfileEditingVC: UIViewController {
     
     private let nickNameLabel: TLLabel = {
         let label = TLLabel(font: TLFont.subtitle1, color: TLColor.white)
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.text = Constants.nickName
         
         return label
@@ -65,7 +62,6 @@ final class ProfileEditingVC: UIViewController {
     
     private let textFieldPaddingView: UIView = {
         let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = TLColor.backgroundGray
         view.layer.cornerRadius = Metric.textFieldPaddingCornerRadius
         view.layer.borderWidth = Metric.textFieldPaddingBorderWidth
@@ -76,7 +72,6 @@ final class ProfileEditingVC: UIViewController {
     
     private let nickNameTextField: UITextField = {
         let field = UITextField()
-        field.translatesAutoresizingMaskIntoConstraints = false
         field.font = TLFont.subtitle2.font
         
         return field
@@ -84,7 +79,6 @@ final class ProfileEditingVC: UIViewController {
     
     private let captionLabel: TLLabel = {
         let label = TLLabel(font: TLFont.caption, color: TLColor.main)
-        label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
     }()
@@ -129,14 +123,6 @@ extension ProfileEditingVC {
     private func setupAttributes() {
         setupNavigationItem()
         view.backgroundColor = TLColor.black
-        view.addSubviews(
-            imageView,
-            imageEditButton,
-            nickNameLabel,
-            textFieldPaddingView,
-            nickNameTextField,
-            captionLabel
-        )
         
         imageEditButton.addTarget(self, action: #selector(imageEditButtonTapped), for: .touchUpInside)
     }
@@ -149,12 +135,26 @@ extension ProfileEditingVC {
             target: self,
             action: #selector(completeButtonTapped)
         )
-        completeButton.tintColor = TLColor.main
         completeButton.isEnabled = false
+        completeButton.setTitleTextAttributes([.font: TLFont.body1.font], for: .normal)
+        completeButton.setTitleTextAttributes([.foregroundColor: TLColor.gray], for: .disabled)
+        completeButton.setTitleTextAttributes([.foregroundColor: TLColor.main], for: .normal)
         self.navigationItem.rightBarButtonItem = completeButton
     }
     
     private func setupLayout() {
+        view.addSubviews(
+            imageView,
+            imageEditButton,
+            nickNameLabel,
+            textFieldPaddingView,
+            nickNameTextField,
+            captionLabel
+        )
+        view.subviews.forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+        
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Metric.topInset),
             imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
