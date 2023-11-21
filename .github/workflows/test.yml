@@ -26,7 +26,7 @@ jobs:
 
       - name: Build Docker
         run: |
-          docker build -f Dockerfile -t traveline-docker ./BE
+          docker build -f Dockerfile -t traveline-docker .
 
       - name: Push Docker
         run: docker push traveline/traveline-repo:latest
