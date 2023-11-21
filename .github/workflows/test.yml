@@ -26,6 +26,8 @@ jobs:
 
       - name: Build Docker
         run: |
+          pwd
+          ls
           docker build -f Dockerfile -t traveline-docker .
 
       - name: Push Docker
