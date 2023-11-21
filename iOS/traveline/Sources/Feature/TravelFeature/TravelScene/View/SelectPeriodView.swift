@@ -16,6 +16,7 @@ final class SelectPeriodView: UIView {
         static let imageHeight: CGFloat = 20.0
         static let spacing: CGFloat = 12.0
         static let radius: CGFloat = 12.0
+        static let localeIdentifier: String = "ko_KR"
     }
     
     // MARK: - UI Components
@@ -43,8 +44,8 @@ final class SelectPeriodView: UIView {
         let datePicker = UIDatePicker()
         
         datePicker.datePickerMode = .date
-        datePicker.locale = Locale(identifier: "ko_KR")
-        datePicker.calendar.locale = Locale(identifier: "ko_KR")
+        datePicker.locale = Locale(identifier: Constants.localeIdentifier)
+        datePicker.calendar.locale = Locale(identifier: Constants.localeIdentifier)
         
         return datePicker
     }()
@@ -59,8 +60,8 @@ final class SelectPeriodView: UIView {
         let datePicker = UIDatePicker()
         
         datePicker.datePickerMode = .date
-        datePicker.locale = Locale(identifier: "ko_KR")
-        datePicker.calendar.locale = Locale(identifier: "ko_KR")
+        datePicker.locale = Locale(identifier: Constants.localeIdentifier)
+        datePicker.calendar.locale = Locale(identifier: Constants.localeIdentifier)
         
         return datePicker
     }()
