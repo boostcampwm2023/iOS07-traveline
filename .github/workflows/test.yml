@@ -19,6 +19,8 @@ jobs:
       - name: Install package
         run: |
           cd BE
+          pwd
+          ls
           npm ci
 
       - name: Docker Login
@@ -28,7 +30,7 @@ jobs:
         run: |
           pwd
           ls
-          docker build -f Dockerfile -t traveline-docker .
+          docker build -f Dockerfile -t traveline-docker ./BE
 
       - name: Push Docker
         run: docker push traveline/traveline-repo:latest
