@@ -17,6 +17,7 @@ enum Literal {
         static let season: String = "계절"
         static let theme: String = "테마"
         static let cost: String = "비용"
+        static let costSubtitle: String = "단위: 만원"
         static let people: String = "인원"
         static let with: String = "함께"
         static let transportation: String = "이동수단"

@@ -60,6 +60,15 @@ enum TagType {
         }
     }
     
+    var subtitle: String? {
+        switch self {
+        case .cost:
+            Literal.Tag.costSubtitle
+        default:
+            nil
+        }
+    }
+    
     var detailTags: [String] {
         switch self {
         case .theme:

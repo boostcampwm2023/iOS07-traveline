@@ -33,7 +33,7 @@ final class SelectTagView: UIView {
         stackView.axis = .horizontal
         stackView.spacing = 4.0
         stackView.distribution = .fill
-        stackView.alignment = .leading
+        stackView.alignment = .trailing
         
         return stackView
     }()
@@ -41,6 +41,11 @@ final class SelectTagView: UIView {
     private let tagTitleLabel = TLLabel(
         font: .subtitle2,
         color: TLColor.white
+    )
+    
+    private let tagSubtitleLabel = TLLabel(
+        font: .body4,
+        color: TLColor.gray
     )
     
     private lazy var tagListView: TLTagListView = .init(tagType: tagType, width: limitWidth)
@@ -74,6 +79,10 @@ private extension SelectTagView {
     func setupAttributes() {
         backgroundColor = TLColor.black
         tagTitleLabel.setText(to: tagType.title)
+        
+        if let subtitle = tagType.subtitle {
+            tagSubtitleLabel.setText(to: subtitle)
+        }
     }
     
     func setupLayout() {
@@ -86,7 +95,10 @@ private extension SelectTagView {
             titleStackView,
             tagListView
         )
-        titleStackView.addArrangedSubviews(tagTitleLabel)
+        titleStackView.addArrangedSubviews(
+            tagTitleLabel,
+            tagSubtitleLabel
+        )
         
         NSLayoutConstraint.activate([
             baseStackView.topAnchor.constraint(equalTo: topAnchor),
