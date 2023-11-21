@@ -43,7 +43,7 @@ final class SelectTagView: UIView {
         color: TLColor.white
     )
     
-    private lazy var tagListView: TagListView = .init(tagType: tagType, width: limitWidth)
+    private lazy var tagListView: TLTagListView = .init(tagType: tagType, width: limitWidth)
     
     // MARK: - Properties
     
