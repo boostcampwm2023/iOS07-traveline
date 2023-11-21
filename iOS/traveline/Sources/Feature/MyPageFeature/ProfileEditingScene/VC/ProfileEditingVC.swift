@@ -47,7 +47,7 @@ final class ProfileEditingVC: UIViewController {
     private let imageEditButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "camera"), for: .normal)
+        button.setImage(TLImage.Common.camera, for: .normal)
         button.tintColor = TLColor.black
         button.layer.cornerRadius = Metric.buttonWidth / 2
         button.backgroundColor = TLColor.white
