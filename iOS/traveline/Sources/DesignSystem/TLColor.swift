@@ -11,6 +11,7 @@ import Foundation
 enum TLColor {
     static let main = TravelineAsset.Colors.main.color
     static let lightMain = TravelineAsset.Colors.lightMain.color
+    static let pressedMain = TravelineAsset.Colors.pressedMain.color
     static let black = TravelineAsset.Colors.black.color
     static let disabledGray = TravelineAsset.Colors.disabledGray.color
     static let darkGray = TravelineAsset.Colors.darkGray.color
