@@ -20,6 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let vc = HomeVC(viewModel: viewModel)
         let nv = UINavigationController(rootViewController: vc)
         window?.rootViewController = nv
+        window?.tintColor = TLColor.main
         window?.makeKeyAndVisible()
     }
 
