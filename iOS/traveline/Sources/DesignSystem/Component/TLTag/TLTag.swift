@@ -10,6 +10,12 @@ import UIKit
 
 final class TLTag: UIButton {
     
+    enum Metric {
+        static let borderWidth: CGFloat = 1.0
+        static let spacing: CGFloat = 4.0
+        static let cancelImageWidth: CGFloat = 12.0
+    }
+    
     // MARK: - UI Components
     
     private let innerView: UIView = {
@@ -17,7 +23,7 @@ final class TLTag: UIButton {
         
         view.isUserInteractionEnabled = false
         view.backgroundColor = TLColor.darkGray
-        view.layer.borderWidth = 1.0
+        view.layer.borderWidth = Metric.borderWidth
         view.layer.borderColor = TLColor.lightGray.cgColor
         
         return view
@@ -29,7 +35,7 @@ final class TLTag: UIButton {
         stackView.axis = .horizontal
         stackView.distribution = .fill
         stackView.alignment = .center
-        stackView.spacing = 4.0
+        stackView.spacing = Metric.spacing
         stackView.isUserInteractionEnabled = false
         
         return stackView
@@ -57,6 +63,18 @@ final class TLTag: UIButton {
         didSet {
             updateTagSelected()
         }
+    }
+    
+    override var intrinsicContentSize: CGSize {
+        var size = CGSize()
+        
+        size.height += style.verticalInset * 2 + tagTitleLabel.intrinsicContentSize.height
+        if cancelImageView.image != nil {
+            size.height += Metric.cancelImageWidth + Metric.spacing
+        }
+        size.width += style.horizontalInset * 2 + tagTitleLabel.intrinsicContentSize.width
+        
+        return size
     }
     
     private var style: TLTagStyle
@@ -153,7 +171,7 @@ private extension TLTag {
             stackView.trailingAnchor.constraint(equalTo: innerView.trailingAnchor, constant: -style.horizontalInset),
             stackView.bottomAnchor.constraint(equalTo: innerView.bottomAnchor, constant: -style.verticalInset),
             
-            cancelImageView.heightAnchor.constraint(equalToConstant: 12.0),
+            cancelImageView.heightAnchor.constraint(equalToConstant: Metric.cancelImageWidth),
             cancelImageView.widthAnchor.constraint(equalTo: cancelImageView.heightAnchor)
         ])
     }

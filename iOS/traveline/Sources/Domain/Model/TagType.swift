@@ -59,4 +59,30 @@ enum TagType {
             Literal.Tag.transportation
         }
     }
+    
+    var subtitle: String? {
+        switch self {
+        case .cost:
+            Literal.Tag.costSubtitle
+        default:
+            nil
+        }
+    }
+    
+    var detailTags: [String] {
+        switch self {
+        case .theme:
+            ThemeTag.allCases.map { $0.title }
+        case .cost:
+            CostTag.allCases.map { $0.title }
+        case .people:
+            PeopleTag.allCases.map { $0.title }
+        case .with:
+            WithTag.allCases.map { $0.title }
+        case .transportation:
+            TransportationTag.allCases.map { $0.title }
+        case .location, .period, .season:
+            []
+        }
+    }
 }
