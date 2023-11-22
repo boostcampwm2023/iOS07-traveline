@@ -40,7 +40,6 @@ final class TLTagListView: UIView {
     
     // MARK: - Properties
     
-    private let tagType: TagType
     private var detailTagList: [TLTag] = .init()
     private lazy var currentStackView: UIStackView = tagStackView
     
@@ -50,14 +49,22 @@ final class TLTagListView: UIView {
     // MARK: - Initializer
     
     init(tagType: TagType, width: CGFloat) {
-        self.tagType = tagType
         self.limitWidth = width
         
         super.init(frame: .zero)
         
         setupAttributes()
         setupLayout()
-        setupTags()
+        setupTags(type: tagType)
+    }
+    
+    init(width: CGFloat) {
+        self.limitWidth = width
+        
+        super.init(frame: .zero)
+        
+        setupAttributes()
+        setupLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -80,6 +87,25 @@ final class TLTagListView: UIView {
     
     @objc private func selectTag(_ sender: TLTag) {
         sender.isSelected.toggle()
+    }
+    
+    /// TLTagListView 생성 후 Tag를 추가할 때
+    func setTags(_ tags: [Tag], style: TLTagStyle) {
+        tags.forEach { tag in
+            let tlTag: TLTag = .init(
+                style: style,
+                name: tag.title,
+                color: tag.type.color
+            )
+            let neededWidth: CGFloat = tlTag.intrinsicContentSize.width + Metric.tagSpacing
+            
+            if currentWidth + neededWidth > limitWidth {
+                makeNextLine()
+            }
+            
+            currentStackView.addArrangedSubview(tlTag)
+            currentWidth += neededWidth
+        }
     }
     
 }
@@ -107,12 +133,12 @@ private extension TLTagListView {
         ])
     }
     
-    func setupTags() {
-        tagType.detailTags.forEach { detailTag in
+    func setupTags(type: TagType) {
+        type.detailTags.forEach { detailTag in
             let tlTag: TLTag = .init(
                 style: .selectable,
                 name: detailTag,
-                color: tagType.color
+                color: type.color
             )
             let neededWidth: CGFloat = tlTag.intrinsicContentSize.width + Metric.tagSpacing
             
