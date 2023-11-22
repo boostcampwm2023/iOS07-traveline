@@ -9,7 +9,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { SocialLogin } from './social.entity';
+import { SocialLogin } from './social-login.entity';
 
 @Entity()
 export class User {
@@ -25,8 +25,8 @@ export class User {
   @Column({ length: 255, name: 'resource_id' })
   resourceId: string;
 
-  @Column({ type: 'int' })
-  type: number;
+  @Column({ type: 'int', name: 'social_type' })
+  socialType: number;
 
   @OneToMany(() => Liked, (liked) => liked.users)
   likeds: Liked[];
