@@ -12,7 +12,11 @@ final class FilterCVC: UICollectionViewCell {
     
     static let identifier = String(describing: type(of: FilterCVC.self))
     
-    private let filter: TLFilter = .init(filterType: .empty)
+    // MARK: - UI Components
+    
+    private let filter: TLFilter = .init()
+    
+    // MARK: - Initializer
     
     override init(frame: CGRect) {
         super.init(frame: .zero)
@@ -21,16 +25,20 @@ final class FilterCVC: UICollectionViewCell {
         setupLayout()
     }
     
-    override func prepareForReuse() {
-        filter.resetFilter()
-    }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Life Cycle
+    
+    override func prepareForReuse() {
+        filter.resetFilter()
+    }
+    
+    // MARK: - Functions
+    
     func setupData(item: Filter) {
-        filter.updateFilter(type: item.type)
+        filter.setupFilter(type: item.type)
         filter.isSelected = item.isSelected
     }
     
