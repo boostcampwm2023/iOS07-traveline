@@ -61,4 +61,8 @@ enum Literal {
             static let drive: String = "자차"
         }
     }
+    
+    enum Filter {
+        static let sort: String = "정렬"
+    }
 }
