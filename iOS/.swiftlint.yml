@@ -11,3 +11,7 @@ excluded:
 - traveline/Sources/App/SceneDelegate.swift
 - "Tuist"
 - "Plugins"
+
+nesting:
+  type_level:
+    warning: 2
