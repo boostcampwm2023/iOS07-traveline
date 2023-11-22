@@ -9,9 +9,14 @@
 import UIKit
 
 final class TLListCVC: UICollectionViewCell {
+    
     static let identifier = String(describing: type(of: TLListCVC.self))
     
+    // MARK: - UI Components
+    
     private let tlInfoView: TLInfoView = .init()
+    
+    // MARK: - Initializer
     
     override init(frame: CGRect) {
         super.init(frame: .zero)
@@ -23,10 +28,14 @@ final class TLListCVC: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setData(item: TravelListInfo) {
-        tlInfoView.setData(item: item)
+    // MARK: - Functions
+    
+    func setupData(item: TravelListInfo) {
+        tlInfoView.setupData(item: item)
     }
 }
+
+// MARK: - Setup Functions
 
 private extension TLListCVC {
     func setupLayout() {

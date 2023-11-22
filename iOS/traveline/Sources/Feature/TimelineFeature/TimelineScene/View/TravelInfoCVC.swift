@@ -41,7 +41,7 @@ final class TravelInfoCVC: UICollectionViewCell {
     private let likeButton: UIButton = {
         let button = UIButton()
         
-        button.setImage(TLImage.Common.likeUnselected, for: .normal)
+        button.setImage(TLImage.Common.like, for: .normal)
         button.setImage(TLImage.Common.likeSelected, for: .selected)
         
         return button
