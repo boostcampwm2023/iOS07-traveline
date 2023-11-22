@@ -12,7 +12,7 @@ export class AuthService {
     if (!isValidUser) {
       throw new UnauthorizedException();
     }
-    const payload = { id: id };
+    const payload = { id };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
