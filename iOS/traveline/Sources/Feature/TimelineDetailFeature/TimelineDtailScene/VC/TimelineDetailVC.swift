@@ -81,12 +81,6 @@ final class TimelineDetailVC: UIViewController {
         contentView.setText(to: info.content)
     }
     
-    // MARK: - Life Cycle
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
     // MARK: - Functions
     
     private func aspectRatio(from image: UIImage) -> CGFloat {
