@@ -85,7 +85,7 @@ final class SelectImageButton: UIView {
     
     // MARK: - Functions
     
-    @objc func cancelButtonTapped() {
+    @objc private func cancelButtonTapped() {
         imageView.image = nil
         updateView()
         

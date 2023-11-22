@@ -26,12 +26,13 @@ final class TimelineWritingVC: UIViewController {
     
     // MARK: - UI Components
     
-        let timePickerVC = TimePickerVC()
+    private let timePickerVC = TimePickerVC()
     private let titleTextField: TitleTextField = .init()
     private let dateLabel: TLLabel = .init(font: TLFont.body2, color: TLColor.gray)
     private let selectTime: TLImageLabel = .init(image: TLImage.Travel.time, text: "현재시각")
     private let selectLocation: TLImageLabel = .init(image: TLImage.Travel.location, text: "선택한 장소")
     private let selectImageButton: SelectImageButton = .init()
+    
     private let textView: UITextView = {
         let view = UITextView()
         view.text = Constants.contentPlaceholder
@@ -69,6 +70,10 @@ final class TimelineWritingVC: UIViewController {
         // action
     }
     
+    @objc func selectLocationButtonTapped() {
+        // action
+    }
+    
     @objc func selectTimeButtonTapped() {
         let alert = TLAlertController(title: "시간선택", message: nil, preferredStyle: .alert)
         let complete = UIAlertAction(title: Constants.complete, style: .default) { [weak self] _ in
@@ -97,10 +102,13 @@ private extension TimelineWritingVC {
         textView.delegate = self
         let imageTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectImageButtonTapped))
         let timeTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectTimeButtonTapped))
+        let locationTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectLocationButtonTapped))
         selectImageButton.addGestureRecognizer(imageTapGesture)
         selectTime.addGestureRecognizer(timeTapGesture)
+        selectLocation.addGestureRecognizer(locationTapGesture)
         selectImageButton.isUserInteractionEnabled = true
         selectTime.isUserInteractionEnabled = true
+        selectLocation.isUserInteractionEnabled = true
         updateTime()
     }
     
