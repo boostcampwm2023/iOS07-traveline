@@ -12,4 +12,18 @@ export class PeriodsRepository extends TagRepository<Period> {
   ) {
     super(periodsRepository);
   }
+
+  findNameByCalculatingDays(days: number) {
+    return days === 1
+      ? '당일치기'
+      : days === 2
+      ? '1박 2일'
+      : days === 3
+      ? '2박 3일'
+      : days < 7
+      ? '3박 ~'
+      : days < 30
+      ? '일주일 ~'
+      : '한 달 ~';
+  }
 }
