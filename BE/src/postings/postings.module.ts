@@ -13,7 +13,7 @@ import { PeriodsRepository } from './repositories/tags/periods.repository';
 import { SeasonsRepository } from './repositories/tags/seasons.repository';
 import { ThemesRepository } from './repositories/tags/themes.repository';
 import { VehiclesRepository } from './repositories/tags/vehicles.repository';
-import { WithWHosRepository } from './repositories/tags/with-whos.repository';
+import { WithWhosRepository } from './repositories/tags/with-whos.repository';
 import { PostingThemesRepository } from './repositories/mappings/posting-themes.repository';
 import { PostingWithWhosRepository } from './repositories/mappings/posting-with-whos.repository';
 
@@ -33,7 +33,7 @@ import { PostingWithWhosRepository } from './repositories/mappings/posting-with-
     SeasonsRepository,
     ThemesRepository,
     VehiclesRepository,
-    WithWHosRepository,
+    WithWhosRepository,
     PostingThemesRepository,
     PostingWithWhosRepository,
   ],
