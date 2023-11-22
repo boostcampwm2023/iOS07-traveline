@@ -12,6 +12,14 @@ import { Liked } from './liked.entity';
 import { Report } from './report.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Timeline } from 'src/timelines/entities/timeline.entity';
+import { PostingTheme } from './mapping/posting-theme.entity';
+import { PostingWithWho } from './mapping/posting-with-who.entity';
+import { Budget } from './tags/budget.entity';
+import { Season } from './tags/season.entity';
+import { Vehicle } from './tags/vehicle.entity';
+import { Period } from './tags/period.entity';
+import { Location } from './tags/location.entity';
+import { Headcount } from './tags/headcount.entity';
 
 @Entity()
 export class Posting {
@@ -42,28 +50,30 @@ export class Posting {
   @Column({ type: 'int' })
   days: number;
 
-  @Column({ type: 'int' })
+  @ManyToOne(() => Period, (period) => period.postings, { nullable: false })
+  @JoinColumn({ name: 'period' })
   period: number;
 
-  @Column({ type: 'int', nullable: true })
+  @ManyToOne(() => Headcount, (headcount) => headcount.postings)
+  @JoinColumn({ name: 'headcount' })
   headcount: number;
 
-  @Column({ type: 'int', nullable: true })
-  budget: number;
+  @ManyToOne(() => Budget, (budget) => budget.postings)
+  @JoinColumn({ name: 'budget' })
+  budget: Budget;
 
-  @Column({ type: 'int' })
+  @ManyToOne(() => Location, (location) => location.postings, {
+    nullable: false,
+  })
+  @JoinColumn({ name: 'location' })
   location: number;
 
-  @Column({ type: 'json', nullable: true, default: null })
-  theme: number[];
-
-  @Column({ type: 'json', nullable: true, default: null })
-  with_who: number[];
-
-  @Column({ type: 'int' })
+  @ManyToOne(() => Season, (season) => season.postings, { nullable: false })
+  @JoinColumn({ name: 'season' })
   season: number;
 
-  @Column({ type: 'int', nullable: true })
+  @ManyToOne(() => Vehicle, (vehicle) => vehicle.postings)
+  @JoinColumn({ name: 'vehicle' })
   vehicle: number;
 
   @RelationId((posting: Posting) => posting.reports)
@@ -84,4 +94,13 @@ export class Posting {
 
   @OneToMany(() => Report, (report) => report.postings)
   reports: Report[];
+
+  @OneToMany(() => PostingTheme, (postingTheme) => postingTheme.postings)
+  postingThemes: PostingTheme[];
+
+  @OneToMany(
+    () => PostingWithWho,
+    (postingWithWhos) => postingWithWhos.postings
+  )
+  postingWithWhos: PostingWithWho[];
 }
