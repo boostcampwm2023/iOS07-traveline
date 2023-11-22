@@ -70,7 +70,7 @@ export class Posting {
   report: { reporter: string; posting: string }[];
 
   @ManyToOne(() => User, (user) => user.postings, {
-    onDelete: 'SET NULL',
+    onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
   @JoinColumn({ name: 'writer', referencedColumnName: 'id' })
