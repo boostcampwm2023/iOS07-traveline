@@ -9,6 +9,7 @@
 import UIKit
 
 final class TLListCVC: UICollectionViewCell {
+    
     static let identifier = String(describing: type(of: TLListCVC.self))
     
     private let tlInfoView: TLInfoView = .init()
@@ -23,8 +24,8 @@ final class TLListCVC: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setData(item: TravelListInfo) {
-        tlInfoView.setData(item: item)
+    func setupData(item: TravelListInfo) {
+        tlInfoView.setupData(item: item)
     }
 }
 
