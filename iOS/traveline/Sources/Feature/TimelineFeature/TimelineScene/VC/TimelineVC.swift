@@ -10,6 +10,10 @@ import UIKit
 
 final class TimelineVC: UIViewController {
     
+    private enum Metric {
+        static let travelInfoEstimatedHeight: CGFloat = 170.0
+    }
+    
     // MARK: - UI Components
     
     private lazy var timelineCollectionView: UICollectionView = {
@@ -71,18 +75,15 @@ private extension TimelineVC {
     }
     
     func makeTravelInfoSection() -> NSCollectionLayoutSection {
-        let item = NSCollectionLayoutItem(
-            layoutSize: .init(
-                widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(170.0)
-            )
+        let size = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(Metric.travelInfoEstimatedHeight)
         )
         
+        let item = NSCollectionLayoutItem(layoutSize: size)
+        
         let group = NSCollectionLayoutGroup.horizontal(
-            layoutSize: .init(
-                widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(170.0)
-            ),
+            layoutSize: size,
             repeatingSubitem: item,
             count: 1
         )
