@@ -15,8 +15,8 @@ final class HomeListView: UIView {
             static let spacing: CGFloat = 8
             static let topInset: CGFloat = 12
             static let leftRightInset: CGFloat = 16
-            static let width: CGFloat = 66
-            static let height: CGFloat = 32
+            static let width: CGFloat = 95
+            static let height: CGFloat = 36
         }
         
         enum TravelList {
