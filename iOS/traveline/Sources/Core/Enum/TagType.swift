@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum TagType {
+enum TagType: CaseIterable {
     case location
     case period
     case season
