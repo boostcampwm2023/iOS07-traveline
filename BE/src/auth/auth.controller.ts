@@ -2,7 +2,6 @@ import { Controller, Post, Body, Param, Delete } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { User } from 'src/users/entities/user.entity';
 import { CreateAuthDto } from './dto/create-auth.dto';
 
 @Controller('auth')
@@ -19,9 +18,9 @@ export class AuthController {
     description:
       'body로 전달받은 회원 정보를 확인하고 존재하는 회원이면 로그인을, 존재하지 않는 회원이면 회원가입을 진행한다.',
   })
-  @ApiOkResponse({ description: 'OK', type: User })
+  @ApiOkResponse({ description: 'OK' })
   login(@Body() createAuthDto: CreateAuthDto) {
-    // return this.usersService.create(createUserDto);
+    return this.authService.login(createAuthDto.id);
   }
 
   @Post('logout')
