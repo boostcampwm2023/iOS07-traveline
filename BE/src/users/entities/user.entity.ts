@@ -1,7 +1,15 @@
 import { Liked } from 'src/postings/entities/liked.entity';
 import { Posting } from 'src/postings/entities/posting.entity';
 import { Report } from 'src/postings/entities/report.entity';
-import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { SocialLogin } from './social-login.entity';
 
 @Entity()
 export class User {
@@ -14,6 +22,12 @@ export class User {
   @Column({ length: 255, nullable: true })
   avatar: string;
 
+  @Column({ length: 255, name: 'resource_id' })
+  resourceId: string;
+
+  @Column({ type: 'int', name: 'social_type' })
+  socialType: number;
+
   @OneToMany(() => Liked, (liked) => liked.users)
   likeds: Liked[];
 
@@ -22,4 +36,8 @@ export class User {
 
   @OneToMany(() => Posting, (posting) => posting.writers)
   postings: Posting[];
+
+  @ManyToOne(() => SocialLogin, (socialLogin) => socialLogin.users)
+  @JoinColumn({ name: 'type', referencedColumnName: 'id' })
+  socials: SocialLogin;
 }
