@@ -12,6 +12,14 @@ import { Liked } from './liked.entity';
 import { Report } from './report.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Timeline } from 'src/timelines/entities/timeline.entity';
+import { PostingTheme } from './mappings/posting-theme.entity';
+import { PostingWithWho } from './mappings/posting-with-who.entity';
+import { Budget } from './tags/budget.entity';
+import { Season } from './tags/season.entity';
+import { Vehicle } from './tags/vehicle.entity';
+import { Period } from './tags/period.entity';
+import { Location } from './tags/location.entity';
+import { Headcount } from './tags/headcount.entity';
 
 @Entity()
 export class Posting {
@@ -24,8 +32,8 @@ export class Posting {
   @Column({ length: 14 })
   title: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  createdAt: Date;
 
   @Column({ length: 255, nullable: true, default: null })
   thumbnail: string;
@@ -33,37 +41,39 @@ export class Posting {
   @RelationId((posting: Posting) => posting.likeds)
   liked: { user: string; posting: string }[];
 
-  @Column({ type: 'date' })
-  start_date: Date;
+  @Column({ name: 'start_date', type: 'date' })
+  startDate: Date;
 
-  @Column({ type: 'date' })
-  end_date: Date;
+  @Column({ name: 'end_date', type: 'date' })
+  endDate: Date;
 
   @Column({ type: 'int' })
   days: number;
 
-  @Column({ type: 'int' })
+  @ManyToOne(() => Period, (period) => period.postings, { nullable: false })
+  @JoinColumn({ name: 'period' })
   period: number;
 
-  @Column({ type: 'int', nullable: true })
+  @ManyToOne(() => Headcount, (headcount) => headcount.postings)
+  @JoinColumn({ name: 'headcount' })
   headcount: number;
 
-  @Column({ type: 'int', nullable: true })
-  budget: number;
+  @ManyToOne(() => Budget, (budget) => budget.postings)
+  @JoinColumn({ name: 'budget' })
+  budget: Budget;
 
-  @Column({ type: 'int' })
+  @ManyToOne(() => Location, (location) => location.postings, {
+    nullable: false,
+  })
+  @JoinColumn({ name: 'location' })
   location: number;
 
-  @Column({ type: 'json', nullable: true, default: null })
-  theme: number[];
-
-  @Column({ type: 'json', nullable: true, default: null })
-  with_who: number[];
-
-  @Column({ type: 'int' })
+  @ManyToOne(() => Season, (season) => season.postings, { nullable: false })
+  @JoinColumn({ name: 'season' })
   season: number;
 
-  @Column({ type: 'int', nullable: true })
+  @ManyToOne(() => Vehicle, (vehicle) => vehicle.postings)
+  @JoinColumn({ name: 'vehicle' })
   vehicle: number;
 
   @RelationId((posting: Posting) => posting.reports)
@@ -84,4 +94,13 @@ export class Posting {
 
   @OneToMany(() => Report, (report) => report.postings)
   reports: Report[];
+
+  @OneToMany(() => PostingTheme, (postingTheme) => postingTheme.postings)
+  postingThemes: PostingTheme[];
+
+  @OneToMany(
+    () => PostingWithWho,
+    (postingWithWhos) => postingWithWhos.postings
+  )
+  postingWithWhos: PostingWithWho[];
 }
