@@ -17,6 +17,7 @@ enum TLImage {
         static let likeUnselected = TravelineAsset.Images.likeUnselected.image
         static let likeSelected = TravelineAsset.Images.likeSelected.image
         static let camera = TravelineAsset.Images.camera.image
+        static let album = TravelineAsset.Images.album.image
         static let back = TravelineAsset.Images.back.image
         static let plus = TravelineAsset.Images.plus.image
     }
