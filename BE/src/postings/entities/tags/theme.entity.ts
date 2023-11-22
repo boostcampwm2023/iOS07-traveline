@@ -1,4 +1,4 @@
-import { PostingTheme } from '../mapping/posting-theme.entity';
+import { PostingTheme } from '../mappings/posting-theme.entity';
 import { Tag } from './tag.entity';
 import { Entity, OneToMany } from 'typeorm';
 

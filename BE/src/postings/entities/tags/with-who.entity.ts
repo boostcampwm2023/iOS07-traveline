@@ -1,4 +1,4 @@
-import { PostingWithWho } from '../mapping/posting-with-who.entity';
+import { PostingWithWho } from '../mappings/posting-with-who.entity';
 import { Entity, OneToMany } from 'typeorm';
 import { Tag } from './tag.entity';
 
