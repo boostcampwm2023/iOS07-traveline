@@ -9,23 +9,13 @@
 import UIKit
 
 final class TLFilter: UIButton {
-
+    
     private enum Metric {
         static let leftRightInset: CGFloat = 10
         static let topBottomInset: CGFloat = 8
         static let spacing: CGFloat = 4
         static let zero: CGFloat = 0
         static let cornerRadius: CGFloat = 12
-        
-        enum TotalImage {
-            static let width: CGFloat = 14
-            static let height: CGFloat = 12
-        }
-        
-        enum DownImage {
-            static let width: CGFloat = 12
-            static let height: CGFloat = 8
-        }
     }
     
     // MARK: - UI Components
@@ -50,14 +40,15 @@ final class TLFilter: UIButton {
     
     private let filterTitleLabel: TLLabel = .init(font: .body1, color: TLColor.unselectedGray)
     
-    private let filterImageView: UIImageView = .init()
+    private let filterImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
     
     // MARK: - Properties
     
-    private var imageWidthConstraint: NSLayoutConstraint?
-    private var imageHeightConstraint: NSLayoutConstraint?
-    
-    private var filterType: FilterType
+    private var filterType: FilterType?
     
     override var isSelected: Bool {
         didSet {
@@ -77,24 +68,11 @@ final class TLFilter: UIButton {
         return isTotal ? TLImage.Filter.totalSelected : TLImage.Filter.downSelected
     }
     
-    private var imageWidth: CGFloat {
-        return isTotal ? Metric.TotalImage.width : Metric.DownImage.width
-    }
-    
-    private var imageHeight: CGFloat {
-        return isTotal ? Metric.TotalImage.height : Metric.DownImage.height
-    }
-    
     // MARK: - Initializer
     
-    init(
-        frame: CGRect = .zero,
-        filterType: FilterType
-    ) {
-        self.filterType = filterType
+    override init(frame: CGRect = .zero) {
         super.init(frame: frame)
         
-        setupAttributes()
         setupLayout()
     }
     
@@ -118,10 +96,8 @@ final class TLFilter: UIButton {
         }
     }
     
-    func updateFilter(type: FilterType) {
-        self.filterType = type
-        setupAttributes()
-        updateLayout()
+    func setupFilter(type: FilterType) {
+        setupAttributes(type: type)
     }
     
     func resetFilter() {
@@ -134,8 +110,9 @@ final class TLFilter: UIButton {
 // MARK: - Setup Functions
 
 private extension TLFilter {
-    func setupAttributes() {
-        filterTitleLabel.setText(to: filterType.title)
+    func setupAttributes(type: FilterType) {
+        self.filterType = type
+        filterTitleLabel.setText(to: type.title)
         filterTitleLabel.setColor(to: isSelected ? TLColor.main :  TLColor.unselectedGray)
         stackView.spacing = isTotal ? Metric.zero : Metric.spacing
         filterImageView.image = isSelected ? filterSelectedImage : filterImage
@@ -166,21 +143,13 @@ private extension TLFilter {
             stackView.bottomAnchor.constraint(equalTo: innerView.bottomAnchor, constant: -Metric.topBottomInset),
             stackView.trailingAnchor.constraint(equalTo: innerView.trailingAnchor, constant: -Metric.leftRightInset)
         ])
-        
-        imageWidthConstraint = filterImageView.widthAnchor.constraint(equalToConstant: imageWidth)
-        imageHeightConstraint = filterImageView.heightAnchor.constraint(equalToConstant: imageHeight)
-    }
-    
-    func updateLayout() {
-        imageWidthConstraint?.constant = imageWidth
-        imageHeightConstraint?.constant = imageHeight
     }
 }
 
 @available(iOS 17, *)
 #Preview("TLFilter") {
-    let tlFilter = TLFilter.init(filterType: .empty)
+    let tlFilter = TLFilter.init()
+    tlFilter.setupFilter(type: .total)
     tlFilter.isSelected = false
-    tlFilter.updateFilter(type: .tagtype(.cost))
     return tlFilter
 }
