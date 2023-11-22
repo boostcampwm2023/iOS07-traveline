@@ -20,6 +20,7 @@ enum TLImage {
         static let album = TravelineAsset.Images.album.image
         static let back = TravelineAsset.Images.back.image
         static let plus = TravelineAsset.Images.plus.image
+        static let closeBlack = TravelineAsset.Images.closeBlack.image
     }
     
     enum Travel {
