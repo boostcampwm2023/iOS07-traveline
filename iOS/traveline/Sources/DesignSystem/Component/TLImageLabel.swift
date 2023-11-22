@@ -16,18 +16,13 @@ final class TLImageLabel: UIView {
     
     // MARK: - UI Components
     
-    private let imageView: UIImageView = {
-        let imageView = UIImageView()
-        
-        return imageView
-    }()
+    private let imageView: UIImageView = .init()
     
-    private let label: TLLabel = {
-        let label = TLLabel(font: TLFont.subtitle2, color: TLColor.white)
-        
-        return label
-    }()
-
+    private let label: TLLabel = .init(
+        font: TLFont.subtitle2,
+        color: TLColor.white
+    )
+    
     // MARK: - Initialize
     
     init(image: UIImage? = nil, text: String = "") {

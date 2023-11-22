@@ -20,16 +20,10 @@ final class TimelineDetailVC: UIViewController {
     
     // MARK: - UI Components
     
-    private let scrollView: UIScrollView = {
-        let view = UIScrollView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        
-        return view
-    }()
+    private let scrollView: UIScrollView = .init()
     
     private let stackView: UIStackView = {
         let view = UIStackView()
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.axis = .vertical
         view.spacing = Metric.spacing
         
@@ -38,7 +32,6 @@ final class TimelineDetailVC: UIViewController {
     
     private let titleLabel: TLLabel = {
         let label = TLLabel(font: TLFont.heading1, color: TLColor.white)
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.setText(to: "광안리 짱")
         
         return label
@@ -46,14 +39,13 @@ final class TimelineDetailVC: UIViewController {
     
     private let line: UIView = {
         let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = TLColor.lineGray
+        
         return view
     }()
     
     private let dateLabel: TLLabel = {
         let label = TLLabel(font: TLFont.body2, color: TLColor.gray)
-        label.translatesAutoresizingMaskIntoConstraints = false
         label.setText(to: "2023년 11월 9일")
         
         return label
@@ -61,21 +53,18 @@ final class TimelineDetailVC: UIViewController {
     
     private let timeLabel: TLImageLabel = {
         let label = TLImageLabel(image: TLImage.Travel.time, text: "오전 02:00")
-        label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
     }()
     
     private let locationLabel: TLImageLabel = {
         let label = TLImageLabel(image: TLImage.Travel.location, text: "부산 광안리 해수욕장")
-        label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
     }()
     
     private let imageView: UIImageView = {
         let view = UIImageView()
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.contentMode = .scaleAspectFill
         view.image = UIImage(systemName: "leaf")
         
@@ -84,7 +73,6 @@ final class TimelineDetailVC: UIViewController {
     
     private let contentView: TLLabel = {
         let view = TLLabel(font: TLFont.body1, color: TLColor.white)
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.numberOfLines = 0
         view.tintColor = TLColor.white
         view.font = TLFont.body1.font
@@ -116,12 +104,12 @@ final class TimelineDetailVC: UIViewController {
 
 private extension TimelineDetailVC {
     
-    private func setupAttributes() {
+    func setupAttributes() {
         self.navigationItem.title = "Day01"
         view.backgroundColor = TLColor.black
     }
     
-    private func setupLayout() {
+    func setupLayout() {
         view.addSubview(scrollView)
         scrollView.addSubview(stackView)
         stackView.addArrangedSubviews(
