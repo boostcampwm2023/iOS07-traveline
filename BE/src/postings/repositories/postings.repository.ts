@@ -1,4 +1,3 @@
-import { CreatePostingDto } from '../dto/create-posting.dto';
 import { POSTINGS_REPOSITORY } from '../postings.constants';
 import { Posting } from '../entities/posting.entity';
 import { Inject, Injectable } from '@nestjs/common';
@@ -11,5 +10,7 @@ export class PostingsRepository {
     private postingsRepository: Repository<Posting>
   ) {}
 
-  save(createPostingDto: CreatePostingDto) {}
+  async save(posting: Posting) {
+    return this.postingsRepository.save(posting);
+  }
 }

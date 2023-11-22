@@ -12,4 +12,15 @@ export class SeasonsRepository extends TagRepository<Season> {
   ) {
     super(seasonsRepository);
   }
+
+  findNameByCalculatingStartDate(startDate: Date) {
+    const month = startDate.getMonth() + 1;
+    return month >= 3 && month <= 5
+      ? '봄'
+      : month >= 6 && month <= 9
+      ? '여름'
+      : month >= 10 && month <= 11
+      ? '가을'
+      : '겨울';
+  }
 }

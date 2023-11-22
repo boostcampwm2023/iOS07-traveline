@@ -9,4 +9,8 @@ export class PostingThemesRepository {
     @Inject(POSTING_THEMES_REPOSITORY)
     private postingThemesRepository: Repository<PostingTheme>
   ) {}
+
+  async save(postingTheme: PostingTheme) {
+    return this.postingThemesRepository.save(postingTheme);
+  }
 }

@@ -9,4 +9,8 @@ export class PostingWithWhosRepository {
     @Inject(POSTING_WITH_WHOS_REPOSITORY)
     private postingWithWhosRepository: Repository<PostingWithWho>
   ) {}
+
+  async save(postingWithWho: PostingWithWho) {
+    return this.postingWithWhosRepository.save(postingWithWho);
+  }
 }
