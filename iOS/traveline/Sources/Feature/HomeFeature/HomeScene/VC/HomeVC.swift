@@ -25,6 +25,7 @@ final class HomeVC: UIViewController {
     
     private let searchController = TLSearchController.init(placeholder: Constants.searchTravel)
     private let homeListView: HomeListView = .init()
+    private let homeSearchView = HomeSearchView.init()
     
     // MARK: - Properties
     
@@ -51,13 +52,26 @@ final class HomeVC: UIViewController {
         setupLayout()
         bind()
     }
+    
+    // MARK: - Functions
+    
+    func setupSearchView() {
+        view.addSubview(homeSearchView)
+        homeSearchView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            homeSearchView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            homeSearchView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            homeSearchView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            homeSearchView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
 }
 
 // MARK: - Setup Functions
 
 private extension HomeVC {
     func setupAttributes() {
-        searchController.searchResultsUpdater = self
         searchController.searchBar.delegate = self
         
         view.backgroundColor = TLColor.black
@@ -96,29 +110,36 @@ private extension HomeVC {
     
     func bind() {
         viewModel.$state
-            .map(\.value)
-            .sink { value in
-                os_log("\(value)")
+            .map(\.isSearching)
+            .removeDuplicates()
+            .filter { $0 }
+            .sink { [weak owner = self] _ in
+                guard let owner else { return }
+                owner.setupSearchView()
             }
             .store(in: &cancellables)
     }
 }
 
-// MARK: - UISearchResultsUpdating
-
-extension HomeVC: UISearchResultsUpdating {
-    func updateSearchResults(for searchController: UISearchController) {
-        // TODO: - 최근검색어 및 자동완성어
-        guard let text = searchController.searchBar.searchTextField.text else { return }
-        viewModel.sendAction(.searchStart(text))
-    }
-}
+// MARK: - UISearchBarDelegate
 
 extension HomeVC: UISearchBarDelegate {
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        guard let text = searchController.searchBar.searchTextField.text else { return }
+        viewModel.sendAction(.startSearch(text))
+    }
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         // TODO: - 검색결과
         guard let text = searchBar.text else { return }
         viewModel.sendAction(.searchDone(text))
+        homeSearchView.removeFromSuperview()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        // TODO: - 전체 리스트
+        viewModel.sendAction(.cancelSearch)
+        homeSearchView.removeFromSuperview()
     }
 }
 

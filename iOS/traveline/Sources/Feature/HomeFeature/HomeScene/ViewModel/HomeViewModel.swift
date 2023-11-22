@@ -10,27 +10,40 @@ import Foundation
 import Combine
 
 enum HomeAction: BaseAction {
-    case searchStart(String)
+    case startSearch(String)
     case searchDone(String)
+    case cancelSearch
 }
 
 enum HomeSideEffect: BaseSideEffect {
-    case fetchSearchAPI
-    case fetchSearchResultAPI
+    case showText(String)
+    case showResult(String)
+    case showList
 }
 
 struct HomeState: BaseState {
-    var value: Int = 0
+    enum SearchViewType {
+        case none
+        case recent
+        case typing
+        case result
+    }
+    
+    var isSearching: Bool = false
+    var searchViewType: SearchViewType = .none
+    var searchText: String = ""
 }
 
 final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> {
     
     override func transform(action: Action) -> SideEffectPublisher {
         switch action {
-        case .searchStart:
-            fetchSearch()
-        case .searchDone:
-            fetchSearchResult()
+        case let .startSearch(text):
+            Just(HomeSideEffect.showText(text)).eraseToAnyPublisher()
+        case let .searchDone(text):
+            Just(HomeSideEffect.showResult(text)).eraseToAnyPublisher()
+        case .cancelSearch:
+            Just(HomeSideEffect.showList).eraseToAnyPublisher()
         }
     }
     
@@ -38,32 +51,19 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         var newState = state
         
         switch effect {
-        case .fetchSearchAPI:
-            newState.value += 1
-        case .fetchSearchResultAPI:
-            newState.value -= 1
+        case let .showText(text):
+            newState.isSearching = true
+            newState.searchViewType = text.isEmpty ? .recent : .typing
+            newState.searchText = text
+        case let .showResult(text):
+            newState.isSearching = false
+            newState.searchViewType = .result
+            newState.searchText = text
+        case .showList:
+            newState.isSearching = false
+            newState.searchViewType = .none
         }
         
         return newState
-    }
-}
-
-private extension HomeViewModel {
-    private func fetchSearch() -> SideEffectPublisher {
-        return Future { promise in
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-                promise(.success(.fetchSearchAPI))
-            }
-        }
-        .eraseToAnyPublisher()
-    }
-    
-    private func fetchSearchResult() -> SideEffectPublisher {
-        return Future { promise in
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-                promise(.success(.fetchSearchResultAPI))
-            }
-        }
-        .eraseToAnyPublisher()
     }
 }
