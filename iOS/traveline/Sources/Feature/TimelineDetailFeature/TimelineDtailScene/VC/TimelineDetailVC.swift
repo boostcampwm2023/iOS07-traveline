@@ -48,8 +48,6 @@ final class TimelineDetailVC: UIViewController {
     private let contentView: TLLabel = {
         let view = TLLabel(font: TLFont.body1, color: TLColor.white)
         view.numberOfLines = 0
-        view.tintColor = TLColor.white
-        view.font = TLFont.body1.font
         
         return view
     }()
@@ -91,7 +89,7 @@ final class TimelineDetailVC: UIViewController {
     
     // MARK: - Functions
     
-    private func ascpectRatio(from image: UIImage) -> CGFloat {
+    private func aspectRatio(from image: UIImage) -> CGFloat {
         return image.size.width / image.size.height
     }
     
@@ -141,7 +139,7 @@ private extension TimelineDetailVC {
             imageView.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
             imageView.heightAnchor.constraint(
                 equalTo: imageView.widthAnchor,
-                multiplier: 1.0 / ascpectRatio(from: imageView.image ?? UIImage())
+                multiplier: 1.0 / aspectRatio(from: imageView.image ?? UIImage())
             )
         ])
         
