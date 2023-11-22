@@ -11,38 +11,51 @@ import UIKit
 final class HomeListView: UIView {
     
     private enum Metric {
-        static let spacing: CGFloat = 12
-        static let sectionInset: CGFloat = 24
-        static let inset: CGFloat = 16
-        static let width: CGFloat = UIScreen.main.bounds.width - 32
-        static let height: CGFloat = 140
+        enum Filter {
+            static let spacing: CGFloat = 8
+            static let topInset: CGFloat = 12
+            static let leftRightInset: CGFloat = 16
+            static let width: CGFloat = 66
+            static let height: CGFloat = 32
+        }
+        
+        enum TravelList {
+            static let spacing: CGFloat = 12
+            static let topBottomInset: CGFloat = 24
+            static let leftRightInset: CGFloat = 16
+            static let height: CGFloat = 140
+        }
     }
     
-    private enum HomeListType {
-        case travelInfo
+    private enum HomeSection: Int {
+        case filter
+        case travelList
+    }
+    
+    private enum HomeItem: Hashable {
+        case filterItem(Filter)
+        case travelListItem(TravelListInfo)
     }
     
     // MARK: - UI Components
     
     private lazy var homeCollectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: tlFlowLayout)
+        let collectionView = UICollectionView(
+            frame: .zero,
+            collectionViewLayout: makeLayout()
+        )
         collectionView.register(TLListCVC.self, forCellWithReuseIdentifier: TLListCVC.identifier)
+        collectionView.register(FilterCVC.self, forCellWithReuseIdentifier: FilterCVC.identifier)
         collectionView.showsVerticalScrollIndicator = false
         return collectionView
     }()
     
-    private let tlFlowLayout: UICollectionViewFlowLayout = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.minimumInteritemSpacing = Metric.spacing
-        layout.sectionInset = .init(top: Metric.sectionInset, left: 0, bottom: Metric.sectionInset, right: 0)
-        layout.estimatedItemSize = .init(width: Metric.width, height: Metric.height)
-        return layout
-    }()
-    
     // MARK: - Properties
     
-    private var dataSource: UICollectionViewDiffableDataSource<HomeListType, TravelListInfo>!
+    private typealias DataSource = UICollectionViewDiffableDataSource<HomeSection, HomeItem>
+    private typealias Snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>
+    
+    private var dataSource: DataSource!
     
     // MARK: - Initializer
     
@@ -50,7 +63,7 @@ final class HomeListView: UIView {
         super.init(frame: .zero)
         
         setupLayout()
-        setupDataSource()
+        makeDataSource()
     }
     
     required init?(coder: NSCoder) {
@@ -59,31 +72,113 @@ final class HomeListView: UIView {
     
     // MARK: - Functions
     
-    func setupDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<HomeListType, TravelListInfo>(
-            collectionView: self.homeCollectionView
-        ) { (collectionView, indexPath, travelInfo) -> TLListCVC? in
-            guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: TLListCVC.identifier,
-                for: indexPath
-            ) as? TLListCVC else {
-                return nil
+    private func makeDataSource() {
+        dataSource = DataSource(collectionView: homeCollectionView) { collectionView, indexPath, itemIdentifier in
+            
+            let section = HomeSection(rawValue: indexPath.section)
+            
+            var item: Any
+            switch itemIdentifier {
+            case let .filterItem(value):
+                item = value
+            case let .travelListItem(value):
+                item = value
             }
-            cell.setData(item: travelInfo)
-            return cell
+            
+            switch section {
+            case .filter:
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: FilterCVC.identifier,
+                    for: indexPath
+                ) as? FilterCVC else { return UICollectionViewCell() }
+                cell.setupData(item: item as? Filter ?? .empty)
+                return cell
+            case .travelList:
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: TLListCVC.identifier,
+                    for: indexPath
+                ) as? TLListCVC else { return UICollectionViewCell() }
+                cell.setupData(item: item as? TravelListInfo ?? TravelListSample.makeInfo())
+                return cell
+            default:
+                return UICollectionViewCell()
+            }
         }
+        
+        homeCollectionView.dataSource = dataSource
     }
     
-    func setData(items: TravelList) {
-        var snapshot = NSDiffableDataSourceSnapshot<HomeListType, TravelListInfo>()
-        snapshot.appendSections([.travelInfo])
-        snapshot.appendItems(items)
+    private func makeLayout() -> UICollectionViewLayout {
+        let layout = UICollectionViewCompositionalLayout { [weak self] idx, _ in
+            switch idx {
+            case 0:
+                self?.makeFilterSection()
+            default:
+                self?.makeTravelListSection()
+            }
+        }
+        
+        return layout
+    }
+    
+    private func makeFilterSection() -> NSCollectionLayoutSection {
+        let size = NSCollectionLayoutSize(
+            widthDimension: .estimated(Metric.Filter.width),
+            heightDimension: .estimated(Metric.Filter.height)
+        )
+        
+        let item = NSCollectionLayoutItem(layoutSize: size)
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: size, subitems: [item])
+        let section = NSCollectionLayoutSection(group: group)
+        
+        section.orthogonalScrollingBehavior = .continuous
+        section.interGroupSpacing = Metric.Filter.spacing
+        section.contentInsets = .init(
+            top: Metric.Filter.topInset,
+            leading: Metric.Filter.leftRightInset,
+            bottom: 0,
+            trailing: Metric.Filter.leftRightInset
+        )
+        
+        return section
+    }
+    
+    private func makeTravelListSection() -> NSCollectionLayoutSection {
+        let size = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1),
+            heightDimension: .estimated(Metric.TravelList.height)
+        )
+        
+        let item = NSCollectionLayoutItem(layoutSize: size)
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: size, subitems: [item])
+        let section = NSCollectionLayoutSection(group: group)
+        
+        section.contentInsets = .init(
+            top: Metric.TravelList.topBottomInset,
+            leading: Metric.TravelList.leftRightInset,
+            bottom: Metric.TravelList.topBottomInset,
+            trailing: Metric.TravelList.leftRightInset
+        )
+        section.interGroupSpacing = Metric.TravelList.spacing
+        
+        return section
+    }
+    
+    func setupData(filterList: FilterList, travelList: TravelList) {
+        var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>()
+        snapshot.appendSections([.filter, .travelList])
+        
+        filterList.forEach { snapshot.appendItems([.filterItem($0)], toSection: .filter) }
+        travelList.forEach { snapshot.appendItems([.travelListItem($0)], toSection: .travelList) }
+        
         dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
 
-private extension HomeListView {
-    func setupLayout() {
+// MARK: - Setup Functions
+
+extension HomeListView {
+    private func setupLayout() {
         addSubviews(homeCollectionView)
         
         subviews.forEach {
@@ -102,6 +197,11 @@ private extension HomeListView {
 @available(iOS 17, *)
 #Preview("HomeListView") {
     let homeListView = HomeListView()
-    homeListView.setData(items: TravelListSample.make())
+    homeListView.setupData(
+        filterList: FilterType.allCases.map {
+            Filter(type: $0, isSelected: false)
+        },
+        travelList: TravelListSample.make()
+    )
     return homeListView
 }
