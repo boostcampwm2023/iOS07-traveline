@@ -32,8 +32,8 @@ export class Posting {
   @Column({ length: 14 })
   title: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  createdAt: Date;
 
   @Column({ length: 255, nullable: true, default: null })
   thumbnail: string;
@@ -41,11 +41,11 @@ export class Posting {
   @RelationId((posting: Posting) => posting.likeds)
   liked: { user: string; posting: string }[];
 
-  @Column({ type: 'date' })
-  start_date: Date;
+  @Column({ name: 'start_date', type: 'date' })
+  startDate: Date;
 
-  @Column({ type: 'date' })
-  end_date: Date;
+  @Column({ name: 'end_date', type: 'date' })
+  endDate: Date;
 
   @Column({ type: 'int' })
   days: number;
