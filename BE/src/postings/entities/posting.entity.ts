@@ -52,11 +52,11 @@ export class Posting {
 
   @ManyToOne(() => Period, (period) => period.postings, { nullable: false })
   @JoinColumn({ name: 'period' })
-  period: number;
+  period: Period;
 
   @ManyToOne(() => Headcount, (headcount) => headcount.postings)
   @JoinColumn({ name: 'headcount' })
-  headcount: number;
+  headcount: Headcount;
 
   @ManyToOne(() => Budget, (budget) => budget.postings)
   @JoinColumn({ name: 'budget' })
@@ -66,15 +66,15 @@ export class Posting {
     nullable: false,
   })
   @JoinColumn({ name: 'location' })
-  location: number;
+  location: Location;
 
   @ManyToOne(() => Season, (season) => season.postings, { nullable: false })
   @JoinColumn({ name: 'season' })
-  season: number;
+  season: Season;
 
   @ManyToOne(() => Vehicle, (vehicle) => vehicle.postings)
   @JoinColumn({ name: 'vehicle' })
-  vehicle: number;
+  vehicle: Vehicle;
 
   @RelationId((posting: Posting) => posting.reports)
   report: { reporter: string; posting: string }[];
