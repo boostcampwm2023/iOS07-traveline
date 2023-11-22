@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import PhotosUI
 
 final class TimelineWritingVC: UIViewController {
     
@@ -25,6 +26,7 @@ final class TimelineWritingVC: UIViewController {
     
     // MARK: - UI Components
     
+        let timePickerVC = TimePickerVC()
     private let titleTextField: TitleTextField = .init()
     private let dateLabel: TLLabel = .init(font: TLFont.body2, color: TLColor.gray)
     private let selectTime: TLImageLabel = .init(image: TLImage.Travel.time, text: "현재시각")
@@ -53,7 +55,14 @@ final class TimelineWritingVC: UIViewController {
     // MARK: - Functions
     
     @objc func selectImageButtonTapped() {
-        selectImageButton.setImage(UIImage(systemName: "leaf") ?? nil)
+        var config = PHPickerConfiguration()
+        config.selectionLimit = 1
+        config.filter = .images
+        
+        let picker = PHPickerViewController(configuration: config)
+        picker.delegate = self
+        
+        self.present(picker, animated: true)
     }
     
     @objc func completeButtonTapped() {
@@ -62,9 +71,9 @@ final class TimelineWritingVC: UIViewController {
     
     @objc func selectTimeButtonTapped() {
         let alert = TLAlertController(title: "시간선택", message: nil, preferredStyle: .alert)
-        let timePickerVC = TimePickerVC()
         let complete = UIAlertAction(title: Constants.complete, style: .default) { [weak self] _ in
-            self?.selectTime.setText(to: timePickerVC.time())
+            guard let self = self else { return }
+            self.updateTime()
         }
         
         alert.addAction(complete)
@@ -73,6 +82,9 @@ final class TimelineWritingVC: UIViewController {
         present(alert, animated: true)
     }
     
+    private func updateTime() {
+        selectTime.setText(to: timePickerVC.time())
+    }
 }
 
 // MARK: - Setup Functions
@@ -89,6 +101,7 @@ private extension TimelineWritingVC {
         selectTime.addGestureRecognizer(timeTapGesture)
         selectImageButton.isUserInteractionEnabled = true
         selectTime.isUserInteractionEnabled = true
+        updateTime()
     }
     
     private func setupNavigationItem() {
@@ -153,7 +166,29 @@ extension TimelineWritingVC: UITextViewDelegate {
         }
     }
 }
+
+// MARK: - PHPPickerViewControllerDelegate 
+
+extension TimelineWritingVC: PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         
+        picker.dismiss(animated: true, completion: nil)
+        
+        let itemProvider = results.first?.itemProvider
+        guard let itemProvider = itemProvider,
+              itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
+        
+        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                guard let selectedImage = image as? UIImage else { return }
+                self.selectImageButton.setImage(selectedImage)
+            }
+        }
+    }
+    
+}
+
 @available(iOS 17, *)
 #Preview("TimelineWritingVC") {
     let timelineWritingVC = TimelineWritingVC()
