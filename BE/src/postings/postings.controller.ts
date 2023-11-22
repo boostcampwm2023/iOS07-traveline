@@ -36,23 +36,33 @@ import {
 export class PostingsController {
   constructor(private readonly postingsService: PostingsService) {}
 
-  // @Post()
-  // @ApiOperation({
-  //   summary: '포스팅 생성 API',
-  //   description: '새로운 포스팅을 작성한다.',
-  // })
-  // @ApiOkResponse({ description: 'OK', type: Posting })
-  // async create(@Body() createPostingDto: CreatePostingDto) {
-  //   if (
-  //     new Date(createPostingDto.endDate) < new Date(createPostingDto.startDate)
-  //   ) {
-  //     throw new BadRequestException(
-  //       'endDate는 startDate와 같거나 더 나중의 날짜여야 합니다.'
-  //     );
-  //   }
+  @Post()
+  @ApiOperation({
+    summary: '포스팅 생성 API',
+    description: '새로운 포스팅을 작성한다.',
+  })
+  @ApiOkResponse({ description: 'OK', type: Posting })
+  async create(@Body() createPostingDto: CreatePostingDto) {
+    if (
+      new Date(createPostingDto.endDate) < new Date(createPostingDto.startDate)
+    ) {
+      throw new BadRequestException(
+        'endDate는 startDate와 같거나 더 나중의 날짜여야 합니다.'
+      );
+    }
 
-  //   return this.postingsService.create(createPostingDto);
-  // }
+    const posting = await this.postingsService.createPosting(createPostingDto);
+
+    await this.postingsService.createPostingTheme(
+      posting.id,
+      createPostingDto.theme
+    );
+
+    await this.postingsService.createPostingWithWho(
+      posting.id,
+      createPostingDto.withWho
+    );
+  }
 
   // @Get()
   // @ApiOperation({

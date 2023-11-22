@@ -7,13 +7,7 @@ import {
 import { CreatePostingDto } from './dto/create-posting.dto';
 import { UpdatePostingDto } from './dto/update-posting.dto';
 import { v4 as uuidv4 } from 'uuid';
-import { Repository } from 'typeorm';
 import { Posting } from './entities/posting.entity';
-import {
-  LIKEDS_REPOSITORY,
-  POSTINGS_REPOSITORY,
-  REPORTS_REPOSITORY,
-} from './postings.constants';
 import {
   headcounts,
   budgets,
@@ -22,47 +16,90 @@ import {
   vehicles,
   withWhos,
 } from './postings.types';
-import { Liked } from './entities/liked.entity';
-import { Report } from './entities/report.entity';
+import { LikedsRepository } from './repositories/likeds.repository';
+import { PostingThemesRepository } from './repositories/mappings/posting-themes.repository';
+import { PostingWithWhosRepository } from './repositories/mappings/posting-with-whos.repository';
+import { PostingsRepository } from './repositories/postings.repository';
+import { ReportsRepository } from './repositories/reports.repository';
+import { BudgetsRepository } from './repositories/tags/budgets.repository';
+import { HeadcountsRepository } from './repositories/tags/headcounts.repository';
+import { LocationsRepository } from './repositories/tags/locations.repository';
+import { PeriodsRepository } from './repositories/tags/periods.repository';
+import { SeasonsRepository } from './repositories/tags/seasons.repository';
+import { ThemesRepository } from './repositories/tags/themes.repository';
+import { VehiclesRepository } from './repositories/tags/vehicles.repository';
+import { WithWhosRepository } from './repositories/tags/with-whos.repository';
+import { PostingTheme } from './entities/mappings/posting-theme.entity';
+import { PostingWithWho } from './entities/mappings/posting-with-who.entity';
 
 @Injectable()
 export class PostingsService {
   constructor(
-    @Inject(POSTINGS_REPOSITORY)
-    private readonly postingsRepository: Repository<Posting>,
-    @Inject(LIKEDS_REPOSITORY)
-    private readonly likedsRepository: Repository<Liked>,
-    @Inject(REPORTS_REPOSITORY)
-    private readonly reportsRepository: Repository<Report>
+    private readonly postingsRepository: PostingsRepository,
+    private readonly likedsRepository: LikedsRepository,
+    private readonly reportsRepository: ReportsRepository,
+    private readonly budgetsRepository: BudgetsRepository,
+    private readonly headcountsRepository: HeadcountsRepository,
+    private readonly locationsRepository: LocationsRepository,
+    private readonly periodsRepository: PeriodsRepository,
+    private readonly seasonsRepository: SeasonsRepository,
+    private readonly themesRepository: ThemesRepository,
+    private readonly vehiclesRepository: VehiclesRepository,
+    private readonly withWhosRepository: WithWhosRepository,
+    private readonly postingThemesRepository: PostingThemesRepository,
+    private readonly postingWithWhosRepository: PostingWithWhosRepository
   ) {}
 
-  // async create(createPostingDto: CreatePostingDto) {
-  //   const posting = new Posting();
-  //   posting.id = uuidv4();
-  //   posting.writer = '123456789012345678901234567890123456'; // TODO: 나중에 JWT에서 User의 id 가져오기
-  //   posting.title = createPostingDto.title;
-  //   posting.created_at = new Date();
-  //   posting.start_date = new Date(createPostingDto.startDate);
-  //   posting.end_date = new Date(createPostingDto.endDate);
-  //   posting.days = this.calculateDays(posting.start_date, posting.end_date);
-  //   posting.period = this.selectPeriod(posting.days);
-  //   posting.headcount = this.customIndexOf(
-  //     headcounts,
-  //     createPostingDto.headcount
-  //   );
-  //   posting.budget = this.customIndexOf(budgets, createPostingDto.budget);
-  //   posting.location = this.customIndexOf(locations, createPostingDto.location);
-  //   posting.theme = createPostingDto.theme
-  //     ? createPostingDto.theme.map((e) => themes.indexOf(e))
-  //     : null;
-  //   posting.with_who = createPostingDto.withWho
-  //     ? createPostingDto.withWho.map((e) => withWhos.indexOf(e))
-  //     : null;
-  //   posting.season = this.calculateSeason(posting.start_date);
-  //   posting.vehicle = this.customIndexOf(vehicles, createPostingDto.vehicle);
+  async createPosting(createPostingDto: CreatePostingDto) {
+    const posting = new Posting();
+    posting.id = uuidv4();
+    posting.writer = ''; // TODO: 나중에 JWT에서 User의 id 가져오기
+    posting.title = createPostingDto.title;
+    posting.createdAt = new Date();
+    posting.startDate = new Date(createPostingDto.startDate);
+    posting.endDate = new Date(createPostingDto.endDate);
+    posting.days = this.calculateDays(posting.startDate, posting.endDate);
+    posting.period = await this.periodsRepository.findByName(
+      this.periodsRepository.findNameByCalculatingDays(posting.days)
+    );
+    posting.headcount = await this.headcountsRepository.findByName(
+      createPostingDto.headcount
+    );
+    posting.budget = await this.budgetsRepository.findByName(
+      createPostingDto.budget
+    );
+    posting.location = await this.locationsRepository.findByName(
+      createPostingDto.location
+    );
+    posting.season = await this.seasonsRepository.findByName(
+      this.seasonsRepository.findNameByCalculatingStartDate(posting.startDate)
+    );
+    posting.vehicle = await this.vehiclesRepository.findByName(
+      createPostingDto.vehicle
+    );
 
-  //   return this.postingsRepository.save(posting);
-  // }
+    return this.postingsRepository.save(posting);
+  }
+
+  async createPostingTheme(postingId: string, themes: string[]) {
+    themes.forEach(async (e) => {
+      const themeId = await this.themesRepository.findByName(e);
+      const postingTheme = new PostingTheme();
+      postingTheme.posting = postingId;
+      postingTheme.theme = themeId.id;
+      await this.postingThemesRepository.save(postingTheme);
+    });
+  }
+
+  async createPostingWithWho(postingId: string, withWhos: string[]) {
+    withWhos.forEach(async (e) => {
+      const withWhoId = await this.withWhosRepository.findByName(e);
+      const postingWithWho = new PostingWithWho();
+      postingWithWho.posting = postingId;
+      postingWithWho.withWho = withWhoId.id;
+      await this.postingWithWhosRepository.save(postingWithWho);
+    });
+  }
 
   // findAll() {
   //   return `This action returns all postings`;
@@ -155,38 +192,9 @@ export class PostingsService {
   //   return this.reportsRepository.save(newReport);
   // }
 
-  // private calculateDays(startDate: Date, endDate: Date): number {
-  //   return (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) + 1;
-  // }
-
-  // private selectPeriod(days: number): number {
-  //   return days === 1
-  //     ? 0
-  //     : days === 2
-  //     ? 1
-  //     : days === 3
-  //     ? 2
-  //     : days < 7
-  //     ? 3
-  //     : days < 30
-  //     ? 4
-  //     : 5;
-  // }
-
-  // private customIndexOf(list: string[], value: string): number | null {
-  //   return list.indexOf(value) > -1 ? list.indexOf(value) : null;
-  // }
-
-  // private calculateSeason(startDate: Date): number {
-  //   const month = startDate.getMonth() + 1;
-  //   return month >= 3 && month <= 5
-  //     ? 0
-  //     : month >= 6 && month <= 9
-  //     ? 1
-  //     : month >= 10 && month <= 11
-  //     ? 2
-  //     : 3;
-  // }
+  private calculateDays(startDate: Date, endDate: Date): number {
+    return (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) + 1;
+  }
 
   // createDaysList(startDate: Date, days: number) {
   //   const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
