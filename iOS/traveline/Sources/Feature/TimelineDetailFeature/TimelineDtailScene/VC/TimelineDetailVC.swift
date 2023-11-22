@@ -30,12 +30,6 @@ final class TimelineDetailVC: UIViewController {
         return view
     }()
     
-    private let titleLabel: TLLabel = {
-        let label = TLLabel(font: TLFont.heading1, color: TLColor.white)
-        label.setText(to: "광안리 짱")
-        
-        return label
-    }()
     
     private let line: UIView = {
         let view = UIView()
@@ -44,29 +38,9 @@ final class TimelineDetailVC: UIViewController {
         return view
     }()
     
-    private let dateLabel: TLLabel = {
-        let label = TLLabel(font: TLFont.body2, color: TLColor.gray)
-        label.setText(to: "2023년 11월 9일")
-        
-        return label
-    }()
-    
-    private let timeLabel: TLImageLabel = {
-        let label = TLImageLabel(image: TLImage.Travel.time, text: "오전 02:00")
-        
-        return label
-    }()
-    
-    private let locationLabel: TLImageLabel = {
-        let label = TLImageLabel(image: TLImage.Travel.location, text: "부산 광안리 해수욕장")
-        
-        return label
-    }()
-    
     private let imageView: UIImageView = {
         let view = UIImageView()
         view.contentMode = .scaleAspectFill
-        view.image = UIImage(systemName: "leaf")
         
         return view
     }()
@@ -76,20 +50,43 @@ final class TimelineDetailVC: UIViewController {
         view.numberOfLines = 0
         view.tintColor = TLColor.white
         view.font = TLFont.body1.font
-        view.text = "광안리 짱짱맨"
         
         return view
     }()
     
-    // MARK: - Properties
+    private let titleLabel: TLLabel = .init(font: TLFont.heading1, color: TLColor.white)
+    private let dateLabel: TLLabel = .init(font: TLFont.body2, color: TLColor.gray)
+    private let timeLabel: TLImageLabel = .init(image: TLImage.Travel.time)
+    private let locationLabel: TLImageLabel = .init(image: TLImage.Travel.location)
+    
+    // MARK: - Initialize
+    
+    init(info: TimelineDetailInfo) {
+        super.init(nibName: nil, bundle: nil)
+        
+        initInfo(from: info)
+        setupAttributes()
+        setupLayout()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func initInfo(from info: TimelineDetailInfo) {
+        self.navigationItem.title = info.day
+        titleLabel.setText(to: info.title)
+        dateLabel.setText(to: info.date)
+        timeLabel.setText(to: info.time)
+        locationLabel.setText(to: info.location)
+        imageView.image = UIImage(systemName: "leaf")
+        contentView.setText(to: info.content)
+    }
     
     // MARK: - Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        setupAttributes()
-        setupLayout()
     }
     
     // MARK: - Functions
@@ -105,7 +102,6 @@ final class TimelineDetailVC: UIViewController {
 private extension TimelineDetailVC {
     
     func setupAttributes() {
-        self.navigationItem.title = "Day01"
         view.backgroundColor = TLColor.black
     }
     
@@ -163,7 +159,17 @@ private extension TimelineDetailVC {
 
 @available(iOS 17, *)
 #Preview("TimelineDetailVC") {
-    let timelineDetailVC = TimelineDetailVC()
+    let info = TimelineDetailInfo(
+        id: "a1b2c3d4",
+        day: "day02",
+        title: "광안리 짱",
+        date: "2023년 12월 15일",
+        time: "오후 02:00",
+        location: "부산 광안리 해수욕장",
+        content: "광안리 짱짱맨",
+        imageURL: "http://sigan.nermoo.bballa"
+    )
+    let timelineDetailVC = TimelineDetailVC(info: info)
     let homeNV = UINavigationController(rootViewController: timelineDetailVC)
     return homeNV
 }
