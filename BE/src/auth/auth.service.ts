@@ -1,9 +1,31 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateUserDto } from '../users/dto/update-user.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
+  constructor(private readonly jwtService: JwtService) {}
+
+  async login(id: string) {
+    const isValidUser = this.validate(id);
+    if (!isValidUser) {
+      throw new UnauthorizedException();
+    }
+    const payload = { id: id };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  validate(id: string) {
+    //임시로 작성해둔 함수입니다.
+    if (id) {
+      return true;
+    }
+    return false;
+  }
+
   create(createAuthDto: CreateAuthDto) {
     return 'This action adds a new auth';
   }
