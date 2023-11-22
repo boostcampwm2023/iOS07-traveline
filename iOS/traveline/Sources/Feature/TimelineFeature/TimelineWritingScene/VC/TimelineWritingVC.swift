@@ -60,6 +60,19 @@ final class TimelineWritingVC: UIViewController {
         // action
     }
     
+    @objc func selectTimeButtonTapped() {
+        let alert = TLAlertController(title: "시간선택", message: nil, preferredStyle: .alert)
+        let timePickerVC = TimePickerVC()
+        let complete = UIAlertAction(title: Constants.complete, style: .default) { [weak self] _ in
+            self?.selectTime.setText(to: timePickerVC.time())
+        }
+        
+        alert.addAction(complete)
+        alert.setValue(timePickerVC, forKey: "contentViewController")
+        
+        present(alert, animated: true)
+    }
+    
 }
 
 // MARK: - Setup Functions
@@ -71,8 +84,11 @@ private extension TimelineWritingVC {
         titleTextField.placeholder = Constants.titlePlaceholder
         textView.delegate = self
         let imageTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectImageButtonTapped))
+        let timeTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectTimeButtonTapped))
         selectImageButton.addGestureRecognizer(imageTapGesture)
+        selectTime.addGestureRecognizer(timeTapGesture)
         selectImageButton.isUserInteractionEnabled = true
+        selectTime.isUserInteractionEnabled = true
     }
     
     private func setupNavigationItem() {
