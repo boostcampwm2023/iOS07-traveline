@@ -90,10 +90,10 @@ final class TLTagListView: UIView {
     }
     
     /// TLTagListView 생성 후 Tag를 추가할 때
-    func setTags(_ tags: [Tag]) {
+    func setTags(_ tags: [Tag], style: TLTagStyle) {
         tags.forEach { tag in
             let tlTag: TLTag = .init(
-                style: .normal,
+                style: style,
                 name: tag.title,
                 color: tag.type.color
             )

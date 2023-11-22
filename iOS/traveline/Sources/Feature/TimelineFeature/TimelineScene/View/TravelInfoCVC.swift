@@ -70,7 +70,7 @@ final class TravelInfoCVC: UICollectionViewCell {
         travelTitleLabel.setText(to: data.travelTitle)
         travelDateLabel.setText(to: "\(data.startDate) ~ \(data.endDate)")
         likeButton.isSelected = data.isLiked
-        tagListView.setTags(data.tags)
+        tagListView.setTags(data.tags, style: .normal)
     }
     
     @objc private func likeButtonPressed() {
