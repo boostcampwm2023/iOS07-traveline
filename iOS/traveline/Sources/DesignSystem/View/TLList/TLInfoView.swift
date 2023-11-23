@@ -30,6 +30,9 @@ final class TLInfoView: UIView {
         let imageView = UIImageView()
         imageView.backgroundColor = TLColor.gray
         imageView.layer.cornerRadius = Metric.radius
+        // TODO: - 서버 연동 후 수정
+        imageView.image = TravelineAsset.Images.travelImage.image
+        imageView.clipsToBounds = true
         return imageView
     }()
     
