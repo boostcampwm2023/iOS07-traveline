@@ -55,6 +55,26 @@ final class TimelineMapVC: UIViewController {
         title = "Day \(day)"
     }
     
+    @objc private func showTimelineDetail() {
+        if let selected = selectedAnnotation as? TLMarkerAnnotation {
+            let info = selected.cardInfo
+            let timelineDetailVC = TimelineDetailVC(
+                info: .init(
+                    id: "1",
+                    day: "Day 1",
+                    title: info.title,
+                    date: "2023.11.23",
+                    time: "오후 02:00",
+                    location: info.subtitle,
+                    content: info.content,
+                    imageURL: ""
+                )
+            )
+            
+            navigationController?.pushViewController(timelineDetailVC, animated: true)
+        }
+        
+    }
 }
 
 // MARK: - Setup Functions
@@ -73,6 +93,13 @@ private extension TimelineMapVC {
             alpha: 0.25
         )
         timelineCardView.isHidden = true
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showTimelineDetail))
+        timelineCardView.addGestureRecognizer(tapGesture)
+        
+        let backBarButtonItem = UIBarButtonItem(title: Literal.empty, style: .plain, target: self, action: nil)
+        backBarButtonItem.tintColor = TLColor.white
+        self.navigationItem.backBarButtonItem = backBarButtonItem
     }
     
     func setupLayout() {
