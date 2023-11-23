@@ -26,10 +26,15 @@ enum TLImage {
         static let camera = TravelineAsset.Images.camera.image
         static let back = TravelineAsset.Images.back.image
         static let plus = TravelineAsset.Images.plus.image
+        static let search = TravelineAsset.Images.search.image
     }
     
     enum Travel {
         static let location = TravelineAsset.Images.location.image
         static let time = TravelineAsset.Images.time.image
+    }
+    
+    enum Home {
+        static let close = TravelineAsset.Images.closeMedium.image
     }
 }
