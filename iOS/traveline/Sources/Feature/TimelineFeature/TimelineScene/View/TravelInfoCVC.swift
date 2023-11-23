@@ -64,6 +64,12 @@ final class TravelInfoCVC: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        tagListView.resetTags()
+    }
+    
     // MARK: - Functions
     
     func setData(from data: TimelineTravelInfo) {

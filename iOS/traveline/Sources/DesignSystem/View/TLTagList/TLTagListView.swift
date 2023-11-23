@@ -108,6 +108,23 @@ final class TLTagListView: UIView {
         }
     }
     
+    /// TLTagListView를 Cell에서 재사용 시 초기화
+    func resetTags() {
+        currentWidth = 0
+        currentStackView = tagStackView
+        baseStackView
+            .arrangedSubviews
+            .filter({ $0 != tagStackView })
+            .forEach {
+                $0.removeFromSuperview()
+            }
+        
+        tagStackView
+            .arrangedSubviews
+            .forEach {
+                $0.removeFromSuperview()
+            }
+    }
 }
 
 // MARK: - Setup Functions
