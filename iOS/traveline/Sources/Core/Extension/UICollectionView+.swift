@@ -50,4 +50,3 @@ extension UICollectionView {
         return view
     }
 }
-

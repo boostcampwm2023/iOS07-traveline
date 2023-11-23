@@ -180,7 +180,7 @@ extension ProfileEditingVC {
             
             captionLabel.topAnchor.constraint(equalTo: textFieldPaddingView.bottomAnchor, constant: Metric.textFieldPaddingBottomInset),
             captionLabel.leadingAnchor.constraint(equalTo: textFieldPaddingView.leadingAnchor, constant: Metric.textFieldPaddingMargin),
-            captionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
+            captionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin)
         ])
     }
 }

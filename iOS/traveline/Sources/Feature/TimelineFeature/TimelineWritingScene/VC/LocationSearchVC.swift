@@ -191,4 +191,3 @@ extension LocationSearchVC: UITableViewDataSource {
     let homeNV = UINavigationController(rootViewController: vc)
     return homeNV
 }
-

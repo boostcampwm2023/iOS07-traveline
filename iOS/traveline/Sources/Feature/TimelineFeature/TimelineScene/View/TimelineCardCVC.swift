@@ -106,7 +106,7 @@ private extension TimelineCardCVC {
             
             cardView.topAnchor.constraint(equalTo: timeBallView.bottomAnchor, constant: Metric.cardTopInset),
             cardView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Metric.horizontalInset),
-            cardView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Metric.horizontalInset),
+            cardView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Metric.horizontalInset)
         ])
     }
 }

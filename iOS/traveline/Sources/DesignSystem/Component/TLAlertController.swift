@@ -50,7 +50,7 @@ final class TLAlertController: UIAlertController {
             NSAttributedString.Key.foregroundColor: TLColor.white,
             NSAttributedString.Key.kern: font.letterSpacing,
             NSAttributedString.Key.paragraphStyle: paragraph
-        ] as [NSAttributedString.Key : Any]
+        ] as [NSAttributedString.Key: Any]
     }
 }
 
