@@ -7,6 +7,7 @@ import {
   Delete,
   Query,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { TimelinesService } from './timelines.service';
 import { CreateTimelineDto } from './dto/create-timeline.dto';
@@ -18,7 +19,9 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Timeline } from './entities/timeline.entity';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('timelines')
 @ApiTags('Timelines API')
 export class TimelinesController {
