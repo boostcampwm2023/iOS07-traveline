@@ -214,7 +214,6 @@ extension TimelineWritingVC: PHPickerViewControllerDelegate {
 
 extension TimelineWritingVC: LocationSearchDelegate {
     func selectedLocation(result: String) {
-        print("ho?")
         selectLocation.setText(to: result)
     }
     

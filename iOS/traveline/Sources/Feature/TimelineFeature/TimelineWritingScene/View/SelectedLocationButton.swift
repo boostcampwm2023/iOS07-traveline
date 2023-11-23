@@ -64,7 +64,7 @@ final class SelectLocationButton: UIView {
         updateLayout()
     }
     
-    @objc func cancelTapped() {
+    @objc private func cancelTapped() {
         setText(to: Constants.defaultText)
     }
     
@@ -92,7 +92,6 @@ private extension SelectLocationButton {
         }
         
         NSLayoutConstraint.activate([
-            
             icon.leadingAnchor.constraint(equalTo: leadingAnchor),
             icon.topAnchor.constraint(equalTo: topAnchor),
             icon.bottomAnchor.constraint(equalTo: bottomAnchor),
