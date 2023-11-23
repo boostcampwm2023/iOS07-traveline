@@ -1,24 +1,21 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { WithWho } from '../tags/with-who.entity';
 import { Posting } from '../posting.entity';
 
 @Entity('posting_with_who')
 export class PostingWithWho {
-  @PrimaryColumn({ type: 'char', length: 36 })
-  posting: string;
-
-  @PrimaryColumn({ name: 'with_who' })
-  withWho: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => Posting, (posting) => posting.postingWithWhos, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'posting' })
-  postings: Posting;
+  posting: Posting;
 
-  @ManyToOne(() => WithWho, (withWho) => withWho.postingWithWhos, {
+  @ManyToOne(() => WithWho, (withWho) => withWho.postingWithWho, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'with_who' })
-  withWhos: WithWho;
+  withWho: WithWho;
 }

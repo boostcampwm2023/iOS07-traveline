@@ -5,13 +5,13 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   RelationId,
 } from 'typeorm';
 import { Liked } from './liked.entity';
 import { Report } from './report.entity';
-import { User } from 'src/users/entities/user.entity';
-import { Timeline } from 'src/timelines/entities/timeline.entity';
+import { User } from '../../users/entities/user.entity';
+import { Timeline } from '../../timelines/entities/timeline.entity';
 import { PostingTheme } from './mappings/posting-theme.entity';
 import { PostingWithWho } from './mappings/posting-with-who.entity';
 import { Budget } from './tags/budget.entity';
@@ -23,11 +23,15 @@ import { Headcount } from './tags/headcount.entity';
 
 @Entity()
 export class Posting {
-  @PrimaryColumn({ type: 'char', length: 36 })
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'char', length: 36, nullable: true })
-  writer: string;
+  @ManyToOne(() => User, (user) => user.postings, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'writer' })
+  writer: User;
 
   @Column({ length: 14 })
   title: string;
@@ -79,13 +83,6 @@ export class Posting {
   @RelationId((posting: Posting) => posting.reports)
   report: { reporter: string; posting: string }[];
 
-  @ManyToOne(() => User, (user) => user.postings, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  @JoinColumn({ name: 'writer', referencedColumnName: 'id' })
-  writers: User;
-
   @OneToMany(() => Timeline, (timeline) => timeline.postings)
   timelines: Timeline[];
 
@@ -95,12 +92,9 @@ export class Posting {
   @OneToMany(() => Report, (report) => report.postings)
   reports: Report[];
 
-  @OneToMany(() => PostingTheme, (postingTheme) => postingTheme.postings)
+  @OneToMany(() => PostingTheme, (postingTheme) => postingTheme.posting)
   postingThemes: PostingTheme[];
 
-  @OneToMany(
-    () => PostingWithWho,
-    (postingWithWhos) => postingWithWhos.postings
-  )
+  @OneToMany(() => PostingWithWho, (postingWithWhos) => postingWithWhos.posting)
   postingWithWhos: PostingWithWho[];
 }

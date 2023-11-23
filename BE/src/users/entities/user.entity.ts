@@ -34,7 +34,7 @@ export class User {
   @OneToMany(() => Report, (report) => report.reporters)
   reports: Report[];
 
-  @OneToMany(() => Posting, (posting) => posting.writers)
+  @OneToMany(() => Posting, (posting) => posting.writer)
   postings: Posting[];
 
   @ManyToOne(() => SocialLogin, (socialLogin) => socialLogin.users)
