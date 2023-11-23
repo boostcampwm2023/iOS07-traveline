@@ -12,6 +12,13 @@ final class TimelineVC: UIViewController {
     
     private enum Metric {
         static let travelInfoEstimatedHeight: CGFloat = 170.0
+        static let timelineCardEstimatedHeight: CGFloat = 153.0
+        static let headerHeight: CGFloat = 112.0
+        
+        enum FloatingButton {
+            static let horizontalInset: CGFloat = 24.0
+            static let verticalInset: CGFloat = 14.0
+        }
     }
     
     // MARK: - UI Components
@@ -20,6 +27,8 @@ final class TimelineVC: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
         
         collectionView.register(cell: TravelInfoCVC.self)
+        collectionView.register(cell: TimelineCardCVC.self)
+        collectionView.registerHeader(view: TimelineDateHeaderView.self)
         collectionView.showsVerticalScrollIndicator = false
         collectionView.backgroundColor = TLColor.black
         collectionView.delegate = self
@@ -27,6 +36,8 @@ final class TimelineVC: UIViewController {
         
         return collectionView
     }()
+    
+    private let createPostingButton: TLFloatingButton = .init(style: .create)
         
     // MARK: - Life Cycle
     
@@ -45,10 +56,31 @@ final class TimelineVC: UIViewController {
 private extension TimelineVC {
     func setupAttributes() {
         view.backgroundColor = TLColor.black
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = TLColor.black
+        appearance.shadowColor = .clear
+        
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        
+        let menuItems: [UIAction] = [
+            .init(title: "수정하기", handler: { _ in
+                // TODO: - 수정하기 연결
+            }),
+            .init(title: "삭제하기", attributes: .destructive, handler: { _ in
+                // TODO: - 삭제하기 연결
+            })
+        ]
+        let moreButton = UIBarButtonItem(
+            image: TLImage.Travel.more.withRenderingMode(.alwaysOriginal),
+            menu: .init(children: menuItems)
+        )
+        navigationItem.rightBarButtonItem = moreButton
     }
     
     func setupLayout() {
-        view.addSubviews(timelineCollectionView)
+        view.addSubviews(timelineCollectionView, createPostingButton)
         view.subviews.forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -57,7 +89,10 @@ private extension TimelineVC {
             timelineCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             timelineCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             timelineCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            timelineCollectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            timelineCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            createPostingButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.FloatingButton.horizontalInset),
+            createPostingButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Metric.FloatingButton.verticalInset)
         ])
     }
     
@@ -66,6 +101,8 @@ private extension TimelineVC {
             switch section {
             case 0:
                 self?.makeTravelInfoSection()
+            case 1:
+                self?.makeTimelineSection()
             default:
                 self?.makeTravelInfoSection()
             }
@@ -92,23 +129,59 @@ private extension TimelineVC {
         
         return section
     }
+    
+    func makeTimelineSection() -> NSCollectionLayoutSection {
+        let size = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .estimated(Metric.timelineCardEstimatedHeight)
+        )
+        
+        let item = NSCollectionLayoutItem(layoutSize: size)
+        
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: size,
+            repeatingSubitem: item,
+            count: 1
+        )
+        
+        let section = NSCollectionLayoutSection(group: group)
+        
+        let headerSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(Metric.headerHeight)
+        )
+        let header = NSCollectionLayoutBoundarySupplementaryItem(
+            layoutSize: headerSize,
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
+        header.pinToVisibleBounds = true
+        
+        section.boundarySupplementaryItems = [header]
+        
+        return section
+    }
+    
 }
 
 // MARK: - UICollectionView Delegate
 
 extension TimelineVC: UICollectionViewDelegate {
-    
+    // TODO: - 상세 뷰 연결
 }
 
 extension TimelineVC: UICollectionViewDataSource {
+    // TODO: - 모델 연결
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        1
+        2
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch section {
         case 0:
             return 1
+        case 1:
+            return 5
         default:
             return 1
         }
@@ -121,9 +194,18 @@ extension TimelineVC: UICollectionViewDataSource {
             cell.setData(from: TimelineSample.makeTravelInfo())
             cell.delegate = self
             return cell
+        case 1:
+            let cell = collectionView.dequeue(cell: TimelineCardCVC.self, for: indexPath)
+            cell.setData()
+            return cell
         default:
             return UICollectionViewCell()
         }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        let header = collectionView.dequeHeader(view: TimelineDateHeaderView.self, for: indexPath)
+        return header
     }
 }
 
