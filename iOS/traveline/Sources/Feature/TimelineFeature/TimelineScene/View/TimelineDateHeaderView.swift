@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol TimelineDateHeaderDelegate: AnyObject {
+    func goToMapView()
+}
+
 final class TimelineDateHeaderView: UICollectionReusableView {
     
     private enum Metric {
@@ -83,6 +87,15 @@ final class TimelineDateHeaderView: UICollectionReusableView {
         return button
     }()
     
+    // MARK: - Properties
+    
+    weak var delegate: TimelineDateHeaderDelegate?
+    
+    // TODO: - 더미 제거
+    private let dummyDays: [String] = [
+        "28 금", "29 토", "30 일", "01 월", "02 화", "03 수", "04 목", "05 금", "06 토", "07 일"
+    ]
+    
     // MARK: - Initializer
     
     override init(frame: CGRect) {
@@ -103,6 +116,10 @@ final class TimelineDateHeaderView: UICollectionReusableView {
         // TODO: - 날짜 선택 시 마다 변경
         dayLabel.setText(to: "Day 1")
     }
+    
+    @objc private func mapViewButtonPressed() {
+        delegate?.goToMapView()
+    }
 
 }
 
@@ -116,6 +133,8 @@ private extension TimelineDateHeaderView {
             animated: true,
             scrollPosition: .left
         )
+        
+        mapViewButton.addTarget(self, action: #selector(mapViewButtonPressed), for: .touchUpInside)
     }
     
     func setupLayout() {
@@ -161,12 +180,12 @@ extension TimelineDateHeaderView: UICollectionViewDelegate {
 extension TimelineDateHeaderView: UICollectionViewDataSource {
     // TODO: - 날짜 데이터 관리
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        10
+        dummyDays.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeue(cell: DateIndicatorCVC.self, for: indexPath)
-        cell.setDate("28 금")
+        cell.setDate(dummyDays[indexPath.row])
         return cell
     }
 }
