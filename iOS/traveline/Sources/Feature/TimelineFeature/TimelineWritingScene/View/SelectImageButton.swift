@@ -16,14 +16,14 @@ final class SelectImageButton: UIView {
         static let buttonOffset: CGFloat = 9
         static let iconWidth: CGFloat = 30
         static let iconSpacing: CGFloat = 20
-        static let cornuerRadius: CGFloat = 12
+        static let cornerRadius: CGFloat = 12
     }
     
     // MARK: - UI Components
     
     let view: UIView = {
         let view = UIView()
-        view.layer.cornerRadius = Metric.cornuerRadius
+        view.layer.cornerRadius = Metric.cornerRadius
         view.clipsToBounds = true
         
         return view
@@ -33,7 +33,7 @@ final class SelectImageButton: UIView {
         let button = UIButton()
         button.setImage(TLImage.Common.closeBlack, for: .normal)
         button.tintColor = TLColor.white
-        button.layer.cornerRadius = Metric.cornuerRadius
+        button.layer.cornerRadius = Metric.cornerRadius
         button.backgroundColor = TLColor.white
         
         return button
@@ -88,19 +88,12 @@ final class SelectImageButton: UIView {
     @objc private func cancelButtonTapped() {
         imageView.image = nil
         updateView()
-        
     }
     
     private func updateView() {
-        if hasImage {
-            selectView.isHidden = true
-            imageView.isHidden = false
-            cancelButton.isHidden = false
-        } else {
-            selectView.isHidden = false
-            imageView.isHidden = true
-            cancelButton.isHidden = true
-        }
+        selectView.isHidden = hasImage
+        imageView.isHidden = !hasImage
+        cancelButton.isHidden = !hasImage
     }
     
     func setImage(_ image: UIImage?) {

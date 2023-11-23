@@ -22,6 +22,7 @@ final class TimelineWritingVC: UIViewController {
         static let titlePlaceholder: String = "제목 *"
         static let contentPlaceholder: String = "내용을 입력해주세요. *"
         static let complete: String = "완료"
+        static let alertContentVCKey = "contentViewController"
     }
     
     // MARK: - UI Components
@@ -77,18 +78,18 @@ final class TimelineWritingVC: UIViewController {
     @objc func selectTimeButtonTapped() {
         let alert = TLAlertController(title: "시간선택", message: nil, preferredStyle: .alert)
         let complete = UIAlertAction(title: Constants.complete, style: .default) { [weak self] _ in
-            guard let self = self else { return }
+            guard let self else { return }
             self.updateTime()
         }
         
         alert.addAction(complete)
-        alert.setValue(timePickerVC, forKey: "contentViewController")
+        alert.setValue(timePickerVC, forKey: Constants.alertContentVCKey)
         
         present(alert, animated: true)
     }
     
     private func updateTime() {
-        selectTime.setText(to: timePickerVC.time())
+        selectTime.setText(to: timePickerVC.time)
     }
 }
 
@@ -140,7 +141,6 @@ private extension TimelineWritingVC {
         view.subviews.forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin).isActive = true
-            $0.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin).isActive = true
         }
         
         NSLayoutConstraint.activate([
@@ -150,6 +150,7 @@ private extension TimelineWritingVC {
             selectLocation.topAnchor.constraint(equalTo: selectTime.bottomAnchor, constant: Metric.spacing),
             selectImageButton.topAnchor.constraint(equalTo: selectLocation.bottomAnchor, constant: Metric.spacing),
             textView.topAnchor.constraint(equalTo: selectImageButton.bottomAnchor, constant: Metric.spacing),
+            textView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
             textView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         

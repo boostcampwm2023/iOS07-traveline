@@ -10,23 +10,35 @@ import UIKit
 
 final class TimePickerVC: UIViewController {
     
-    let timePicker: UIDatePicker = {
+    // MARK: - UI Components
+    
+    private let timePicker: UIDatePicker = {
         let picker = UIDatePicker()
         picker.datePickerMode = .time
+        picker.locale = Locale(identifier: "ko_KR")
         picker.preferredDatePickerStyle = .wheels
         
         return picker
     }()
     
+    // MARK: - Properties
+    var time: String {
+        return timeFormat(date: timePicker.date)
+    }
+    
+    // MARK: - Initialize
+    
     init() {
         super.init(nibName: nil, bundle: nil)
         
-        setupAttributes()
+        setupLayout()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - Functions
     
     private func timeFormat(date: Date) -> String {
         let formmater = DateFormatter()
@@ -36,17 +48,17 @@ final class TimePickerVC: UIViewController {
         return result
     }
     
-    func time() -> String {
-        return timeFormat(date: timePicker.date)
-    }
-    
 }
 
 // MARK: - Setup Functions
 
 private extension TimePickerVC {
     
-    func setupAttributes() {
-        self.view = timePicker
+    func setupLayout() {
+        view.addSubview(timePicker)
+        timePicker.translatesAutoresizingMaskIntoConstraints = false
+        
+        timePicker.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        timePicker.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
     }
 }
