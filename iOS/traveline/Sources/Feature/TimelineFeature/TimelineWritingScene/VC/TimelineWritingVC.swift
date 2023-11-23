@@ -140,20 +140,29 @@ private extension TimelineWritingVC {
         
         view.subviews.forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
-            $0.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin).isActive = true
         }
         
         NSLayoutConstraint.activate([
             titleTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Metric.topInset),
+            titleTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
+            titleTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
             dateLabel.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: Metric.belowLine),
+            dateLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
+            dateLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
             selectTime.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: Metric.spacing),
+            selectTime.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
+            selectTime.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
             selectLocation.topAnchor.constraint(equalTo: selectTime.bottomAnchor, constant: Metric.spacing),
+            selectLocation.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
+            selectLocation.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
             selectImageButton.topAnchor.constraint(equalTo: selectLocation.bottomAnchor, constant: Metric.spacing),
+            selectImageButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
+            selectImageButton.widthAnchor.constraint(equalToConstant: selectImageButton.width),
             textView.topAnchor.constraint(equalTo: selectImageButton.bottomAnchor, constant: Metric.spacing),
+            textView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
             textView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
             textView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-        
     }
 }
 

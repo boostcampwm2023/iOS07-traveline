@@ -69,6 +69,7 @@ final class SelectImageButton: UIView {
     private var hasImage: Bool {
         imageView.image != nil
     }
+    let width = Metric.viewWidth + Metric.buttonOffset
     
     // MARK: - initialize
     
