@@ -34,5 +34,6 @@ enum TLImage {
         static let location = TravelineAsset.Images.location.image
         static let time = TravelineAsset.Images.time.image
         static let map = TravelineAsset.Images.map.image
+        static let more = TravelineAsset.Images.more.image
     }
 }
