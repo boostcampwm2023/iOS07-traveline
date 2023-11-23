@@ -63,9 +63,8 @@ final class TimelineCardCVC: UICollectionViewCell {
     
     // MARK: - Functions
     
-    func setData() {
-        // TODO: - Model 연결
-        cardView.setData()
+    func setData(by cardInfo: TimelineCardInfo) {
+        cardView.setData(cardInfo: cardInfo)
         timeLabel.setText(to: "14:05")
     }
     

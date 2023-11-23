@@ -38,6 +38,11 @@ final class TimelineVC: UIViewController {
     }()
     
     private let createPostingButton: TLFloatingButton = .init(style: .create)
+    
+    // MARK: - Properties
+    
+    // TODO: - dummy 제거
+    private let dummyCardList = TimelineSample.makeCardList()
         
     // MARK: - Life Cycle
     
@@ -47,6 +52,15 @@ final class TimelineVC: UIViewController {
         setupAttributes()
         setupLayout()
         setupCompositionalLayout()
+    }
+    
+    // MARK: - Functions
+    
+    @objc func showMapView() {
+        let mapVC = TimelineMapVC()
+        mapVC.setMarker(by: TimelineSample.makeCardList(), day: 1)
+        
+        navigationController?.pushViewController(mapVC, animated: true)
     }
     
 }
@@ -77,6 +91,11 @@ private extension TimelineVC {
             menu: .init(children: menuItems)
         )
         navigationItem.rightBarButtonItem = moreButton
+                
+        let backBarButtonItem = UIBarButtonItem(title: Literal.empty, style: .plain, target: self, action: nil)
+        backBarButtonItem.tintColor = TLColor.white
+        self.navigationItem.backBarButtonItem = backBarButtonItem
+
     }
     
     func setupLayout() {
@@ -181,7 +200,7 @@ extension TimelineVC: UICollectionViewDataSource {
         case 0:
             return 1
         case 1:
-            return 5
+            return dummyCardList.count
         default:
             return 1
         }
@@ -196,7 +215,7 @@ extension TimelineVC: UICollectionViewDataSource {
             return cell
         case 1:
             let cell = collectionView.dequeue(cell: TimelineCardCVC.self, for: indexPath)
-            cell.setData()
+            cell.setData(by: dummyCardList[indexPath.row])
             return cell
         default:
             return UICollectionViewCell()
@@ -205,6 +224,7 @@ extension TimelineVC: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeHeader(view: TimelineDateHeaderView.self, for: indexPath)
+        header.delegate = self
         return header
     }
 }
@@ -215,6 +235,14 @@ extension TimelineVC: TravelInfoDelegate {
     func likeChanged(to isLiked: Bool) {
         // TODO: - 좋아요 변경 처리
         print("Like Changed")
+    }
+}
+
+// MARK: - TimelineDateHeader Delegate
+
+extension TimelineVC: TimelineDateHeaderDelegate {
+    func goToMapView() {
+        showMapView()
     }
 }
 

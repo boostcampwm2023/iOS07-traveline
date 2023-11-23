@@ -51,12 +51,10 @@ final class TimelineCardView: UIView {
 
     // MARK: - Functions
     
-    func setData() {
-        // TODO: - Model 연결
-        titleLabel.setText(to: "광안리 짱")
-        subtitleLabel.setText(to: "광안리 해수욕장")
-        contentLabel.setText(to: "어쩌고 저쩌고 어쩌고 이러쿵 저러쿵")
-        thumbnailImageView.isHidden = true
+    func setData(cardInfo: TimelineCardInfo) {
+        titleLabel.setText(to: cardInfo.title)
+        subtitleLabel.setText(to: cardInfo.subtitle)
+        contentLabel.setText(to: cardInfo.content)
     }
 }
 
@@ -66,6 +64,8 @@ private extension TimelineCardView {
     func setupAttributes() {
         backgroundColor = TLColor.darkGray
         layer.cornerRadius = Metric.radius
+        thumbnailImageView.backgroundColor = TLColor.disabledGray
+        thumbnailImageView.layer.cornerRadius = 12.0
     }
     
     func setupLayout() {
@@ -112,6 +112,6 @@ private extension TimelineCardView {
 @available(iOS 17, *)
 #Preview {
     let view = TimelineCardView()
-    view.setData()
+    view.setData(cardInfo: TimelineSample.makeCard())
     return view
 }
