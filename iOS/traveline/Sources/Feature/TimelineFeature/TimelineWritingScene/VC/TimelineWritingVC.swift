@@ -31,7 +31,8 @@ final class TimelineWritingVC: UIViewController {
     private let titleTextField: TitleTextField = .init()
     private let dateLabel: TLLabel = .init(font: TLFont.body2, color: TLColor.gray)
     private let selectTime: TLImageLabel = .init(image: TLImage.Travel.time, text: "현재시각")
-    private let selectLocation: TLImageLabel = .init(image: TLImage.Travel.location, text: "선택한 장소")
+  //  private let selectLocation: TLImageLabel = .init(image: TLImage.Travel.location, text: "선택한 장소")
+    private let selectLocation: SelectLocationButton = .init()
     private let selectImageButton: SelectImageButton = .init()
     
     private let textView: UITextView = {
@@ -56,7 +57,7 @@ final class TimelineWritingVC: UIViewController {
     
     // MARK: - Functions
     
-    @objc func selectImageButtonTapped() {
+    @objc private func selectImageButtonTapped() {
         var config = PHPickerConfiguration()
         config.selectionLimit = 1
         config.filter = .images
@@ -67,11 +68,11 @@ final class TimelineWritingVC: UIViewController {
         self.present(picker, animated: true)
     }
     
-    @objc func completeButtonTapped() {
+    @objc private func completeButtonTapped() {
         // action
     }
     
-    @objc func selectLocationButtonTapped() {
+    @objc private func selectLocationButtonTapped() {
         // action
         let loca = LocationSearchVC()
         loca.delegate = self
@@ -79,7 +80,7 @@ final class TimelineWritingVC: UIViewController {
         present(loca, animated: true)
     }
     
-    @objc func selectTimeButtonTapped() {
+    @objc private func selectTimeButtonTapped() {
         let alert = TLAlertController(title: "시간선택", message: nil, preferredStyle: .alert)
         let complete = UIAlertAction(title: Constants.complete, style: .default) { [weak self] _ in
             guard let self else { return }
@@ -117,7 +118,7 @@ private extension TimelineWritingVC {
         updateTime()
     }
     
-    private func setupNavigationItem() {
+    func setupNavigationItem() {
         self.navigationItem.title = "Day01"
         let completeButton = UIBarButtonItem(
             title: Constants.complete,
@@ -200,7 +201,7 @@ extension TimelineWritingVC: PHPickerViewControllerDelegate {
         guard let itemProvider = itemProvider,
               itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
         
-        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, _ in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 guard let selectedImage = image as? UIImage else { return }

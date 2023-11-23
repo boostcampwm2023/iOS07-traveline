@@ -14,12 +14,23 @@ protocol LocationSearchDelegate: AnyObject {
 
 final class LocationSearchVC: UIViewController {
     
+    private enum Metric {
+        static let topInset: CGFloat = 27
+        static let margin: CGFloat = 16
+        static let contentHeight: CGFloat = 52
+    }
+    
+    private enum Constants {
+        static let titleText = "장소 선택"
+        static let placeholder = "여행 검색"
+    }
+    
     // MARK: - UI Components
     
     private let header: UIView = .init()
     private let headerTitle: TLLabel = .init(
         font: TLFont.subtitle1,
-        text: "장소 선택",
+        text: Constants.titleText,
         color: TLColor.white
     )
     private let closeButton: UIButton = {
@@ -31,7 +42,7 @@ final class LocationSearchVC: UIViewController {
     
     private let searchBar: UISearchBar = {
         let searchBar = UISearchBar()
-        searchBar.placeholder = "여행 검색"
+        searchBar.placeholder = Constants.placeholder
         searchBar.searchTextField.textColor = TLColor.white
         searchBar.barTintColor = TLColor.black
         searchBar.searchTextField.backgroundColor = TLColor.backgroundGray
@@ -91,7 +102,7 @@ final class LocationSearchVC: UIViewController {
 
 // MARK: - Setup Functions
 
-extension LocationSearchVC {
+private extension LocationSearchVC {
     
     func setupAttributes() {
         view.backgroundColor = TLColor.black
@@ -130,9 +141,9 @@ extension LocationSearchVC {
             header.topAnchor.constraint(equalTo: view.topAnchor),
             header.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             header.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            header.heightAnchor.constraint(equalToConstant: 52),
+            header.heightAnchor.constraint(equalToConstant: Metric.contentHeight),
             
-            closeButton.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 16),
+            closeButton.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: Metric.margin),
             closeButton.centerYAnchor.constraint(equalTo: header.centerYAnchor),
             headerTitle.centerXAnchor.constraint(equalTo: header.centerXAnchor),
             headerTitle.centerYAnchor.constraint(equalTo: header.centerYAnchor),
@@ -140,9 +151,9 @@ extension LocationSearchVC {
             searchBar.topAnchor.constraint(equalTo: header.bottomAnchor),
             searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            searchBar.heightAnchor.constraint(equalToConstant: 52),
+            searchBar.heightAnchor.constraint(equalToConstant: Metric.contentHeight),
            
-            tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 27),
+            tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: Metric.topInset),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -190,7 +201,7 @@ extension LocationSearchVC: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 52
+        return Metric.contentHeight
     }
     
 }
