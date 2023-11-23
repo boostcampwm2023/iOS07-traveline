@@ -74,10 +74,10 @@ final class TimelineWritingVC: UIViewController {
     
     @objc private func selectLocationButtonTapped() {
         // action
-        let loca = LocationSearchVC()
-        loca.delegate = self
+        let locationSearchVC = LocationSearchVC()
+        locationSearchVC.delegate = self
         
-        present(loca, animated: true)
+        present(locationSearchVC, animated: true)
     }
     
     @objc private func selectTimeButtonTapped() {

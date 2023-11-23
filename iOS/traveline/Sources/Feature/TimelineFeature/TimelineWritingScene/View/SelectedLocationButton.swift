@@ -94,13 +94,15 @@ private extension SelectLocationButton {
         NSLayoutConstraint.activate([
             
             icon.leadingAnchor.constraint(equalTo: leadingAnchor),
-            label.leadingAnchor.constraint(equalTo: icon.trailingAnchor),
-            cancelButton.leadingAnchor.constraint(equalTo: label.trailingAnchor, constant: Constants.buttonSpacing),
             icon.topAnchor.constraint(equalTo: topAnchor),
-            label.topAnchor.constraint(equalTo: topAnchor),
-            cancelButton.topAnchor.constraint(equalTo: topAnchor),
             icon.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            label.leadingAnchor.constraint(equalTo: icon.trailingAnchor),
+            label.topAnchor.constraint(equalTo: topAnchor),
             label.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            cancelButton.topAnchor.constraint(equalTo: topAnchor),
+            cancelButton.leadingAnchor.constraint(equalTo: label.trailingAnchor, constant: Constants.buttonSpacing),
             cancelButton.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }

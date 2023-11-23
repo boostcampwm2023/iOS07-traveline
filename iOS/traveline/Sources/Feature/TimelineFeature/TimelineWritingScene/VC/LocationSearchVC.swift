@@ -78,26 +78,6 @@ final class LocationSearchVC: UIViewController {
         dismiss(animated: true)
     }
     
-    private func attributeString(from text: String) -> NSMutableAttributedString {
-        let attributedString = NSMutableAttributedString(string: text)
-        let length = text.count
-        let range = (text as NSString).range(of: text)
-        let colorRange = (text as NSString).range(of: String(text.dropLast(length - 1)))
-        
-        attributedString.addAttribute(
-            .font,
-            value: TLFont.body1.font,
-            range: range
-        )
-        
-        attributedString.addAttribute(
-            .foregroundColor,
-            value: TLColor.main,
-            range: colorRange
-        )
-        return attributedString
-    }
-    
 }
 
 // MARK: - Setup Functions
@@ -168,8 +148,7 @@ extension LocationSearchVC: UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         guard let text = searchBar.text,
-              !text.replacingOccurrences(of: " ", with: "").isEmpty else { return
-        }
+              !text.trimmingCharacters(in: .whitespaces).isEmpty else { return }
         // search result logic
     }
 }
@@ -195,8 +174,8 @@ extension LocationSearchVC: UITableViewDataSource {
         let cell = UITableViewCell(style: .default, reuseIdentifier: .none)
         let text = results[indexPath.row]
         cell.backgroundColor = TLColor.black
-        cell.textLabel?.text = text
-        cell.textLabel?.attributedText = attributeString(from: text)
+        cell.textLabel?.attributedText = text.attributeFirstLetterToMainColor()
+        
         return cell
     }
     
