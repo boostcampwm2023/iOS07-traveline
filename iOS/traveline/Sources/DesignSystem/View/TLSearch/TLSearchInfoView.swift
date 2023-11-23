@@ -21,7 +21,6 @@ final class TLSearchInfoView: UIView {
         stackView.axis = .horizontal
         stackView.alignment = .center
         stackView.spacing = Metric.spacing
-        stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
     
@@ -41,7 +40,6 @@ final class TLSearchInfoView: UIView {
         let button = UIButton()
         button.setImage(TLImage.Home.close, for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -72,6 +70,10 @@ private extension TLSearchInfoView {
     func setupLayout() {
         searchStackView.addArrangedSubviews(searchIcon, titleLabel)
         addSubviews(searchStackView, closeButton)
+        
+        subviews.forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         
         NSLayoutConstraint.activate([
             closeButton.trailingAnchor.constraint(equalTo: trailingAnchor),

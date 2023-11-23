@@ -73,6 +73,7 @@ private extension HomeVC {
         
         homeSearchView.isHidden = true
         
+        // TODO: - 서버 연동 후 수정
         homeListView.setupData(
             filterList: FilterType.allCases.map {
                 Filter(type: $0, isSelected: false)
@@ -81,6 +82,7 @@ private extension HomeVC {
         )
     }
     
+    // TODO: - 서버 연동 후 수정
     func testSampleData(type: SearchViewType) {
         if type == .recent {
             homeSearchView.setupData(
@@ -94,7 +96,10 @@ private extension HomeVC {
     }
     
     func setupLayout() {
-        view.addSubviews(homeListView)
+        view.addSubviews(
+            homeListView,
+            homeSearchView
+        )
         
         view.subviews.forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
@@ -104,13 +109,8 @@ private extension HomeVC {
             homeListView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             homeListView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             homeListView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            homeListView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-        
-        view.addSubview(homeSearchView)
-        homeSearchView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
+            homeListView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             homeSearchView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             homeSearchView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             homeSearchView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
