@@ -73,6 +73,10 @@ final class TimelineWritingVC: UIViewController {
     
     @objc func selectLocationButtonTapped() {
         // action
+        let loca = LocationSearchVC()
+        loca.delegate = self
+        
+        present(loca, animated: true)
     }
     
     @objc func selectTimeButtonTapped() {
@@ -203,6 +207,14 @@ extension TimelineWritingVC: PHPickerViewControllerDelegate {
                 self.selectImageButton.setImage(selectedImage)
             }
         }
+    }
+    
+}
+
+extension TimelineWritingVC: LocationSearchDelegate {
+    func selectedLocation(result: String) {
+        print("ho?")
+        selectLocation.setText(to: result)
     }
     
 }
