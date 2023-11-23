@@ -16,9 +16,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
             
         window = UIWindow(windowScene: windowScene)
-      //  let viewModel = HomeViewModel()
-    //    let vc = HomeVC(viewModel: viewModel)
-        let vc = TimelineWritingVC()
+        let viewModel = HomeViewModel()
+        let vc = HomeVC(viewModel: viewModel)
+//        let vc = TimelineWritingVC()
         let nv = UINavigationController(rootViewController: vc)
         window?.rootViewController = nv
         window?.tintColor = TLColor.main

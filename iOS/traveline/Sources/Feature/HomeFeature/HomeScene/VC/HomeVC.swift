@@ -14,6 +14,11 @@ final class HomeVC: UIViewController {
     
     private enum Metric {
         static let topInset: CGFloat = 12
+        
+        enum Button {
+            static let trailingInset: CGFloat = 24
+            static let bottomInset: CGFloat = 10
+        }
     }
     
     private enum Constants {
@@ -26,6 +31,7 @@ final class HomeVC: UIViewController {
     private let searchController = TLSearchController.init(placeholder: Constants.searchTravel)
     private let homeListView: HomeListView = .init()
     private let homeSearchView: HomeSearchView = .init()
+    private let createTravelButton: TLFloatingButton = .init(style: .create)
     
     // MARK: - Properties
     
@@ -52,6 +58,13 @@ final class HomeVC: UIViewController {
         setupLayout()
         bind()
     }
+    
+    // MARK: - Functions
+    
+    @objc private func createTravelButtonDidTapped(_ button: TLFloatingButton) {
+        let travelVC = TravelVC()
+        navigationController?.pushViewController(travelVC, animated: true)
+    }
 }
 
 // MARK: - Setup Functions
@@ -73,6 +86,12 @@ private extension HomeVC {
         
         homeSearchView.isHidden = true
         
+        createTravelButton.addTarget(
+            self,
+            action: #selector(createTravelButtonDidTapped(_:)),
+            for: .touchUpInside
+        )
+        
         // TODO: - 서버 연동 후 수정
         homeListView.setupData(
             filterList: FilterType.allCases.map {
@@ -80,6 +99,10 @@ private extension HomeVC {
             },
             travelList: TravelListSample.make()
         )
+        
+        let backBarButtonItem = UIBarButtonItem()
+        backBarButtonItem.tintColor = TLColor.white
+        self.navigationItem.backBarButtonItem = backBarButtonItem
     }
     
     // TODO: - 서버 연동 후 수정
@@ -98,7 +121,8 @@ private extension HomeVC {
     func setupLayout() {
         view.addSubviews(
             homeListView,
-            homeSearchView
+            homeSearchView,
+            createTravelButton
         )
         
         view.subviews.forEach {
@@ -114,11 +138,25 @@ private extension HomeVC {
             homeSearchView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             homeSearchView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             homeSearchView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            homeSearchView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            homeSearchView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            createTravelButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.Button.trailingInset),
+            createTravelButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -Metric.Button.bottomInset)
         ])
     }
     
     func bind() {
+        homeListView.didSelectHomeList
+            .sink { [weak owner = self] _ in
+                guard let owner else { return }
+                let timelineVC = TimelineVC()
+                owner.navigationController?.pushViewController(
+                    timelineVC,
+                    animated: true
+                )
+            }
+            .store(in: &cancellables)
+        
         viewModel.$state
             .map(\.homeViewType)
             .removeDuplicates()
