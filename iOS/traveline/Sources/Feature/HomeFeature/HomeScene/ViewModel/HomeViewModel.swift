@@ -10,27 +10,43 @@ import Foundation
 import Combine
 
 enum HomeAction: BaseAction {
-    case searchStart(String)
+    case startSearch
+    case searching(String)
     case searchDone(String)
+    case cancelSearch
 }
 
 enum HomeSideEffect: BaseSideEffect {
-    case fetchSearchAPI
-    case fetchSearchResultAPI
+    case showRecent
+    case showRelated(String)
+    case showResult(String)
+    case showList
 }
 
 struct HomeState: BaseState {
-    var value: Int = 0
+    enum HomeViewType {
+        case home
+        case recent
+        case related
+        case result
+    }
+    
+    var homeViewType: HomeViewType = .home
+    var searchText: String = ""
 }
 
 final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> {
     
     override func transform(action: Action) -> SideEffectPublisher {
         switch action {
-        case .searchStart:
-            fetchSearch()
-        case .searchDone:
-            fetchSearchResult()
+        case .startSearch:
+            Just(HomeSideEffect.showRecent).eraseToAnyPublisher()
+        case let .searching(text):
+            Just(HomeSideEffect.showRelated(text)).eraseToAnyPublisher()
+        case let .searchDone(text):
+            Just(HomeSideEffect.showResult(text)).eraseToAnyPublisher()
+        case .cancelSearch:
+            Just(HomeSideEffect.showList).eraseToAnyPublisher()
         }
     }
     
@@ -38,32 +54,18 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         var newState = state
         
         switch effect {
-        case .fetchSearchAPI:
-            newState.value += 1
-        case .fetchSearchResultAPI:
-            newState.value -= 1
+        case .showRecent:
+            newState.homeViewType = .recent
+        case let .showRelated(text):
+            newState.homeViewType = (text.isEmpty) ? .recent : .related
+            newState.searchText = text
+        case let .showResult(text):
+            newState.homeViewType = .result
+            newState.searchText = text
+        case .showList:
+            newState.homeViewType = .home
         }
         
         return newState
-    }
-}
-
-private extension HomeViewModel {
-    private func fetchSearch() -> SideEffectPublisher {
-        return Future { promise in
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-                promise(.success(.fetchSearchAPI))
-            }
-        }
-        .eraseToAnyPublisher()
-    }
-    
-    private func fetchSearchResult() -> SideEffectPublisher {
-        return Future { promise in
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 2) {
-                promise(.success(.fetchSearchResultAPI))
-            }
-        }
-        .eraseToAnyPublisher()
     }
 }

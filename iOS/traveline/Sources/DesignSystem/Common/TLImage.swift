@@ -28,6 +28,7 @@ enum TLImage {
         static let back = TravelineAsset.Images.back.image
         static let plus = TravelineAsset.Images.plus.image
         static let closeBlack = TravelineAsset.Images.closeBlack.image
+        static let search = TravelineAsset.Images.search.image
     }
     
     enum Travel {
@@ -35,5 +36,9 @@ enum TLImage {
         static let time = TravelineAsset.Images.time.image
         static let map = TravelineAsset.Images.map.image
         static let more = TravelineAsset.Images.more.image
+    }
+    
+    enum Home {
+        static let close = TravelineAsset.Images.closeMedium.image
     }
 }
