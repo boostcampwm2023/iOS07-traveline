@@ -63,7 +63,7 @@ final class HomeListView: UIView {
         super.init(frame: .zero)
         
         setupLayout()
-        makeDataSource()
+        setupDataSource()
     }
     
     required init?(coder: NSCoder) {
@@ -72,7 +72,7 @@ final class HomeListView: UIView {
     
     // MARK: - Functions
     
-    private func makeDataSource() {
+    private func setupDataSource() {
         dataSource = DataSource(collectionView: homeCollectionView) { collectionView, indexPath, itemIdentifier in
             
             let section = HomeSection(rawValue: indexPath.section)
@@ -165,7 +165,7 @@ final class HomeListView: UIView {
     }
     
     func setupData(filterList: FilterList, travelList: TravelList) {
-        var snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>()
+        var snapshot = Snapshot()
         snapshot.appendSections([.filter, .travelList])
         
         filterList.forEach { snapshot.appendItems([.filterItem($0)], toSection: .filter) }

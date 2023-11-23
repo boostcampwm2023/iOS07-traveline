@@ -10,27 +10,28 @@ import Foundation
 import Combine
 
 enum HomeAction: BaseAction {
-    case startSearch(String)
+    case startSearch
+    case searching(String)
     case searchDone(String)
     case cancelSearch
 }
 
 enum HomeSideEffect: BaseSideEffect {
-    case showText(String)
+    case showRecent
+    case showRelated(String)
     case showResult(String)
     case showList
 }
 
 struct HomeState: BaseState {
-    enum SearchViewType {
-        case none
+    enum HomeViewType {
+        case home
         case recent
-        case typing
+        case related
         case result
     }
     
-    var isSearching: Bool = false
-    var searchViewType: SearchViewType = .none
+    var homeViewType: HomeViewType = .home
     var searchText: String = ""
 }
 
@@ -38,8 +39,10 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
     
     override func transform(action: Action) -> SideEffectPublisher {
         switch action {
-        case let .startSearch(text):
-            Just(HomeSideEffect.showText(text)).eraseToAnyPublisher()
+        case .startSearch:
+            Just(HomeSideEffect.showRecent).eraseToAnyPublisher()
+        case let .searching(text):
+            Just(HomeSideEffect.showRelated(text)).eraseToAnyPublisher()
         case let .searchDone(text):
             Just(HomeSideEffect.showResult(text)).eraseToAnyPublisher()
         case .cancelSearch:
@@ -51,17 +54,16 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         var newState = state
         
         switch effect {
-        case let .showText(text):
-            newState.isSearching = true
-            newState.searchViewType = text.isEmpty ? .recent : .typing
+        case .showRecent:
+            newState.homeViewType = .recent
+        case let .showRelated(text):
+            newState.homeViewType = (text.isEmpty) ? .recent : .related
             newState.searchText = text
         case let .showResult(text):
-            newState.isSearching = false
-            newState.searchViewType = .result
+            newState.homeViewType = .result
             newState.searchText = text
         case .showList:
-            newState.isSearching = false
-            newState.searchViewType = .none
+            newState.homeViewType = .home
         }
         
         return newState

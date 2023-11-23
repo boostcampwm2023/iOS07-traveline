@@ -25,7 +25,7 @@ final class HomeVC: UIViewController {
     
     private let searchController = TLSearchController.init(placeholder: Constants.searchTravel)
     private let homeListView: HomeListView = .init()
-    private let homeSearchView = HomeSearchView.init()
+    private let homeSearchView: HomeSearchView = .init()
     
     // MARK: - Properties
     
@@ -52,20 +52,6 @@ final class HomeVC: UIViewController {
         setupLayout()
         bind()
     }
-    
-    // MARK: - Functions
-    
-    func setupSearchView() {
-        view.addSubview(homeSearchView)
-        homeSearchView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            homeSearchView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            homeSearchView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            homeSearchView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            homeSearchView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-    }
 }
 
 // MARK: - Setup Functions
@@ -85,12 +71,26 @@ private extension HomeVC {
             .font: TLFont.subtitle1.font
         ]
         
+        homeSearchView.isHidden = true
+        
         homeListView.setupData(
             filterList: FilterType.allCases.map {
                 Filter(type: $0, isSelected: false)
             },
             travelList: TravelListSample.make()
         )
+    }
+    
+    func testSampleData(type: SearchViewType) {
+        if type == .recent {
+            homeSearchView.setupData(
+                list: SearchKeywordSample.makeRecentList()
+            )
+        } else {
+            homeSearchView.setupData(
+                list: SearchKeywordSample.makeRelatedList()
+            )
+        }
     }
     
     func setupLayout() {
@@ -106,16 +106,29 @@ private extension HomeVC {
             homeListView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             homeListView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+        
+        view.addSubview(homeSearchView)
+        homeSearchView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            homeSearchView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            homeSearchView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            homeSearchView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            homeSearchView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
     
     func bind() {
         viewModel.$state
-            .map(\.isSearching)
+            .map(\.homeViewType)
             .removeDuplicates()
-            .filter { $0 }
-            .sink { [weak owner = self] _ in
+            .filter { $0 == .recent || $0 == .related }
+            .sink { [weak owner = self] type in
                 guard let owner else { return }
-                owner.setupSearchView()
+                let type: SearchViewType = (type == .recent) ? .recent : .related
+                owner.homeSearchView.isHidden = false
+                owner.homeSearchView.makeLayout(type: type)
+                owner.testSampleData(type: type)
             }
             .store(in: &cancellables)
     }
@@ -125,21 +138,26 @@ private extension HomeVC {
 
 extension HomeVC: UISearchBarDelegate {
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
-        guard let text = searchController.searchBar.searchTextField.text else { return }
-        viewModel.sendAction(.startSearch(text))
+        // 최근 검색어
+        viewModel.sendAction(.startSearch)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        // 관련 검색어
+        viewModel.sendAction(.searching(searchText))
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        // TODO: - 검색결과
+        // 검색 결과
         guard let text = searchBar.text else { return }
         viewModel.sendAction(.searchDone(text))
-        homeSearchView.removeFromSuperview()
+        homeSearchView.isHidden = true
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        // TODO: - 전체 리스트
+        // 홈 리스트
         viewModel.sendAction(.cancelSearch)
-        homeSearchView.removeFromSuperview()
+        homeSearchView.isHidden = true
     }
 }
 
