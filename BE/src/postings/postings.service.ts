@@ -50,10 +50,10 @@ export class PostingsService {
     private readonly postingWithWhosRepository: PostingWithWhosRepository
   ) {}
 
-  async createPosting(createPostingDto: CreatePostingDto) {
+  async createPosting(userId: string, createPostingDto: CreatePostingDto) {
     const posting = new Posting();
     posting.id = uuidv4();
-    posting.writer = ''; // TODO: 나중에 JWT에서 User의 id 가져오기
+    posting.writer = userId;
     posting.title = createPostingDto.title;
     posting.createdAt = new Date();
     posting.startDate = new Date(createPostingDto.startDate);

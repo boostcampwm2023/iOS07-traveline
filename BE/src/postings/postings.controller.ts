@@ -8,6 +8,7 @@ import {
   Query,
   Put,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { PostingsService } from './postings.service';
 import { CreatePostingDto } from './dto/create-posting.dto';
@@ -30,7 +31,9 @@ import {
   vehicles,
   withWhos,
 } from './postings.types';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+@UseGuards(AuthGuard)
 @Controller('postings')
 @ApiTags('Postings API')
 export class PostingsController {
@@ -51,7 +54,11 @@ export class PostingsController {
       );
     }
 
-    const posting = await this.postingsService.createPosting(createPostingDto);
+    // TODO: JWT 토큰에서 user의 id 꺼내기
+    const posting = await this.postingsService.createPosting(
+      '',
+      createPostingDto
+    );
 
     await this.postingsService.createPostingTheme(
       posting.id,
@@ -62,6 +69,8 @@ export class PostingsController {
       posting.id,
       createPostingDto.withWho
     );
+
+    return posting;
   }
 
   // @Get()
