@@ -26,8 +26,6 @@ final class TimelineCardView: UIView {
         
         stackView.axis = .horizontal
         stackView.spacing = Metric.labelLeadingInset
-        stackView.alignment = .fill
-        stackView.distribution = .fill
         
         return stackView
     }()
