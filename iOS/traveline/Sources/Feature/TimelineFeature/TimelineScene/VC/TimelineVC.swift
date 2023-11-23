@@ -63,6 +63,20 @@ private extension TimelineVC {
         
         navigationController?.navigationBar.standardAppearance = appearance
         navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        
+        let menuItems: [UIAction] = [
+            .init(title: "수정하기", handler: { _ in
+                // TODO: - 수정하기 연결
+            }),
+            .init(title: "삭제하기", attributes: .destructive, handler: { _ in
+                // TODO: - 삭제하기 연결
+            })
+        ]
+        let moreButton = UIBarButtonItem(
+            image: TLImage.Travel.more.withRenderingMode(.alwaysOriginal),
+            menu: .init(children: menuItems)
+        )
+        navigationItem.rightBarButtonItem = moreButton
     }
     
     func setupLayout() {
