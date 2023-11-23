@@ -38,6 +38,6 @@ export class User {
   postings: Posting[];
 
   @ManyToOne(() => SocialLogin, (socialLogin) => socialLogin.users)
-  @JoinColumn({ name: 'socialType', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'social_type', referencedColumnName: 'id' })
   socials: SocialLogin;
 }
