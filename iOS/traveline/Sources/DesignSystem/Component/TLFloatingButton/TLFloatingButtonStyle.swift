@@ -12,7 +12,7 @@ enum TLFloatingButtonStyle {
     case create
     
     var height: CGFloat {
-        48.0
+        52.0
     }
     
     var floatingImage: TravelineImages.Image {

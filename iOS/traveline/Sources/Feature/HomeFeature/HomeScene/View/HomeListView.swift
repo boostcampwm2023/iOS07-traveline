@@ -6,6 +6,7 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
+import Combine
 import UIKit
 
 final class HomeListView: UIView {
@@ -44,8 +45,10 @@ final class HomeListView: UIView {
             frame: .zero,
             collectionViewLayout: makeLayout()
         )
+        collectionView.backgroundColor = TLColor.black
         collectionView.register(TLListCVC.self, forCellWithReuseIdentifier: TLListCVC.identifier)
         collectionView.register(FilterCVC.self, forCellWithReuseIdentifier: FilterCVC.identifier)
+        collectionView.delegate = self
         collectionView.showsVerticalScrollIndicator = false
         return collectionView
     }()
@@ -56,6 +59,8 @@ final class HomeListView: UIView {
     private typealias Snapshot = NSDiffableDataSourceSnapshot<HomeSection, HomeItem>
     
     private var dataSource: DataSource!
+    
+    var didSelectHomeList: PassthroughSubject<Void, Never> = .init()
     
     // MARK: - Initializer
     
@@ -191,6 +196,14 @@ extension HomeListView {
             homeCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
             homeCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension HomeListView: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        didSelectHomeList.send(Void())
     }
 }
 

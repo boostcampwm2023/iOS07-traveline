@@ -63,6 +63,11 @@ final class TimelineVC: UIViewController {
         navigationController?.pushViewController(mapVC, animated: true)
     }
     
+    @objc private func createPostingButtonDidTapped() {
+        let timelineWritingVC = TimelineWritingVC()
+        navigationController?.pushViewController(timelineWritingVC, animated: true)
+    }
+    
 }
 
 // MARK: - Setup Functions
@@ -70,6 +75,9 @@ final class TimelineVC: UIViewController {
 private extension TimelineVC {
     func setupAttributes() {
         view.backgroundColor = TLColor.black
+        
+        createPostingButton.addTarget(self, action: #selector(createPostingButtonDidTapped), for: .touchUpInside)
+        
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = TLColor.black
@@ -187,6 +195,14 @@ private extension TimelineVC {
 
 extension TimelineVC: UICollectionViewDelegate {
     // TODO: - 상세 뷰 연결
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let timelineDetailVC = TimelineDetailVC(
+            info: TimelineSample.makeDetailInfo()
+        )
+        
+        navigationController?.pushViewController(timelineDetailVC, animated: true)
+    }
 }
 
 extension TimelineVC: UICollectionViewDataSource {

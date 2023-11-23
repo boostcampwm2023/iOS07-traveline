@@ -11,7 +11,7 @@ import UIKit
 final class TLTag: UIButton {
     
     enum Metric {
-        static let borderWidth: CGFloat = 1.0
+        static let borderWidth: CGFloat = 0.5
         static let spacing: CGFloat = 4.0
         static let cancelImageWidth: CGFloat = 12.0
     }
@@ -24,7 +24,7 @@ final class TLTag: UIButton {
         view.isUserInteractionEnabled = false
         view.backgroundColor = TLColor.darkGray
         view.layer.borderWidth = Metric.borderWidth
-        view.layer.borderColor = TLColor.lightGray.cgColor
+        view.layer.borderColor = TLColor.mediumGray.cgColor
         
         return view
     }()
@@ -44,7 +44,7 @@ final class TLTag: UIButton {
     private let tagTitleLabel: TLLabel = TLLabel(
         font: .body2,
         text: Literal.empty,
-        color: TLColor.lightGray
+        color: TLColor.mediumGray
     )
     
     private let cancelImageView: UIImageView = {
@@ -79,7 +79,7 @@ final class TLTag: UIButton {
     
     private var style: TLTagStyle
     private let tagColor: UIColor
-    private let defaultColor: UIColor = TLColor.lightGray
+    private let defaultColor: UIColor = TLColor.mediumGray
 
     // MARK: - Initialize
     

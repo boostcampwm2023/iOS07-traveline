@@ -66,6 +66,9 @@ private extension TimelineCardView {
         layer.cornerRadius = Metric.radius
         thumbnailImageView.backgroundColor = TLColor.disabledGray
         thumbnailImageView.layer.cornerRadius = 12.0
+        // TODO: - 서버 연동 후 수정
+        thumbnailImageView.image = TravelineAsset.Images.travelImage.image
+        thumbnailImageView.clipsToBounds = true
     }
     
     func setupLayout() {

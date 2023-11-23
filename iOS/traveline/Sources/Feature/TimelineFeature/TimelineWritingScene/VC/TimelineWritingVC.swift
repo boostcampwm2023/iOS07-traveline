@@ -225,4 +225,3 @@ extension TimelineWritingVC: LocationSearchDelegate {
     let homeNV = UINavigationController(rootViewController: timelineWritingVC)
     return homeNV
 }
-

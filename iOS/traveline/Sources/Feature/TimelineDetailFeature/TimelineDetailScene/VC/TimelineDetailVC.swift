@@ -30,7 +30,6 @@ final class TimelineDetailVC: UIViewController {
         return view
     }()
     
-    
     private let line: UIView = {
         let view = UIView()
         view.backgroundColor = TLColor.lineGray
@@ -41,6 +40,9 @@ final class TimelineDetailVC: UIViewController {
     private let imageView: UIImageView = {
         let view = UIImageView()
         view.contentMode = .scaleAspectFill
+        // TODO: - 서버 연동 후 수정
+        view.image = TravelineAsset.Images.travelImage.image
+        view.clipsToBounds = true
         
         return view
     }()
@@ -77,7 +79,6 @@ final class TimelineDetailVC: UIViewController {
         dateLabel.setText(to: info.date)
         timeLabel.setText(to: info.time)
         locationLabel.setText(to: info.location)
-        imageView.image = UIImage(systemName: "leaf")
         contentView.setText(to: info.content)
     }
     
