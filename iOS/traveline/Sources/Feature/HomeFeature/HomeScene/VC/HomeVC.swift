@@ -13,7 +13,7 @@ import OSLog
 final class HomeVC: UIViewController {
     
     private enum Metric {
-        static let topInset: CGFloat = 24
+        static let topInset: CGFloat = 12
     }
     
     private enum Constants {
@@ -71,7 +71,12 @@ private extension HomeVC {
             .font: TLFont.subtitle1.font
         ]
         
-        homeListView.setData(items: TravelListSample.make())
+        homeListView.setupData(
+            filterList: FilterType.allCases.map {
+                Filter(type: $0, isSelected: false)
+            },
+            travelList: TravelListSample.make()
+        )
     }
     
     func setupLayout() {

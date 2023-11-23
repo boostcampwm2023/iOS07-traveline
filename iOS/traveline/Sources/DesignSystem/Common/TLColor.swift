@@ -14,6 +14,7 @@ enum TLColor {
     static let pressedMain = TravelineAsset.Colors.pressedMain.color
     static let black = TravelineAsset.Colors.black.color
     static let disabledGray = TravelineAsset.Colors.disabledGray.color
+    static let unselectedGray = TravelineAsset.Colors.unSelectedGray.color
     static let darkGray = TravelineAsset.Colors.darkGray.color
     static let gray = TravelineAsset.Colors.gray.color
     static let lightGray = TravelineAsset.Colors.lightGray.color

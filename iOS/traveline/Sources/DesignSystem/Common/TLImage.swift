@@ -13,8 +13,15 @@ enum TLImage {
         static let close = TravelineAsset.Images.close.image
     }
     
+    enum Filter {
+        static let total = TravelineAsset.Images.totalFilter.image
+        static let totalSelected = TravelineAsset.Images.totalFilterSelected.image
+        static let down = TravelineAsset.Images.downArrow.image
+        static let downSelected = TravelineAsset.Images.downArrowSelected.image
+    }
+    
     enum Common {
-        static let likeUnselected = TravelineAsset.Images.likeUnselected.image
+        static let like = TravelineAsset.Images.likeUnselected.image
         static let likeSelected = TravelineAsset.Images.likeSelected.image
         static let camera = TravelineAsset.Images.camera.image
         static let album = TravelineAsset.Images.album.image

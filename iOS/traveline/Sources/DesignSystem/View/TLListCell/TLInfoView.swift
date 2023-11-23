@@ -63,7 +63,7 @@ final class TLInfoView: UIView {
     
     private let likeImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = TLImage.Common.likeUnselected
+        imageView.image = TLImage.Common.like
         return imageView
     }()
     
@@ -104,7 +104,7 @@ final class TLInfoView: UIView {
     
     // MARK: - Functions
     
-    func setData(item: TravelListInfo) {
+    func setupData(item: TravelListInfo) {
         // TODO: - 이미지 캐싱 구현
 //        thumbnailImageView.image = model.imageURL
 //        profileImageView.image = model.profile.imageURL
@@ -172,6 +172,6 @@ private extension TLInfoView {
 @available(iOS 17, *)
 #Preview("TLInfoView") {
     let tlInfoView = TLInfoView()
-    tlInfoView.setData(item: TravelListSample.makeInfo())
+    tlInfoView.setupData(item: TravelListSample.makeInfo())
     return tlInfoView
 }
