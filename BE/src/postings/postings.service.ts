@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { CreatePostingDto } from './dto/create-posting.dto';
 import { UpdatePostingDto } from './dto/update-posting.dto';
-import { v4 as uuidv4 } from 'uuid';
 import { Posting } from './entities/posting.entity';
 import {
   headcounts,
@@ -31,6 +30,7 @@ import { VehiclesRepository } from './repositories/tags/vehicles.repository';
 import { WithWhosRepository } from './repositories/tags/with-whos.repository';
 import { PostingTheme } from './entities/mappings/posting-theme.entity';
 import { PostingWithWho } from './entities/mappings/posting-with-who.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class PostingsService {
@@ -50,10 +50,9 @@ export class PostingsService {
     private readonly postingWithWhosRepository: PostingWithWhosRepository
   ) {}
 
-  async createPosting(userId: string, createPostingDto: CreatePostingDto) {
+  async createPosting(user: User, createPostingDto: CreatePostingDto) {
     const posting = new Posting();
-    posting.id = uuidv4();
-    posting.writer = userId;
+    posting.writer = user;
     posting.title = createPostingDto.title;
     posting.createdAt = new Date();
     posting.startDate = new Date(createPostingDto.startDate);
@@ -81,22 +80,20 @@ export class PostingsService {
     return this.postingsRepository.save(posting);
   }
 
-  async createPostingTheme(postingId: string, themes: string[]) {
+  async createPostingTheme(posting: Posting, themes: string[]) {
     themes.forEach(async (e) => {
-      const themeId = await this.themesRepository.findByName(e);
       const postingTheme = new PostingTheme();
-      postingTheme.posting = postingId;
-      postingTheme.theme = themeId.id;
+      postingTheme.posting = posting;
+      postingTheme.theme = await this.themesRepository.findByName(e);
       await this.postingThemesRepository.save(postingTheme);
     });
   }
 
-  async createPostingWithWho(postingId: string, withWhos: string[]) {
+  async createPostingWithWho(posting: Posting, withWhos: string[]) {
     withWhos.forEach(async (e) => {
-      const withWhoId = await this.withWhosRepository.findByName(e);
       const postingWithWho = new PostingWithWho();
-      postingWithWho.posting = postingId;
-      postingWithWho.withWho = withWhoId.id;
+      postingWithWho.posting = posting;
+      postingWithWho.withWho = await this.withWhosRepository.findByName(e);
       await this.postingWithWhosRepository.save(postingWithWho);
     });
   }
@@ -196,14 +193,14 @@ export class PostingsService {
     return (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) + 1;
   }
 
-  // createDaysList(startDate: Date, days: number) {
-  //   const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
-  //   const standardDate = new Date(startDate);
+  createDaysList(startDate: Date, days: number) {
+    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+    const standardDate = new Date(startDate);
 
-  //   return Array.from({ length: days }, (_, index) => {
-  //     const date = new Date(startDate);
-  //     date.setDate(standardDate.getDate() + index);
-  //     return `${date.getDate()}${weekdays[date.getDay()]}`;
-  //   });
-  // }
+    return Array.from({ length: days }, (_, index) => {
+      const date = new Date(startDate);
+      date.setDate(standardDate.getDate() + index);
+      return `${date.getDate()}${weekdays[date.getDay()]}`;
+    });
+  }
 }

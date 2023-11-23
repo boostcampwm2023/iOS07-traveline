@@ -31,13 +31,17 @@ import {
   vehicles,
   withWhos,
 } from './postings.types';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from '../auth/auth.guard';
+import { UsersService } from '../users/users.service';
 
 @UseGuards(AuthGuard)
 @Controller('postings')
 @ApiTags('Postings API')
 export class PostingsController {
-  constructor(private readonly postingsService: PostingsService) {}
+  constructor(
+    private readonly postingsService: PostingsService,
+    private readonly usersService: UsersService
+  ) {}
 
   @Post()
   @ApiOperation({
@@ -54,19 +58,19 @@ export class PostingsController {
       );
     }
 
-    // TODO: JWT 토큰에서 user의 id 꺼내기
+    const user = await this.usersService.findById(''); // TODO: JWT 토큰에서 user의 id 꺼내기
     const posting = await this.postingsService.createPosting(
-      '',
+      user,
       createPostingDto
     );
 
     await this.postingsService.createPostingTheme(
-      posting.id,
+      posting,
       createPostingDto.theme
     );
 
     await this.postingsService.createPostingWithWho(
-      posting.id,
+      posting,
       createPostingDto.withWho
     );
 
