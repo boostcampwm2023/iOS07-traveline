@@ -45,6 +45,7 @@ final class HomeListView: UIView {
             frame: .zero,
             collectionViewLayout: makeLayout()
         )
+        collectionView.backgroundColor = TLColor.black
         collectionView.register(TLListCVC.self, forCellWithReuseIdentifier: TLListCVC.identifier)
         collectionView.register(FilterCVC.self, forCellWithReuseIdentifier: FilterCVC.identifier)
         collectionView.delegate = self
