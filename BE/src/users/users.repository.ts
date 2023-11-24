@@ -2,11 +2,12 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Repository, UpdateResult } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UserInfoDto } from './dto/user-info.dto';
+import { USERS_REPOSITORY } from './users.constants';
 
 @Injectable()
 export class UserRepository {
   constructor(
-    @Inject('USERS_REPOSITORY')
+    @Inject(USERS_REPOSITORY)
     private userRepository: Repository<User>
   ) {}
 
