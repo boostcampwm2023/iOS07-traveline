@@ -1,7 +1,10 @@
-import { HttpException, Injectable } from '@nestjs/common';
-import { UpdateUserDto } from './dto/update-user.dto';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { UserInfoDto } from './dto/user-info.dto';
 import { CreateAuthDto } from 'src/auth/dto/create-auth.dto';
-import { User } from './entities/user.entity';
 import { StorageService } from 'src/storage/storage.service';
 import { UserRepository } from './users.repository';
 import { CheckDuplicatedNameResponseDto } from './dto/check-duplicated-name-response.dto';
@@ -13,36 +16,58 @@ export class UsersService {
     private readonly storageService: StorageService
   ) {}
 
-  create(createAuthDto: CreateAuthDto) {
+  createUser(createAuthDto: CreateAuthDto) {
     return 'This action adds a new user';
   }
 
-  async findById(id: string): Promise<User> {
-    const user = await this.userRepository.findById(id);
-    if (!user) {
-      throw new HttpException('Not Found', 404);
-    }
-    const avatarPath = user.avatar;
-    user.avatar = await this.storageService.getImageUrl(avatarPath);
-    return user;
+  deleteUser(id: number) {
+    return `This action removes a #${id} user`;
   }
 
-  async update(
-    id: string,
-    updateUserDto: UpdateUserDto,
+  async getUserInfo(id: string): Promise<UserInfoDto> {
+    const user = await this.userRepository.findById(id);
+    const avatarPath = user.avatar;
+    user.avatar = await this.storageService.getImageUrl(avatarPath);
+    return { name: user.name, avatar: user.avatar };
+  }
+
+  async updateUserInfo(
+    id,
+    userInfoDto: UserInfoDto,
     file: Express.Multer.File
   ) {
-    if (file) {
-      const uploadResult = await this.storageService.upload('avatar/', file);
+    const user = await this.userRepository.findById(id);
+
+    //프로필사진, 닉네임 변화 모두 없음
+    if (!file && userInfoDto.name === user.name) {
+      throw new BadRequestException('변경 사항이 없습니다.');
+    }
+
+    //닉네임만 변경
+    if (!file) {
+      userInfoDto.avatar = user.avatar;
+    }
+
+    //닉네임과 프로필 모두 변경
+    else {
+      if (user.avatar != 'default') {
+        const deleteResult = await this.storageService.delete(user.avatar);
+        console.log(deleteResult);
+      }
+      const uploadResult = await this.storageService.upload(`${id}/`, file);
       const path = uploadResult.path;
-      updateUserDto.avatar = path;
+      userInfoDto.avatar = path;
     }
-    const updateResult = await this.userRepository.update(id, updateUserDto);
+
+    const updateResult = await this.userRepository.update(id, userInfoDto);
     if (updateResult.affected == 0) {
-      throw new HttpException('Bad Request', 400);
+      throw new InternalServerErrorException();
     }
-    const url = await this.storageService.getImageUrl(updateUserDto.avatar);
-    return { imageUrl: url };
+
+    userInfoDto.avatar = await this.storageService.getImageUrl(
+      userInfoDto.avatar
+    );
+    return userInfoDto;
   }
 
   async checkDuplicatedName(
@@ -53,9 +78,5 @@ export class UsersService {
       return { isDuplicated: false };
     }
     return { isDuplicated: true };
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
   }
 }
