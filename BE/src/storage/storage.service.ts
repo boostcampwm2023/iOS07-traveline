@@ -21,7 +21,7 @@ export class StorageService {
   }
 
   async upload(path: string, file: Express.Multer.File) {
-    const uploadParams = {
+    const uploadParams: AWS.S3.PutObjectRequest = {
       Bucket: this.bucketName,
       Key: path + this.generateFilename(file.originalname),
       Body: file.buffer,
@@ -44,5 +44,14 @@ export class StorageService {
 
     const signedUrl = await this.s3.getSignedUrlPromise('getObject', params);
     return signedUrl;
+  }
+
+  async delete(path: string) {
+    const deleteParams: AWS.S3.DeleteObjectRequest = {
+      Bucket: this.bucketName,
+      Key: path,
+    };
+
+    return await this.s3.deleteObject(deleteParams).promise();
   }
 }
