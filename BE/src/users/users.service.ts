@@ -27,7 +27,13 @@ export class UsersService {
   async getUserInfo(id: string): Promise<UserInfoDto> {
     const user = await this.userRepository.findById(id);
     const avatarPath = user.avatar;
-    user.avatar = await this.storageService.getImageUrl(avatarPath);
+    try {
+      user.avatar = await this.storageService.getImageUrl(avatarPath);
+    } catch {
+      throw new InternalServerErrorException(
+        '사용자 프로필 사진을 찾을 수 없습니다.'
+      );
+    }
     return { name: user.name, avatar: user.avatar };
   }
 
@@ -51,32 +57,60 @@ export class UsersService {
     //닉네임과 프로필 모두 변경
     else {
       if (user.avatar != 'default') {
-        const deleteResult = await this.storageService.delete(user.avatar);
-        console.log(deleteResult);
+        try {
+          await this.storageService.delete(user.avatar);
+        } catch (error) {
+          throw new InternalServerErrorException(
+            '사용자의 기존 프로필 사진 삭제에 실패하였습니다.'
+          );
+        }
+        return true;
       }
-      const uploadResult = await this.storageService.upload(`${id}/`, file);
-      const path = uploadResult.path;
-      userInfoDto.avatar = path;
+
+      try {
+        const uploadResult = await this.storageService.upload(`${id}/`, file);
+        const path = uploadResult.path;
+        userInfoDto.avatar = path;
+      } catch {
+        throw new InternalServerErrorException(
+          '새로운 프로필 사진 업로드에 실패하였습니다.'
+        );
+      }
+    }
+    try {
+      await this.userRepository.update(id, userInfoDto);
+    } catch {
+      throw new InternalServerErrorException(
+        '사용자 정보 갱신에 실패하였습니다.'
+      );
     }
 
-    const updateResult = await this.userRepository.update(id, userInfoDto);
-    if (updateResult.affected == 0) {
-      throw new InternalServerErrorException();
+    try {
+      userInfoDto.avatar = await this.storageService.getImageUrl(
+        userInfoDto.avatar
+      );
+    } catch {
+      throw new InternalServerErrorException(
+        '사용자 프로필 사진을 찾을 수 없습니다.'
+      );
     }
 
-    userInfoDto.avatar = await this.storageService.getImageUrl(
-      userInfoDto.avatar
-    );
     return userInfoDto;
   }
 
   async checkDuplicatedName(
     name: string
   ): Promise<CheckDuplicatedNameResponseDto> {
-    const duplicatedUser = await this.userRepository.findByName(name);
-    if (!duplicatedUser) {
-      return { isDuplicated: false };
+    try {
+      const duplicatedUser = await this.userRepository.findByName(name);
+      if (!duplicatedUser) {
+        return { isDuplicated: false };
+      }
+      return { isDuplicated: true };
+    } catch {
+      throw new InternalServerErrorException(
+        '닉네임 중복 검사에 실패하였습니다.'
+      );
     }
-    return { isDuplicated: true };
   }
 }
