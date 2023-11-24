@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateUserDto } from '../users/dto/update-user.dto';
+import { UserInfoDto } from '../users/dto/user-info.dto';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -38,7 +38,7 @@ export class AuthService {
     return `This action returns a #${id} auth`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  update(id: number, updateUserDto: UserInfoDto) {
     return `This action updates a #${id} auth`;
   }
 
