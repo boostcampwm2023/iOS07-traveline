@@ -30,7 +30,7 @@ export class UsersController {
   })
   @ApiOkResponse({
     description: 'OK',
-    type: User,
+    type: UserInfoDto,
   })
   async findOne(@Req() request) {
     return this.usersService.getUserInfo(request['user'].id);
