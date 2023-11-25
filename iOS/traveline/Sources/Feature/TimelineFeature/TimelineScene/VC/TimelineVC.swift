@@ -191,11 +191,9 @@ private extension TimelineVC {
     
 }
 
-// MARK: - UICollectionView Delegate
+// MARK: - UICollectionView Delegate, DataSource
 
 extension TimelineVC: UICollectionViewDelegate {
-    // TODO: - 상세 뷰 연결
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let timelineDetailVC = TimelineDetailVC(
             info: TimelineSample.makeDetailInfo()
@@ -242,7 +240,11 @@ extension TimelineVC: UICollectionViewDataSource {
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
         let header = collectionView.dequeHeader(view: TimelineDateHeaderView.self, for: indexPath)
         header.delegate = self
         return header
