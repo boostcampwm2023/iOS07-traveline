@@ -229,10 +229,14 @@ extension TimelineVC: UICollectionViewDataSource {
             cell.setData(from: TimelineSample.makeTravelInfo())
             cell.delegate = self
             return cell
+            
         case 1:
             let cell = collectionView.dequeue(cell: TimelineCardCVC.self, for: indexPath)
             cell.setData(by: dummyCardList[indexPath.row])
+            let lastRow = collectionView.numberOfItems(inSection: indexPath.section) - 1
+            if indexPath.row == lastRow { cell.changeToLast() }
             return cell
+                
         default:
             return UICollectionViewCell()
         }
