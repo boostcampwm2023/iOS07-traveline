@@ -4,6 +4,6 @@ export class Tag {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
-  @Column({ length: 14 })
+  @Column({ length: 14, unique: true })
   name: string;
 }

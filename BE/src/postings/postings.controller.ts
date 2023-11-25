@@ -8,6 +8,7 @@ import {
   Query,
   Put,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { PostingsService } from './postings.service';
 import { CreatePostingDto } from './dto/create-posting.dto';
@@ -30,29 +31,51 @@ import {
   vehicles,
   withWhos,
 } from './postings.types';
+import { AuthGuard } from '../auth/auth.guard';
+import { UsersService } from '../users/users.service';
 
+@UseGuards(AuthGuard)
 @Controller('postings')
 @ApiTags('Postings API')
 export class PostingsController {
-  constructor(private readonly postingsService: PostingsService) {}
+  constructor(
+    private readonly postingsService: PostingsService,
+    private readonly usersService: UsersService
+  ) {}
 
-  // @Post()
-  // @ApiOperation({
-  //   summary: '포스팅 생성 API',
-  //   description: '새로운 포스팅을 작성한다.',
-  // })
-  // @ApiOkResponse({ description: 'OK', type: Posting })
-  // async create(@Body() createPostingDto: CreatePostingDto) {
-  //   if (
-  //     new Date(createPostingDto.endDate) < new Date(createPostingDto.startDate)
-  //   ) {
-  //     throw new BadRequestException(
-  //       'endDate는 startDate와 같거나 더 나중의 날짜여야 합니다.'
-  //     );
-  //   }
+  @Post()
+  @ApiOperation({
+    summary: '포스팅 생성 API',
+    description: '새로운 포스팅을 작성한다.',
+  })
+  @ApiOkResponse({ description: 'OK', type: Posting })
+  async create(@Body() createPostingDto: CreatePostingDto) {
+    if (
+      new Date(createPostingDto.endDate) < new Date(createPostingDto.startDate)
+    ) {
+      throw new BadRequestException(
+        'endDate는 startDate와 같거나 더 나중의 날짜여야 합니다.'
+      );
+    }
 
-  //   return this.postingsService.create(createPostingDto);
-  // }
+    const user = await this.usersService.findById(''); // TODO: JWT 토큰에서 user의 id 꺼내기
+    const posting = await this.postingsService.createPosting(
+      user,
+      createPostingDto
+    );
+
+    await this.postingsService.createPostingTheme(
+      posting,
+      createPostingDto.theme
+    );
+
+    await this.postingsService.createPostingWithWho(
+      posting,
+      createPostingDto.withWho
+    );
+
+    return posting;
+  }
 
   // @Get()
   // @ApiOperation({
