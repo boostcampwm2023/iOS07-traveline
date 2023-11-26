@@ -103,6 +103,10 @@ export class PostingsService {
       this.postingWithWhosRepository.findAllByPosting(id),
     ]);
 
+    if (posting.report.length > 5) {
+      throw new ForbiddenException('차단된 게시글입니다.');
+    }
+
     return { ...posting, theme, withWho };
   }
 
