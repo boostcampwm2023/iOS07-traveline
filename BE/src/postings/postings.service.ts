@@ -32,6 +32,7 @@ import { WithWhosRepository } from './repositories/tags/with-whos.repository';
 import { PostingTheme } from './entities/mappings/posting-theme.entity';
 import { PostingWithWho } from './entities/mappings/posting-with-who.entity';
 import { UserRepository } from 'src/users/users.repository';
+import { Liked } from './entities/liked.entity';
 
 @Injectable()
 export class PostingsService {
@@ -178,22 +179,24 @@ export class PostingsService {
     return this.postingWithWhosRepository.remove(postingWithWhos);
   }
 
-  // async toggleLike(postingId: string, userId: string) {
-  //   const liked = await this.likedsRepository.findOneBy({
-  //     posting: postingId,
-  //     user: userId,
-  //   });
+  async toggleLike(postingId: string, userId: string) {
+    const posting = await this.postingsRepository.findOne(postingId);
 
-  //   if (liked) {
-  //     return this.likedsRepository.delete({ posting: postingId, user: userId });
-  //   }
+    if (!posting) {
+      throw new NotFoundException('게시글이 존재하지 않습니다.');
+    }
 
-  //   const newLiked = new Liked();
-  //   newLiked.posting = postingId;
-  //   newLiked.user = userId;
+    const liked = await this.likedsRepository.findOne(postingId, userId);
 
-  //   return this.likedsRepository.save(newLiked);
-  // }
+    if (liked) {
+      const newLiked = new Liked();
+      newLiked.posting = postingId;
+      newLiked.user = userId;
+      return this.likedsRepository.save(newLiked);
+    }
+
+    return this.likedsRepository.toggle(liked);
+  }
 
   // async report(postingId: string, userId: string) {
   //   const report = await this.reportsRepository.findOneBy({

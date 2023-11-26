@@ -112,17 +112,17 @@ export class PostingsController {
   //   //return this.postingsService.searchByKeyWord(keyword);
   // }
 
-  // @Post(':id/like')
-  // @ApiOperation({
-  //   summary: '포스팅 좋아요 API',
-  //   description:
-  //     'id 값에 해당되는 포스팅에 좋아요가 추가되거나 삭제된다. (토글)',
-  // })
-  // @ApiOkResponse({ description: 'OK' })
-  // toggleLike(@Param('id') id: string) {
-  //   // TODO: JWT에서 사용자 ID 가져오기
-  //   return this.postingsService.toggleLike(id, '');
-  // }
+  @Post(':id/like')
+  @ApiOperation({
+    summary: '포스팅 좋아요 API',
+    description:
+      'id 값에 해당되는 포스팅에 좋아요가 추가되거나 삭제된다. (토글)',
+  })
+  @ApiOkResponse({ description: 'OK' })
+  toggleLike(@Param('id') id: string) {
+    const userId = ''; // TODO: request['user'].id; (현재 id 필드 값은 닉네임)
+    return this.postingsService.toggleLike(id, userId);
+  }
 
   // @Post(':id/report')
   // @ApiOperation({
