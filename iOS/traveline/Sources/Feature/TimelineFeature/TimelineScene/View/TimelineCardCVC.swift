@@ -69,7 +69,7 @@ final class TimelineCardCVC: UICollectionViewCell {
     }
     
     /// 마지막 셀일 때 line 길이 수정
-    private func changeToLast() {
+    func changeToLast() {
         lineHeightConstraint.isActive = false
         lineView.bottomAnchor.constraint(equalTo: cardView.centerYAnchor).isActive = true
     }
