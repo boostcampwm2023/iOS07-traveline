@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreatePostingDto } from './dto/create-posting.dto';
 import { UpdatePostingDto } from './dto/update-posting.dto';
@@ -127,42 +128,78 @@ export class PostingsService {
     return { ...posting, theme, withWho };
   }
 
-  // async update(
-  //   postingId: string,
-  //   userId: string,
-  //   updatePostingDto: UpdatePostingDto
-  // ) {
-  //   const posting = await this.postingsRepository.findOneBy({ id: postingId });
+  async updatePosting(
+    postingId: string,
+    userId: string,
+    updatePostingDto: UpdatePostingDto
+  ) {
+    const posting = await this.postingsRepository.findOne(postingId);
 
-  //   if (posting && posting.writer !== userId) {
-  //     throw new ForbiddenException(
-  //       '본인이 작성한 게시글만 수정할 수 있습니다.'
-  //     );
-  //   }
+    if (!posting) {
+      throw new NotFoundException('게시글이 존재하지 않습니다.');
+    }
 
-  //   const startDate = new Date(updatePostingDto.startDate);
-  //   const endDate = new Date(updatePostingDto.endDate);
-  //   const days = this.calculateDays(startDate, endDate);
+    if (posting.writer.id !== userId) {
+      throw new ForbiddenException(
+        '본인이 작성한 게시글만 수정할 수 있습니다.'
+      );
+    }
 
-  //   return this.postingsRepository.update(postingId, {
-  //     title: updatePostingDto.title,
-  //     start_date: startDate,
-  //     end_date: endDate,
-  //     days: days,
-  //     period: this.selectPeriod(days),
-  //     headcount: this.customIndexOf(headcounts, updatePostingDto.headcount),
-  //     budget: this.customIndexOf(budgets, updatePostingDto.budget),
-  //     location: this.customIndexOf(locations, updatePostingDto.location),
-  //     theme: updatePostingDto.theme
-  //       ? updatePostingDto.theme.map((e) => themes.indexOf(e))
-  //       : null,
-  //     with_who: updatePostingDto.withWho
-  //       ? updatePostingDto.withWho.map((e) => withWhos.indexOf(e))
-  //       : null,
-  //     season: this.calculateSeason(new Date(updatePostingDto.startDate)),
-  //     vehicle: this.customIndexOf(vehicles, updatePostingDto.vehicle),
-  //   });
-  // }
+    const updatedPosting = new Posting();
+    updatedPosting.id = postingId;
+    updatedPosting.title = updatePostingDto.title;
+    updatedPosting.startDate = new Date(updatePostingDto.startDate);
+    updatedPosting.endDate = new Date(updatePostingDto.endDate);
+    updatedPosting.days = this.calculateDays(
+      updatedPosting.startDate,
+      updatedPosting.endDate
+    );
+    [
+      updatedPosting.period,
+      updatedPosting.headcount,
+      updatedPosting.budget,
+      updatedPosting.location,
+      updatedPosting.season,
+      updatedPosting.vehicle,
+    ] = await Promise.all([
+      this.periodsRepository.findByName(
+        this.periodsRepository.findNameByCalculatingDays(updatedPosting.days)
+      ),
+      this.headcountsRepository.findByName(updatePostingDto.headcount),
+      this.budgetsRepository.findByName(updatePostingDto.budget),
+      this.locationsRepository.findByName(updatePostingDto.location),
+      this.seasonsRepository.findByName(
+        this.seasonsRepository.findNameByCalculatingStartDate(
+          updatedPosting.startDate
+        )
+      ),
+      this.vehiclesRepository.findByName(updatePostingDto.vehicle),
+    ]);
+
+    const [, theme, withWho] = await Promise.all([
+      this.postingsRepository.update(postingId, updatedPosting),
+      this.updatePostingTheme(updatedPosting, updatePostingDto.theme),
+      this.updatePostingWithWho(updatedPosting, updatePostingDto.withWho),
+    ]);
+
+    return { ...updatedPosting, theme, withWho };
+  }
+
+  async updatePostingTheme(posting: Posting, themes: string[]) {
+    const outdated =
+      await this.postingThemesRepository.findAllEntitiesByPosting(posting.id);
+
+    await this.removePostingTheme(outdated);
+    return this.createPostingTheme(posting, themes);
+  }
+
+  async updatePostingWithWho(posting: Posting, withWhos: string[]) {
+    const outdated =
+      await this.postingWithWhosRepository.findAllEntitiesByPosting(posting.id);
+
+    await this.removePostingWithWho(outdated);
+    return this.createPostingWithWho(posting, withWhos);
+  }
 
   // async remove(postingId: string, userId: string) {
   //   const posting = await this.postingsRepository.findOneBy({ id: postingId });
@@ -175,6 +212,14 @@ export class PostingsService {
 
   //   return this.postingsRepository.delete({ id: postingId });
   // }
+
+  async removePostingTheme(postingThemes: PostingTheme[]) {
+    return this.postingThemesRepository.remove(postingThemes);
+  }
+
+  async removePostingWithWho(postingWithWhos: PostingWithWho[]) {
+    return this.postingWithWhosRepository.remove(postingWithWhos);
+  }
 
   // async toggleLike(postingId: string, userId: string) {
   //   const liked = await this.likedsRepository.findOneBy({

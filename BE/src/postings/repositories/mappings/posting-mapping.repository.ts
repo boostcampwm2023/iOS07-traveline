@@ -7,6 +7,17 @@ export class PostingMappingRepository<T> {
     return this.postingMappingRepository.save(entity);
   }
 
+  async findAllEntitiesByPosting(postingId: string) {
+    return this.postingMappingRepository
+      .createQueryBuilder('pm')
+      .where('pm.posting = :postingId', { postingId: postingId })
+      .getMany();
+  }
+
+  async remove(entities: T[]) {
+    return this.postingMappingRepository.remove(entities);
+  }
+
   async findAllByPosting(postingId: string) {
     const results = await this.postingMappingRepository
       .createQueryBuilder('pm')

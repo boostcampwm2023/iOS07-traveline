@@ -28,4 +28,8 @@ export class PostingsRepository {
       },
     });
   }
+
+  async update(id: string, posting: Posting) {
+    return this.postingsRepository.update(id, posting);
+  }
 }

@@ -89,16 +89,16 @@ export class PostingsController {
     };
   }
 
-  // @Put(':id')
-  // @ApiOperation({
-  //   summary: '포스팅 수정 API',
-  //   description: 'id 값에 해당되는 포스팅을 수정한다.',
-  // })
-  // @ApiOkResponse({ description: 'OK' })
-  // update(@Param('id') id: string, @Body() updatePostingDto: UpdatePostingDto) {
-  //   // TODO: JWT에서 user id 가져오기
-  //   return this.postingsService.update(id, '', updatePostingDto);
-  // }
+  @Put(':id')
+  @ApiOperation({
+    summary: '포스팅 수정 API',
+    description: 'id 값에 해당되는 포스팅을 수정한다.',
+  })
+  @ApiOkResponse({ description: 'OK' })
+  update(@Param('id') id: string, @Body() updatePostingDto: UpdatePostingDto) {
+    const userId = ''; // TODO: request['user'].id; (현재 id 필드 값은 닉네임)
+    return this.postingsService.updatePosting(id, userId, updatePostingDto);
+  }
 
   // @Delete(':id')
   // @ApiOperation({
