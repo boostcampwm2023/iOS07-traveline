@@ -7,7 +7,6 @@ import {
   Delete,
   Query,
   Put,
-  BadRequestException,
   UseGuards,
   Req,
 } from '@nestjs/common';
@@ -37,14 +36,6 @@ export class PostingsController {
   })
   @ApiCreatedResponse({ description: 'Created', type: Posting })
   async create(@Req() request, @Body() createPostingDto: CreatePostingDto) {
-    if (
-      new Date(createPostingDto.endDate) < new Date(createPostingDto.startDate)
-    ) {
-      throw new BadRequestException(
-        'endDate는 startDate와 같거나 더 나중의 날짜여야 합니다.'
-      );
-    }
-
     const userId = ''; // TODO: request['user'].id; (현재 id 필드 값은 닉네임)
     return this.postingsService.createPosting(userId, createPostingDto);
   }

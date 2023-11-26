@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -54,6 +55,14 @@ export class PostingsService {
   ) {}
 
   async createPosting(userId: string, createPostingDto: CreatePostingDto) {
+    if (
+      new Date(createPostingDto.endDate) < new Date(createPostingDto.startDate)
+    ) {
+      throw new BadRequestException(
+        'endDate는 startDate와 같거나 더 나중의 날짜여야 합니다.'
+      );
+    }
+
     const posting = await this.initializePosting(createPostingDto);
     posting.writer = await this.userRepository.findById(userId);
 
