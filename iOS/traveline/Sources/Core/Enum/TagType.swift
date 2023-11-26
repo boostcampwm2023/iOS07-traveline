@@ -11,8 +11,8 @@ import Foundation
 enum TagType: CaseIterable {
     case location
     case period
-    case season
     case theme
+    case season
     case cost
     case people
     case with
@@ -81,8 +81,12 @@ enum TagType: CaseIterable {
             WithTag.allCases.map { $0.title }
         case .transportation:
             TransportationTag.allCases.map { $0.title }
-        case .location, .period, .season:
-            []
+        case .location:
+            LocationFilter.allCases.map { $0.title }
+        case .period:
+            PeriodFilter.allCases.map { $0.title }
+        case .season:
+            SeasonFilter.allCases.map { $0.title }
         }
     }
 }

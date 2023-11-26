@@ -38,7 +38,10 @@ final class TLFilter: UIButton {
         return stackView
     }()
     
-    private let filterTitleLabel: TLLabel = .init(font: .body1, color: TLColor.unselectedGray)
+    private let filterTitleLabel: TLLabel = .init(
+        font: .body3,
+        color: TLColor.unselectedGray
+    )
     
     private let filterImageView: UIImageView = {
         let imageView = UIImageView()
