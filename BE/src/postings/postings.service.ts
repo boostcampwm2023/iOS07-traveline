@@ -70,30 +70,26 @@ export class PostingsService {
     return { ...savedPosting, postingTheme, postingWithWho };
   }
 
-  async createPostingTheme(posting: Posting, themes: string[]) {
-    return !!themes
-      ? Promise.all(
-          themes.map(async (e) => {
-            const postingTheme = new PostingTheme();
-            postingTheme.posting = posting;
-            postingTheme.tag = await this.themesRepository.findByName(e);
-            return this.postingThemesRepository.save(postingTheme);
-          })
-        )
-      : undefined;
+  async createPostingTheme(posting: Posting, themes: string[] = []) {
+    return Promise.all(
+      themes.map(async (e) => {
+        const postingTheme = new PostingTheme();
+        postingTheme.posting = posting;
+        postingTheme.tag = await this.themesRepository.findByName(e);
+        return this.postingThemesRepository.save(postingTheme);
+      })
+    );
   }
 
-  async createPostingWithWho(posting: Posting, withWhos: string[]) {
-    return !!withWhos
-      ? Promise.all(
-          withWhos.map(async (e) => {
-            const postingWithWho = new PostingWithWho();
-            postingWithWho.posting = posting;
-            postingWithWho.tag = await this.withWhosRepository.findByName(e);
-            return this.postingWithWhosRepository.save(postingWithWho);
-          })
-        )
-      : undefined;
+  async createPostingWithWho(posting: Posting, withWhos: string[] = []) {
+    return Promise.all(
+      withWhos.map(async (e) => {
+        const postingWithWho = new PostingWithWho();
+        postingWithWho.posting = posting;
+        postingWithWho.tag = await this.withWhosRepository.findByName(e);
+        return this.postingWithWhosRepository.save(postingWithWho);
+      })
+    );
   }
 
   // findAll() {
