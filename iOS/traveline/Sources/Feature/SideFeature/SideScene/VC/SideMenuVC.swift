@@ -98,6 +98,7 @@ private extension SideMenuVC {
         profileLabel.addTarget(self, action: #selector(profileEditTapped), for: .touchUpInside)
         myPostListLabel.addTarget(self, action: #selector(myPostListTapped), for: .touchUpInside)
         settingLabel.addTarget(self, action: #selector(settingTapped), for: .touchUpInside)
+        view.backgroundColor = TLColor.black
     }
     
     func setupLayout() {
