@@ -69,43 +69,25 @@ export class PostingsController {
   //   //return this.postingsService.search(searchPostingDto);
   // }
 
-  // @Get(':id')
-  // @ApiOperation({
-  //   summary: '포스팅 로드 API',
-  //   description: 'id 값에 해당되는 포스팅을 반환한다.',
-  // })
-  // @ApiOkResponse({ description: 'OK', type: Posting })
-  // async findOne(@Param('id') id: string) {
-  //   const posting = await this.postingsService.findOne(id);
-  //   const userId = ''; // TODO: JWT에서 userID 가져오기
-  //   return {
-  //     id: posting.id,
-  //     writer: posting.writer,
-  //     title: posting.title,
-  //     createdAt: posting.created_at,
-  //     thumbnail: posting.thumbnail,
-  //     startDate: posting.start_date,
-  //     endDate: posting.end_date,
-  //     days: this.postingsService.createDaysList(
-  //       posting.start_date,
-  //       posting.days
-  //     ),
-  //     period: periods[posting.period] || null,
-  //     headcount: headcounts[posting.headcount] || null,
-  //     budget: budgets[posting.budget] || null,
-  //     location: locations[posting.location],
-  //     season: seasons[posting.season],
-  //     vehicle: vehicles[posting.vehicle] || null,
-  //     theme: posting.theme ? posting.theme.map((e) => themes[e]) : null,
-  //     withWho: posting.with_who
-  //       ? posting.with_who.map((e) => withWhos[e])
-  //       : null,
-  //     report: posting.report.length,
-  //     liked: posting.liked.length,
-  //     isLiked: posting.liked.some((liked) => liked.user === userId),
-  //     isOwner: posting.writer === userId,
-  //   };
-  // }
+  @Get(':id')
+  @ApiOperation({
+    summary: '포스팅 로드 API',
+    description: 'id 값에 해당되는 포스팅을 반환한다.',
+  })
+  @ApiOkResponse({ description: 'OK', type: Posting })
+  async findOne(@Param('id') id: string) {
+    const userId = ''; // TODO: request['user'].id; (현재 id 필드 값은 닉네임)
+    const posting = await this.postingsService.findPosting(id);
+
+    return {
+      ...posting,
+      days: this.createDaysList(posting.startDate, posting.days),
+      liked: posting.liked.length,
+      report: posting.report.length,
+      isLiked: posting.liked.some((liked) => liked.user === userId),
+      isOwner: posting.writer.id === userId,
+    };
+  }
 
   // @Put(':id')
   // @ApiOperation({
@@ -164,4 +146,15 @@ export class PostingsController {
   //   // TODO: JWT에서 사용자 ID 가져오기
   //   return this.postingsService.report(id, '');
   // }
+
+  private createDaysList(startDate: Date, days: number) {
+    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+    const standardDate = new Date(startDate);
+
+    return Array.from({ length: days }, (_, index) => {
+      const date = new Date(startDate);
+      date.setDate(standardDate.getDate() + index);
+      return `${date.getDate()}${weekdays[date.getDay()]}`;
+    });
+  }
 }

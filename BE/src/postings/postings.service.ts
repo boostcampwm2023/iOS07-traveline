@@ -117,9 +117,15 @@ export class PostingsService {
   //   return `This action returns all postings`;
   // }
 
-  // async findOne(id: string) {
-  //   return this.postingsRepository.findOneBy({ id });
-  // }
+  async findPosting(id: string) {
+    const [posting, theme, withWho] = await Promise.all([
+      this.postingsRepository.findOne(id),
+      this.postingThemesRepository.findAllByPosting(id),
+      this.postingWithWhosRepository.findAllByPosting(id),
+    ]);
+
+    return { ...posting, theme, withWho };
+  }
 
   // async update(
   //   postingId: string,
@@ -206,16 +212,5 @@ export class PostingsService {
 
   private calculateDays(startDate: Date, endDate: Date): number {
     return (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) + 1;
-  }
-
-  createDaysList(startDate: Date, days: number) {
-    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
-    const standardDate = new Date(startDate);
-
-    return Array.from({ length: days }, (_, index) => {
-      const date = new Date(startDate);
-      date.setDate(standardDate.getDate() + index);
-      return `${date.getDate()}${weekdays[date.getDay()]}`;
-    });
   }
 }
