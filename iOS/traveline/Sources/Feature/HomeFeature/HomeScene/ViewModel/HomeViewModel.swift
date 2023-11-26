@@ -68,6 +68,7 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         switch effect {
         case .showRecent:
             newState.homeViewType = .recent
+            newState.curFilter = nil
         case let .showRelated(text):
             newState.homeViewType = (text.isEmpty) ? .recent : .related
             newState.searchText = text
