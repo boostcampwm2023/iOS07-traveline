@@ -30,11 +30,12 @@ import { VehiclesRepository } from './repositories/tags/vehicles.repository';
 import { WithWhosRepository } from './repositories/tags/with-whos.repository';
 import { PostingTheme } from './entities/mappings/posting-theme.entity';
 import { PostingWithWho } from './entities/mappings/posting-with-who.entity';
-import { User } from '../users/entities/user.entity';
+import { UserRepository } from 'src/users/users.repository';
 
 @Injectable()
 export class PostingsService {
   constructor(
+    private readonly userRepository: UserRepository,
     private readonly postingsRepository: PostingsRepository,
     private readonly likedsRepository: LikedsRepository,
     private readonly reportsRepository: ReportsRepository,
@@ -50,9 +51,9 @@ export class PostingsService {
     private readonly postingWithWhosRepository: PostingWithWhosRepository
   ) {}
 
-  async createPosting(user: User, createPostingDto: CreatePostingDto) {
+  async createPosting(userId: string, createPostingDto: CreatePostingDto) {
     const posting = new Posting();
-    posting.writer = user;
+    posting.writer = await this.userRepository.findById(userId);
     posting.title = createPostingDto.title;
     posting.createdAt = new Date();
     posting.startDate = new Date(createPostingDto.startDate);
@@ -77,25 +78,39 @@ export class PostingsService {
       createPostingDto.vehicle
     );
 
-    return this.postingsRepository.save(posting);
+    const savedPosting = await this.postingsRepository.save(posting);
+    const postingTheme = await this.createPostingTheme(
+      savedPosting,
+      createPostingDto.theme
+    );
+    const postingWithWho = await this.createPostingWithWho(
+      savedPosting,
+      createPostingDto.withWho
+    );
+
+    return { ...savedPosting, postingTheme, postingWithWho };
   }
 
   async createPostingTheme(posting: Posting, themes: string[]) {
-    themes.forEach(async (e) => {
-      const postingTheme = new PostingTheme();
-      postingTheme.posting = posting;
-      postingTheme.theme = await this.themesRepository.findByName(e);
-      await this.postingThemesRepository.save(postingTheme);
-    });
+    return Promise.all(
+      themes.map(async (e) => {
+        const postingTheme = new PostingTheme();
+        postingTheme.posting = posting;
+        postingTheme.theme = await this.themesRepository.findByName(e);
+        return this.postingThemesRepository.save(postingTheme);
+      })
+    );
   }
 
   async createPostingWithWho(posting: Posting, withWhos: string[]) {
-    withWhos.forEach(async (e) => {
-      const postingWithWho = new PostingWithWho();
-      postingWithWho.posting = posting;
-      postingWithWho.withWho = await this.withWhosRepository.findByName(e);
-      await this.postingWithWhosRepository.save(postingWithWho);
-    });
+    return Promise.all(
+      withWhos.map(async (e) => {
+        const postingWithWho = new PostingWithWho();
+        postingWithWho.posting = posting;
+        postingWithWho.withWho = await this.withWhosRepository.findByName(e);
+        return this.postingWithWhosRepository.save(postingWithWho);
+      })
+    );
   }
 
   // findAll() {

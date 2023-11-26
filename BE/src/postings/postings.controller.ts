@@ -9,6 +9,7 @@ import {
   Put,
   BadRequestException,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { PostingsService } from './postings.service';
 import { CreatePostingDto } from './dto/create-posting.dto';
@@ -32,16 +33,12 @@ import {
   withWhos,
 } from './postings.types';
 import { AuthGuard } from '../auth/auth.guard';
-import { UsersService } from '../users/users.service';
 
 @UseGuards(AuthGuard)
 @Controller('postings')
 @ApiTags('Postings API')
 export class PostingsController {
-  constructor(
-    private readonly postingsService: PostingsService,
-    private readonly usersService: UsersService
-  ) {}
+  constructor(private readonly postingsService: PostingsService) {}
 
   @Post()
   @ApiOperation({
@@ -49,7 +46,7 @@ export class PostingsController {
     description: '새로운 포스팅을 작성한다.',
   })
   @ApiOkResponse({ description: 'OK', type: Posting })
-  async create(@Body() createPostingDto: CreatePostingDto) {
+  async create(@Req() request, @Body() createPostingDto: CreatePostingDto) {
     if (
       new Date(createPostingDto.endDate) < new Date(createPostingDto.startDate)
     ) {
@@ -58,23 +55,8 @@ export class PostingsController {
       );
     }
 
-    const user = await this.usersService.findById(''); // TODO: JWT 토큰에서 user의 id 꺼내기
-    const posting = await this.postingsService.createPosting(
-      user,
-      createPostingDto
-    );
-
-    await this.postingsService.createPostingTheme(
-      posting,
-      createPostingDto.theme
-    );
-
-    await this.postingsService.createPostingWithWho(
-      posting,
-      createPostingDto.withWho
-    );
-
-    return posting;
+    const userId = ''; // TODO: request['user'].id; (현재 id 필드 값은 닉네임)
+    return this.postingsService.createPosting(userId, createPostingDto);
   }
 
   // @Get()
