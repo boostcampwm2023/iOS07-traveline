@@ -53,31 +53,8 @@ export class PostingsService {
   ) {}
 
   async createPosting(userId: string, createPostingDto: CreatePostingDto) {
-    const posting = new Posting();
+    const posting = await this.initializePosting(createPostingDto);
     posting.writer = await this.userRepository.findById(userId);
-    posting.title = createPostingDto.title;
-    posting.createdAt = new Date();
-    posting.startDate = new Date(createPostingDto.startDate);
-    posting.endDate = new Date(createPostingDto.endDate);
-    posting.days = this.calculateDays(posting.startDate, posting.endDate);
-    posting.period = await this.periodsRepository.findByName(
-      this.periodsRepository.findNameByCalculatingDays(posting.days)
-    );
-    posting.headcount = await this.headcountsRepository.findByName(
-      createPostingDto.headcount
-    );
-    posting.budget = await this.budgetsRepository.findByName(
-      createPostingDto.budget
-    );
-    posting.location = await this.locationsRepository.findByName(
-      createPostingDto.location
-    );
-    posting.season = await this.seasonsRepository.findByName(
-      this.seasonsRepository.findNameByCalculatingStartDate(posting.startDate)
-    );
-    posting.vehicle = await this.vehiclesRepository.findByName(
-      createPostingDto.vehicle
-    );
 
     const savedPosting = await this.postingsRepository.save(posting);
     const postingTheme = await this.createPostingTheme(
@@ -93,25 +70,29 @@ export class PostingsService {
   }
 
   async createPostingTheme(posting: Posting, themes: string[]) {
-    return Promise.all(
-      themes.map(async (e) => {
-        const postingTheme = new PostingTheme();
-        postingTheme.posting = posting;
-        postingTheme.tag = await this.themesRepository.findByName(e);
-        return this.postingThemesRepository.save(postingTheme);
-      })
-    );
+    return !!themes
+      ? Promise.all(
+          themes.map(async (e) => {
+            const postingTheme = new PostingTheme();
+            postingTheme.posting = posting;
+            postingTheme.tag = await this.themesRepository.findByName(e);
+            return this.postingThemesRepository.save(postingTheme);
+          })
+        )
+      : undefined;
   }
 
   async createPostingWithWho(posting: Posting, withWhos: string[]) {
-    return Promise.all(
-      withWhos.map(async (e) => {
-        const postingWithWho = new PostingWithWho();
-        postingWithWho.posting = posting;
-        postingWithWho.tag = await this.withWhosRepository.findByName(e);
-        return this.postingWithWhosRepository.save(postingWithWho);
-      })
-    );
+    return !!withWhos
+      ? Promise.all(
+          withWhos.map(async (e) => {
+            const postingWithWho = new PostingWithWho();
+            postingWithWho.posting = posting;
+            postingWithWho.tag = await this.withWhosRepository.findByName(e);
+            return this.postingWithWhosRepository.save(postingWithWho);
+          })
+        )
+      : undefined;
   }
 
   // findAll() {
@@ -145,36 +126,8 @@ export class PostingsService {
       );
     }
 
-    const updatedPosting = new Posting();
+    const updatedPosting = await this.initializePosting(updatePostingDto);
     updatedPosting.id = postingId;
-    updatedPosting.title = updatePostingDto.title;
-    updatedPosting.startDate = new Date(updatePostingDto.startDate);
-    updatedPosting.endDate = new Date(updatePostingDto.endDate);
-    updatedPosting.days = this.calculateDays(
-      updatedPosting.startDate,
-      updatedPosting.endDate
-    );
-    [
-      updatedPosting.period,
-      updatedPosting.headcount,
-      updatedPosting.budget,
-      updatedPosting.location,
-      updatedPosting.season,
-      updatedPosting.vehicle,
-    ] = await Promise.all([
-      this.periodsRepository.findByName(
-        this.periodsRepository.findNameByCalculatingDays(updatedPosting.days)
-      ),
-      this.headcountsRepository.findByName(updatePostingDto.headcount),
-      this.budgetsRepository.findByName(updatePostingDto.budget),
-      this.locationsRepository.findByName(updatePostingDto.location),
-      this.seasonsRepository.findByName(
-        this.seasonsRepository.findNameByCalculatingStartDate(
-          updatedPosting.startDate
-        )
-      ),
-      this.vehiclesRepository.findByName(updatePostingDto.vehicle),
-    ]);
 
     const [, theme, withWho] = await Promise.all([
       this.postingsRepository.update(postingId, updatedPosting),
@@ -257,5 +210,37 @@ export class PostingsService {
 
   private calculateDays(startDate: Date, endDate: Date): number {
     return (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) + 1;
+  }
+
+  private async initializePosting(
+    postingDto: CreatePostingDto | UpdatePostingDto
+  ): Promise<Posting> {
+    const posting = new Posting();
+
+    posting.title = postingDto.title;
+    posting.startDate = new Date(postingDto.startDate);
+    posting.endDate = new Date(postingDto.endDate);
+    posting.days = this.calculateDays(posting.startDate, posting.endDate);
+    [
+      posting.period,
+      posting.headcount,
+      posting.budget,
+      posting.location,
+      posting.season,
+      posting.vehicle,
+    ] = await Promise.all([
+      this.periodsRepository.findByName(
+        this.periodsRepository.findNameByCalculatingDays(posting.days)
+      ),
+      this.headcountsRepository.findByName(postingDto.headcount),
+      this.budgetsRepository.findByName(postingDto.budget),
+      this.locationsRepository.findByName(postingDto.location),
+      this.seasonsRepository.findByName(
+        this.seasonsRepository.findNameByCalculatingStartDate(posting.startDate)
+      ),
+      this.vehiclesRepository.findByName(postingDto.vehicle),
+    ]);
+
+    return posting;
   }
 }
