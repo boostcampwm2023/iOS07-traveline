@@ -1,12 +1,10 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Posting } from '../posting.entity';
+import { PostingMapping } from './posting-mapping.entity';
+import { Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Theme } from '../tags/theme.entity';
+import { Posting } from '../posting.entity';
 
 @Entity('posting_theme')
-export class PostingTheme {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class PostingTheme extends PostingMapping {
   @ManyToOne(() => Posting, (posting) => posting.postingThemes, {
     onDelete: 'CASCADE',
   })
@@ -16,6 +14,6 @@ export class PostingTheme {
   @ManyToOne(() => Theme, (theme) => theme.postingTheme, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'theme' })
-  theme: Theme;
+  @JoinColumn({ name: 'tag' })
+  tag: Theme;
 }

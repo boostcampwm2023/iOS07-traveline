@@ -4,6 +4,6 @@ import { Entity, OneToMany } from 'typeorm';
 
 @Entity()
 export class Theme extends Tag {
-  @OneToMany(() => PostingTheme, (postingTheme) => postingTheme.theme)
+  @OneToMany(() => PostingTheme, (postingTheme) => postingTheme.tag)
   postingTheme: PostingTheme[];
 }

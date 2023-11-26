@@ -4,6 +4,6 @@ import { Tag } from './tag.entity';
 
 @Entity('with_who')
 export class WithWho extends Tag {
-  @OneToMany(() => PostingWithWho, (postingWithWho) => postingWithWho.withWho)
+  @OneToMany(() => PostingWithWho, (postingWithWho) => postingWithWho.tag)
   postingWithWho: PostingWithWho[];
 }

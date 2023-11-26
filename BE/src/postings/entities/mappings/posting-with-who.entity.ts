@@ -1,12 +1,10 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { PostingMapping } from './posting-mapping.entity';
+import { Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { WithWho } from '../tags/with-who.entity';
 import { Posting } from '../posting.entity';
 
 @Entity('posting_with_who')
-export class PostingWithWho {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class PostingWithWho extends PostingMapping {
   @ManyToOne(() => Posting, (posting) => posting.postingWithWhos, {
     onDelete: 'CASCADE',
   })
@@ -16,6 +14,6 @@ export class PostingWithWho {
   @ManyToOne(() => WithWho, (withWho) => withWho.postingWithWho, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'with_who' })
-  withWho: WithWho;
+  @JoinColumn({ name: 'tag' })
+  tag: WithWho;
 }

@@ -96,7 +96,7 @@ export class PostingsService {
       themes.map(async (e) => {
         const postingTheme = new PostingTheme();
         postingTheme.posting = posting;
-        postingTheme.theme = await this.themesRepository.findByName(e);
+        postingTheme.tag = await this.themesRepository.findByName(e);
         return this.postingThemesRepository.save(postingTheme);
       })
     );
@@ -107,7 +107,7 @@ export class PostingsService {
       withWhos.map(async (e) => {
         const postingWithWho = new PostingWithWho();
         postingWithWho.posting = posting;
-        postingWithWho.withWho = await this.withWhosRepository.findByName(e);
+        postingWithWho.tag = await this.withWhosRepository.findByName(e);
         return this.postingWithWhosRepository.save(postingWithWho);
       })
     );
