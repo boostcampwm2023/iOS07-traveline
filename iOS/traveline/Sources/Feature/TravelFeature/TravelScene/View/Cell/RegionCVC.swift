@@ -10,6 +10,11 @@ import UIKit
 
 final class RegionCVC: UICollectionViewCell {
     
+    private enum Metric {
+        static let verticalInset: CGFloat = 14.0
+        static let horizontalInset: CGFloat = 16.0
+    }
+    
     // MARK: - UI Components
     
     private let regionLabel: TLLabel = .init(font: .body1, color: TLColor.white)
@@ -49,10 +54,10 @@ private extension RegionCVC {
         regionLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            regionLabel.topAnchor.constraint(equalTo: topAnchor, constant: 14.0),
-            regionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16.0),
-            regionLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16.0),
-            regionLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -14.0)
+            regionLabel.topAnchor.constraint(equalTo: topAnchor, constant: Metric.verticalInset),
+            regionLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Metric.horizontalInset),
+            regionLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Metric.horizontalInset),
+            regionLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Metric.verticalInset)
         ])
     }
 }
