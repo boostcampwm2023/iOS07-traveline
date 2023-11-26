@@ -22,16 +22,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Posting } from './entities/posting.entity';
-import {
-  budgets,
-  headcounts,
-  locations,
-  periods,
-  seasons,
-  themes,
-  vehicles,
-  withWhos,
-} from './postings.types';
 import { AuthGuard } from '../auth/auth.guard';
 
 @UseGuards(AuthGuard)
@@ -45,7 +35,7 @@ export class PostingsController {
     summary: '포스팅 생성 API',
     description: '새로운 포스팅을 작성한다.',
   })
-  @ApiOkResponse({ description: 'OK', type: Posting })
+  @ApiCreatedResponse({ description: 'Created', type: Posting })
   async create(@Req() request, @Body() createPostingDto: CreatePostingDto) {
     if (
       new Date(createPostingDto.endDate) < new Date(createPostingDto.startDate)
