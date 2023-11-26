@@ -95,7 +95,7 @@ private extension HomeVC {
         // TODO: - 서버 연동 후 수정
         homeListView.setupData(
             filterList: FilterType.allCases.map {
-                Filter(type: $0, isSelected: false)
+                Filter(type: $0, selected: [])
             },
             travelList: TravelListSample.make()
         )
@@ -157,6 +157,13 @@ private extension HomeVC {
             }
             .store(in: &cancellables)
         
+        homeListView.didSelectFilterType
+            .sink { [weak owner = self] type in
+                guard let owner else { return }
+                owner.viewModel.sendAction(.startFilter(type))
+            }
+            .store(in: &cancellables)
+        
         viewModel.$state
             .map(\.homeViewType)
             .removeDuplicates()
@@ -167,6 +174,32 @@ private extension HomeVC {
                 owner.homeSearchView.isHidden = false
                 owner.homeSearchView.makeLayout(type: type)
                 owner.testSampleData(type: type)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .filter { $0.homeViewType == .home }
+            .dropFirst()
+            .compactMap(\.curFilter)
+            .filter { $0 != .emtpy }
+            .sink { [weak owner = self] filter in
+                guard let owner else { return }
+                let filterVC = FilterBottomSheet(filter: filter)
+                filterVC.delegate = owner
+                owner.present(filterVC, animated: true)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .filter { $0.homeViewType == .home }
+            .map(\.filters)
+            .removeDuplicates()
+            .sink { [weak owner = self] filters in
+                guard let owner else { return }
+                owner.homeListView.setupData(
+                    filterList: filters.map { $0.value }.sorted { $0.type.id < $1.type.id },
+                    travelList: TravelListSample.make()
+                )
             }
             .store(in: &cancellables)
     }
@@ -196,6 +229,15 @@ extension HomeVC: UISearchBarDelegate {
         // 홈 리스트
         viewModel.sendAction(.cancelSearch)
         homeSearchView.isHidden = true
+    }
+}
+
+// MARK: - TLBottomSheetDelegate
+
+extension HomeVC: TLBottomSheetDelegate {
+    func bottomSheetDidDisappear(data: Any) {     
+        guard let filters = data as? [Filter] else { return }
+        viewModel.sendAction(.addFilter(filters))
     }
 }
 

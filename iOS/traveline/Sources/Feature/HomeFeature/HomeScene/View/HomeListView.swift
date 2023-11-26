@@ -60,7 +60,10 @@ final class HomeListView: UIView {
     
     private var dataSource: DataSource!
     
-    var didSelectHomeList: PassthroughSubject<Void, Never> = .init()
+    let didSelectHomeList: PassthroughSubject<Void, Never> = .init()
+    let didSelectFilterType: PassthroughSubject<FilterType, Never> = .init()
+    
+    private var cancellables: Set<AnyCancellable> = .init()
     
     // MARK: - Initializer
     
@@ -96,7 +99,8 @@ final class HomeListView: UIView {
                     withReuseIdentifier: FilterCVC.identifier,
                     for: indexPath
                 ) as? FilterCVC else { return UICollectionViewCell() }
-                cell.setupData(item: item as? Filter ?? .empty)
+                cell.setupData(item: item as? Filter ?? .emtpy)
+                cell.delegate = self
                 return cell
             case .travelList:
                 guard let cell = collectionView.dequeueReusableCell(
@@ -207,12 +211,20 @@ extension HomeListView: UICollectionViewDelegate {
     }
 }
 
+// MARK: - FilterCVCDelegate
+
+extension HomeListView: FilterCVCDelegate {
+    func filterTypeDidSelect(type: FilterType) {
+        didSelectFilterType.send(type)
+    }
+}
+
 @available(iOS 17, *)
 #Preview("HomeListView") {
     let homeListView = HomeListView()
     homeListView.setupData(
         filterList: FilterType.allCases.map {
-            Filter(type: $0, isSelected: false)
+            Filter(type: $0, selected: [])
         },
         travelList: TravelListSample.make()
     )

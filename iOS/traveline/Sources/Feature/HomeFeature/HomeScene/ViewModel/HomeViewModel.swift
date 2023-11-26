@@ -14,6 +14,8 @@ enum HomeAction: BaseAction {
     case searching(String)
     case searchDone(String)
     case cancelSearch
+    case startFilter(FilterType)
+    case addFilter([Filter])
 }
 
 enum HomeSideEffect: BaseSideEffect {
@@ -21,6 +23,8 @@ enum HomeSideEffect: BaseSideEffect {
     case showRelated(String)
     case showResult(String)
     case showList
+    case showFilter(FilterType)
+    case saveFilter([Filter])
 }
 
 struct HomeState: BaseState {
@@ -33,6 +37,10 @@ struct HomeState: BaseState {
     
     var homeViewType: HomeViewType = .home
     var searchText: String = ""
+    var filters: [FilterType: Filter] = FilterType.allCases.reduce(into: [:]) { filters, type in
+        filters[type] = .init(type: type, selected: [])
+    }
+    var curFilter: Filter? = .emtpy
 }
 
 final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> {
@@ -47,6 +55,10 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             Just(HomeSideEffect.showResult(text)).eraseToAnyPublisher()
         case .cancelSearch:
             Just(HomeSideEffect.showList).eraseToAnyPublisher()
+        case let .startFilter(type):
+            Just(HomeSideEffect.showFilter(type)).eraseToAnyPublisher()
+        case let .addFilter(filterList):
+            Just(HomeSideEffect.saveFilter(filterList)).eraseToAnyPublisher()
         }
     }
     
@@ -64,6 +76,12 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             newState.searchText = text
         case .showList:
             newState.homeViewType = .home
+        case let .showFilter(type):
+            newState.curFilter = state.filters[type]
+        case let .saveFilter(filterList):
+            filterList.forEach { newState.filters[$0.type] = $0 }
+            newState.curFilter = nil
+            print(filterList)
         }
         
         return newState

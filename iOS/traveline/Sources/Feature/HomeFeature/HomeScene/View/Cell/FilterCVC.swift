@@ -6,7 +6,12 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
+import Combine
 import UIKit
+
+protocol FilterCVCDelegate: AnyObject {
+    func filterTypeDidSelect(type: FilterType)
+}
 
 final class FilterCVC: UICollectionViewCell {
     
@@ -15,6 +20,11 @@ final class FilterCVC: UICollectionViewCell {
     // MARK: - UI Components
     
     private let filter: TLFilter = .init()
+    
+    // MARK: - Properties
+    
+    private var filterType: FilterType = .empty
+    weak var delegate: FilterCVCDelegate?
     
     // MARK: - Initializer
     
@@ -38,13 +48,13 @@ final class FilterCVC: UICollectionViewCell {
     // MARK: - Functions
     
     func setupData(item: Filter) {
+        filterType = item.type
         filter.setupFilter(type: item.type)
         filter.isSelected = item.isSelected
     }
     
     @objc private func filterDidTapped(_ tlFilter: TLFilter) {
-        // TODO: - 필터 바텀시트 선택된 후 필터 버튼 토글하는 로직으로 수정
-        tlFilter.isSelected.toggle()
+        delegate?.filterTypeDidSelect(type: filterType)
     }
 }
 
