@@ -154,17 +154,21 @@ export class PostingsService {
     return this.createPostingWithWho(posting, withWhos);
   }
 
-  // async remove(postingId: string, userId: string) {
-  //   const posting = await this.postingsRepository.findOneBy({ id: postingId });
+  async removePosting(postingId: string, userId: string) {
+    const posting = await this.postingsRepository.findOne(postingId);
 
-  //   if (posting && posting.writer !== userId) {
-  //     throw new ForbiddenException(
-  //       '본인이 작성한 게시글만 삭제할 수 있습니다.'
-  //     );
-  //   }
+    if (!posting) {
+      throw new NotFoundException('게시글이 존재하지 않습니다.');
+    }
 
-  //   return this.postingsRepository.delete({ id: postingId });
-  // }
+    if (posting.writer.id !== userId) {
+      throw new ForbiddenException(
+        '본인이 작성한 게시글만 삭제할 수 있습니다.'
+      );
+    }
+
+    return this.postingsRepository.remove(posting);
+  }
 
   async removePostingTheme(postingThemes: PostingTheme[]) {
     return this.postingThemesRepository.remove(postingThemes);
