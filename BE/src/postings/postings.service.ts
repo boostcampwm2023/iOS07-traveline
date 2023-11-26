@@ -1,7 +1,6 @@
 import {
   ConflictException,
   ForbiddenException,
-  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -33,6 +32,7 @@ import { PostingTheme } from './entities/mappings/posting-theme.entity';
 import { PostingWithWho } from './entities/mappings/posting-with-who.entity';
 import { UserRepository } from 'src/users/users.repository';
 import { Liked } from './entities/liked.entity';
+import { Report } from './entities/report.entity';
 
 @Injectable()
 export class PostingsService {
@@ -198,22 +198,25 @@ export class PostingsService {
     return this.likedsRepository.toggle(liked);
   }
 
-  // async report(postingId: string, userId: string) {
-  //   const report = await this.reportsRepository.findOneBy({
-  //     posting: postingId,
-  //     reporter: userId,
-  //   });
+  async report(postingId: string, userId: string) {
+    const posting = await this.postingsRepository.findOne(postingId);
 
-  //   if (report) {
-  //     throw new ConflictException('이미 신고한 게시글입니다.');
-  //   }
+    if (!posting) {
+      throw new NotFoundException('게시글이 존재하지 않습니다.');
+    }
 
-  //   const newReport = new Report();
-  //   newReport.posting = postingId;
-  //   newReport.reporter = userId;
+    const report = await this.reportsRepository.findOne(postingId, userId);
 
-  //   return this.reportsRepository.save(newReport);
-  // }
+    if (report) {
+      throw new ConflictException('이미 신고한 게시글입니다.');
+    }
+
+    const newReport = new Report();
+    newReport.posting = postingId;
+    newReport.reporter = userId;
+
+    return this.reportsRepository.save(newReport);
+  }
 
   private calculateDays(startDate: Date, endDate: Date): number {
     return (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) + 1;

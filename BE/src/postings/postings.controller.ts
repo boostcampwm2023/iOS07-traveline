@@ -124,18 +124,18 @@ export class PostingsController {
     return this.postingsService.toggleLike(id, userId);
   }
 
-  // @Post(':id/report')
-  // @ApiOperation({
-  //   summary: '게시글 신고',
-  //   description: 'id에 해당하는 게시글을 신고한다.',
-  // })
-  // @ApiCreatedResponse({
-  //   description: 'OK',
-  // })
-  // report(@Param('id') id: string) {
-  //   // TODO: JWT에서 사용자 ID 가져오기
-  //   return this.postingsService.report(id, '');
-  // }
+  @Post(':id/report')
+  @ApiOperation({
+    summary: '게시글 신고',
+    description: 'id에 해당하는 게시글을 신고한다.',
+  })
+  @ApiCreatedResponse({
+    description: 'OK',
+  })
+  report(@Param('id') id: string) {
+    const userId = ''; // TODO: request['user'].id; (현재 id 필드 값은 닉네임)
+    return this.postingsService.report(id, userId);
+  }
 
   private createDaysList(startDate: Date, days: number) {
     const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
