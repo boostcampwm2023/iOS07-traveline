@@ -16,7 +16,7 @@ final class TravelVC: UIViewController {
         static let spacing: CGFloat = 20.0
         static let width: CGFloat = UIScreen.main.bounds.width - 32.0
         static let borderWidth: CGFloat = 1.0
-        static let bottomSheetHeight: CGFloat = 595.0
+        static let bottomSheetHeight: CGFloat = UIScreen.main.bounds.height * 0.7
     }
     
     private enum Constants {
