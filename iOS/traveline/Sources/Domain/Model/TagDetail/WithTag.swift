@@ -19,7 +19,7 @@ enum WithTag: DetailTagType {
         case .family:
             Literal.Tag.WithDetail.family
         case .friend:
-            Literal.Tag.WithDetail.family
+            Literal.Tag.WithDetail.friend
         case .couple:
             Literal.Tag.WithDetail.couple
         case .pet:

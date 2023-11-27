@@ -28,7 +28,7 @@ enum TLColor {
     static let error = TravelineAsset.Colors.error.color
     
     enum Tag {
-        static let location = TravelineAsset.Colors.locaction.color
+        static let region = TravelineAsset.Colors.region.color
         static let cost = TravelineAsset.Colors.cost.color
         static let period = TravelineAsset.Colors.period.color
         static let people = TravelineAsset.Colors.people.color

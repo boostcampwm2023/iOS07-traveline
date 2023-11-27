@@ -87,10 +87,10 @@ final class TLInfoView: UIView {
         return stackView
     }()
     
-    private let locationTag: TLTag = .init(style: .normal, name: "", color: TagType.location.color)
+    private let regionTag: TLTag = .init(style: .normal, name: "", color: TagType.region.color)
     private let periodTag: TLTag = .init(style: .normal, name: "", color: TagType.period.color)
     private let seasonTag: TLTag = .init(style: .normal, name: "", color: TagType.season.color)
-    private lazy var tags: [TLTag] = [locationTag, periodTag, seasonTag]
+    private lazy var tags: [TLTag] = [regionTag, periodTag, seasonTag]
     
     // MARK: - Initialzier
     
@@ -131,7 +131,7 @@ private extension TLInfoView {
     func setupLayout() {
         profileStackView.addArrangedSubviews(profileImageView, nameLabel)
         likeStackView.addArrangedSubviews(likeImageView, likeCountLabel)
-        tagStackView.addArrangedSubviews(locationTag, periodTag, seasonTag)
+        tagStackView.addArrangedSubviews(regionTag, periodTag, seasonTag)
         
         addSubviews(
             thumbnailImageView,
