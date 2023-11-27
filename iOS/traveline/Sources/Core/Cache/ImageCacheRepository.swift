@@ -54,7 +54,7 @@ final class ImageCacheRepositoryImpl: ImageCacheRepository {
     }
     
     private func storeToMemoryCache(_ data: Data, cacheKey: String) {
-        memoryCache.setObject(data as NSData, forKey: cacheKey as NSString)
+        return memoryCache.setObject(data as NSData, forKey: cacheKey as NSString)
     }
     
     // MARK: - Disk
