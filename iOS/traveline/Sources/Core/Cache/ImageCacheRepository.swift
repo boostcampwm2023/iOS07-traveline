@@ -37,6 +37,7 @@ final class ImageCacheRepositoryImpl: ImageCacheRepository {
         }
         
         if let diskCachedData = fetchFromDiskData(cacheKey) {
+            storeToMemoryCache(diskCachedData, cacheKey: cacheKey)
             return diskCachedData
         }
         return nil
