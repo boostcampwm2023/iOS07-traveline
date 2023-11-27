@@ -15,6 +15,7 @@ import { CreatePostingDto } from './dto/create-posting.dto';
 import { UpdatePostingDto } from './dto/update-posting.dto';
 import { SearchPostingDto } from './dto/search-posting.dto';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
@@ -30,11 +31,11 @@ export class PostingsController {
   constructor(private readonly postingsService: PostingsService) {}
 
   @Post()
+  @ApiBearerAuth()
   @ApiOperation({
     summary: '포스팅 생성 API',
     description: '새로운 포스팅을 작성한다.',
   })
-  @ApiCreatedResponse({ description: 'Created', type: Posting })
   async create(@Req() request, @Body() createPostingDto: CreatePostingDto) {
     const userId = ''; // TODO: request['user'].id; (현재 id 필드 값은 닉네임)
     return this.postingsService.createPosting(userId, createPostingDto);
@@ -51,6 +52,7 @@ export class PostingsController {
   // }
 
   @Get(':id')
+  @ApiBearerAuth()
   @ApiOperation({
     summary: '포스팅 로드 API',
     description: 'id 값에 해당되는 포스팅을 반환한다.',
@@ -71,6 +73,7 @@ export class PostingsController {
   }
 
   @Put(':id')
+  @ApiBearerAuth()
   @ApiOperation({
     summary: '포스팅 수정 API',
     description: 'id 값에 해당되는 포스팅을 수정한다.',
@@ -82,6 +85,7 @@ export class PostingsController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
   @ApiOperation({
     summary: '포스팅 삭제 API',
     description: 'id 값에 해당되는 포스팅을 삭제한다.',
@@ -104,6 +108,7 @@ export class PostingsController {
   // }
 
   @Post(':id/like')
+  @ApiBearerAuth()
   @ApiOperation({
     summary: '포스팅 좋아요 API',
     description:
@@ -116,6 +121,7 @@ export class PostingsController {
   }
 
   @Post(':id/report')
+  @ApiBearerAuth()
   @ApiOperation({
     summary: '게시글 신고',
     description: 'id에 해당하는 게시글을 신고한다.',
