@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class ContainerVC: UIViewController {
+final class RootContainerVC: UIViewController {
     
     enum SideMenuState {
         case opened
@@ -109,7 +109,7 @@ final class ContainerVC: UIViewController {
 
 // MARK: - Setup Functions
 
-private extension ContainerVC {
+private extension RootContainerVC {
     
     func setupChildVC() {
         let navigationVC = UINavigationController(rootViewController: homeVC)
@@ -147,7 +147,7 @@ private extension ContainerVC {
 
 // MARK: - SideMenuDelegate
 
-extension ContainerVC: SideMenuDelegate {
+extension RootContainerVC: SideMenuDelegate {
     
     func didSelect(menuItem: SideMenuVC.Options) {
         closeSideMenu()
@@ -167,7 +167,7 @@ extension ContainerVC: SideMenuDelegate {
 
 // MARK: - HomeViewDelegate
 
-extension ContainerVC: HomeViewDelegate {
+extension RootContainerVC: HomeViewDelegate {
     func sideMenuTapped() {
         switch sideMenuState {
         case .closed: openSideMenu()
@@ -179,7 +179,7 @@ extension ContainerVC: HomeViewDelegate {
 
 // MARK: - extension UIGestureRecognizerDelegate
 
-extension ContainerVC: UIGestureRecognizerDelegate {
+extension RootContainerVC: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         guard let view = touch.view else { return false }
         if view == shadowView {

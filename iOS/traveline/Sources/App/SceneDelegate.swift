@@ -16,8 +16,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
             
         window = UIWindow(windowScene: windowScene)
-        let containerVC = ContainerVC()
-        window?.rootViewController = containerVC
+        let rootContainerVC = RootContainerVC()
+        window?.rootViewController = rootContainerVC
         window?.tintColor = TLColor.main
         window?.makeKeyAndVisible()
     }
