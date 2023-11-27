@@ -43,5 +43,6 @@ enum TLImage {
     
     enum Home {
         static let close = TravelineAsset.Images.closeMedium.image
+        static let menu = TravelineAsset.Images.menu.image
     }
 }

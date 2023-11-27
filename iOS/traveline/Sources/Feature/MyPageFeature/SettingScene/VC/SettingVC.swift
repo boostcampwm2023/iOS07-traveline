@@ -138,6 +138,7 @@ extension SettingVC {
     
     private func setupAttributes() {
         self.navigationItem.title = "설정"
+        view.backgroundColor = TLColor.black
         logoutButton.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
         withdrawalButton.addTarget(self, action: #selector(withdrawalButtonTapped), for: .touchUpInside)
         setupServiceGuideButton()
@@ -168,11 +169,12 @@ extension SettingVC {
             withdrawalButton
         ].forEach {
             stackView.addArrangedSubview($0)
+            $0.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 16).isActive = true
         }
         
         NSLayoutConstraint.activate([
             stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
             line.leadingAnchor.constraint(equalTo: view.leadingAnchor),
