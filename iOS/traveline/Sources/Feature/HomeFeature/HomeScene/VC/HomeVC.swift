@@ -10,6 +10,10 @@ import Combine
 import UIKit
 import OSLog
 
+protocol HomeViewDelegate: AnyObject {
+    func sideMenuTapped()
+}
+
 final class HomeVC: UIViewController {
     
     private enum Metric {
@@ -37,6 +41,7 @@ final class HomeVC: UIViewController {
     
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: HomeViewModel
+    weak var delegate: HomeViewDelegate?
     
     // MARK: - Initializer
     
@@ -65,6 +70,10 @@ final class HomeVC: UIViewController {
         let travelVC = TravelVC()
         navigationController?.pushViewController(travelVC, animated: true)
     }
+    
+    @objc private func menuButtonTapped() {
+        delegate?.sideMenuTapped()
+    }
 }
 
 // MARK: - Setup Functions
@@ -78,6 +87,13 @@ private extension HomeVC {
         navigationItem.searchController = searchController
         navigationItem.title = Constants.title
         navigationItem.hidesSearchBarWhenScrolling = false
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: TLImage.Home.menu,
+            style: .plain,
+            target: self,
+            action: #selector(menuButtonTapped)
+        )
+        navigationItem.leftBarButtonItem?.tintColor = TLColor.white
         
         navigationController?.navigationBar.titleTextAttributes = [
             .foregroundColor: TLColor.white,
