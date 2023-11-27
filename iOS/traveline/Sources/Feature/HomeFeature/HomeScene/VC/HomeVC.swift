@@ -64,13 +64,6 @@ final class HomeVC: UIViewController {
         
         navigationController?.navigationBar.isHidden = false
     }
-    
-    // MARK: - Functions
-    
-    @objc private func createTravelButtonDidTapped(_ button: TLFloatingButton) {
-        let travelVC = TravelVC()
-        navigationController?.pushViewController(travelVC, animated: true)
-    }
 }
 
 // MARK: - Setup Functions
@@ -95,12 +88,6 @@ private extension HomeVC {
         self.navigationItem.backBarButtonItem = backBarButtonItem
         
         homeSearchView.isHidden = true
-        
-        createTravelButton.addTarget(
-            self,
-            action: #selector(createTravelButtonDidTapped(_:)),
-            for: .touchUpInside
-        )
         
         // TODO: - 서버 연동 후 수정
         homeListView.setupData(
@@ -152,9 +139,17 @@ private extension HomeVC {
     }
     
     func bind() {
+        createTravelButton
+            .tapPublisher
+            .withUnretained(self)
+            .sink { owner, _ in
+                owner.viewModel.sendAction(.createTravel)
+            }
+            .store(in: &cancellables)
+        
         homeListView.didSelectHomeList
-            .sink { [weak owner = self] _ in
-                guard let owner else { return }
+            .withUnretained(self)
+            .sink { owner, _  in
                 let timelineVC = TimelineVC()
                 owner.navigationController?.pushViewController(
                     timelineVC,
@@ -164,8 +159,8 @@ private extension HomeVC {
             .store(in: &cancellables)
         
         homeListView.didSelectFilterType
-            .sink { [weak owner = self] type in
-                guard let owner else { return }
+            .withUnretained(self)
+            .sink { owner, type in
                 owner.viewModel.sendAction(.startFilter(type))
             }
             .store(in: &cancellables)
@@ -174,8 +169,8 @@ private extension HomeVC {
             .map(\.homeViewType)
             .removeDuplicates()
             .filter { $0 == .recent || $0 == .related }
-            .sink { [weak owner = self] type in
-                guard let owner else { return }
+            .withUnretained(self)
+            .sink { owner, type in
                 let type: SearchViewType = (type == .recent) ? .recent : .related
                 owner.homeSearchView.isHidden = false
                 owner.homeSearchView.makeLayout(type: type)
@@ -185,11 +180,10 @@ private extension HomeVC {
         
         viewModel.$state
             .filter { $0.homeViewType == .home }
-            .dropFirst()
             .compactMap(\.curFilter)
             .filter { $0 != .emtpy }
-            .sink { [weak owner = self] filter in
-                guard let owner else { return }
+            .withUnretained(self)
+            .sink { owner, filter in
                 let filterVC = FilterBottomSheet(filter: filter)
                 filterVC.delegate = owner
                 owner.present(filterVC, animated: true)
@@ -200,12 +194,22 @@ private extension HomeVC {
             .filter { $0.homeViewType == .home }
             .map(\.filters)
             .removeDuplicates()
-            .sink { [weak owner = self] filters in
-                guard let owner else { return }
+            .withUnretained(self)
+            .sink { owner, filters in
                 owner.homeListView.setupData(
                     filterList: filters.map { $0.value }.sorted { $0.type.id < $1.type.id },
                     travelList: TravelListSample.make()
                 )
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .map(\.moveToTravelWriting)
+            .filter { $0 }
+            .withUnretained(self)
+            .sink { owner, _ in
+                let travelVC = TravelVC()
+                owner.navigationController?.pushViewController(travelVC, animated: true)
             }
             .store(in: &cancellables)
     }
