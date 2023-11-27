@@ -175,6 +175,7 @@ private extension HomeVC {
                 owner.homeSearchView.isHidden = false
                 owner.homeSearchView.makeLayout(type: type)
                 owner.testSampleData(type: type)
+                owner.createTravelButton.isHidden = true
             }
             .store(in: &cancellables)
         
@@ -195,17 +196,18 @@ private extension HomeVC {
             .map(\.homeFilters)
             .withUnretained(self)
             .sink { owner, filters in
+                // TODO: travelList, filterList 분리하기
                 owner.homeListView.setupData(
                     filterList: filters.map { $0.value }.sorted { $0.type.id < $1.type.id },
                     travelList: TravelListSample.make()
                 )
+                owner.createTravelButton.isHidden = false
             }
             .store(in: &cancellables)
         
         viewModel.$state
             .filter { $0.homeViewType == .result }
             .map(\.resultFilters)
-            .removeDuplicates()
             .withUnretained(self)
             .sink { owner, filters in
                 owner.homeListView.setupData(
