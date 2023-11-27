@@ -12,14 +12,6 @@ import { Liked } from './liked.entity';
 import { Report } from './report.entity';
 import { User } from '../../users/entities/user.entity';
 import { Timeline } from '../../timelines/entities/timeline.entity';
-import { PostingTheme } from './mappings/posting-theme.entity';
-import { PostingWithWho } from './mappings/posting-with-who.entity';
-import { Budget } from './tags/budget.entity';
-import { Season } from './tags/season.entity';
-import { Vehicle } from './tags/vehicle.entity';
-import { Period } from './tags/period.entity';
-import { Location } from './tags/location.entity';
-import { Headcount } from './tags/headcount.entity';
 
 @Entity()
 export class Posting {
@@ -54,31 +46,29 @@ export class Posting {
   @Column({ type: 'int' })
   days: number;
 
-  @ManyToOne(() => Period, (period) => period.postings, { nullable: false })
-  @JoinColumn({ name: 'period' })
-  period: Period;
+  @Column({ length: 14, unique: true })
+  period: string;
 
-  @ManyToOne(() => Headcount, (headcount) => headcount.postings)
-  @JoinColumn({ name: 'headcount' })
-  headcount: Headcount;
+  @Column({ length: 14, unique: true, nullable: true })
+  headcount: string;
 
-  @ManyToOne(() => Budget, (budget) => budget.postings)
-  @JoinColumn({ name: 'budget' })
-  budget: Budget;
+  @Column({ length: 14, unique: true, nullable: true })
+  budget: string;
 
-  @ManyToOne(() => Location, (location) => location.postings, {
-    nullable: false,
-  })
-  @JoinColumn({ name: 'location' })
-  location: Location;
+  @Column({ length: 14, unique: true })
+  location: string;
 
-  @ManyToOne(() => Season, (season) => season.postings, { nullable: false })
-  @JoinColumn({ name: 'season' })
-  season: Season;
+  @Column({ length: 14, unique: true })
+  season: string;
 
-  @ManyToOne(() => Vehicle, (vehicle) => vehicle.postings)
-  @JoinColumn({ name: 'vehicle' })
-  vehicle: Vehicle;
+  @Column({ length: 14, unique: true, nullable: true })
+  vehicle: string;
+
+  @Column({ type: 'json', nullable: true })
+  theme: string[];
+
+  @Column({ type: 'json', nullable: true })
+  withWho: string[];
 
   @RelationId((posting: Posting) => posting.reports)
   report: { reporter: string; posting: string }[];
@@ -91,10 +81,4 @@ export class Posting {
 
   @OneToMany(() => Report, (report) => report.postings)
   reports: Report[];
-
-  @OneToMany(() => PostingTheme, (postingTheme) => postingTheme.posting)
-  postingThemes: PostingTheme[];
-
-  @OneToMany(() => PostingWithWho, (postingWithWhos) => postingWithWhos.posting)
-  postingWithWhos: PostingWithWho[];
 }
