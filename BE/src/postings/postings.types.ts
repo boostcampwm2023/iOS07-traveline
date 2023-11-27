@@ -6,6 +6,7 @@ export const periods = [
   '일주일 ~',
   '한 달 ~',
 ];
+export type PeriodType = (typeof periods)[number];
 export const headcounts = ['1인', '2인', '3인', '4인', '5인 이상'];
 export const budgets = [
   '0 - 10만 원',
@@ -46,3 +47,4 @@ export const themes = [
 export const withWhos = ['반려동물', '가족', '친구', '연인'];
 export const vehicles = ['대중교통', '자차'];
 export const seasons = ['봄', '여름', '가을', '겨울'];
+export type SeasonType = (typeof seasons)[number];

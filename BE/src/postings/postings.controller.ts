@@ -24,6 +24,7 @@ import {
 import { Posting } from './entities/posting.entity';
 import { AuthGuard } from '../auth/auth.guard';
 
+// TODO: response dto 생성
 @UseGuards(AuthGuard)
 @Controller('postings')
 @ApiTags('Postings API')
@@ -36,9 +37,13 @@ export class PostingsController {
     summary: '포스팅 생성 API',
     description: '새로운 포스팅을 작성한다.',
   })
-  async create(@Req() request, @Body() createPostingDto: CreatePostingDto) {
+  @ApiCreatedResponse({ description: 'Created', type: Posting })
+  async create(
+    @Req() request,
+    @Body() createPostingDto: CreatePostingDto
+  ): Promise<Posting> {
     const userId = request['user'].id;
-    return this.postingsService.createPosting(userId, createPostingDto);
+    return this.postingsService.create(userId, createPostingDto);
   }
 
   // @Get()
@@ -57,10 +62,9 @@ export class PostingsController {
     summary: '포스팅 로드 API',
     description: 'id 값에 해당되는 포스팅을 반환한다.',
   })
-  @ApiOkResponse({ description: 'OK', type: Posting })
   async findOne(@Req() request, @Param('id') id: string) {
     const userId = request['user'].id;
-    const posting = await this.postingsService.findPosting(id);
+    const posting = await this.postingsService.findOne(id);
 
     return {
       ...posting,
@@ -85,7 +89,7 @@ export class PostingsController {
     @Body() updatePostingDto: UpdatePostingDto
   ) {
     const userId = request['user'].id;
-    return this.postingsService.updatePosting(id, userId, updatePostingDto);
+    return this.postingsService.update(id, userId, updatePostingDto);
   }
 
   @Delete(':id')
@@ -97,7 +101,7 @@ export class PostingsController {
   @ApiOkResponse({ description: 'OK' })
   remove(@Req() request, @Param('id') id: string) {
     const userId = request['user'].id;
-    return this.postingsService.removePosting(id, userId);
+    return this.postingsService.remove(id, userId);
   }
 
   // @Get('/titles')
