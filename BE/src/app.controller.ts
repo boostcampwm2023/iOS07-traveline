@@ -21,45 +21,7 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    return `
-    <!DOCTYPE html>
-      <html>
-      <head>
-      <style>
-      body {
-        background-color: #0F1012;
-      }
-
-      h1 {
-        color: white;
-      }
-
-      a {
-        color: #B15EFF;
-        font-family: verdana;
-        font-size: 20px;
-      }
-
-      p {
-        color: #AAAAAA;
-        font-family: verdana;
-        font-size: 12px;
-      }
-
-      </style>
-      </head>
-      <body>
-
-      <h1>traveline</h1>
-      <a href="itms-services://?action=download-manifest&amp;url=https://traveline.store/apps/manifest.plist">v1-다운로드</a>
-
-      <p>
-      Last updated: 2023-11-27 16:30
-      </p>
-
-      </body>
-      </html>
-      `;
+    return this.appService.getHello();
   }
 
   @Post('/upload')
