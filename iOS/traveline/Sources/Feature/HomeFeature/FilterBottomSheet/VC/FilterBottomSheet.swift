@@ -20,7 +20,7 @@ final class FilterBottomSheet: TLBottomSheetVC {
         super.init(
             title: filter.type.title,
             hasCompleteButton: filter.type.isMultiple,
-            detentHeight: UIScreen.main.bounds.height * 0.5
+            detentHeight: BaseMetric.ScreenSize.height * 0.5
         )
         
         filterListView.setupFilter(filter)

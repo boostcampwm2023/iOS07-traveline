@@ -27,6 +27,8 @@ final class TimelineWritingVC: UIViewController {
     
     // MARK: - UI Components
     
+    private lazy var tlNavigationBar: TLNavigationBar = .init(vc: self).addCompleteButton()
+    
     private let timePickerVC = TimePickerVC()
     private let titleTextField: TitleTextField = .init()
     private let dateLabel: TLLabel = .init(font: TLFont.body2, color: TLColor.gray)
@@ -104,11 +106,17 @@ private extension TimelineWritingVC {
     
     func setupAttributes() {
         view.backgroundColor = TLColor.black
+        
         titleTextField.placeholder = Constants.titlePlaceholder
         textView.delegate = self
+        
+        tlNavigationBar.delegate = self
+        tlNavigationBar.setupTitle(to: "Day01") // TODO: - 추후 서버통신 후 수정
+        
         let imageTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectImageButtonTapped))
         let timeTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectTimeButtonTapped))
         let locationTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectLocationButtonTapped))
+        
         selectImageButton.addGestureRecognizer(imageTapGesture)
         selectTime.addGestureRecognizer(timeTapGesture)
         selectLocation.addGestureRecognizer(locationTapGesture)
@@ -118,23 +126,9 @@ private extension TimelineWritingVC {
         updateTime()
     }
     
-    func setupNavigationItem() {
-        self.navigationItem.title = "Day01"
-        let completeButton = UIBarButtonItem(
-            title: Constants.complete,
-            style: .plain,
-            target: self,
-            action: #selector(completeButtonTapped)
-        )
-        completeButton.isEnabled = false
-        completeButton.setTitleTextAttributes([.font: TLFont.body1.font], for: .normal)
-        completeButton.setTitleTextAttributes([.foregroundColor: TLColor.gray], for: .disabled)
-        completeButton.setTitleTextAttributes([.foregroundColor: TLColor.main], for: .normal)
-        self.navigationItem.rightBarButtonItem = completeButton
-    }
-    
     func setupLayout() {
         view.addSubviews(
+            tlNavigationBar,
             titleTextField,
             dateLabel,
             selectTime,
@@ -148,21 +142,31 @@ private extension TimelineWritingVC {
         }
         
         NSLayoutConstraint.activate([
-            titleTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Metric.topInset),
+            tlNavigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tlNavigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tlNavigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tlNavigationBar.heightAnchor.constraint(equalToConstant: BaseMetric.tlheight),
+            
+            titleTextField.topAnchor.constraint(equalTo: tlNavigationBar.bottomAnchor, constant: Metric.topInset),
             titleTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
             titleTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
+            
             dateLabel.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: Metric.belowLine),
             dateLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
             dateLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
+            
             selectTime.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: Metric.spacing),
             selectTime.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
             selectTime.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
+            
             selectLocation.topAnchor.constraint(equalTo: selectTime.bottomAnchor, constant: Metric.spacing),
             selectLocation.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
             selectLocation.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
+            
             selectImageButton.topAnchor.constraint(equalTo: selectLocation.bottomAnchor, constant: Metric.spacing),
             selectImageButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
             selectImageButton.widthAnchor.constraint(equalToConstant: selectImageButton.width),
+            
             textView.topAnchor.constraint(equalTo: selectImageButton.bottomAnchor, constant: Metric.spacing),
             textView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
             textView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
@@ -212,11 +216,20 @@ extension TimelineWritingVC: PHPickerViewControllerDelegate {
     
 }
 
+// MARK: - LocationSearchDelegate
+
 extension TimelineWritingVC: LocationSearchDelegate {
     func selectedLocation(result: String) {
         selectLocation.setText(to: result)
     }
-    
+}
+
+// MARK: - TLNavigationBarDelegate
+
+extension TimelineWritingVC: TLNavigationBarDelegate {
+    func rightButtonDidTapped() {
+        // TODO: 네비게이션 바 완료 버튼 선택
+    }
 }
 
 @available(iOS 17, *)

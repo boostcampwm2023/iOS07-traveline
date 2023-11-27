@@ -23,6 +23,11 @@ final class TimelineVC: UIViewController {
     
     // MARK: - UI Components
     
+    private lazy var tlNavigationBar: TLNavigationBar = .init(vc: self).addRightButton(
+        image: TLImage.Travel.more,
+        menu: .init(children: menuItems)
+    )
+    
     private lazy var timelineCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
         
@@ -43,7 +48,16 @@ final class TimelineVC: UIViewController {
     
     // TODO: - dummy 제거
     private let dummyCardList = TimelineSample.makeCardList()
-        
+    
+    private let menuItems: [UIAction] = [
+        .init(title: "수정하기", handler: { _ in
+            // TODO: - 수정하기 연결
+        }),
+        .init(title: "삭제하기", attributes: .destructive, handler: { _ in
+            // TODO: - 삭제하기 연결
+        })
+    ]
+    
     // MARK: - Life Cycle
     
     override func viewDidLoad() {
@@ -52,6 +66,12 @@ final class TimelineVC: UIViewController {
         setupAttributes()
         setupLayout()
         setupCompositionalLayout()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.navigationBar.isHidden = true
     }
     
     // MARK: - Functions
@@ -77,43 +97,26 @@ private extension TimelineVC {
         view.backgroundColor = TLColor.black
         
         createPostingButton.addTarget(self, action: #selector(createPostingButtonDidTapped), for: .touchUpInside)
-        
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = TLColor.black
-        appearance.shadowColor = .clear
-        
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
-        
-        let menuItems: [UIAction] = [
-            .init(title: "수정하기", handler: { _ in
-                // TODO: - 수정하기 연결
-            }),
-            .init(title: "삭제하기", attributes: .destructive, handler: { _ in
-                // TODO: - 삭제하기 연결
-            })
-        ]
-        let moreButton = UIBarButtonItem(
-            image: TLImage.Travel.more.withRenderingMode(.alwaysOriginal),
-            menu: .init(children: menuItems)
-        )
-        navigationItem.rightBarButtonItem = moreButton
-                
-        let backBarButtonItem = UIBarButtonItem(title: Literal.empty, style: .plain, target: self, action: nil)
-        backBarButtonItem.tintColor = TLColor.white
-        self.navigationItem.backBarButtonItem = backBarButtonItem
-
     }
     
     func setupLayout() {
-        view.addSubviews(timelineCollectionView, createPostingButton)
+        view.addSubviews(
+            tlNavigationBar,
+            timelineCollectionView,
+            createPostingButton
+        )
+        
         view.subviews.forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         NSLayoutConstraint.activate([
-            timelineCollectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tlNavigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tlNavigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tlNavigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tlNavigationBar.heightAnchor.constraint(equalToConstant: BaseMetric.tlheight),
+            
+            timelineCollectionView.topAnchor.constraint(equalTo: tlNavigationBar.bottomAnchor),
             timelineCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             timelineCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             timelineCollectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -234,7 +237,7 @@ extension TimelineVC: UICollectionViewDataSource {
             let lastRow = collectionView.numberOfItems(inSection: indexPath.section) - 1
             if indexPath.row == lastRow { cell.changeToLast() }
             return cell
-                
+            
         default:
             return UICollectionViewCell()
         }

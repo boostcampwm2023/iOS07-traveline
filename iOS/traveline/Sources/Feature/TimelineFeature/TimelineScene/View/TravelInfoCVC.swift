@@ -35,7 +35,7 @@ final class TravelInfoCVC: UICollectionViewCell {
     )
     
     private let tagListView: TLTagListView = .init(
-        width: UIScreen.main.bounds.width - Metric.horizontalInset * 2
+        width: BaseMetric.ScreenSize.width - Metric.horizontalInset * 2
     )
     
     private let likeButton: UIButton = {

@@ -26,7 +26,7 @@ enum ServiceGuideType: String, CaseIterable {
         let button = UIButton()
         button.setTitle(self.rawValue, for: .normal)
         button.setTitleColor(TLColor.white, for: .normal)
-        button.titleLabel?.font = TLFont.subtitle2.font
+        button.titleLabel?.font = TLFont.body1.font
         
         return button
     }
@@ -39,6 +39,8 @@ final class SettingVC: UIViewController {
     
     // MARK: - UI Components
     
+    private lazy var tlNavigationBar: TLNavigationBar = .init(title: "설정", vc: self)
+    
     private let lineWidth: CGFloat = 1
     
     private let stackView: UIStackView = {
@@ -47,7 +49,7 @@ final class SettingVC: UIViewController {
         stackView.axis = .vertical
         stackView.distribution = .fill
         stackView.alignment = .leading
-        stackView.spacing = 12
+        stackView.spacing = 16
         return stackView
     }()
     
@@ -67,7 +69,7 @@ final class SettingVC: UIViewController {
         let button = UIButton()
         button.setTitle("로그아웃", for: .normal)
         button.setTitleColor(TLColor.white, for: .normal)
-        button.titleLabel?.font = TLFont.subtitle2.font
+        button.titleLabel?.font = TLFont.body1.font
         return button
     }()
     
@@ -75,7 +77,7 @@ final class SettingVC: UIViewController {
         let button = UIButton()
         button.setTitle("탈퇴하기", for: .normal)
         button.setTitleColor(TLColor.white, for: .normal)
-        button.titleLabel?.font = TLFont.subtitle2.font
+        button.titleLabel?.font = TLFont.body1.font
         return button
     }()
     
@@ -137,7 +139,8 @@ final class SettingVC: UIViewController {
 extension SettingVC {
     
     private func setupAttributes() {
-        self.navigationItem.title = "설정"
+        view.backgroundColor = TLColor.black
+        
         logoutButton.addTarget(self, action: #selector(logoutButtonTapped), for: .touchUpInside)
         withdrawalButton.addTarget(self, action: #selector(withdrawalButtonTapped), for: .touchUpInside)
         setupServiceGuideButton()
@@ -158,7 +161,7 @@ extension SettingVC {
     }
     
     private func setupLayout() {
-        view.addSubview(stackView)
+        view.addSubviews(tlNavigationBar, stackView)
         [
             serviceGuides[.license] ?? UIButton(),
             serviceGuides[.termsOfUse] ?? UIButton(),
@@ -170,13 +173,22 @@ extension SettingVC {
             stackView.addArrangedSubview($0)
         }
         
+        view.subviews.forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+        
         NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tlNavigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tlNavigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tlNavigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tlNavigationBar.heightAnchor.constraint(equalToConstant: BaseMetric.tlheight),
             
-            line.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            line.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            stackView.topAnchor.constraint(equalTo: tlNavigationBar.bottomAnchor, constant: 32),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+            line.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
+            line.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
             line.heightAnchor.constraint(equalToConstant: lineWidth)
         ])
     }
