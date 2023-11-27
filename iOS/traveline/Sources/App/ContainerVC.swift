@@ -43,14 +43,20 @@ final class ContainerVC: UIViewController {
     // MARK: - Functions
     
     private func openSideMenu() {
+        self.addChild(self.sideMenuVC)
+        self.sideMenuVC.view.frame = self.sideMenuHiddenPosition()
+        self.view.addSubview(self.sideMenuVC.view)
+        self.sideMenuVC.didMove(toParent: self)
+        
         UIView.animate(
-            withDuration: 0.5,
+            withDuration: 0.4,
             delay: 0,
             usingSpringWithDamping: 1.0,
-            initialSpringVelocity: 0,
-            options: .layoutSubviews,
+            initialSpringVelocity: 0.5,
+            options: .curveEaseInOut,
             animations: {
-                self.sideMenuVC.view.isHidden = false
+                self.sideMenuVC.view.frame = self.sideMenuDisplayPosition()
+                self.sideMenuVC.didMove(toParent: self)
                 self.shadowView.isHidden = false
             },
             completion: { [weak self] _ in
@@ -59,21 +65,45 @@ final class ContainerVC: UIViewController {
             })
     }
     
-    private func closeSideMenu(_ completion: (() -> Void)?) {
+    private func closeSideMenu() {
+        self.sideMenuVC.view.frame = self.sideMenuDisplayPosition()
+        
         UIView.animate(
             withDuration: 0.5,
             animations: { [weak self] in
                 guard let self else { return }
-                self.sideMenuVC.view.isHidden = true
-                self.shadowView.isHidden = true
+                self.sideMenuVC.view.frame = self.sideMenuHiddenPosition()
             },
             completion: { [weak self] _ in
                 guard let self else { return }
                 self.sideMenuState = .closed
-                DispatchQueue.main.async {
-                    completion?()
-                }
+                self.willMove(toParent: nil)
+                self.shadowView.isHidden = true
+                self.sideMenuVC.view.removeFromSuperview()
+                self.sideMenuVC.removeFromParent()
             })
+    }
+    
+    private func sideMenuDisplayPosition() -> CGRect {
+        return CGRect(
+            x: 0,
+            y: 0,
+            width: self.sideMenuVC.view.frame.width,
+            height: self.sideMenuVC.view.frame.height
+        )
+    }
+    
+    private func sideMenuHiddenPosition() -> CGRect {
+        return CGRect(
+            x: -self.sideMenuVC.view.frame.width,
+            y: 0,
+            width: self.sideMenuVC.view.frame.width,
+            height: self.sideMenuVC.view.frame.height
+        )
+    }
+    
+    @objc func shadowTouched() {
+        closeSideMenu()
     }
 }
 
@@ -89,21 +119,21 @@ private extension ContainerVC {
         navigationVC.didMove(toParent: self)
         self.navigationVC = navigationVC
         
-        addChild(sideMenuVC)
-        view.addSubview(sideMenuVC.view)
-        sideMenuVC.didMove(toParent: self)
         sideMenuVC.delegate = self
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(shadowTouched))
+        tapGesture.delegate = self
+        shadowView.addGestureRecognizer(tapGesture)
     }
     
     func setupLayout() {
-        self.sideMenuVC.menuView.frame = CGRect(
+        self.sideMenuVC.view.frame = CGRect(
             x: 0,
             y: 0,
             width: self.homeVC.view.frame.size.width / 16 * 9,
             height: self.homeVC.view.frame.size.height
         )
-        self.sideMenuVC.view.insertSubview(shadowView, at: 0)
-        self.sideMenuVC.view.isHidden = true
+        view.insertSubview(shadowView, at: 1)
         
         self.shadowView.isHidden = true
         self.shadowView.frame = self.view.bounds
@@ -118,12 +148,9 @@ private extension ContainerVC {
 // MARK: - SideMenuDelegate
 
 extension ContainerVC: SideMenuDelegate {
-    func shadowTouched() {
-        closeSideMenu(nil)
-    }
     
     func didSelect(menuItem: SideMenuVC.Options) {
-        closeSideMenu(nil)
+        closeSideMenu()
         
         switch menuItem {
         case .profileEdit:
@@ -144,9 +171,20 @@ extension ContainerVC: HomeViewDelegate {
     func sideMenuTapped() {
         switch sideMenuState {
         case .closed: openSideMenu()
-        case .opened: closeSideMenu(nil)
+        case .opened: closeSideMenu()
         }
     }
     
 }
 
+// MARK: - extension UIGestureRecognizerDelegate
+
+extension ContainerVC: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        guard let view = touch.view else { return false }
+        if view == shadowView {
+            return true
+        }
+        return false
+    }
+}

@@ -52,7 +52,6 @@ final class ProfileLabel: UIView {
     init() {
         super.init(frame: .zero)
         
-        setupAttributes()
         setupLayout()
     }
     
@@ -60,20 +59,11 @@ final class ProfileLabel: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Functions
-    
-    func addTarget(_ target: Any?, action: Selector, for event: UIControl.Event) {
-        editButton.addTarget(target, action: action, for: event)
-    }
-    
 }
 
 // MARK: - Setup Functions
 
 private extension ProfileLabel {
-    
-    func setupAttributes() {
-    }
     
     func setupLayout() {
         addSubviews(

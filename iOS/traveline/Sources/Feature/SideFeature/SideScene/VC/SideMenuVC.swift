@@ -10,7 +10,6 @@ import UIKit
 
 protocol SideMenuDelegate: AnyObject {
     func didSelect(menuItem: SideMenuVC.Options)
-    func shadowTouched()
 }
 
 final class SideMenuVC: UIViewController {
@@ -33,8 +32,6 @@ final class SideMenuVC: UIViewController {
     
     // MARK: - UI Components
     
-    let menuView: UIView = .init()
-    
     private let stackView: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
@@ -46,9 +43,9 @@ final class SideMenuVC: UIViewController {
         return view
     }()
     
-    private let profileLabel: ProfileLabel = .init()
+    private let profileButton: ProfileLabel = .init()
     
-    private let myPostListLabel: UIButton = {
+    private let myPostListButton: UIButton = {
         var config = UIButton.Configuration.borderless()
         let button = UIButton()
         config.title = Constants.myListTitle
@@ -60,7 +57,7 @@ final class SideMenuVC: UIViewController {
         return button
     }()
     
-    let settingLabel: UIButton = {
+    let settingButton: UIButton = {
         var config = UIButton.Configuration.borderless()
         let button = UIButton()
         config.title = Constants.settingTitle
@@ -99,10 +96,6 @@ final class SideMenuVC: UIViewController {
         delegate?.didSelect(menuItem: .setting)
     }
     
-    @objc private func shadowTouched() {
-        delegate?.shadowTouched()
-    }
-    
 }
 
 // MARK: - Setup Functions
@@ -110,25 +103,19 @@ final class SideMenuVC: UIViewController {
 private extension SideMenuVC {
     
     func setupAttributes() {
-        profileLabel.addTarget(self, action: #selector(profileEditTapped), for: .touchUpInside)
-        myPostListLabel.addTarget(self, action: #selector(myPostListTapped), for: .touchUpInside)
-        settingLabel.addTarget(self, action: #selector(settingTapped), for: .touchUpInside)
-        menuView.backgroundColor = TLColor.black
+        profileButton.editButton.addTarget(self, action: #selector(profileEditTapped), for: .touchUpInside)
+        myPostListButton.addTarget(self, action: #selector(myPostListTapped), for: .touchUpInside)
+        settingButton.addTarget(self, action: #selector(settingTapped), for: .touchUpInside)
+        view.backgroundColor = TLColor.black
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(shadowTouched))
-        tapGesture.numberOfTapsRequired = 1
-        tapGesture.delegate = self
-        tapGesture.isEnabled = true
-        view.addGestureRecognizer(tapGesture)
     }
     
     func setupLayout() {
-        view.addSubview(menuView)
-        menuView.addSubview(stackView)
+        view.addSubview(stackView)
         stackView.addArrangedSubviews(
-            profileLabel,
-            myPostListLabel,
-            settingLabel
+            profileButton,
+            myPostListButton,
+            settingButton
         )
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.arrangedSubviews.forEach {
@@ -136,29 +123,12 @@ private extension SideMenuVC {
         }
         
         NSLayoutConstraint.activate([
-            menuView.topAnchor.constraint(equalTo: view.topAnchor),
-            menuView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            menuView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            menuView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
-            stackView.centerXAnchor.constraint(equalTo: menuView.centerXAnchor),
-            stackView.centerYAnchor.constraint(equalTo: menuView.centerYAnchor),
-            stackView.leadingAnchor.constraint(equalTo: menuView.leadingAnchor, constant: Metric.margin),
-            stackView.trailingAnchor.constraint(equalTo: menuView.trailingAnchor, constant: -Metric.margin)
+            stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin)
         ])
     }
     
-}
-
-// MARK: - extension UIGestureRecognizerDelegate
-
-extension SideMenuVC: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        guard let view = touch.view else { return false }
-        if view === menuView {
-            return false
-        }
-        return true
-    }
 }
 
