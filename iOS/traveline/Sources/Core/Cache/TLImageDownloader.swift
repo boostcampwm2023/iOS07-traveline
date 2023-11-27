@@ -24,7 +24,7 @@ final class TLImageDownloader {
     func cancelDownload(key: AnyHashable) {
         downloadTaskQueue.async { [weak self] in
             self?.downloadTasks[key]?.cancel()
-            self?.downloadTasks[key] = nil
+            self?.downloadTasks.removeValue(forKey: key)
         }
     }
     
