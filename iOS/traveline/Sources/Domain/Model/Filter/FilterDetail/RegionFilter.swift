@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum RegionFilter: DetailTagType {
+enum RegionFilter: DetailFilterType {
     case seoul
     case busan
     case daegu
