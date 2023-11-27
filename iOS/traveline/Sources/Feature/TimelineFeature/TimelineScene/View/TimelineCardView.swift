@@ -55,7 +55,15 @@ final class TimelineCardView: UIView {
         titleLabel.setText(to: cardInfo.title)
         subtitleLabel.setText(to: cardInfo.subtitle)
         contentLabel.setText(to: cardInfo.content)
+        thumbnailImageView.setImage(from: cardInfo.thumbnailURL)
     }
+    
+    /// 셀 재사용 시 이미지 reset
+    func reset() {
+        thumbnailImageView.cancel()
+        thumbnailImageView.image = nil
+    }
+    
 }
 
 // MARK: - Setup Functions
@@ -66,8 +74,6 @@ private extension TimelineCardView {
         layer.cornerRadius = Metric.radius
         thumbnailImageView.backgroundColor = TLColor.disabledGray
         thumbnailImageView.layer.cornerRadius = 12.0
-        // TODO: - 서버 연동 후 수정
-        thumbnailImageView.image = TravelineAsset.Images.travelImage.image
         thumbnailImageView.clipsToBounds = true
     }
     
