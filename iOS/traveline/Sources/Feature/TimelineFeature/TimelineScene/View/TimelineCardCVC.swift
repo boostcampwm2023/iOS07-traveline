@@ -48,6 +48,7 @@ final class TimelineCardCVC: UICollectionViewCell {
     // MARK: - Properties
     
     private lazy var lineHeightConstraint: NSLayoutConstraint = lineView.bottomAnchor.constraint(equalTo: bottomAnchor)
+    private lazy var lastLineHeightConstraint: NSLayoutConstraint = lineView.bottomAnchor.constraint(equalTo: cardView.centerYAnchor)
     
     // MARK: - Initializer
     
@@ -61,6 +62,14 @@ final class TimelineCardCVC: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        cardView.reset()
+        lastLineHeightConstraint.isActive = false
+        lineHeightConstraint.isActive = true
+    }
+    
     // MARK: - Functions
     
     func setData(by cardInfo: TimelineCardInfo) {
@@ -71,7 +80,7 @@ final class TimelineCardCVC: UICollectionViewCell {
     /// 마지막 셀일 때 line 길이 수정
     func changeToLast() {
         lineHeightConstraint.isActive = false
-        lineView.bottomAnchor.constraint(equalTo: cardView.centerYAnchor).isActive = true
+        lastLineHeightConstraint.isActive = true
     }
 }
 
