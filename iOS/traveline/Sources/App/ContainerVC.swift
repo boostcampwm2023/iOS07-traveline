@@ -23,7 +23,7 @@ final class ContainerVC: UIViewController {
     private var navigationVC: UINavigationController?
     private var selectedVC: UIViewController?
     
-    //MARK: - Properties
+    // MARK: - Properties
     
     private var sideMenuState: SideMenuState = .closed
     
@@ -40,17 +40,18 @@ final class ContainerVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - LifeCycle
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
 }
 
 // MARK: - Setup Functions
 
 private extension ContainerVC {
+    
+    func setupAttributes() {
+   //     let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(shadowTapped(_:)))
+     //   tapGestureRecognizer.numberOfTapsRequired = 1
+      //  tapGestureRecognizer.delegate = self
+       // self.shadowView.addGestureRecognizer(tapGestureRecognizer)
+    }
     
     func setupChildVC() {
         let navigationVC = UINavigationController(rootViewController: homeVC)
@@ -67,18 +68,20 @@ private extension ContainerVC {
     }
     
     func setupLayout() {
-        self.sideMenuVC.view.frame = CGRect(
+        self.sideMenuVC.menuView.frame = CGRect(
             x: 0,
             y: 0,
             width: self.homeVC.view.frame.size.width / 16 * 9,
             height: self.homeVC.view.frame.size.height
         )
+        self.sideMenuVC.view.insertSubview(shadowView, at: 0)
         self.sideMenuVC.view.isHidden = true
-                self.homeVC.view.addSubview(self.shadowView)
-        
+        self.shadowView.isHidden = true
+        self.shadowView.frame = self.view.bounds
         self.shadowView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         self.shadowView.backgroundColor = TLColor.black
-        self.shadowView.alpha = 0.5
+        self.shadowView.alpha = 0.7
+        
     }
     
 }
@@ -86,6 +89,10 @@ private extension ContainerVC {
 // MARK: - SideMenuDelegate
 
 extension ContainerVC: SideMenuDelegate {
+    func shadowTouched() {
+        closeSideMenu(nil)
+    }
+    
     func didSelect(menuItem: SideMenuVC.Options) {
         toggleSideMenu(completion: nil)
         
@@ -93,7 +100,7 @@ extension ContainerVC: SideMenuDelegate {
         case .profileEdit:
             navigationVC?.pushViewController(ProfileEditingVC(), animated: true)
         case .myPostList:
-            //TODO: - myPostListView 만들면 변경하기
+            // TODO: - myPostListView 만들면 변경하기
             break
         case .setting:
             navigationVC?.pushViewController(SettingVC(), animated: true)
@@ -119,8 +126,13 @@ extension ContainerVC: HomeViewDelegate {
     private func openSideMenu() {
         UIView.animate(
             withDuration: 0.5,
+            delay: 0,
+            usingSpringWithDamping: 1.0,
+            initialSpringVelocity: 0,
+            options: .layoutSubviews,
             animations: {
                 self.sideMenuVC.view.isHidden = false
+                self.shadowView.isHidden = false
             },
             completion: { [weak self] _ in
                 guard let self else { return }
@@ -134,6 +146,7 @@ extension ContainerVC: HomeViewDelegate {
             animations: { [weak self] in
                 guard let self else { return }
                 self.sideMenuVC.view.isHidden = true
+                self.shadowView.isHidden = true
             },
             completion: { [weak self] _ in
                 guard let self else { return }
@@ -145,6 +158,21 @@ extension ContainerVC: HomeViewDelegate {
     }
     
 }
+/*
+extension ContainerVC: UIGestureRecognizerDelegate {
+    @objc func shadowTapped(_ sender: UITapGestureRecognizer) {
+            print("hi")
+        if sender.state == .ended {
+            print("hi")
+            closeSideMenu(nil)
+        }
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        print("??")
+        return true
+    }
+}*/
 
 @available(iOS 17, *)
 #Preview("ContainerVC") {

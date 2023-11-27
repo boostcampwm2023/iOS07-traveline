@@ -20,7 +20,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let vc = HomeVC(viewModel: viewModel)
 //        let vc = TimelineWritingVC()
         let nv = UINavigationController(rootViewController: vc)
-        window?.rootViewController = nv
+        let cvc = ContainerVC()
+        window?.rootViewController = cvc
         window?.tintColor = TLColor.main
         window?.makeKeyAndVisible()
     }
