@@ -21,6 +21,16 @@ final class SideMenuVC: UIViewController {
         case setting
     }
     
+    private enum Metric {
+        static let margin: CGFloat = 16.0
+        static let spacing: CGFloat = 16.0
+    }
+    
+    private enum Constants {
+        static let myListTitle = "내가 작성한 글"
+        static let settingTitle = "설정"
+    }
+    
     // MARK: - UI Components
     
     let menuView: UIView = .init()
@@ -28,7 +38,7 @@ final class SideMenuVC: UIViewController {
     private let stackView: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
-        view.spacing = 16
+        view.spacing = Metric.margin
         view.alignment = .leading
         view.distribution = .fill
         view.isUserInteractionEnabled = true
@@ -41,7 +51,7 @@ final class SideMenuVC: UIViewController {
     private let myPostListLabel: UIButton = {
         var config = UIButton.Configuration.borderless()
         let button = UIButton()
-        config.title = "내가 작성한 글"
+        config.title = Constants.myListTitle
         config.baseForegroundColor = TLColor.white
         
         button.titleLabel?.font = TLFont.subtitle1.font
@@ -53,7 +63,7 @@ final class SideMenuVC: UIViewController {
     let settingLabel: UIButton = {
         var config = UIButton.Configuration.borderless()
         let button = UIButton()
-        config.title = "설정"
+        config.title = Constants.settingTitle
         config.baseForegroundColor = TLColor.white
         
         button.titleLabel?.font = TLFont.subtitle1.font
@@ -92,6 +102,7 @@ final class SideMenuVC: UIViewController {
     @objc private func shadowTouched() {
         delegate?.shadowTouched()
     }
+    
 }
 
 // MARK: - Setup Functions
@@ -103,6 +114,7 @@ private extension SideMenuVC {
         myPostListLabel.addTarget(self, action: #selector(myPostListTapped), for: .touchUpInside)
         settingLabel.addTarget(self, action: #selector(settingTapped), for: .touchUpInside)
         menuView.backgroundColor = TLColor.black
+        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(shadowTouched))
         tapGesture.numberOfTapsRequired = 1
         tapGesture.delegate = self
@@ -124,14 +136,21 @@ private extension SideMenuVC {
         }
         
         NSLayoutConstraint.activate([
+            menuView.topAnchor.constraint(equalTo: view.topAnchor),
+            menuView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            menuView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            menuView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             stackView.centerXAnchor.constraint(equalTo: menuView.centerXAnchor),
             stackView.centerYAnchor.constraint(equalTo: menuView.centerYAnchor),
-            stackView.leadingAnchor.constraint(equalTo: menuView.leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: menuView.trailingAnchor, constant: -16)
+            stackView.leadingAnchor.constraint(equalTo: menuView.leadingAnchor, constant: Metric.margin),
+            stackView.trailingAnchor.constraint(equalTo: menuView.trailingAnchor, constant: -Metric.margin)
         ])
     }
     
 }
+
+// MARK: - extension UIGestureRecognizerDelegate
 
 extension SideMenuVC: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
@@ -143,10 +162,3 @@ extension SideMenuVC: UIGestureRecognizerDelegate {
     }
 }
 
-
-@available(iOS 17, *)
-#Preview("SideMenuVC") {
-    let vc = SideMenuVC()
-    let homeNV = UINavigationController(rootViewController: vc)
-    return homeNV
-}
