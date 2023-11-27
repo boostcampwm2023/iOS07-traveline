@@ -12,7 +12,7 @@ enum Literal {
     static let empty: String = ""
     
     enum Tag {
-        static let location: String = "위치"
+        static let region: String = "지역"
         static let period: String = "기간"
         static let season: String = "계절"
         static let theme: String = "테마"
@@ -39,6 +39,7 @@ enum Literal {
             static let under50: String = "10 - 50"
             static let under100: String = "50 - 100"
             static let over100: String = "100 -"
+            static let won: String = "만원"
         }
         
         enum PeopleDetail {
@@ -64,5 +65,46 @@ enum Literal {
     
     enum Filter {
         static let sort: String = "정렬"
+        
+        enum SortDetail {
+            static let recent: String = "최신순"
+            static let like: String = "좋아요순"
+        }
+        
+        enum RegionDetail {
+            static let seoul: String = "서울"
+            static let busan: String = "부산"
+            static let daegu: String = "대구"
+            static let incheon: String = "인천"
+            static let gwangju: String = "광주"
+            static let daejeon: String = "대전"
+            static let ulsan: String = "울산"
+            static let sejong: String = "세종"
+            static let gyeonggi: String = "경기도"
+            static let gangwon: String = "강원도"
+            static let chungbuk: String = "충청북도"
+            static let chungnam: String = "충청남도"
+            static let jeonbuk: String = "전라북도"
+            static let jeonnam: String = "전라남도"
+            static let gyeongbuk: String = "경상북도"
+            static let gyeongnam: String = "경상남도"
+            static let jeju: String = "제주도"
+        }
+        
+        enum PeriodDetail {
+            static let one: String = "당일치기"
+            static let two: String = "1박 2일"
+            static let three: String = "2박 3일"
+            static let overThree: String = "3박 -"
+            static let week: String = "일주일 -"
+            static let month: String = "한 달 -"
+        }
+        
+        enum SeasonDetail {
+            static let spring: String = "봄"
+            static let summer: String = "여름"
+            static let fall: String = "가을"
+            static let winter: String = "겨울"
+        }
     }
 }
