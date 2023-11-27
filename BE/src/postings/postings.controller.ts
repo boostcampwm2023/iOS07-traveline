@@ -37,7 +37,7 @@ export class PostingsController {
     description: '새로운 포스팅을 작성한다.',
   })
   async create(@Req() request, @Body() createPostingDto: CreatePostingDto) {
-    const userId = ''; // TODO: request['user'].id; (현재 id 필드 값은 닉네임)
+    const userId = request['user'].id;
     return this.postingsService.createPosting(userId, createPostingDto);
   }
 
@@ -58,8 +58,8 @@ export class PostingsController {
     description: 'id 값에 해당되는 포스팅을 반환한다.',
   })
   @ApiOkResponse({ description: 'OK', type: Posting })
-  async findOne(@Param('id') id: string) {
-    const userId = ''; // TODO: request['user'].id; (현재 id 필드 값은 닉네임)
+  async findOne(@Req() request, @Param('id') id: string) {
+    const userId = request['user'].id;
     const posting = await this.postingsService.findPosting(id);
 
     return {
@@ -79,8 +79,12 @@ export class PostingsController {
     description: 'id 값에 해당되는 포스팅을 수정한다.',
   })
   @ApiOkResponse({ description: 'OK' })
-  update(@Param('id') id: string, @Body() updatePostingDto: UpdatePostingDto) {
-    const userId = ''; // TODO: request['user'].id; (현재 id 필드 값은 닉네임)
+  update(
+    @Req() request,
+    @Param('id') id: string,
+    @Body() updatePostingDto: UpdatePostingDto
+  ) {
+    const userId = request['user'].id;
     return this.postingsService.updatePosting(id, userId, updatePostingDto);
   }
 
@@ -91,8 +95,8 @@ export class PostingsController {
     description: 'id 값에 해당되는 포스팅을 삭제한다.',
   })
   @ApiOkResponse({ description: 'OK' })
-  remove(@Param('id') id: string) {
-    const userId = ''; // TODO: request['user'].id; (현재 id 필드 값은 닉네임)
+  remove(@Req() request, @Param('id') id: string) {
+    const userId = request['user'].id;
     return this.postingsService.removePosting(id, userId);
   }
 
@@ -115,8 +119,8 @@ export class PostingsController {
       'id 값에 해당되는 포스팅에 좋아요가 추가되거나 삭제된다. (토글)',
   })
   @ApiOkResponse({ description: 'OK' })
-  toggleLike(@Param('id') id: string) {
-    const userId = ''; // TODO: request['user'].id; (현재 id 필드 값은 닉네임)
+  toggleLike(@Req() request, @Param('id') id: string) {
+    const userId = request['user'].id;
     return this.postingsService.toggleLike(id, userId);
   }
 
@@ -129,8 +133,8 @@ export class PostingsController {
   @ApiCreatedResponse({
     description: 'OK',
   })
-  report(@Param('id') id: string) {
-    const userId = ''; // TODO: request['user'].id; (현재 id 필드 값은 닉네임)
+  report(@Req() request, @Param('id') id: string) {
+    const userId = request['user'].id;
     return this.postingsService.report(id, userId);
   }
 
