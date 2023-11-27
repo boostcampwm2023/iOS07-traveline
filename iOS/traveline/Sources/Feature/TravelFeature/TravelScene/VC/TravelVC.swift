@@ -16,11 +16,13 @@ final class TravelVC: UIViewController {
         static let spacing: CGFloat = 20.0
         static let width: CGFloat = UIScreen.main.bounds.width - 32.0
         static let borderWidth: CGFloat = 1.0
+        static let bottomSheetHeight: CGFloat = UIScreen.main.bounds.height * 0.7
     }
     
     private enum Constants {
         static let textFieldPlaceholder: String = "제목 *"
         static let done: String = "완료"
+        static let bottomSheetTitle: String = "지역"
     }
     
     // MARK: - UI Components
@@ -48,7 +50,7 @@ final class TravelVC: UIViewController {
         let stackView = UIStackView()
         
         stackView.axis = .vertical
-        stackView.spacing = 20.0
+        stackView.spacing = Metric.spacing
         stackView.distribution = .fill
         stackView.alignment = .leading
         
@@ -81,6 +83,15 @@ final class TravelVC: UIViewController {
         view.endEditing(true)
     }
     
+    @objc private func selectRegion() {
+        let regionBottomSheetVC = RegionBottomSheetVC(
+            title: Constants.bottomSheetTitle,
+            hasCompleteButton: false,
+            detentHeight: Metric.bottomSheetHeight
+        )
+        regionBottomSheetVC.delegate = self
+        present(regionBottomSheetVC, animated: true)
+    }
 }
 
 // MARK: - Setup Functions
@@ -90,6 +101,7 @@ private extension TravelVC {
         view.backgroundColor = TLColor.black
         titleTextField.placeholder = Constants.textFieldPlaceholder
         baseScrollView.delegate = self
+        selectRegionButton.addTarget(self, action: #selector(selectRegion), for: .touchUpInside)
         
         navigationItem.title = "여행 생성"
         navigationController?.navigationBar.titleTextAttributes = [
@@ -193,6 +205,15 @@ private extension TravelVC {
 extension TravelVC: UIScrollViewDelegate {
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         dismissKeyboard()
+    }
+}
+
+// MARK: - TLBottomSheetDelegate
+
+extension TravelVC: TLBottomSheetDelegate {
+    func bottomSheetDidDisappear(data: Any) {
+        guard let region = data as? String else { return }
+        selectRegionButton.setSelectedTitle(region)
     }
 }
 

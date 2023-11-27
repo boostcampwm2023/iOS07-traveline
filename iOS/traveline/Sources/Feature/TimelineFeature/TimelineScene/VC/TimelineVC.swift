@@ -191,11 +191,9 @@ private extension TimelineVC {
     
 }
 
-// MARK: - UICollectionView Delegate
+// MARK: - UICollectionView Delegate, DataSource
 
 extension TimelineVC: UICollectionViewDelegate {
-    // TODO: - 상세 뷰 연결
-    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let timelineDetailVC = TimelineDetailVC(
             info: TimelineSample.makeDetailInfo()
@@ -229,16 +227,24 @@ extension TimelineVC: UICollectionViewDataSource {
             cell.setData(from: TimelineSample.makeTravelInfo())
             cell.delegate = self
             return cell
+            
         case 1:
             let cell = collectionView.dequeue(cell: TimelineCardCVC.self, for: indexPath)
             cell.setData(by: dummyCardList[indexPath.row])
+            let lastRow = collectionView.numberOfItems(inSection: indexPath.section) - 1
+            if indexPath.row == lastRow { cell.changeToLast() }
             return cell
+                
         default:
             return UICollectionViewCell()
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
         let header = collectionView.dequeHeader(view: TimelineDateHeaderView.self, for: indexPath)
         header.delegate = self
         return header
