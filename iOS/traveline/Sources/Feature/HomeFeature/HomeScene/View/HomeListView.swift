@@ -180,7 +180,7 @@ final class HomeListView: UIView {
         filterList.forEach { snapshot.appendItems([.filterItem($0)], toSection: .filter) }
         travelList.forEach { snapshot.appendItems([.travelListItem($0)], toSection: .travelList) }
         
-        dataSource.apply(snapshot, animatingDifferences: true)
+        dataSource.apply(snapshot, animatingDifferences: false)
     }
 }
 

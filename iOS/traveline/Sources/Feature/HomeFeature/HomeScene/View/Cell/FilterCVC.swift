@@ -42,7 +42,10 @@ final class FilterCVC: UICollectionViewCell {
     // MARK: - Life Cycle
     
     override func prepareForReuse() {
+        super.prepareForReuse()
+        
         filter.resetFilter()
+        invalidateIntrinsicContentSize()
     }
     
     // MARK: - Functions
