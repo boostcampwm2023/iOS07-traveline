@@ -23,10 +23,11 @@ final class TimelineVC: UIViewController {
     
     // MARK: - UI Components
     
-    private lazy var tlNavigationBar: TLNavigationBar = .init(vc: self).addRightButton(
-        image: TLImage.Travel.more,
-        menu: .init(children: menuItems)
-    )
+    private lazy var tlNavigationBar: TLNavigationBar = .init(vc: self)
+        .addRightButton(
+            image: TLImage.Travel.more,
+            menu: .init(children: menuItems)
+        )
     
     private lazy var timelineCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())

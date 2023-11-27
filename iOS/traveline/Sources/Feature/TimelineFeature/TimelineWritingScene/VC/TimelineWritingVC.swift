@@ -27,7 +27,8 @@ final class TimelineWritingVC: UIViewController {
     
     // MARK: - UI Components
     
-    private lazy var tlNavigationBar: TLNavigationBar = .init(vc: self).addCompleteButton()
+    private lazy var tlNavigationBar: TLNavigationBar = .init(vc: self)
+        .addCompleteButton()
     
     private let timePickerVC = TimePickerVC()
     private let titleTextField: TitleTextField = .init()

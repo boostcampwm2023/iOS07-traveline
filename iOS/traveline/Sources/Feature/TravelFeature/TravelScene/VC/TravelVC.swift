@@ -28,7 +28,8 @@ final class TravelVC: UIViewController {
     
     // MARK: - UI Components
     
-    private lazy var tlNavigationBar: TLNavigationBar = .init(title: Constants.title, vc: self).addCompleteButton()
+    private lazy var tlNavigationBar: TLNavigationBar = .init(title: Constants.title, vc: self)
+        .addCompleteButton()
     
     private let baseScrollView: UIScrollView = {
         let scrollView = UIScrollView()

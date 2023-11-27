@@ -194,3 +194,9 @@ extension SettingVC {
     }
     
 }
+
+@available(iOS 17, *)
+#Preview("ProfileEditingVC") {
+    let vc = SettingVC()
+    return vc
+}
