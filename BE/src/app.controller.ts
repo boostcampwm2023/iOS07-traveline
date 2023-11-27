@@ -51,7 +51,7 @@ export class AppController {
       <body>
 
       <h1>traveline</h1>
-      <a href="/apps/manifest.plist">v1-다운로드</a>
+      <a href="itms-services://?action=download-manifest&amp;url=https://traveline.store/apps/manifest.plist">v1-다운로드</a>
 
       <p>
       Last updated: 2023-11-27 16:30
