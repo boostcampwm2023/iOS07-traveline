@@ -13,4 +13,27 @@ export class PostingsRepository {
   async save(posting: Posting) {
     return this.postingsRepository.save(posting);
   }
+
+  async findOne(id: string) {
+    return this.postingsRepository.findOne({
+      where: { id },
+      relations: {
+        writer: true,
+        budget: true,
+        headcount: true,
+        location: true,
+        period: true,
+        season: true,
+        vehicle: true,
+      },
+    });
+  }
+
+  async update(id: string, posting: Posting) {
+    return this.postingsRepository.update(id, posting);
+  }
+
+  async remove(posting: Posting) {
+    return this.postingsRepository.remove(posting);
+  }
 }

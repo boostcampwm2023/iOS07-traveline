@@ -6,7 +6,6 @@ export class TagRepository<T> {
   async findByName(name: string) {
     return this.tagRepository
       .createQueryBuilder('r')
-      .select('r.id')
       .where('r.name = :name', { name })
       .getOne();
   }

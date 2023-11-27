@@ -1,8 +1,9 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
-  Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreatePostingDto } from './dto/create-posting.dto';
 import { UpdatePostingDto } from './dto/update-posting.dto';
@@ -30,11 +31,14 @@ import { VehiclesRepository } from './repositories/tags/vehicles.repository';
 import { WithWhosRepository } from './repositories/tags/with-whos.repository';
 import { PostingTheme } from './entities/mappings/posting-theme.entity';
 import { PostingWithWho } from './entities/mappings/posting-with-who.entity';
-import { User } from '../users/entities/user.entity';
+import { UserRepository } from 'src/users/users.repository';
+import { Liked } from './entities/liked.entity';
+import { Report } from './entities/report.entity';
 
 @Injectable()
 export class PostingsService {
   constructor(
+    private readonly userRepository: UserRepository,
     private readonly postingsRepository: PostingsRepository,
     private readonly likedsRepository: LikedsRepository,
     private readonly reportsRepository: ReportsRepository,
@@ -50,157 +54,212 @@ export class PostingsService {
     private readonly postingWithWhosRepository: PostingWithWhosRepository
   ) {}
 
-  async createPosting(user: User, createPostingDto: CreatePostingDto) {
-    const posting = new Posting();
-    posting.writer = user;
-    posting.title = createPostingDto.title;
-    posting.createdAt = new Date();
-    posting.startDate = new Date(createPostingDto.startDate);
-    posting.endDate = new Date(createPostingDto.endDate);
-    posting.days = this.calculateDays(posting.startDate, posting.endDate);
-    posting.period = await this.periodsRepository.findByName(
-      this.periodsRepository.findNameByCalculatingDays(posting.days)
+  async createPosting(userId: string, createPostingDto: CreatePostingDto) {
+    if (
+      new Date(createPostingDto.endDate) < new Date(createPostingDto.startDate)
+    ) {
+      throw new BadRequestException(
+        'endDate는 startDate와 같거나 더 나중의 날짜여야 합니다.'
+      );
+    }
+
+    const posting = await this.initializePosting(createPostingDto);
+    posting.writer = await this.userRepository.findById(userId);
+
+    const savedPosting = await this.postingsRepository.save(posting);
+    const postingTheme = await this.createPostingTheme(
+      savedPosting,
+      createPostingDto.theme
     );
-    posting.headcount = await this.headcountsRepository.findByName(
-      createPostingDto.headcount
-    );
-    posting.budget = await this.budgetsRepository.findByName(
-      createPostingDto.budget
-    );
-    posting.location = await this.locationsRepository.findByName(
-      createPostingDto.location
-    );
-    posting.season = await this.seasonsRepository.findByName(
-      this.seasonsRepository.findNameByCalculatingStartDate(posting.startDate)
-    );
-    posting.vehicle = await this.vehiclesRepository.findByName(
-      createPostingDto.vehicle
+    const postingWithWho = await this.createPostingWithWho(
+      savedPosting,
+      createPostingDto.withWho
     );
 
-    return this.postingsRepository.save(posting);
+    return { ...savedPosting, postingTheme, postingWithWho };
   }
 
-  async createPostingTheme(posting: Posting, themes: string[]) {
-    themes.forEach(async (e) => {
-      const postingTheme = new PostingTheme();
-      postingTheme.posting = posting;
-      postingTheme.theme = await this.themesRepository.findByName(e);
-      await this.postingThemesRepository.save(postingTheme);
-    });
+  async createPostingTheme(posting: Posting, themes: string[] = []) {
+    return Promise.all(
+      themes.map(async (e) => {
+        const postingTheme = new PostingTheme();
+        postingTheme.posting = posting;
+        postingTheme.tag = await this.themesRepository.findByName(e);
+        return this.postingThemesRepository.save(postingTheme);
+      })
+    );
   }
 
-  async createPostingWithWho(posting: Posting, withWhos: string[]) {
-    withWhos.forEach(async (e) => {
-      const postingWithWho = new PostingWithWho();
-      postingWithWho.posting = posting;
-      postingWithWho.withWho = await this.withWhosRepository.findByName(e);
-      await this.postingWithWhosRepository.save(postingWithWho);
-    });
+  async createPostingWithWho(posting: Posting, withWhos: string[] = []) {
+    return Promise.all(
+      withWhos.map(async (e) => {
+        const postingWithWho = new PostingWithWho();
+        postingWithWho.posting = posting;
+        postingWithWho.tag = await this.withWhosRepository.findByName(e);
+        return this.postingWithWhosRepository.save(postingWithWho);
+      })
+    );
   }
 
   // findAll() {
   //   return `This action returns all postings`;
   // }
 
-  // async findOne(id: string) {
-  //   return this.postingsRepository.findOneBy({ id });
-  // }
+  async findPosting(id: string) {
+    const [posting, theme, withWho] = await Promise.all([
+      this.postingsRepository.findOne(id),
+      this.postingThemesRepository.findAllByPosting(id),
+      this.postingWithWhosRepository.findAllByPosting(id),
+    ]);
 
-  // async update(
-  //   postingId: string,
-  //   userId: string,
-  //   updatePostingDto: UpdatePostingDto
-  // ) {
-  //   const posting = await this.postingsRepository.findOneBy({ id: postingId });
+    if (posting.report.length > 5) {
+      throw new ForbiddenException('차단된 게시글입니다.');
+    }
 
-  //   if (posting && posting.writer !== userId) {
-  //     throw new ForbiddenException(
-  //       '본인이 작성한 게시글만 수정할 수 있습니다.'
-  //     );
-  //   }
+    return { ...posting, theme, withWho };
+  }
 
-  //   const startDate = new Date(updatePostingDto.startDate);
-  //   const endDate = new Date(updatePostingDto.endDate);
-  //   const days = this.calculateDays(startDate, endDate);
+  async updatePosting(
+    postingId: string,
+    userId: string,
+    updatePostingDto: UpdatePostingDto
+  ) {
+    const posting = await this.postingsRepository.findOne(postingId);
 
-  //   return this.postingsRepository.update(postingId, {
-  //     title: updatePostingDto.title,
-  //     start_date: startDate,
-  //     end_date: endDate,
-  //     days: days,
-  //     period: this.selectPeriod(days),
-  //     headcount: this.customIndexOf(headcounts, updatePostingDto.headcount),
-  //     budget: this.customIndexOf(budgets, updatePostingDto.budget),
-  //     location: this.customIndexOf(locations, updatePostingDto.location),
-  //     theme: updatePostingDto.theme
-  //       ? updatePostingDto.theme.map((e) => themes.indexOf(e))
-  //       : null,
-  //     with_who: updatePostingDto.withWho
-  //       ? updatePostingDto.withWho.map((e) => withWhos.indexOf(e))
-  //       : null,
-  //     season: this.calculateSeason(new Date(updatePostingDto.startDate)),
-  //     vehicle: this.customIndexOf(vehicles, updatePostingDto.vehicle),
-  //   });
-  // }
+    if (!posting) {
+      throw new NotFoundException('게시글이 존재하지 않습니다.');
+    }
 
-  // async remove(postingId: string, userId: string) {
-  //   const posting = await this.postingsRepository.findOneBy({ id: postingId });
+    if (posting.writer.id !== userId) {
+      throw new ForbiddenException(
+        '본인이 작성한 게시글만 수정할 수 있습니다.'
+      );
+    }
 
-  //   if (posting && posting.writer !== userId) {
-  //     throw new ForbiddenException(
-  //       '본인이 작성한 게시글만 삭제할 수 있습니다.'
-  //     );
-  //   }
+    const updatedPosting = await this.initializePosting(updatePostingDto);
+    updatedPosting.id = postingId;
 
-  //   return this.postingsRepository.delete({ id: postingId });
-  // }
+    const [, theme, withWho] = await Promise.all([
+      this.postingsRepository.update(postingId, updatedPosting),
+      this.updatePostingTheme(updatedPosting, updatePostingDto.theme),
+      this.updatePostingWithWho(updatedPosting, updatePostingDto.withWho),
+    ]);
 
-  // async toggleLike(postingId: string, userId: string) {
-  //   const liked = await this.likedsRepository.findOneBy({
-  //     posting: postingId,
-  //     user: userId,
-  //   });
+    return { ...updatedPosting, theme, withWho };
+  }
 
-  //   if (liked) {
-  //     return this.likedsRepository.delete({ posting: postingId, user: userId });
-  //   }
+  async updatePostingTheme(posting: Posting, themes: string[]) {
+    const outdated =
+      await this.postingThemesRepository.findAllEntitiesByPosting(posting.id);
 
-  //   const newLiked = new Liked();
-  //   newLiked.posting = postingId;
-  //   newLiked.user = userId;
+    await this.removePostingTheme(outdated);
+    return this.createPostingTheme(posting, themes);
+  }
 
-  //   return this.likedsRepository.save(newLiked);
-  // }
+  async updatePostingWithWho(posting: Posting, withWhos: string[]) {
+    const outdated =
+      await this.postingWithWhosRepository.findAllEntitiesByPosting(posting.id);
 
-  // async report(postingId: string, userId: string) {
-  //   const report = await this.reportsRepository.findOneBy({
-  //     posting: postingId,
-  //     reporter: userId,
-  //   });
+    await this.removePostingWithWho(outdated);
+    return this.createPostingWithWho(posting, withWhos);
+  }
 
-  //   if (report) {
-  //     throw new ConflictException('이미 신고한 게시글입니다.');
-  //   }
+  async removePosting(postingId: string, userId: string) {
+    const posting = await this.postingsRepository.findOne(postingId);
 
-  //   const newReport = new Report();
-  //   newReport.posting = postingId;
-  //   newReport.reporter = userId;
+    if (!posting) {
+      throw new NotFoundException('게시글이 존재하지 않습니다.');
+    }
 
-  //   return this.reportsRepository.save(newReport);
-  // }
+    if (posting.writer.id !== userId) {
+      throw new ForbiddenException(
+        '본인이 작성한 게시글만 삭제할 수 있습니다.'
+      );
+    }
+
+    return this.postingsRepository.remove(posting);
+  }
+
+  async removePostingTheme(postingThemes: PostingTheme[]) {
+    return this.postingThemesRepository.remove(postingThemes);
+  }
+
+  async removePostingWithWho(postingWithWhos: PostingWithWho[]) {
+    return this.postingWithWhosRepository.remove(postingWithWhos);
+  }
+
+  async toggleLike(postingId: string, userId: string) {
+    const posting = await this.postingsRepository.findOne(postingId);
+
+    if (!posting) {
+      throw new NotFoundException('게시글이 존재하지 않습니다.');
+    }
+
+    const liked = await this.likedsRepository.findOne(postingId, userId);
+
+    if (liked) {
+      const newLiked = new Liked();
+      newLiked.posting = postingId;
+      newLiked.user = userId;
+      return this.likedsRepository.save(newLiked);
+    }
+
+    return this.likedsRepository.toggle(liked);
+  }
+
+  async report(postingId: string, userId: string) {
+    const posting = await this.postingsRepository.findOne(postingId);
+
+    if (!posting) {
+      throw new NotFoundException('게시글이 존재하지 않습니다.');
+    }
+
+    const report = await this.reportsRepository.findOne(postingId, userId);
+
+    if (report) {
+      throw new ConflictException('이미 신고한 게시글입니다.');
+    }
+
+    const newReport = new Report();
+    newReport.posting = postingId;
+    newReport.reporter = userId;
+
+    return this.reportsRepository.save(newReport);
+  }
 
   private calculateDays(startDate: Date, endDate: Date): number {
     return (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) + 1;
   }
 
-  createDaysList(startDate: Date, days: number) {
-    const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
-    const standardDate = new Date(startDate);
+  private async initializePosting(
+    postingDto: CreatePostingDto | UpdatePostingDto
+  ): Promise<Posting> {
+    const posting = new Posting();
 
-    return Array.from({ length: days }, (_, index) => {
-      const date = new Date(startDate);
-      date.setDate(standardDate.getDate() + index);
-      return `${date.getDate()}${weekdays[date.getDay()]}`;
-    });
+    posting.title = postingDto.title;
+    posting.startDate = new Date(postingDto.startDate);
+    posting.endDate = new Date(postingDto.endDate);
+    posting.days = this.calculateDays(posting.startDate, posting.endDate);
+    [
+      posting.period,
+      posting.headcount,
+      posting.budget,
+      posting.location,
+      posting.season,
+      posting.vehicle,
+    ] = await Promise.all([
+      this.periodsRepository.findByName(
+        this.periodsRepository.findNameByCalculatingDays(posting.days)
+      ),
+      this.headcountsRepository.findByName(postingDto.headcount),
+      this.budgetsRepository.findByName(postingDto.budget),
+      this.locationsRepository.findByName(postingDto.location),
+      this.seasonsRepository.findByName(
+        this.seasonsRepository.findNameByCalculatingStartDate(posting.startDate)
+      ),
+      this.vehiclesRepository.findByName(postingDto.vehicle),
+    ]);
+
+    return posting;
   }
 }

@@ -16,16 +16,12 @@ import { VehiclesRepository } from './repositories/tags/vehicles.repository';
 import { WithWhosRepository } from './repositories/tags/with-whos.repository';
 import { PostingThemesRepository } from './repositories/mappings/posting-themes.repository';
 import { PostingWithWhosRepository } from './repositories/mappings/posting-with-whos.repository';
-import { UsersService } from '../users/users.service';
 import { UsersModule } from '../users/users.module';
-import { StorageService } from '../storage/storage.service';
 
 @Module({
   imports: [DatabaseModule, UsersModule],
   controllers: [PostingsController],
   providers: [
-    UsersService,
-    StorageService,
     ...postingsProviders,
     PostingsService,
     PostingsRepository,

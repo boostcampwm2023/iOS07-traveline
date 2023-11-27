@@ -9,4 +9,18 @@ export class LikedsRepository {
     @Inject(LIKEDS_REPOSITORY)
     private likesRepository: Repository<Liked>
   ) {}
+
+  findOne(postingId: string, userId: string) {
+    return this.likesRepository.findOne({
+      where: { posting: postingId, user: userId },
+    });
+  }
+
+  save(liked: Liked) {
+    return this.likesRepository.save(liked);
+  }
+
+  toggle(liked: Liked) {
+    return this.likesRepository.update(liked, { isDeleted: !liked.isDeleted });
+  }
 }
