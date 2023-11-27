@@ -83,7 +83,7 @@ extension FilterBottomSheet: TLFilterListViewDelegate {
 @available(iOS 17, *)
 #Preview("FilterBottomSheet") {
     let view = FilterBottomSheet(
-        filter: FilterSample.makeLocation()
+        filter: FilterSample.makeRegion()
     )
     return view
 }

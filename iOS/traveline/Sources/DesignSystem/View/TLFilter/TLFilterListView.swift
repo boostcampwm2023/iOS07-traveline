@@ -136,6 +136,6 @@ private extension TLFilterListView {
 @available(iOS 17, *)
 #Preview("TLFilterListView") {
     let view = TLFilterListView()
-    view.setupFilter(FilterSample.makeLocation())
+    view.setupFilter(FilterSample.makeRegion())
     return view
 }

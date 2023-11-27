@@ -25,7 +25,7 @@ final class RegionBottomSheetVC: TLBottomSheetVC {
     
     // MARK: - Properties
     
-    private let travelRegions: [String] = LocationFilter.allCases.map { $0.title }
+    private let travelRegions: [String] = RegionFilter.allCases.map { $0.title }
     
     // MARK: - Life Cycle
     

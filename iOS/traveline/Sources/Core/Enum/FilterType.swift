@@ -51,7 +51,7 @@ enum FilterType: Equatable, CaseIterable, Hashable {
             true
         case let .tagtype(tag):
             switch tag {
-            case .location, .season, .with, .theme:
+            case .region, .season, .with, .theme:
                 true
             default:
                 false
@@ -65,7 +65,7 @@ enum FilterType: Equatable, CaseIterable, Hashable {
         case .sort: 2
         case let .tagtype(tag):
             switch tag {
-            case .location: 3
+            case .region: 3
             case .period: 4
             case .theme: 5
             case .season: 6

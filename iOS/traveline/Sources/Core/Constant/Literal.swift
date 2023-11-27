@@ -12,7 +12,7 @@ enum Literal {
     static let empty: String = ""
     
     enum Tag {
-        static let location: String = "지역"
+        static let region: String = "지역"
         static let period: String = "기간"
         static let season: String = "계절"
         static let theme: String = "테마"
@@ -71,7 +71,7 @@ enum Literal {
             static let like: String = "좋아요순"
         }
         
-        enum LocationDetail {
+        enum RegionDetail {
             static let seoul: String = "서울"
             static let busan: String = "부산"
             static let daegu: String = "대구"

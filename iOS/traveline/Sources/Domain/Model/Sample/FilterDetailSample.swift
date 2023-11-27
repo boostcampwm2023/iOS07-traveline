@@ -9,10 +9,10 @@
 import Foundation
 
 enum FilterSample {
-    static func makeLocation() -> Filter {
+    static func makeRegion() -> Filter {
         .init(
-            type: .tagtype(.location),
-            selected: [Literal.Filter.LocationDetail.busan, Literal.Filter.LocationDetail.daejeon]
+            type: .tagtype(.region),
+            selected: [Literal.Filter.RegionDetail.busan, Literal.Filter.RegionDetail.daejeon]
         )
     }
     

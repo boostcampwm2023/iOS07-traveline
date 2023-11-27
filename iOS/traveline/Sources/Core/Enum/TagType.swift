@@ -9,7 +9,7 @@
 import Foundation
 
 enum TagType: CaseIterable {
-    case location
+    case region
     case period
     case theme
     case season
@@ -20,8 +20,8 @@ enum TagType: CaseIterable {
     
     var color: TravelineColors.Color {
         switch self {
-        case .location:
-            TLColor.Tag.location
+        case .region:
+            TLColor.Tag.region
         case .period:
             TLColor.Tag.period
         case .season:
@@ -41,8 +41,8 @@ enum TagType: CaseIterable {
     
     var title: String {
         switch self {
-        case .location:
-            Literal.Tag.location
+        case .region:
+            Literal.Tag.region
         case .period:
             Literal.Tag.period
         case .season:
@@ -81,8 +81,8 @@ enum TagType: CaseIterable {
             WithTag.allCases.map { $0.title }
         case .transportation:
             TransportationTag.allCases.map { $0.title }
-        case .location:
-            LocationFilter.allCases.map { $0.title }
+        case .region:
+            RegionFilter.allCases.map { $0.title }
         case .period:
             PeriodFilter.allCases.map { $0.title }
         case .season:

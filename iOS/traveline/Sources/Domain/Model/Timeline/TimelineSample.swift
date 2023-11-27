@@ -18,7 +18,7 @@ enum TimelineSample {
             isLiked: true,
             tags: [
                 .init(title: "2박 3일", type: .period),
-                .init(title: "부산", type: .location),
+                .init(title: "부산", type: .region),
                 .init(title: "가을", type: .season),
                 .init(title: "맛집", type: .theme),
                 .init(title: "힐링", type: .theme),

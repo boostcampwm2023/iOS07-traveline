@@ -12,7 +12,7 @@ import Foundation
 enum TravelListSample {
     static func makeTags() -> [Tag] {
         return [
-            .init(title: "부산", type: .location),
+            .init(title: "부산", type: .region),
             .init(title: "1박 2일", type: .period),
             .init(title: "봄", type: .season)
         ]
