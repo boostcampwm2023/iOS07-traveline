@@ -46,22 +46,22 @@ export class Posting {
   @Column({ type: 'int' })
   days: number;
 
-  @Column({ length: 14, unique: true })
+  @Column({ length: 14 })
   period: string;
 
-  @Column({ length: 14, unique: true, nullable: true })
+  @Column({ length: 14, nullable: true })
   headcount: string;
 
-  @Column({ length: 14, unique: true, nullable: true })
+  @Column({ length: 14, nullable: true })
   budget: string;
 
-  @Column({ length: 14, unique: true })
+  @Column({ length: 14 })
   location: string;
 
-  @Column({ length: 14, unique: true })
+  @Column({ length: 14 })
   season: string;
 
-  @Column({ length: 14, unique: true, nullable: true })
+  @Column({ length: 14, nullable: true })
   vehicle: string;
 
   @Column({ type: 'json', nullable: true })
