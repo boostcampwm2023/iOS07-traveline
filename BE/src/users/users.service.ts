@@ -8,6 +8,7 @@ import { CreateAuthDto } from 'src/auth/dto/create-auth.dto';
 import { StorageService } from 'src/storage/storage.service';
 import { UserRepository } from './users.repository';
 import { CheckDuplicatedNameResponseDto } from './dto/check-duplicated-name-response.dto';
+import { UserNameDto } from './dto/user-name.dto';
 
 @Injectable()
 export class UsersService {
@@ -37,21 +38,20 @@ export class UsersService {
     return { name: user.name, avatar: user.avatar };
   }
 
-  async updateUserInfo(
-    id,
-    userInfoDto: UserInfoDto,
-    file: Express.Multer.File
-  ) {
+  async updateUserInfo(id, name: string, file: Express.Multer.File) {
     const user = await this.userRepository.findById(id);
+    const result = new UserInfoDto();
 
     //프로필사진, 닉네임 변화 모두 없음
-    if (!file && userInfoDto.name === user.name) {
+    if (!file && name === user.name) {
       throw new BadRequestException('변경 사항이 없습니다.');
     }
 
+    result.name = name;
+
     //닉네임만 변경
     if (!file) {
-      userInfoDto.avatar = user.avatar;
+      result.avatar = user.avatar;
     }
 
     //닉네임과 프로필 모두 변경
@@ -70,7 +70,7 @@ export class UsersService {
       try {
         const uploadResult = await this.storageService.upload(`${id}/`, file);
         const path = uploadResult.path;
-        userInfoDto.avatar = path;
+        result.avatar = path;
       } catch {
         throw new InternalServerErrorException(
           '새로운 프로필 사진 업로드에 실패하였습니다.'
@@ -78,7 +78,7 @@ export class UsersService {
       }
     }
     try {
-      await this.userRepository.update(id, userInfoDto);
+      await this.userRepository.update(id, result);
     } catch {
       throw new InternalServerErrorException(
         '사용자 정보 갱신에 실패하였습니다.'
@@ -86,16 +86,14 @@ export class UsersService {
     }
 
     try {
-      userInfoDto.avatar = await this.storageService.getImageUrl(
-        userInfoDto.avatar
-      );
+      result.avatar = await this.storageService.getImageUrl(result.avatar);
     } catch {
       throw new InternalServerErrorException(
         '사용자 프로필 사진을 찾을 수 없습니다.'
       );
     }
 
-    return userInfoDto;
+    return result;
   }
 
   async checkDuplicatedName(
