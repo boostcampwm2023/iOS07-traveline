@@ -37,20 +37,28 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         case .showRecent:
             newState.homeViewType = .recent
             newState.curFilter = nil
+            newState.isSearching = true
         case let .showRelated(text):
             newState.homeViewType = (text.isEmpty) ? .recent : .related
             newState.searchText = text
+            newState.isSearching = true
         case let .showResult(text):
             newState.homeViewType = .result
             newState.searchText = text
+            newState.isSearching = false
+            newState.resultFilters = .make()
         case .showList:
             newState.homeViewType = .home
+            newState.isSearching = false
         case let .showFilter(type):
-            newState.curFilter = state.filters[type]
+            newState.curFilter = (state.homeViewType == .home) ? state.homeFilters[type] : state.resultFilters[type]
         case let .saveFilter(filterList):
-            filterList.forEach { newState.filters[$0.type] = $0 }
+            if state.homeViewType == .home {
+                filterList.forEach { newState.homeFilters[$0.type] = $0 }
+            } else {
+                filterList.forEach { newState.resultFilters[$0.type] = $0 }
+            }
             newState.curFilter = nil
-            print(filterList)
         case .showTravelWriting:
             newState.moveToTravelWriting = true
         }

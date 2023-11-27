@@ -9,6 +9,7 @@
 import Foundation
 
 struct HomeState: BaseState {
+    
     enum HomeViewType {
         case home
         case recent
@@ -18,9 +19,9 @@ struct HomeState: BaseState {
     
     var homeViewType: HomeViewType = .home
     var searchText: String = ""
-    var filters: [FilterType: Filter] = FilterType.allCases.reduce(into: [:]) { filters, type in
-        filters[type] = .init(type: type, selected: [])
-    }
+    var homeFilters: FilterDictionary = .make()
+    var resultFilters: FilterDictionary = .make()
     var curFilter: Filter? = .emtpy
+    var isSearching: Bool = false
     var moveToTravelWriting: Bool = false
 }

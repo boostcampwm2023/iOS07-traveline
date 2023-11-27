@@ -179,7 +179,7 @@ private extension HomeVC {
             .store(in: &cancellables)
         
         viewModel.$state
-            .filter { $0.homeViewType == .home }
+            .filter { !$0.isSearching }
             .compactMap(\.curFilter)
             .filter { $0 != .emtpy }
             .withUnretained(self)
@@ -192,7 +192,19 @@ private extension HomeVC {
         
         viewModel.$state
             .filter { $0.homeViewType == .home }
-            .map(\.filters)
+            .map(\.homeFilters)
+            .withUnretained(self)
+            .sink { owner, filters in
+                owner.homeListView.setupData(
+                    filterList: filters.map { $0.value }.sorted { $0.type.id < $1.type.id },
+                    travelList: TravelListSample.make()
+                )
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .filter { $0.homeViewType == .result }
+            .map(\.resultFilters)
             .removeDuplicates()
             .withUnretained(self)
             .sink { owner, filters in
