@@ -20,7 +20,6 @@ export class Posting {
 
   @ManyToOne(() => User, (user) => user.postings, {
     onDelete: 'CASCADE',
-    nullable: true,
   })
   @JoinColumn({ name: 'writer' })
   writer: User;
