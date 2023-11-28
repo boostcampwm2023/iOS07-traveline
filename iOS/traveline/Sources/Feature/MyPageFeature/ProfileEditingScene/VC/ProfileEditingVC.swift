@@ -100,12 +100,10 @@ final class ProfileEditingVC: UIViewController {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         [
             UIAlertAction(title: Constants.selectBaseImage, style: .default) { _ in
-                // action
                 self.imageView.image = nil
             },
             UIAlertAction(title: Constants.selectInAlbum, style: .default) { _ in
                 var config = PHPickerConfiguration()
-                config.selectionLimit = 1
                 config.filter = .images
                 
                 let picker = PHPickerViewController(configuration: config)
