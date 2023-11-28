@@ -10,36 +10,77 @@ import {
   UseGuards,
   Req,
   DefaultValuePipe,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { PostingsService } from './postings.service';
 import { CreatePostingDto } from './dto/create-posting.dto';
 import { UpdatePostingDto } from './dto/update-posting.dto';
 import { SearchPostingDto } from './dto/search-posting.dto';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiCreatedResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Posting } from './entities/posting.entity';
 import { Report } from './entities/report.entity';
 import { AuthGuard } from '../auth/auth.guard';
+import {
+  create_OK,
+  findOne_OK,
+  like_OK,
+  remove_OK,
+  report_OK,
+  searchByWord_OK,
+  search_OK,
+  update_OK,
+} from './posting.swagger';
 
-// TODO: response dto 생성
+@ApiBearerAuth('accessToken')
 @UseGuards(AuthGuard)
 @Controller('postings')
 @ApiTags('Postings API')
+@ApiUnauthorizedResponse({
+  schema: {
+    example: {
+      message: '로그인이 필요한 서비스 입니다.',
+      error: 'Unauthorized',
+      statusCode: 401,
+    },
+  },
+})
+@ApiNotFoundResponse({
+  schema: {
+    example: {
+      message: '게시글이 존재하지 않습니다.',
+      error: 'Not Found',
+      statusCode: 404,
+    },
+  },
+})
 export class PostingsController {
   constructor(private readonly postingsService: PostingsService) {}
 
   @Post()
-  @ApiBearerAuth()
   @ApiOperation({
-    summary: '포스팅 생성 API',
-    description: '새로운 포스팅을 작성한다.',
+    summary: '게시글 생성',
+    description: '사용자가 입력한 정보를 토대로 새로운 게시글을 생성합니다.',
   })
-  @ApiCreatedResponse({ description: 'Created', type: Posting })
+  @ApiCreatedResponse({ schema: { example: create_OK } })
+  @ApiBadRequestResponse({
+    schema: {
+      example: {
+        message: 'endDate는 startDate와 같거나 더 나중의 날짜여야 합니다.',
+        error: 'Bad Request',
+        statusCode: 400,
+      },
+    },
+  })
   async create(
     @Req() request,
     @Body() createPostingDto: CreatePostingDto
@@ -49,12 +90,11 @@ export class PostingsController {
   }
 
   @Get()
-  @ApiBearerAuth()
   @ApiOperation({
-    summary: '포스팅 검색 결과 API',
-    description: '전달된 쿼리 값에 따른 검색 결과를 반환한다.',
+    summary: '게시글 검색 결과',
+    description: '검색어와 선택 태그의 교집합에 해당하는 게시글을 반환합니다.',
   })
-  @ApiOkResponse({ description: 'OK', type: [Posting] })
+  @ApiOkResponse({ schema: { example: search_OK } })
   async search(
     @Query() searchPostingDto: SearchPostingDto
   ): Promise<Posting[]> {
@@ -62,29 +102,28 @@ export class PostingsController {
   }
 
   @Get('/titles')
-  @ApiBearerAuth()
   @ApiOperation({
-    summary: '포스팅 제목 검색 API',
+    summary: '게시글 제목 목록 반환',
     description:
-      '전달된 키워드로 시작하는 제목을 가진 포스팅의 제목을 반환한다.',
+      '전달된 키워드로 시작하는 제목을 가진 포스팅의 제목을 반환합니다.',
   })
-  @ApiOkResponse({ description: 'OK', type: [String] })
+  @ApiOkResponse({ schema: { example: searchByWord_OK } })
   async searchByKeyWord(
     @Query('keyword', new DefaultValuePipe('')) keyword: string
-  ) {
+  ): Promise<string[]> {
     return this.postingsService.findAllBytitle(keyword);
   }
 
   @Get(':id')
-  @ApiBearerAuth()
   @ApiOperation({
-    summary: '포스팅 로드 API',
-    description: 'id 값에 해당되는 포스팅을 반환한다.',
+    summary: '특정 게시글 반환',
+    description: 'id 값에 해당되는 게시글을 반환합니다.',
   })
-  async findOne(@Req() request, @Param('id') id: string) {
+  @ApiOkResponse({ schema: { example: findOne_OK } })
+  async findOne(@Req() request, @Param('id', ParseUUIDPipe) id: string) {
     const userId = request['user'].id;
     const posting = await this.postingsService.findOne(id);
-
+    console.log(posting);
     return {
       ...posting,
       days: this.createDaysList(posting.startDate, posting.days),
@@ -96,15 +135,14 @@ export class PostingsController {
   }
 
   @Put(':id')
-  @ApiBearerAuth()
   @ApiOperation({
-    summary: '포스팅 수정 API',
-    description: 'id 값에 해당되는 포스팅을 수정한다.',
+    summary: '게시글 수정',
+    description: 'id 값에 해당되는 게시글을 수정합니다.',
   })
-  @ApiOkResponse({ description: 'OK' })
+  @ApiOkResponse({ schema: { example: update_OK } })
   async update(
     @Req() request,
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePostingDto: UpdatePostingDto
   ) {
     const userId = request['user'].id;
@@ -112,41 +150,49 @@ export class PostingsController {
   }
 
   @Delete(':id')
-  @ApiBearerAuth()
   @ApiOperation({
-    summary: '포스팅 삭제 API',
-    description: 'id 값에 해당되는 포스팅을 삭제한다.',
+    summary: '게시글 삭제',
+    description: 'id 값에 해당되는 게시글을 삭제합니다.',
   })
-  @ApiOkResponse({ description: 'OK', type: Posting })
-  async remove(@Req() request, @Param('id') id: string): Promise<Posting> {
+  @ApiOkResponse({ schema: { example: remove_OK } })
+  async remove(
+    @Req() request,
+    @Param('id', ParseUUIDPipe) id: string
+  ): Promise<Posting> {
     const userId = request['user'].id;
     return this.postingsService.remove(id, userId);
   }
 
   @Post(':id/like')
-  @ApiBearerAuth()
   @ApiOperation({
-    summary: '포스팅 좋아요 API',
-    description:
-      'id 값에 해당되는 포스팅에 좋아요가 추가되거나 삭제된다. (토글)',
+    summary: '게시글 좋아요 토글',
+    description: 'id 값에 해당하는 게시글에 좋아요가 추가되거나 삭제됩니다.',
   })
-  @ApiOkResponse({ description: 'OK' })
-  async toggleLike(@Req() request, @Param('id') id: string) {
+  @ApiOkResponse({ schema: { examples: [update_OK, like_OK] } })
+  async toggleLike(@Req() request, @Param('id', ParseUUIDPipe) id: string) {
     const userId = request['user'].id;
     return this.postingsService.toggleLike(id, userId);
   }
 
   @Post(':id/report')
-  @ApiBearerAuth()
   @ApiOperation({
     summary: '게시글 신고',
-    description: 'id에 해당하는 게시글을 신고한다.',
+    description: 'id에 해당하는 게시글을 신고합니다.',
   })
-  @ApiCreatedResponse({
-    description: 'OK',
-    type: Report,
+  @ApiCreatedResponse({ schema: { example: report_OK } })
+  @ApiConflictResponse({
+    schema: {
+      example: {
+        message: '이미 신고한 게시글입니다.',
+        error: 'Conflict',
+        statusCode: 409,
+      },
+    },
   })
-  async report(@Req() request, @Param('id') id: string): Promise<Report> {
+  async report(
+    @Req() request,
+    @Param('id', ParseUUIDPipe) id: string
+  ): Promise<Report> {
     const userId = request['user'].id;
     return this.postingsService.report(id, userId);
   }

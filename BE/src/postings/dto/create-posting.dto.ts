@@ -25,17 +25,20 @@ import {
 } from '../postings.types';
 
 export class CreatePostingDto {
-  @ApiProperty({ example: 'test title' })
+  @ApiProperty({ example: '여행 꿀팁 공유함', maxLength: 14, minLength: 1 })
   @IsString()
   @MinLength(1)
   @MaxLength(14)
   title: string;
 
-  @ApiProperty({ example: '2023-12-13' })
+  @ApiProperty({ example: '2023-12-13', description: 'YYYY-MM-DD 형식' })
   @IsDateString()
   startDate: string;
 
-  @ApiProperty({ example: '2023-12-15' })
+  @ApiProperty({
+    example: '2023-12-15',
+    description: 'YYYY-MM-DD 형식, startDate보다 이른 날짜일 수 없습니다.',
+  })
   @IsDateString()
   endDate: string;
 
@@ -56,7 +59,13 @@ export class CreatePostingDto {
   @IsIn(locations)
   location: Location;
 
-  @ApiProperty({ required: false, enum: Theme })
+  @ApiProperty({
+    required: false,
+    enum: Theme,
+    example: ['힐링', '액티비티', '맛집'],
+    description: '최대 3개까지 입력할 수 있습니다.',
+    isArray: true,
+  })
   @IsOptional()
   @IsString({ each: true })
   @ArrayMaxSize(3)
@@ -64,7 +73,13 @@ export class CreatePostingDto {
   @IsIn(themes, { each: true })
   theme: Theme[];
 
-  @ApiProperty({ required: false, enum: WithWho })
+  @ApiProperty({
+    required: false,
+    enum: WithWho,
+    example: ['가족', '반려동물'],
+    description: '최대 3개까지 입력할 수 있습니다.',
+    isArray: true,
+  })
   @IsOptional()
   @IsString({ each: true })
   @ArrayMaxSize(3)
