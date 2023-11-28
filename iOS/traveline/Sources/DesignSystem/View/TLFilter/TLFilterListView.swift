@@ -125,7 +125,7 @@ private extension TLFilterListView {
         button.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            button.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width),
+            button.widthAnchor.constraint(equalToConstant: BaseMetric.ScreenSize.width),
             button.heightAnchor.constraint(equalToConstant: Metric.height)
         ])
         

@@ -35,7 +35,7 @@ final class LocationSearchVC: UIViewController {
     )
     private let closeButton: UIButton = {
         let button = UIButton()
-        button.setImage(TLImage.Tag.close, for: .normal)
+        button.setImage(TLImage.Common.close, for: .normal)
         
         return button
     }()

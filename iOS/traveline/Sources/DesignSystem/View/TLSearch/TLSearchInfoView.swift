@@ -38,7 +38,7 @@ final class TLSearchInfoView: UIView {
     
     private let closeButton: UIButton = {
         let button = UIButton()
-        button.setImage(TLImage.Home.close, for: .normal)
+        button.setImage(TLImage.Common.close, for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
         return button
     }()
