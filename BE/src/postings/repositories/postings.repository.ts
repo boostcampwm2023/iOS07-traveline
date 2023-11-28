@@ -2,6 +2,17 @@ import { POSTINGS_REPOSITORY } from '../postings.constants';
 import { Posting } from '../entities/posting.entity';
 import { Inject, Injectable } from '@nestjs/common';
 import { Like, Repository } from 'typeorm';
+import {
+  Budget,
+  Headcount,
+  Sorting,
+  Location,
+  Period,
+  Season,
+  Vehicle,
+  Theme,
+  WithWho,
+} from '../postings.types';
 
 @Injectable()
 export class PostingsRepository {
@@ -25,17 +36,17 @@ export class PostingsRepository {
 
   async findAll(
     keyword: string,
-    sorting: string,
+    sorting: Sorting,
     offset: number,
     limit: number,
-    budget: string,
-    headcount: string,
-    location: string,
-    period: string,
-    season: string,
-    vehicle: string,
-    theme: string,
-    withWho: string
+    budget: Budget,
+    headcount: Headcount,
+    location: Location,
+    period: Period,
+    season: Season,
+    vehicle: Vehicle,
+    theme: Theme,
+    withWho: WithWho
   ) {
     const qb = this.postingsRepository
       .createQueryBuilder('p')
@@ -73,7 +84,7 @@ export class PostingsRepository {
       });
     }
 
-    if (sorting === '좋아요순') {
+    if (sorting === Sorting.좋아요순) {
       qb.leftJoin('p.likeds', 'liked', 'liked.isDeleted = :isDeleted', {
         isDeleted: false,
       })

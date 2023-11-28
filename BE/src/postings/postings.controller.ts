@@ -23,6 +23,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Posting } from './entities/posting.entity';
+import { Report } from './entities/report.entity';
 import { AuthGuard } from '../auth/auth.guard';
 
 // TODO: response dto 생성
@@ -48,6 +49,7 @@ export class PostingsController {
   }
 
   @Get()
+  @ApiBearerAuth()
   @ApiOperation({
     summary: '포스팅 검색 결과 API',
     description: '전달된 쿼리 값에 따른 검색 결과를 반환한다.',
@@ -60,13 +62,16 @@ export class PostingsController {
   }
 
   @Get('/titles')
+  @ApiBearerAuth()
   @ApiOperation({
     summary: '포스팅 제목 검색 API',
     description:
       '전달된 키워드로 시작하는 제목을 가진 포스팅의 제목을 반환한다.',
   })
   @ApiOkResponse({ description: 'OK', type: [String] })
-  searchByKeyWord(@Query('keyword', new DefaultValuePipe('')) keyword: string) {
+  async searchByKeyWord(
+    @Query('keyword', new DefaultValuePipe('')) keyword: string
+  ) {
     return this.postingsService.findAllBytitle(keyword);
   }
 
@@ -97,7 +102,7 @@ export class PostingsController {
     description: 'id 값에 해당되는 포스팅을 수정한다.',
   })
   @ApiOkResponse({ description: 'OK' })
-  update(
+  async update(
     @Req() request,
     @Param('id') id: string,
     @Body() updatePostingDto: UpdatePostingDto
@@ -112,8 +117,8 @@ export class PostingsController {
     summary: '포스팅 삭제 API',
     description: 'id 값에 해당되는 포스팅을 삭제한다.',
   })
-  @ApiOkResponse({ description: 'OK' })
-  remove(@Req() request, @Param('id') id: string) {
+  @ApiOkResponse({ description: 'OK', type: Posting })
+  async remove(@Req() request, @Param('id') id: string): Promise<Posting> {
     const userId = request['user'].id;
     return this.postingsService.remove(id, userId);
   }
@@ -126,7 +131,7 @@ export class PostingsController {
       'id 값에 해당되는 포스팅에 좋아요가 추가되거나 삭제된다. (토글)',
   })
   @ApiOkResponse({ description: 'OK' })
-  toggleLike(@Req() request, @Param('id') id: string) {
+  async toggleLike(@Req() request, @Param('id') id: string) {
     const userId = request['user'].id;
     return this.postingsService.toggleLike(id, userId);
   }
@@ -139,8 +144,9 @@ export class PostingsController {
   })
   @ApiCreatedResponse({
     description: 'OK',
+    type: Report,
   })
-  report(@Req() request, @Param('id') id: string) {
+  async report(@Req() request, @Param('id') id: string): Promise<Report> {
     const userId = request['user'].id;
     return this.postingsService.report(id, userId);
   }

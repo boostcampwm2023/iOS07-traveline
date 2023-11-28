@@ -1,7 +1,12 @@
-import { IsArray, IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import {
+  Budget,
+  Headcount,
+  Period,
+  Sorting,
+  Location,
   budgets,
   headcounts,
   locations,
@@ -10,77 +15,83 @@ import {
   themes,
   vehicles,
   withWhos,
+  Theme,
+  WithWho,
+  Season,
+  Vehicle,
 } from '../postings.types';
 
-// TODO: enum 만들고 swagger에 띄우기
 export class SearchPostingDto {
-  @ApiProperty({ required: false })
+  @ApiProperty({
+    required: false,
+    description: '검색어가 제목에 포함될 경우 검색됩니다.',
+  })
   @IsOptional()
   @IsString()
   keyword: string = '';
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, enum: Sorting, default: Sorting.최신순 })
   @IsOptional()
   @IsString()
-  sorting: string = '최신순';
+  sorting: Sorting = Sorting.최신순;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, default: 0 })
   @Transform(({ value }) => parseInt(value))
   @IsOptional()
   @IsNumber()
   offset: number = 0;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, default: 20 })
   @Transform(({ value }) => parseInt(value))
   @IsOptional()
   @IsNumber()
   limit: number = 20;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, enum: Period })
   @IsOptional()
   @IsString()
   @IsIn(periods)
-  period: string;
+  period: Period;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, enum: Headcount })
   @IsOptional()
   @IsString()
   @IsIn(headcounts)
-  headcount: string;
+  headcount: Headcount;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, enum: Budget })
   @IsOptional()
   @IsString()
   @IsIn(budgets)
-  budget: string;
+  budget: Budget;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, enum: Location })
   @IsOptional()
   @IsString()
   @IsIn(locations)
-  location: string;
+  location: Location;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, enum: Theme })
   @IsOptional()
   @IsString()
   @IsIn(themes)
-  theme: string;
+  theme: Theme;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, enum: WithWho })
   @IsOptional()
   @IsString()
   @IsIn(withWhos)
-  withWho: string;
+  withWho: WithWho;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, enum: Season })
   @IsOptional()
   @IsString()
   @IsIn(seasons)
-  season: string;
+  season: Season;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, enum: Vehicle })
   @IsOptional()
   @IsString()
   @IsIn(vehicles)
-  vehicle: string;
+  vehicle: Vehicle;
 }

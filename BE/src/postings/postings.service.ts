@@ -15,7 +15,7 @@ import { ReportsRepository } from './repositories/reports.repository';
 import { UserRepository } from 'src/users/users.repository';
 import { Liked } from './entities/liked.entity';
 import { Report } from './entities/report.entity';
-import { PeriodType, SeasonType } from './postings.types';
+import { Period, Season } from './postings.types';
 import { BLOCKING_LIMIT } from './postings.constants';
 
 @Injectable()
@@ -165,28 +165,28 @@ export class PostingsService {
     return (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) + 1;
   }
 
-  private findPeriod(days: number): PeriodType {
+  private findPeriod(days: number): Period {
     return days === 1
-      ? '당일치기'
+      ? Period['당일치기']
       : days === 2
-      ? '1박 2일'
+      ? Period['1박 2일']
       : days === 3
-      ? '2박 3일'
+      ? Period['2박 3일']
       : days < 7
-      ? '3박 ~'
+      ? Period['3박 ~']
       : days < 30
-      ? '일주일 ~'
-      : '한 달 ~';
+      ? Period['일주일 ~']
+      : Period['한 달 ~'];
   }
 
-  private findSeason(startDate: Date): SeasonType {
+  private findSeason(startDate: Date): Season {
     const month = startDate.getMonth() + 1;
     return month >= 3 && month <= 5
-      ? '봄'
+      ? Season.봄
       : month >= 6 && month <= 9
-      ? '여름'
+      ? Season.여름
       : month >= 10 && month <= 11
-      ? '가을'
-      : '겨울';
+      ? Season.가을
+      : Season.겨울;
   }
 }
