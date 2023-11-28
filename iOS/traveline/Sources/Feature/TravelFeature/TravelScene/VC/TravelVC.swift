@@ -67,6 +67,22 @@ final class TravelVC: UIViewController {
     private let withTagView: SelectTagView = .init(tagType: .with, width: Metric.width)
     private let costTagView: SelectTagView = .init(tagType: .cost, width: Metric.width)
     
+    // MARK: - Properties
+    
+    private var cancellables: Set<AnyCancellable> = .init()
+    private let viewModel: TravelViewModel
+    
+    // MARK: - Initializer
+    
+    init(viewModel: TravelViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - Life Cycle
     
     override func viewDidLoad() {
@@ -75,6 +91,7 @@ final class TravelVC: UIViewController {
         setupAttributes()
         setupLayout()
         setupKeyboard()
+        bind()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -84,10 +101,6 @@ final class TravelVC: UIViewController {
     }
 
     // MARK: - Functions
-    
-    @objc private func doneButtonPressed() {
-        // TODO: - 완료 버튼 처리
-    }
     
     @objc private func dismissKeyboard() {
         view.endEditing(true)
@@ -102,6 +115,28 @@ final class TravelVC: UIViewController {
         regionBottomSheetVC.delegate = self
         present(regionBottomSheetVC, animated: true)
     }
+    
+    @objc private func selectStartDate(_ sender: UIDatePicker) {
+        let startDate = sender.date
+        viewModel.sendAction(.startDateSelected(startDate))
+        
+        if selectPeriodView.endDatePicker.date < startDate {
+            selectPeriodView.endDatePicker.date = startDate
+            viewModel.sendAction(.endDateSelected(startDate))
+        }
+        
+        selectPeriodView.endDatePicker.minimumDate = startDate
+        
+        dismiss(animated: false)
+    }
+    
+    @objc private func selectEndDate(_ sender: UIDatePicker) {
+        let endDate = sender.date
+        viewModel.sendAction(.endDateSelected(endDate))
+        
+        dismiss(animated: false)
+    }
+    
 }
 
 // MARK: - Setup Functions
@@ -111,7 +146,10 @@ private extension TravelVC {
         view.backgroundColor = TLColor.black
         titleTextField.placeholder = Constants.textFieldPlaceholder
         baseScrollView.delegate = self
+        titleTextField.delegate = self
         selectRegionButton.addTarget(self, action: #selector(selectRegion), for: .touchUpInside)
+        selectPeriodView.startDatePicker.addTarget(self, action: #selector(selectStartDate(_:)), for: .primaryActionTriggered)
+        selectPeriodView.endDatePicker.addTarget(self, action: #selector(selectEndDate(_:)), for: .valueChanged)
         
         tlNavigationBar.delegate = self
     }
@@ -188,6 +226,16 @@ private extension TravelVC {
         )
         baseScrollView.addGestureRecognizer(tapGesture)
     }
+    
+    func bind() {
+        viewModel.$state
+            .map(\.canPost)
+            .sink { [weak owner = self] canPost in
+                guard let owner else { return }
+                owner.tlNavigationBar.isRightButtonEnabled(canPost)
+            }
+            .store(in: &cancellables)
+    }
 }
 
 // MARK: - UIScrollView Delegate
@@ -198,12 +246,27 @@ extension TravelVC: UIScrollViewDelegate {
     }
 }
 
+// MARK: - UITextField Delegate
+
+extension TravelVC: UITextFieldDelegate {
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        guard let text = textField.text else { return }
+        viewModel.sendAction(.titleEdited(text))
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        dismissKeyboard()
+        return true
+    }
+}
+
 // MARK: - TLBottomSheetDelegate
 
 extension TravelVC: TLBottomSheetDelegate {
     func bottomSheetDidDisappear(data: Any) {
         guard let region = data as? String else { return }
         selectRegionButton.setSelectedTitle(region)
+        viewModel.sendAction(.regionSelected(region))
     }
 }
 
@@ -211,11 +274,19 @@ extension TravelVC: TLBottomSheetDelegate {
 
 extension TravelVC: TLNavigationBarDelegate {
     func rightButtonDidTapped() {
-        // TODO: 네비게이션 바 완료 버튼 선택
+        let selectedTags = [
+            peopleTagView.selectedTags.map { Tag(title: $0, type: .people) },
+            transportationTagView.selectedTags.map { Tag(title: $0, type: .transportation) },
+            themeTagView.selectedTags.map { Tag(title: $0, type: .theme) },
+            withTagView.selectedTags.map { Tag(title: $0, type: .with) },
+            costTagView.selectedTags.map { Tag(title: $0, type: .cost) }
+        ].flatMap({ $0 })
+        
+        viewModel.sendAction(.donePressed(selectedTags))
     }
 }
 
 @available(iOS 17, *)
 #Preview {
-    return UINavigationController(rootViewController: TravelVC())
+    return UINavigationController(rootViewController: TravelVC(viewModel: TravelViewModel()))
 }
