@@ -89,4 +89,11 @@ enum TagType: CaseIterable {
             SeasonFilter.allCases.map { $0.title }
         }
     }
+    
+    var isMultiple: Bool {
+        switch self {
+        case .theme, .with: true
+        default: false
+        }
+    }
 }
