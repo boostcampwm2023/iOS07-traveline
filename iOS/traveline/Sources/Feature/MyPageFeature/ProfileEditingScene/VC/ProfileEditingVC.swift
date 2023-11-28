@@ -95,6 +95,12 @@ final class ProfileEditingVC: UIViewController {
         setupLayout()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.navigationBar.isHidden = true
+    }
+    
     // MARK: - Functions
     
     @objc private func imageEditButtonTapped() {
