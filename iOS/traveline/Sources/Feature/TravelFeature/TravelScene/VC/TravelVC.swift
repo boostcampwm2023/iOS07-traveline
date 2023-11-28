@@ -14,18 +14,22 @@ final class TravelVC: UIViewController {
     private enum Metric {
         static let horizontalInset: CGFloat = 16.0
         static let spacing: CGFloat = 20.0
-        static let width: CGFloat = UIScreen.main.bounds.width - 32.0
+        static let width: CGFloat = BaseMetric.ScreenSize.width - 32.0
         static let borderWidth: CGFloat = 1.0
-        static let bottomSheetHeight: CGFloat = UIScreen.main.bounds.height * 0.7
+        static let bottomSheetHeight: CGFloat = BaseMetric.ScreenSize.height * 0.7
     }
     
     private enum Constants {
+        static let title: String = "여행 생성"
         static let textFieldPlaceholder: String = "제목 *"
         static let done: String = "완료"
         static let bottomSheetTitle: String = "지역"
     }
     
     // MARK: - UI Components
+    
+    private lazy var tlNavigationBar: TLNavigationBar = .init(title: Constants.title, vc: self)
+        .addCompleteButton()
     
     private let baseScrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -72,6 +76,12 @@ final class TravelVC: UIViewController {
         setupLayout()
         setupKeyboard()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.navigationBar.isHidden = true
+    }
 
     // MARK: - Functions
     
@@ -103,39 +113,14 @@ private extension TravelVC {
         baseScrollView.delegate = self
         selectRegionButton.addTarget(self, action: #selector(selectRegion), for: .touchUpInside)
         
-        navigationItem.title = "여행 생성"
-        navigationController?.navigationBar.titleTextAttributes = [
-            .foregroundColor: TLColor.white,
-            .font: TLFont.subtitle1.font
-        ]
-        
-        let doneButton = UIBarButtonItem(
-            title: Constants.done,
-            style: .done,
-            target: self,
-            action: #selector(doneButtonPressed)
-        )
-
-        doneButton.setTitleTextAttributes(
-            [
-                .foregroundColor: TLColor.main,
-                .font: TLFont.body1.font
-            ],
-            for: .normal
-        )
-        doneButton.setTitleTextAttributes(
-            [
-                .foregroundColor: TLColor.main,
-                .font: TLFont.body1.font
-            ],
-            for: .highlighted
-        )
-        
-        navigationItem.rightBarButtonItem = doneButton
+        tlNavigationBar.delegate = self
     }
     
     func setupLayout() {
-        view.addSubviews(baseScrollView)
+        view.addSubviews(
+            tlNavigationBar,
+            baseScrollView
+        )
         baseScrollView.addSubviews(
             titleTextField,
             selectRegionButton,
@@ -161,7 +146,12 @@ private extension TravelVC {
         )
         
         NSLayoutConstraint.activate([
-            baseScrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            tlNavigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tlNavigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tlNavigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tlNavigationBar.heightAnchor.constraint(equalToConstant: BaseMetric.tlheight),
+            
+            baseScrollView.topAnchor.constraint(equalTo: tlNavigationBar.bottomAnchor),
             baseScrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             baseScrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             baseScrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -214,6 +204,14 @@ extension TravelVC: TLBottomSheetDelegate {
     func bottomSheetDidDisappear(data: Any) {
         guard let region = data as? String else { return }
         selectRegionButton.setSelectedTitle(region)
+    }
+}
+
+// MARK: - TLNavigationBarDelegate
+
+extension TravelVC: TLNavigationBarDelegate {
+    func rightButtonDidTapped() {
+        // TODO: 네비게이션 바 완료 버튼 선택
     }
 }
 

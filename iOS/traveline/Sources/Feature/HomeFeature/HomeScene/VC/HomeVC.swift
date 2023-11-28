@@ -64,6 +64,12 @@ final class HomeVC: UIViewController {
         bind()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.navigationBar.isHidden = false
+    }
+    
     // MARK: - Functions
     
     @objc private func createTravelButtonDidTapped(_ button: TLFloatingButton) {
@@ -100,6 +106,10 @@ private extension HomeVC {
             .font: TLFont.subtitle1.font
         ]
         
+        let backBarButtonItem = UIBarButtonItem(title: Literal.empty, style: .plain, target: self, action: nil)
+        backBarButtonItem.tintColor = .clear
+        self.navigationItem.backBarButtonItem = backBarButtonItem
+        
         homeSearchView.isHidden = true
         
         createTravelButton.addTarget(
@@ -115,10 +125,6 @@ private extension HomeVC {
             },
             travelList: TravelListSample.make()
         )
-        
-        let backBarButtonItem = UIBarButtonItem()
-        backBarButtonItem.tintColor = TLColor.white
-        self.navigationItem.backBarButtonItem = backBarButtonItem
     }
     
     // TODO: - 서버 연동 후 수정
@@ -251,7 +257,7 @@ extension HomeVC: UISearchBarDelegate {
 // MARK: - TLBottomSheetDelegate
 
 extension HomeVC: TLBottomSheetDelegate {
-    func bottomSheetDidDisappear(data: Any) {     
+    func bottomSheetDidDisappear(data: Any) {
         guard let filters = data as? [Filter] else { return }
         viewModel.sendAction(.addFilter(filters))
     }

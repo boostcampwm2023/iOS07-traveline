@@ -20,6 +20,8 @@ final class TimelineDetailVC: UIViewController {
     
     // MARK: - UI Components
     
+    private lazy var tlNavigationBar: TLNavigationBar = .init(vc: self)
+    
     private let scrollView: UIScrollView = .init()
     
     private let stackView: UIStackView = {
@@ -74,7 +76,7 @@ final class TimelineDetailVC: UIViewController {
     }
     
     private func initInfo(from info: TimelineDetailInfo) {
-        self.navigationItem.title = info.day
+        tlNavigationBar.setupTitle(to: info.day)
         titleLabel.setText(to: info.title)
         dateLabel.setText(to: info.date)
         timeLabel.setText(to: info.time)
@@ -99,7 +101,7 @@ private extension TimelineDetailVC {
     }
     
     func setupLayout() {
-        view.addSubview(scrollView)
+        view.addSubviews(tlNavigationBar, scrollView)
         scrollView.addSubview(stackView)
         stackView.addArrangedSubviews(
             titleLabel,
@@ -110,14 +112,21 @@ private extension TimelineDetailVC {
             imageView,
             contentView
         )
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        view.subviews.forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.arrangedSubviews.forEach { 
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
+            tlNavigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tlNavigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tlNavigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tlNavigationBar.heightAnchor.constraint(equalToConstant: BaseMetric.tlheight),
+            
+            scrollView.topAnchor.constraint(equalTo: tlNavigationBar.bottomAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor),
