@@ -81,12 +81,15 @@ export class AuthService {
       }
     }
 
-    const payload = { id: user.id };
+    const accessPayload = { id: user.id, type: 'access' };
+    const refreshPayload = { id: user.id, type: 'refresh' };
     return {
-      accessToken: await this.jwtService.signAsync(payload),
-      refreshToken: await this.jwtService.signAsync(payload, {
+      accessToken: await this.jwtService.signAsync(accessPayload),
+      refreshToken: await this.jwtService.signAsync(refreshPayload, {
         expiresIn: '30d',
       }),
     };
   }
+
+  logout(request) {}
 }
