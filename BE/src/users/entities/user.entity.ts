@@ -4,19 +4,19 @@ import { Report } from 'src/postings/entities/report.entity';
 import {
   Entity,
   Column,
-  PrimaryColumn,
   OneToMany,
   ManyToOne,
   JoinColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { SocialLogin } from './social-login.entity';
 
 @Entity()
 export class User {
-  @PrimaryColumn({ type: 'char', length: 36 })
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ length: 10, unique: true })
+  @Column({ length: 14, unique: true })
   name: string;
 
   @Column({ length: 255, nullable: true })
