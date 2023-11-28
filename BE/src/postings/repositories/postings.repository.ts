@@ -39,6 +39,7 @@ export class PostingsRepository {
   ) {
     const qb = this.postingsRepository
       .createQueryBuilder('p')
+      .leftJoinAndSelect('p.writer', 'user')
       .where('p.title LIKE :keyword', { keyword: `%${keyword}%` });
 
     if (budget) {
@@ -72,11 +73,18 @@ export class PostingsRepository {
       });
     }
 
-    return qb
-      .offset(offset)
-      .limit(limit)
-      .orderBy('p.createdAt', 'DESC')
-      .getMany();
+    if (sorting === '좋아요순') {
+      qb.leftJoin('p.likeds', 'liked', 'liked.isDeleted = :isDeleted', {
+        isDeleted: false,
+      })
+        .groupBy('p.id')
+        .addSelect('COUNT(liked.posting)', 'likedCount')
+        .orderBy('likedCount', 'DESC');
+    } else {
+      qb.orderBy('p.createdAt', 'DESC');
+    }
+
+    return qb.offset(offset).limit(limit).getMany();
   }
 
   async findAllByTitle(keyword: string) {
