@@ -4,11 +4,9 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { UserInfoDto } from './dto/user-info.dto';
-import { CreateAuthDto } from 'src/auth/dto/create-auth.dto';
 import { StorageService } from 'src/storage/storage.service';
 import { UserRepository } from './users.repository';
 import { CheckDuplicatedNameResponseDto } from './dto/check-duplicated-name-response.dto';
-import { UserNameDto } from './dto/user-name.dto';
 
 @Injectable()
 export class UsersService {
@@ -17,8 +15,29 @@ export class UsersService {
     private readonly storageService: StorageService
   ) {}
 
-  createUser(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new user';
+  nameGenerator() {
+    const length = Math.floor(Math.random() * 14) + 1;
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let name = '';
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      name += characters[randomIndex];
+    }
+    return name;
+  }
+
+  async createUser(resourceId: string) {
+    let name = this.nameGenerator();
+    while (true) {
+      const user = await this.userRepository.findByName(name);
+      if (!user) {
+        break;
+      }
+      name = this.nameGenerator();
+    }
+    const socialType = 1;
+    const createUserDto = { name, resourceId, socialType };
+    return this.userRepository.save(createUserDto);
   }
 
   deleteUser(id: number) {
