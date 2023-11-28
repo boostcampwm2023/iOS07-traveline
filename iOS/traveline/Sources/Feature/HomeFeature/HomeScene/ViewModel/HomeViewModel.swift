@@ -13,14 +13,14 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
     
     override func transform(action: Action) -> SideEffectPublisher {
         switch action {
+        case .viewDidLoad, .cancelSearch:
+                .just(HomeSideEffect.showList)
         case .startSearch:
                 .just(HomeSideEffect.showRecent)
         case let .searching(text):
                 .just(HomeSideEffect.showRelated(text))
         case let .searchDone(text):
                 .just(HomeSideEffect.showResult(text))
-        case .cancelSearch:
-                .just(HomeSideEffect.showList)
         case let .startFilter(type):
                 .just(HomeSideEffect.showFilter(type))
         case let .addFilter(filterList):
@@ -35,19 +35,27 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         
         switch effect {
         case .showRecent:
+            // TODO: - 서버 연동 후 수정
+            newState.searchList = SearchKeywordSample.makeRecentList()
             newState.homeViewType = .recent
             newState.curFilter = nil
             newState.isSearching = true
         case let .showRelated(text):
+            // TODO: - 서버 연동 후 수정
+            newState.searchList = SearchKeywordSample.makeRelatedList()
             newState.homeViewType = (text.isEmpty) ? .recent : .related
             newState.searchText = text
             newState.isSearching = true
         case let .showResult(text):
+            // TODO: - 서버 연동 후 수정
+            newState.travelList = TravelListSample.make()
             newState.homeViewType = .result
             newState.searchText = text
             newState.isSearching = false
             newState.resultFilters = .make()
         case .showList:
+            // TODO: - 서버 연동 후 수정
+            newState.travelList = TravelListSample.make()
             newState.homeViewType = .home
             newState.isSearching = false
         case let .showFilter(type):

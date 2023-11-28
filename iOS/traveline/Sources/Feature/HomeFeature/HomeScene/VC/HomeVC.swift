@@ -62,6 +62,7 @@ final class HomeVC: UIViewController {
         setupAttributes()
         setupLayout()
         bind()
+        viewModel.sendAction(.viewDidLoad)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -106,27 +107,6 @@ private extension HomeVC {
         self.navigationItem.backBarButtonItem = backBarButtonItem
         
         homeSearchView.isHidden = true
-        
-        // TODO: - 서버 연동 후 수정
-        homeListView.setupData(
-            filterList: FilterType.allCases.map {
-                Filter(type: $0, selected: [])
-            },
-            travelList: TravelListSample.make()
-        )
-    }
-    
-    // TODO: - 서버 연동 후 수정
-    func testSampleData(type: SearchViewType) {
-        if type == .recent {
-            homeSearchView.setupData(
-                list: SearchKeywordSample.makeRecentList()
-            )
-        } else {
-            homeSearchView.setupData(
-                list: SearchKeywordSample.makeRelatedList()
-            )
-        }
     }
     
     func setupLayout() {
@@ -184,15 +164,32 @@ private extension HomeVC {
             .store(in: &cancellables)
         
         viewModel.$state
+            .map(\.travelList)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, list in
+                owner.homeListView.setupData(list: list)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .map(\.searchList)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, list in
+                owner.homeSearchView.setupData(list: list)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .filter { $0.isSearching }
             .map(\.homeViewType)
             .removeDuplicates()
-            .filter { $0 == .recent || $0 == .related }
             .withUnretained(self)
             .sink { owner, type in
                 let type: SearchViewType = (type == .recent) ? .recent : .related
                 owner.homeSearchView.isHidden = false
                 owner.homeSearchView.makeLayout(type: type)
-                owner.testSampleData(type: type)
                 owner.createTravelButton.isHidden = true
             }
             .store(in: &cancellables)
