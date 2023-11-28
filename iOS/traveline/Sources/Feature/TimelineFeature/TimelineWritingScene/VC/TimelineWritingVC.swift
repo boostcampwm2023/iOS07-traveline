@@ -18,20 +18,35 @@ final class TimelineWritingVC: UIViewController {
         static let belowLine: CGFloat = 4
     }
     
+    private enum KeyboardState {
+        static let willShow = "UIKeyboardWillShowNotification"
+        static let willHide = "UIKeyboardWillHideNotification"
+    }
+    
     private enum Constants {
         static let titlePlaceholder: String = "제목 *"
         static let contentPlaceholder: String = "내용을 입력해주세요. *"
         static let complete: String = "완료"
+        static let selectTime: String = "시간선택"
         static let alertContentVCKey = "contentViewController"
     }
     
     // MARK: - UI Components
     
+    private let scrollView: UIScrollView = .init()
+    
+    private let stackView: UIStackView = {
+        let view = UIStackView()
+        view.axis = .vertical
+        view.spacing = Metric.spacing
+        
+        return view
+    }()
+    
     private let timePickerVC = TimePickerVC()
     private let titleTextField: TitleTextField = .init()
     private let dateLabel: TLLabel = .init(font: TLFont.body2, color: TLColor.gray)
     private let selectTime: TLImageLabel = .init(image: TLImage.Travel.time, text: "현재시각")
-  //  private let selectLocation: TLImageLabel = .init(image: TLImage.Travel.location, text: "선택한 장소")
     private let selectLocation: SelectLocationButton = .init()
     private let selectImageButton: SelectImageButton = .init()
     
@@ -40,6 +55,7 @@ final class TimelineWritingVC: UIViewController {
         view.text = Constants.contentPlaceholder
         view.textColor = TLColor.disabledGray
         view.font = TLFont.body1.font
+        view.isScrollEnabled = false
         view.backgroundColor = TLColor.black
         
         return view
@@ -59,7 +75,6 @@ final class TimelineWritingVC: UIViewController {
     
     @objc private func selectImageButtonTapped() {
         var config = PHPickerConfiguration()
-        config.selectionLimit = 1
         config.filter = .images
         
         let picker = PHPickerViewController(configuration: config)
@@ -73,7 +88,6 @@ final class TimelineWritingVC: UIViewController {
     }
     
     @objc private func selectLocationButtonTapped() {
-        // action
         let locationSearchVC = LocationSearchVC()
         locationSearchVC.delegate = self
         
@@ -81,8 +95,16 @@ final class TimelineWritingVC: UIViewController {
     }
     
     @objc private func selectTimeButtonTapped() {
-        let alert = TLAlertController(title: "시간선택", message: nil, preferredStyle: .alert)
-        let complete = UIAlertAction(title: Constants.complete, style: .default) { [weak self] _ in
+        let alert = TLAlertController(
+            title: Constants.selectTime,
+            message: nil,
+            preferredStyle: .alert
+        )
+        
+        let complete = UIAlertAction(
+            title: Constants.complete,
+            style: .default
+        ) { [weak self] _ in
             guard let self else { return }
             self.updateTime()
         }
@@ -95,6 +117,36 @@ final class TimelineWritingVC: UIViewController {
     
     private func updateTime() {
         selectTime.setText(to: timePickerVC.time)
+    }
+    
+    @objc private func scrollViewTouched() {
+        textView.becomeFirstResponder()
+    }
+    
+    @objc private func keyboardNotification(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
+            return
+        }
+        
+        switch notification.name.rawValue {
+        case KeyboardState.willShow:
+            actionKeyboardWillShow(keyboardFrame)
+        case KeyboardState.willHide:
+            actionKeyboardWillHide()
+        default: break
+        }
+    }
+    
+    private func actionKeyboardWillShow(_ keyboardFrame: CGRect) {
+        self.scrollView.contentInset.bottom = keyboardFrame.size.height
+        scrollView.scrollRectToVisible(textView.frame, animated: true)
+    }
+    
+    private func actionKeyboardWillHide() {
+        let contentInset = UIEdgeInsets.zero
+        scrollView.contentInset = contentInset
+        scrollView.scrollIndicatorInsets = contentInset
     }
 }
 
@@ -116,6 +168,11 @@ private extension TimelineWritingVC {
         selectTime.isUserInteractionEnabled = true
         selectLocation.isUserInteractionEnabled = true
         updateTime()
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(scrollViewTouched))
+        tapGesture.delegate = self
+        scrollView.addGestureRecognizer(tapGesture)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     func setupNavigationItem() {
@@ -134,7 +191,9 @@ private extension TimelineWritingVC {
     }
     
     func setupLayout() {
-        view.addSubviews(
+        view.addSubview(scrollView)
+        scrollView.addSubview(stackView)
+        stackView.addArrangedSubviews(
             titleTextField,
             dateLabel,
             selectTime,
@@ -143,32 +202,29 @@ private extension TimelineWritingVC {
             textView
         )
         
-        view.subviews.forEach {
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.arrangedSubviews.forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
+            $0.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 16).isActive = true
+            $0.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: -16).isActive = true
         }
         
         NSLayoutConstraint.activate([
-            titleTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Metric.topInset),
-            titleTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
-            titleTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
-            dateLabel.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: Metric.belowLine),
-            dateLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
-            dateLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
-            selectTime.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: Metric.spacing),
-            selectTime.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
-            selectTime.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
-            selectLocation.topAnchor.constraint(equalTo: selectTime.bottomAnchor, constant: Metric.spacing),
-            selectLocation.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
-            selectLocation.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
-            selectImageButton.topAnchor.constraint(equalTo: selectLocation.bottomAnchor, constant: Metric.spacing),
-            selectImageButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
-            selectImageButton.widthAnchor.constraint(equalToConstant: selectImageButton.width),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Metric.topInset),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            stackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
+            stackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+            stackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
+            stackView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
             textView.topAnchor.constraint(equalTo: selectImageButton.bottomAnchor, constant: Metric.spacing),
-            textView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
-            textView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
-            textView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            textView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
         ])
     }
+    
 }
 
 // MARK: - UITextViewDelegate
@@ -188,6 +244,7 @@ extension TimelineWritingVC: UITextViewDelegate {
             textView.textColor = TLColor.disabledGray
         }
     }
+    
 }
 
 // MARK: - PHPPickerViewControllerDelegate 
@@ -212,11 +269,23 @@ extension TimelineWritingVC: PHPickerViewControllerDelegate {
     
 }
 
+// MARK: - extension LocationSearchDelegate
+
 extension TimelineWritingVC: LocationSearchDelegate {
     func selectedLocation(result: String) {
         selectLocation.setText(to: result)
     }
     
+}
+
+extension TimelineWritingVC: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        guard let view = touch.view else { return false }
+        if view == scrollView {
+            return true
+        }
+        return false
+    }
 }
 
 @available(iOS 17, *)
