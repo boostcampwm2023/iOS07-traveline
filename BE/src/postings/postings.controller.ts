@@ -47,15 +47,17 @@ export class PostingsController {
     return this.postingsService.create(userId, createPostingDto);
   }
 
-  // @Get()
-  // @ApiOperation({
-  //   summary: '포스팅 검색 결과 API',
-  //   description: '전달된 쿼리 값에 따른 검색 결과를 반환한다.',
-  // })
-  // @ApiOkResponse({ description: 'OK', type: [Posting] })
-  // search(@Query() searchPostingDto: SearchPostingDto) {
-  //   //return this.postingsService.search(searchPostingDto);
-  // }
+  @Get()
+  @ApiOperation({
+    summary: '포스팅 검색 결과 API',
+    description: '전달된 쿼리 값에 따른 검색 결과를 반환한다.',
+  })
+  @ApiOkResponse({ description: 'OK', type: [Posting] })
+  async search(
+    @Query() searchPostingDto: SearchPostingDto
+  ): Promise<Posting[]> {
+    return this.postingsService.findAll(searchPostingDto);
+  }
 
   @Get('/titles')
   @ApiOperation({

@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { CreatePostingDto } from './dto/create-posting.dto';
 import { UpdatePostingDto } from './dto/update-posting.dto';
+import { SearchPostingDto } from './dto/search-posting.dto';
 import { Posting } from './entities/posting.entity';
 import { LikedsRepository } from './repositories/likeds.repository';
 import { PostingsRepository } from './repositories/postings.repository';
@@ -41,9 +42,22 @@ export class PostingsService {
     return this.postingsRepository.save(posting);
   }
 
-  // findAll() {
-  //   return `This action returns all postings`;
-  // }
+  async findAll(dto: SearchPostingDto) {
+    return this.postingsRepository.findAll(
+      dto.keyword,
+      dto.sorting,
+      dto.offset,
+      dto.limit,
+      dto.budget,
+      dto.headcount,
+      dto.location,
+      dto.period,
+      dto.season,
+      dto.vehicle,
+      dto.theme,
+      dto.withWho
+    );
+  }
 
   async findAllBytitle(keyword: string) {
     const titles = await this.postingsRepository.findAllByTitle(keyword);
@@ -142,6 +156,8 @@ export class PostingsService {
     posting.location = postingDto.location;
     posting.season = this.findSeason(posting.startDate);
     posting.vehicle = postingDto.vehicle;
+    posting.theme = postingDto.theme;
+    posting.withWho = postingDto.withWho;
     return posting;
   }
 
