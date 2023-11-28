@@ -31,6 +31,7 @@
     "aws-sdk": "^2.1500.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
+    "crypto": "^1.0.1",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.6.3",
     "nest-winston": "^1.9.4",
