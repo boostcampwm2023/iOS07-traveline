@@ -171,6 +171,7 @@ extension SettingVC {
             withdrawalButton
         ].forEach {
             stackView.addArrangedSubview($0)
+            $0.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 16).isActive = true
         }
         
         view.subviews.forEach {
