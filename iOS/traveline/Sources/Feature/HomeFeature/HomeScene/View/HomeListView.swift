@@ -72,6 +72,7 @@ final class HomeListView: UIView {
         
         setupLayout()
         setupDataSource()
+        setupSnapshot()
     }
     
     required init?(coder: NSCoder) {
@@ -173,12 +174,25 @@ final class HomeListView: UIView {
         return section
     }
     
-    func setupData(filterList: FilterList, travelList: TravelList) {
+    func setupSnapshot() {
         var snapshot = Snapshot()
         snapshot.appendSections([.filter, .travelList])
         
-        filterList.forEach { snapshot.appendItems([.filterItem($0)], toSection: .filter) }
-        travelList.forEach { snapshot.appendItems([.travelListItem($0)], toSection: .travelList) }
+        dataSource.apply(snapshot, animatingDifferences: false)
+    }
+    
+    func setupData(list: FilterList) {
+        var snapshot = dataSource.snapshot()
+        snapshot.deleteItems(snapshot.itemIdentifiers(inSection: .filter))
+        list.forEach { snapshot.appendItems([.filterItem($0)], toSection: .filter) }
+        
+        dataSource.apply(snapshot, animatingDifferences: false)
+    }
+    
+    func setupData(list: TravelList) {
+        var snapshot = dataSource.snapshot()
+        snapshot.deleteItems(snapshot.itemIdentifiers(inSection: .travelList))
+        list.forEach { snapshot.appendItems([.travelListItem($0)], toSection: .travelList) }
         
         dataSource.apply(snapshot, animatingDifferences: false)
     }
@@ -217,16 +231,4 @@ extension HomeListView: FilterCVCDelegate {
     func filterTypeDidSelect(type: FilterType) {
         didSelectFilterType.send(type)
     }
-}
-
-@available(iOS 17, *)
-#Preview("HomeListView") {
-    let homeListView = HomeListView()
-    homeListView.setupData(
-        filterList: FilterType.allCases.map {
-            Filter(type: $0, selected: [])
-        },
-        travelList: TravelListSample.make()
-    )
-    return homeListView
 }
