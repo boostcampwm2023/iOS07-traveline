@@ -30,6 +30,9 @@ final class MyPostListVC: UIViewController {
     
     // MARK: - UI Components
     
+    private lazy var tlNavigationBar: TLNavigationBar = .init(vc: self)
+        .addCompleteButton()
+    
     private let myPostListView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -106,6 +109,9 @@ private extension MyPostListVC {
     func setupAttributes() {
         myPostListView.collectionViewLayout = collectionLayout()
         myPostListView.delegate = self
+        
+        tlNavigationBar.delegate = self
+        tlNavigationBar.setupTitle(to: "내가 작성한 글 목록")
     }
     
     private func setupDataSource() {
@@ -121,11 +127,17 @@ private extension MyPostListVC {
     }
     
     func setupLayout() {
-        view.addSubview(myPostListView)
-        myPostListView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubviews(tlNavigationBar, myPostListView)
+        view.subviews.forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         
         NSLayoutConstraint.activate([
-            myPostListView.topAnchor.constraint(equalTo: view.topAnchor, constant: 24),
+            tlNavigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tlNavigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tlNavigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tlNavigationBar.heightAnchor.constraint(equalToConstant: BaseMetric.tlheight),
+            myPostListView.topAnchor.constraint(equalTo: tlNavigationBar.bottomAnchor, constant: 24),
             myPostListView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             myPostListView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             myPostListView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -143,9 +155,18 @@ extension MyPostListVC: UICollectionViewDelegate {
     }
 }
 
+// MARK: - TLNavigationBarDelegate
+
+extension MyPostListVC: TLNavigationBarDelegate {
+    func rightButtonDidTapped() {
+        // TODO: 네비게이션 바 완료 버튼 선택
+    }
+}
+
 @available(iOS 17, *)
 #Preview("MyPostListVC") {
     let vc = MyPostListVC()
    // vc.sampleData()
     return vc.view
 }
+
