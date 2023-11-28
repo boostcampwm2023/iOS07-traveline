@@ -130,6 +130,8 @@ final class HomeSearchView: UIView {
 private extension HomeSearchView {
     func setupAttributes() {
         backgroundColor = TLColor.black
+        
+        searchCollectionView.keyboardDismissMode = .onDrag
     }
     
     func setupLayout() {
