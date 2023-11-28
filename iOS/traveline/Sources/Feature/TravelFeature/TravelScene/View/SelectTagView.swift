@@ -55,6 +55,10 @@ final class SelectTagView: UIView {
     private let tagType: TagType
     private let limitWidth: CGFloat
     
+    var selectedTags: [String] {
+        tagListView.selectedTags
+    }
+    
     // MARK: - Initializer
     
     init(tagType: TagType, width: CGFloat) {
