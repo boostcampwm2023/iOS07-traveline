@@ -80,6 +80,7 @@ final class TLTag: UIButton {
     private var style: TLTagStyle
     private let tagColor: UIColor
     private let defaultColor: UIColor = TLColor.mediumGray
+    let name: String
 
     // MARK: - Initialize
     
@@ -91,6 +92,7 @@ final class TLTag: UIButton {
     ) {
         self.style = style
         self.tagColor = color
+        self.name = name
         tagTitleLabel.setText(to: name)
         tagTitleLabel.setFont(to: style.font)
         
