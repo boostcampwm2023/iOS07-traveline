@@ -10,6 +10,12 @@ import Foundation
 
 typealias FilterList = [Filter]
 
+extension FilterList {
+    static func sortFilters(_ filters: FilterDictionary) -> FilterList {
+        filters.map { $0.value }.sorted { $0.type.id < $1.type.id }
+    }
+}
+
 struct Filter: Hashable {
     let type: FilterType
     let selected: [String]

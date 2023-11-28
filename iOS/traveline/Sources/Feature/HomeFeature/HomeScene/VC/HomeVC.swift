@@ -211,11 +211,7 @@ private extension HomeVC {
             .map(\.homeFilters)
             .withUnretained(self)
             .sink { owner, filters in
-                // TODO: travelList, filterList 분리하기
-                owner.homeListView.setupData(
-                    filterList: filters.map { $0.value }.sorted { $0.type.id < $1.type.id },
-                    travelList: TravelListSample.make()
-                )
+                owner.homeListView.setupData(list: .sortFilters(filters))
                 owner.createTravelButton.isHidden = false
             }
             .store(in: &cancellables)
@@ -225,10 +221,7 @@ private extension HomeVC {
             .map(\.resultFilters)
             .withUnretained(self)
             .sink { owner, filters in
-                owner.homeListView.setupData(
-                    filterList: filters.map { $0.value }.sorted { $0.type.id < $1.type.id },
-                    travelList: TravelListSample.make()
-                )
+                owner.homeListView.setupData(list: .sortFilters(filters))
             }
             .store(in: &cancellables)
         
