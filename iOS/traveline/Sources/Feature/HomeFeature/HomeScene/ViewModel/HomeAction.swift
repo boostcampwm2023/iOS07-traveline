@@ -9,6 +9,7 @@
 import Foundation
 
 enum HomeAction: BaseAction {
+    case viewDidLoad
     case startSearch
     case searching(String)
     case searchDone(String)
