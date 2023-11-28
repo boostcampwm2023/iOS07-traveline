@@ -62,9 +62,13 @@ export class PostingsService {
   async findAllBytitle(keyword: string) {
     const titles = await this.postingsRepository.findAllByTitle(keyword);
 
-    return titles
-      .filter((e) => e.report.length <= BLOCKING_LIMIT)
-      .map((e) => e.title);
+    return [
+      ...new Set(
+        titles
+          .filter((e) => e.report.length <= BLOCKING_LIMIT)
+          .map((e) => e.title)
+      ),
+    ];
   }
 
   async findOne(id: string) {
