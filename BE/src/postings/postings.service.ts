@@ -15,6 +15,7 @@ import { UserRepository } from 'src/users/users.repository';
 import { Liked } from './entities/liked.entity';
 import { Report } from './entities/report.entity';
 import { PeriodType, SeasonType } from './postings.types';
+import { BLOCKING_LIMIT } from './postings.constants';
 
 @Injectable()
 export class PostingsService {
@@ -47,7 +48,9 @@ export class PostingsService {
   async findAllBytitle(keyword: string) {
     const titles = await this.postingsRepository.findAllByTitle(keyword);
 
-    return titles.filter((e) => e.report.length <= 5).map((e) => e.title);
+    return titles
+      .filter((e) => e.report.length <= BLOCKING_LIMIT)
+      .map((e) => e.title);
   }
 
   async findOne(id: string) {
@@ -57,7 +60,7 @@ export class PostingsService {
       throw new NotFoundException('게시글이 존재하지 않습니다.');
     }
 
-    if (posting.report.length > 5) {
+    if (posting.report.length > BLOCKING_LIMIT) {
       throw new ForbiddenException('차단된 게시글입니다.');
     }
 
