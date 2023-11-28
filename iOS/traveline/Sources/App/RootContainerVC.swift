@@ -157,6 +157,7 @@ extension RootContainerVC: SideMenuDelegate {
             navigationVC?.pushViewController(ProfileEditingVC(), animated: true)
         case .myPostList:
             // TODO: - myPostListView 만들면 변경하기
+            navigationVC?.pushViewController(MyPostListVC(), animated: true)
             break
         case .setting:
             navigationVC?.pushViewController(SettingVC(), animated: true)
