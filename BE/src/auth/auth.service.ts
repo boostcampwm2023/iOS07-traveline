@@ -1,48 +1,92 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UserInfoDto } from '../users/dto/user-info.dto';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { HttpService } from '@nestjs/axios';
+import * as jwt from 'jsonwebtoken';
+import { UsersService } from 'src/users/users.service';
+import { isArray } from 'class-validator';
+import { CreateAuthRequestDto } from './dto/create-auth-request.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly httpService: HttpService,
+    private readonly usersService: UsersService
+  ) {}
 
-  async login(id: string) {
-    const isValidUser = this.validate(id);
-    if (!isValidUser) {
-      throw new UnauthorizedException();
-    }
-    const payload = { id };
-    return {
-      access_token: await this.jwtService.signAsync(payload),
+  async refresh(request) {}
+
+  getPublicKey(n: string, e: string) {
+    // 비대칭 암호화 공개키 생성을 위한 함수
+    const bufferN = Buffer.from(n, 'hex');
+    const bufferE = Buffer.from(e, 'hex');
+
+    const publicKey = {
+      type: 'rsa',
+      format: 'der',
+      key: Buffer.concat([
+        Buffer.from([
+          0x30, 0x81, 0x9f, 0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86,
+          0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00, 0x03, 0x81, 0x8d, 0x00,
+        ]),
+        bufferN,
+        Buffer.from([0x02, 0x03]),
+        bufferE,
+      ]),
     };
+    return publicKey;
   }
 
-  validate(id: string) {
-    //임시로 작성해둔 함수입니다.
-    if (id) {
-      return true;
+  async login(createAuthDto: CreateAuthRequestDto) {
+    const idToken = createAuthDto.idToken;
+    const decodedIdTokenHeader = jwt.decode(idToken, {
+      complete: true,
+    }).header;
+
+    // const res = await this.httpService.get(
+    //   'https://appleid.apple.com/auth/keys'
+    // );
+    const res = 'sss';
+    const publicKeyArr = JSON.parse(res.toString()).keys;
+
+    let publicKey;
+    for (let i = 0; i < publicKeyArr.length; i++) {
+      if (
+        publicKeyArr.kid == decodedIdTokenHeader.kid &&
+        publicKeyArr.alg == decodedIdTokenHeader.alg
+      ) {
+        publicKey = this.getPublicKey(publicKeyArr[i].n, publicKeyArr[i].e);
+        break;
+      }
     }
-    return false;
-  }
 
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
-  }
+    const decodedPayload = await this.jwtService.verifyAsync(idToken, {
+      secret: publicKey,
+    });
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+    console.log(decodedPayload);
+    //검증 로직 필요 - 테스트 해서 나오는 값 보고 검증 진행 예정
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    const appleId = decodedPayload.sub;
+    let user = await this.usersService.getUserInfoByResourceId(appleId);
 
-  update(id: number, updateUserDto: UserInfoDto) {
-    return `This action updates a #${id} auth`;
-  }
+    if (isArray(user)) {
+      throw new InternalServerErrorException();
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    if (!user) {
+      user = await this.usersService.createUser(appleId);
+      if (!user) {
+        throw new InternalServerErrorException();
+      }
+    }
+
+    const payload = { id: user.id };
+    return {
+      accessToken: await this.jwtService.signAsync(payload),
+      refreshToken: await this.jwtService.signAsync(payload, {
+        expiresIn: '30d',
+      }),
+    };
   }
 }

@@ -9,7 +9,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { StorageModule } from './storage/storage.module';
 import { JwtModule } from '@nestjs/jwt';
-import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -28,7 +27,6 @@ import { HttpModule } from '@nestjs/axios';
     TimelinesModule,
     AuthModule,
     DatabaseModule,
-    HttpModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],
