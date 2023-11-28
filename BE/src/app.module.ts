@@ -9,6 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { StorageModule } from './storage/storage.module';
 import { JwtModule } from '@nestjs/jwt';
+import { BlacklistModule } from './blacklist/blacklist.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { JwtModule } from '@nestjs/jwt';
     TimelinesModule,
     AuthModule,
     DatabaseModule,
+    BlacklistModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],
