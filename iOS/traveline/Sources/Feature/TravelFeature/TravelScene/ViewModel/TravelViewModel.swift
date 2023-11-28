@@ -77,6 +77,7 @@ final class TravelViewModel: BaseViewModel<TravelAction, TravelSideEffect, Trave
             
         case let .saveStartDate(startDate):
             newState.startDate = startDate
+            if !newState.isValidDate { newState.endDate = startDate }
             
         case let .saveEndDate(endDate):
             newState.endDate = endDate

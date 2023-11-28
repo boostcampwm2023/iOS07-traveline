@@ -119,14 +119,7 @@ final class TravelVC: UIViewController {
     @objc private func selectStartDate(_ sender: UIDatePicker) {
         let startDate = sender.date
         viewModel.sendAction(.startDateSelected(startDate))
-        
-        if selectPeriodView.endDatePicker.date < startDate {
-            selectPeriodView.endDatePicker.date = startDate
-            viewModel.sendAction(.endDateSelected(startDate))
-        }
-        
-        selectPeriodView.endDatePicker.minimumDate = startDate
-        
+
         dismiss(animated: false)
     }
     
@@ -230,9 +223,27 @@ private extension TravelVC {
     func bind() {
         viewModel.$state
             .map(\.canPost)
+            .removeDuplicates()
             .sink { [weak owner = self] canPost in
                 guard let owner else { return }
                 owner.tlNavigationBar.isRightButtonEnabled(canPost)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .map(\.startDate)
+            .sink { [weak owner = self] startDate in
+                guard let owner else { return }
+                owner.selectPeriodView.endDatePicker.minimumDate = startDate
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .map(\.endDate)
+            .removeDuplicates()
+            .sink { [weak owner = self] endDate in
+                guard let owner else { return }
+                owner.selectPeriodView.endDatePicker.date = endDate
             }
             .store(in: &cancellables)
     }
