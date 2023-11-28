@@ -48,7 +48,7 @@ final class TLNavigationBar: UIView {
     
     // MARK: - Initializer
     
-    init(title: String="", vc: UIViewController) {
+    init(title: String = "", vc: UIViewController) {
         self.title = title
         self.vc = vc
         

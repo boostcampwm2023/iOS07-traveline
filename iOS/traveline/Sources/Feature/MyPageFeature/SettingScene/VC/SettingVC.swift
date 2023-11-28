@@ -90,6 +90,12 @@ final class SettingVC: UIViewController {
         setupLayout()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.navigationBar.isHidden = true
+    }
+    
     // MARK: - Functions
     
     @objc private func logoutButtonTapped() {
@@ -171,6 +177,7 @@ extension SettingVC {
             withdrawalButton
         ].forEach {
             stackView.addArrangedSubview($0)
+            $0.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 16).isActive = true
         }
         
         view.subviews.forEach {
@@ -184,8 +191,8 @@ extension SettingVC {
             tlNavigationBar.heightAnchor.constraint(equalToConstant: BaseMetric.tlheight),
             
             stackView.topAnchor.constraint(equalTo: tlNavigationBar.bottomAnchor, constant: 32),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
             line.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
             line.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),

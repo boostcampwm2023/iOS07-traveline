@@ -41,4 +41,8 @@ enum TLImage {
         static let marker = TravelineAsset.Images.markerUnselected.image
         static let markerSelected = TravelineAsset.Images.markerSelected.image
     }
+    
+    enum Home {
+        static let menu = TravelineAsset.Images.menu.image
+    }
 }
