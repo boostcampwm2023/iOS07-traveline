@@ -29,6 +29,7 @@ enum TLImage {
         static let plus = TravelineAsset.Images.plus.image
         static let closeBlack = TravelineAsset.Images.closeBlack.image
         static let search = TravelineAsset.Images.search.image
+        static let close = TravelineAsset.Images.closeMedium.image
     }
     
     enum Travel {
@@ -42,7 +43,6 @@ enum TLImage {
     }
     
     enum Home {
-        static let close = TravelineAsset.Images.closeMedium.image
         static let menu = TravelineAsset.Images.menu.image
     }
 }

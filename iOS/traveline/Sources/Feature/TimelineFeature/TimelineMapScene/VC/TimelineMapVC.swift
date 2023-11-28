@@ -21,6 +21,8 @@ final class TimelineMapVC: UIViewController {
     
     // MARK: - UI Componenets
     
+    private lazy var tlNavigationBar: TLNavigationBar = .init(vc: self)
+    
     private let mapView = MKMapView()
     private let timelineCardView: TimelineCardView = .init()
     
@@ -52,7 +54,7 @@ final class TimelineMapVC: UIViewController {
         
         mapView.showAnnotations(markerAnnotations, animated: true)
         mapView.addAnnotations(markerAnnotations)
-        title = "Day \(day)"
+        tlNavigationBar.setupTitle(to: "Day \(day)")
     }
     
     @objc private func showTimelineDetail() {
@@ -81,6 +83,8 @@ final class TimelineMapVC: UIViewController {
 
 private extension TimelineMapVC {
     func setupAttributes() {
+        view.backgroundColor = TLColor.black
+        
         mapView.isPitchEnabled = false
         mapView.isRotateEnabled = false
         mapView.delegate = self
@@ -96,21 +100,26 @@ private extension TimelineMapVC {
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showTimelineDetail))
         timelineCardView.addGestureRecognizer(tapGesture)
-        
-        let backBarButtonItem = UIBarButtonItem(title: Literal.empty, style: .plain, target: self, action: nil)
-        backBarButtonItem.tintColor = TLColor.white
-        self.navigationItem.backBarButtonItem = backBarButtonItem
     }
     
     func setupLayout() {
-        view.addSubviews(mapView, timelineCardView)
+        view.addSubviews(
+            tlNavigationBar,
+            mapView,
+            timelineCardView
+        )
         
         view.subviews.forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
         NSLayoutConstraint.activate([
-            mapView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tlNavigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tlNavigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tlNavigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tlNavigationBar.heightAnchor.constraint(equalToConstant: BaseMetric.tlheight),
+            
+            mapView.topAnchor.constraint(equalTo: tlNavigationBar.bottomAnchor),
             mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
