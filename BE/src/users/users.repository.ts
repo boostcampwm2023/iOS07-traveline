@@ -21,4 +21,8 @@ export class UserRepository {
   findByName(name: string): Promise<User> {
     return this.userRepository.findOne({ where: { name: name } });
   }
+
+  findByResourceId(resourceId: string): Promise<User> {
+    return this.userRepository.findOne({ where: { resourceId: resourceId } });
+  }
 }

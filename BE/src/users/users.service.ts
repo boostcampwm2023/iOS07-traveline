@@ -25,7 +25,7 @@ export class UsersService {
     return `This action removes a #${id} user`;
   }
 
-  async getUserInfo(id: string): Promise<UserInfoDto> {
+  async getUserInfoById(id: string): Promise<UserInfoDto> {
     const user = await this.userRepository.findById(id);
     const avatarPath = user.avatar;
     try {
@@ -36,6 +36,10 @@ export class UsersService {
       );
     }
     return { name: user.name, avatar: user.avatar };
+  }
+
+  async getUserInfoByResourceId(resourceId: string) {
+    return this.userRepository.findByResourceId(resourceId);
   }
 
   async updateUserInfo(id, name: string, file: Express.Multer.File) {
