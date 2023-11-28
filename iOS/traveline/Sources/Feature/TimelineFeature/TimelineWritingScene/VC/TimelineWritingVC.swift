@@ -186,7 +186,7 @@ private extension TimelineWritingVC {
     
     func setupLayout() {
         
-        view.addSubview(tlNavigationBar, scrollView)
+        view.addSubviews(tlNavigationBar, scrollView)
         scrollView.addSubview(stackView)
         stackView.addArrangedSubviews(
             titleTextField,
@@ -197,12 +197,13 @@ private extension TimelineWritingVC {
             textView
         )
         
+        tlNavigationBar.translatesAutoresizingMaskIntoConstraints = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.arrangedSubviews.forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
-            $0.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 16).isActive = true
-            $0.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: -16).isActive = true
+            $0.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: Metric.margin).isActive = true
+            $0.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: -Metric.margin).isActive = true
         }
         
         NSLayoutConstraint.activate([
@@ -215,11 +216,14 @@ private extension TimelineWritingVC {
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             stackView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
             stackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
             stackView.bottomAnchor.constraint(equalTo: scrollView.contentLayoutGuide.bottomAnchor),
             stackView.widthAnchor.constraint(equalTo: scrollView.frameLayoutGuide.widthAnchor),
+            titleTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
             textView.topAnchor.constraint(equalTo: selectImageButton.bottomAnchor, constant: Metric.spacing),
             textView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
         ])
