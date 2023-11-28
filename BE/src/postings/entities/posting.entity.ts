@@ -12,6 +12,16 @@ import { Liked } from './liked.entity';
 import { Report } from './report.entity';
 import { User } from '../../users/entities/user.entity';
 import { Timeline } from '../../timelines/entities/timeline.entity';
+import {
+  Budget,
+  Headcount,
+  Location,
+  Period,
+  Season,
+  Theme,
+  Vehicle,
+  WithWho,
+} from '../postings.types';
 
 @Entity()
 export class Posting {
@@ -20,7 +30,6 @@ export class Posting {
 
   @ManyToOne(() => User, (user) => user.postings, {
     onDelete: 'CASCADE',
-    nullable: true,
   })
   @JoinColumn({ name: 'writer' })
   writer: User;
@@ -47,28 +56,28 @@ export class Posting {
   days: number;
 
   @Column({ length: 14 })
-  period: string;
+  period: Period;
 
   @Column({ length: 14, nullable: true })
-  headcount: string;
+  headcount: Headcount;
 
   @Column({ length: 14, nullable: true })
-  budget: string;
+  budget: Budget;
 
   @Column({ length: 14 })
-  location: string;
+  location: Location;
 
   @Column({ length: 14 })
-  season: string;
+  season: Season;
 
   @Column({ length: 14, nullable: true })
-  vehicle: string;
+  vehicle: Vehicle;
 
   @Column({ type: 'json', nullable: true })
-  theme: string[];
+  theme: Theme[];
 
   @Column({ type: 'json', nullable: true })
-  withWho: string[];
+  withWho: WithWho[];
 
   @RelationId((posting: Posting) => posting.reports)
   report: { reporter: string; posting: string }[];

@@ -10,12 +10,12 @@ import {
   IsDateString,
 } from 'class-validator';
 import {
-  BudgetType,
-  HeadcountType,
-  LocationType,
-  ThemeType,
-  VehicleType,
-  WithWhoType,
+  Budget,
+  Headcount,
+  Location,
+  Theme,
+  Vehicle,
+  WithWho,
   budgets,
   headcounts,
   locations,
@@ -25,56 +25,71 @@ import {
 } from '../postings.types';
 
 export class CreatePostingDto {
-  @ApiProperty()
+  @ApiProperty({ example: '여행 꿀팁 공유함', maxLength: 14, minLength: 1 })
   @IsString()
   @MinLength(1)
   @MaxLength(14)
   title: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '2023-12-13', description: 'YYYY-MM-DD 형식' })
   @IsDateString()
   startDate: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    example: '2023-12-15',
+    description: 'YYYY-MM-DD 형식, startDate보다 이른 날짜일 수 없습니다.',
+  })
   @IsDateString()
   endDate: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false, enum: Headcount })
   @IsOptional()
   @IsString()
   @IsIn(headcounts)
-  headcount: HeadcountType;
+  headcount: Headcount;
 
-  @ApiProperty()
+  @ApiProperty({ required: false, enum: Budget })
   @IsOptional()
   @IsString()
   @IsIn(budgets)
-  budget: BudgetType;
+  budget: Budget;
 
-  @ApiProperty()
+  @ApiProperty({ enum: Location })
   @IsString()
   @IsIn(locations)
-  location: LocationType;
+  location: Location;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+    enum: Theme,
+    example: ['힐링', '액티비티', '맛집'],
+    description: '최대 3개까지 입력할 수 있습니다.',
+    isArray: true,
+  })
   @IsOptional()
   @IsString({ each: true })
   @ArrayMaxSize(3)
   @IsArray()
   @IsIn(themes, { each: true })
-  theme: ThemeType[];
+  theme: Theme[];
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false,
+    enum: WithWho,
+    example: ['가족', '반려동물'],
+    description: '최대 3개까지 입력할 수 있습니다.',
+    isArray: true,
+  })
   @IsOptional()
   @IsString({ each: true })
   @ArrayMaxSize(3)
   @IsArray()
   @IsIn(withWhos, { each: true })
-  withWho: WithWhoType[];
+  withWho: WithWho[];
 
-  @ApiProperty()
+  @ApiProperty({ required: false, enum: Vehicle })
   @IsOptional()
   @IsString()
   @IsIn(vehicles)
-  vehicle: VehicleType;
+  vehicle: Vehicle;
 }

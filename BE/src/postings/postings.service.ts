@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { CreatePostingDto } from './dto/create-posting.dto';
 import { UpdatePostingDto } from './dto/update-posting.dto';
+import { SearchPostingDto } from './dto/search-posting.dto';
 import { Posting } from './entities/posting.entity';
 import { LikedsRepository } from './repositories/likeds.repository';
 import { PostingsRepository } from './repositories/postings.repository';
@@ -14,7 +15,8 @@ import { ReportsRepository } from './repositories/reports.repository';
 import { UserRepository } from 'src/users/users.repository';
 import { Liked } from './entities/liked.entity';
 import { Report } from './entities/report.entity';
-import { PeriodType, SeasonType } from './postings.types';
+import { Period, Season } from './postings.types';
+import { BLOCKING_LIMIT } from './postings.constants';
 
 @Injectable()
 export class PostingsService {
@@ -40,9 +42,34 @@ export class PostingsService {
     return this.postingsRepository.save(posting);
   }
 
-  // findAll() {
-  //   return `This action returns all postings`;
-  // }
+  async findAll(dto: SearchPostingDto) {
+    return this.postingsRepository.findAll(
+      dto.keyword,
+      dto.sorting,
+      dto.offset,
+      dto.limit,
+      dto.budget,
+      dto.headcount,
+      dto.location,
+      dto.period,
+      dto.season,
+      dto.vehicle,
+      dto.theme,
+      dto.withWho
+    );
+  }
+
+  async findAllBytitle(keyword: string) {
+    const titles = await this.postingsRepository.findAllByTitle(keyword);
+
+    return [
+      ...new Set(
+        titles
+          .filter((e) => e.report.length <= BLOCKING_LIMIT)
+          .map((e) => e.title)
+      ),
+    ];
+  }
 
   async findOne(id: string) {
     const posting = await this.postingsRepository.findOne(id);
@@ -51,7 +78,7 @@ export class PostingsService {
       throw new NotFoundException('게시글이 존재하지 않습니다.');
     }
 
-    if (posting.report.length > 5) {
+    if (posting.report.length > BLOCKING_LIMIT) {
       throw new ForbiddenException('차단된 게시글입니다.');
     }
 
@@ -133,6 +160,8 @@ export class PostingsService {
     posting.location = postingDto.location;
     posting.season = this.findSeason(posting.startDate);
     posting.vehicle = postingDto.vehicle;
+    posting.theme = postingDto.theme;
+    posting.withWho = postingDto.withWho;
     return posting;
   }
 
@@ -140,28 +169,28 @@ export class PostingsService {
     return (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) + 1;
   }
 
-  private findPeriod(days: number): PeriodType {
+  private findPeriod(days: number): Period {
     return days === 1
-      ? '당일치기'
+      ? Period['당일치기']
       : days === 2
-      ? '1박 2일'
+      ? Period['1박 2일']
       : days === 3
-      ? '2박 3일'
+      ? Period['2박 3일']
       : days < 7
-      ? '3박 ~'
+      ? Period['3박 ~']
       : days < 30
-      ? '일주일 ~'
-      : '한 달 ~';
+      ? Period['일주일 ~']
+      : Period['한 달 ~'];
   }
 
-  private findSeason(startDate: Date): SeasonType {
+  private findSeason(startDate: Date): Season {
     const month = startDate.getMonth() + 1;
     return month >= 3 && month <= 5
-      ? '봄'
+      ? Season.봄
       : month >= 6 && month <= 9
-      ? '여름'
+      ? Season.여름
       : month >= 10 && month <= 11
-      ? '가을'
-      : '겨울';
+      ? Season.가을
+      : Season.겨울;
   }
 }
