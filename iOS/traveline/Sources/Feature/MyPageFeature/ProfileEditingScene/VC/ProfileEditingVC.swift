@@ -6,6 +6,7 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
+import PhotosUI
 import UIKit
 
 final class ProfileEditingVC: UIViewController {
@@ -100,9 +101,17 @@ final class ProfileEditingVC: UIViewController {
         [
             UIAlertAction(title: Constants.selectBaseImage, style: .default) { _ in
                 // action
+                self.imageView.image = nil
             },
             UIAlertAction(title: Constants.selectInAlbum, style: .default) { _ in
-                // action
+                var config = PHPickerConfiguration()
+                config.selectionLimit = 1
+                config.filter = .images
+                
+                let picker = PHPickerViewController(configuration: config)
+                picker.delegate = self
+                
+                self.present(picker, animated: true)
             },
             UIAlertAction(title: Constants.close, style: .cancel)
         ].forEach { alert.addAction($0) }
@@ -185,9 +194,34 @@ extension ProfileEditingVC {
     }
 }
 
+// MARK: - PHPickerViewControllerDelegate
+
+extension ProfileEditingVC: PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        
+        picker.dismiss(animated: true, completion: nil)
+        
+        let itemProvider = results.first?.itemProvider
+        guard let itemProvider = itemProvider,
+              itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
+        
+        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, _ in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                guard let selectedImage = image as? UIImage else { return }
+                self.imageView.image = selectedImage
+            }
+        }
+    }
+    
+}
+
+/*
 @available(iOS 17, *)
 #Preview("ProfileEditingVC") {
     let profileEditingVC = ProfileEditingVC()
     let homeNV = UINavigationController(rootViewController: profileEditingVC)
     return homeNV
 }
+
+*/
