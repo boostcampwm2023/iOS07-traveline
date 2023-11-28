@@ -42,20 +42,27 @@ final class TLTagListView: UIView {
     
     private var detailTagList: [TLTag] = .init()
     private lazy var currentStackView: UIStackView = tagStackView
-    
+    private var tagType: TagType?
+    private var selectedTag: TLTag?
+
     private var currentWidth: CGFloat = 0
     private let limitWidth: CGFloat
+    
+    var selectedTags: [String] {
+        detailTagList.filter({ $0.isSelected }).map { $0.name }
+    }
     
     // MARK: - Initializer
     
     init(tagType: TagType, width: CGFloat) {
         self.limitWidth = width
+        self.tagType = tagType
         
         super.init(frame: .zero)
         
         setupAttributes()
         setupLayout()
-        setupTags(type: tagType)
+        setupTags()
     }
     
     init(width: CGFloat) {
@@ -86,6 +93,10 @@ final class TLTagListView: UIView {
     }
     
     @objc private func selectTag(_ sender: TLTag) {
+        if let tagType, !tagType.isMultiple {
+            selectedTag?.isSelected = false
+            selectedTag = sender
+        }
         sender.isSelected.toggle()
     }
     
@@ -150,12 +161,13 @@ private extension TLTagListView {
         ])
     }
     
-    func setupTags(type: TagType) {
-        type.detailTags.forEach { detailTag in
+    func setupTags() {
+        guard let tagType else { return }
+        tagType.detailTags.forEach { detailTag in
             let tlTag: TLTag = .init(
                 style: .selectable,
                 name: detailTag,
-                color: type.color
+                color: tagType.color
             )
             let neededWidth: CGFloat = tlTag.intrinsicContentSize.width + Metric.tagSpacing
             

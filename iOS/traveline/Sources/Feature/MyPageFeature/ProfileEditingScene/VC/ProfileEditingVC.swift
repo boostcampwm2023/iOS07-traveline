@@ -6,6 +6,7 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
+import PhotosUI
 import UIKit
 
 final class ProfileEditingVC: UIViewController {
@@ -34,6 +35,9 @@ final class ProfileEditingVC: UIViewController {
     }
     
     // MARK: - UI Components
+    
+    private lazy var tlNavigationBar: TLNavigationBar = .init(title: Constants.title, vc: self)
+        .addCompleteButton()
     
     private let imageView: UIImageView = {
         let view = UIImageView()
@@ -92,6 +96,12 @@ final class ProfileEditingVC: UIViewController {
         setupLayout()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.navigationBar.isHidden = true
+    }
+    
     // MARK: - Functions
     
     @objc private func imageEditButtonTapped() {
@@ -99,10 +109,16 @@ final class ProfileEditingVC: UIViewController {
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         [
             UIAlertAction(title: Constants.selectBaseImage, style: .default) { _ in
-                // action
+                self.imageView.image = nil
             },
             UIAlertAction(title: Constants.selectInAlbum, style: .default) { _ in
-                // action
+                var config = PHPickerConfiguration()
+                config.filter = .images
+                
+                let picker = PHPickerViewController(configuration: config)
+                picker.delegate = self
+                
+                self.present(picker, animated: true)
             },
             UIAlertAction(title: Constants.close, style: .cancel)
         ].forEach { alert.addAction($0) }
@@ -121,29 +137,14 @@ final class ProfileEditingVC: UIViewController {
 extension ProfileEditingVC {
     
     private func setupAttributes() {
-        setupNavigationItem()
         view.backgroundColor = TLColor.black
         
         imageEditButton.addTarget(self, action: #selector(imageEditButtonTapped), for: .touchUpInside)
     }
     
-    private func setupNavigationItem() {
-        self.navigationItem.title = Constants.title
-        let completeButton = UIBarButtonItem(
-            title: Constants.complete,
-            style: .plain,
-            target: self,
-            action: #selector(completeButtonTapped)
-        )
-        completeButton.isEnabled = false
-        completeButton.setTitleTextAttributes([.font: TLFont.body1.font], for: .normal)
-        completeButton.setTitleTextAttributes([.foregroundColor: TLColor.gray], for: .disabled)
-        completeButton.setTitleTextAttributes([.foregroundColor: TLColor.main], for: .normal)
-        self.navigationItem.rightBarButtonItem = completeButton
-    }
-    
     private func setupLayout() {
         view.addSubviews(
+            tlNavigationBar,
             imageView,
             imageEditButton,
             nickNameLabel,
@@ -156,7 +157,12 @@ extension ProfileEditingVC {
         }
         
         NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Metric.topInset),
+            tlNavigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tlNavigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tlNavigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tlNavigationBar.heightAnchor.constraint(equalToConstant: BaseMetric.tlheight),
+            
+            imageView.topAnchor.constraint(equalTo: tlNavigationBar.bottomAnchor, constant: Metric.topInset),
             imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             imageView.widthAnchor.constraint(equalToConstant: Metric.imageWidth),
             imageView.heightAnchor.constraint(equalToConstant: Metric.imageWidth),
@@ -185,9 +191,34 @@ extension ProfileEditingVC {
     }
 }
 
+// MARK: - PHPickerViewControllerDelegate
+
+extension ProfileEditingVC: PHPickerViewControllerDelegate {
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        
+        picker.dismiss(animated: true, completion: nil)
+        
+        let itemProvider = results.first?.itemProvider
+        guard let itemProvider = itemProvider,
+              itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
+        
+        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, _ in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                guard let selectedImage = image as? UIImage else { return }
+                self.imageView.image = selectedImage
+            }
+        }
+    }
+    
+}
+
+/*
 @available(iOS 17, *)
 #Preview("ProfileEditingVC") {
     let profileEditingVC = ProfileEditingVC()
     let homeNV = UINavigationController(rootViewController: profileEditingVC)
     return homeNV
 }
+
+*/
