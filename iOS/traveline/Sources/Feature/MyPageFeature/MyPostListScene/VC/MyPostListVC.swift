@@ -31,7 +31,6 @@ final class MyPostListVC: UIViewController {
     // MARK: - UI Components
     
     private lazy var tlNavigationBar: TLNavigationBar = .init(vc: self)
-        .addCompleteButton()
     
     private let myPostListView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -110,7 +109,6 @@ private extension MyPostListVC {
         myPostListView.collectionViewLayout = collectionLayout()
         myPostListView.delegate = self
         
-        tlNavigationBar.delegate = self
         tlNavigationBar.setupTitle(to: "내가 작성한 글 목록")
     }
     
@@ -152,14 +150,6 @@ extension MyPostListVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let timelineVC = TimelineVC()
         self.navigationController?.pushViewController(timelineVC, animated: true)
-    }
-}
-
-// MARK: - TLNavigationBarDelegate
-
-extension MyPostListVC: TLNavigationBarDelegate {
-    func rightButtonDidTapped() {
-        // TODO: 네비게이션 바 완료 버튼 선택
     }
 }
 
