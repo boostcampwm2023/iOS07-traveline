@@ -37,7 +37,7 @@ final class MyPostListVC: UIViewController {
         let layout = UICollectionViewFlowLayout()
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.backgroundColor = TLColor.black
-        view.register(TLListCVC.self, forCellWithReuseIdentifier: TLListCVC.identifier)
+        view.register(cell: TLListCVC.self)
         view.showsVerticalScrollIndicator = false
         
         return view
@@ -122,8 +122,7 @@ private extension MyPostListVC {
     
     private func setupDataSource() {
         dataSource = DataSource(collectionView: myPostListView) { collectionView, indexPath, itemIdentifier in
-           
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TLListCVC.identifier, for: indexPath) as? TLListCVC else { return UICollectionViewCell() }
+            let cell = collectionView.dequeue(cell: TLListCVC.self, for: indexPath)
             cell.setupData(item: itemIdentifier)
             
             return cell
