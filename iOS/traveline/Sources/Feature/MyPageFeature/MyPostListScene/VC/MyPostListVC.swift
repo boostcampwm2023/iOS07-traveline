@@ -22,6 +22,7 @@ final class MyPostListVC: UIViewController {
     private enum Constants {
         static let title: String = "traveline"
         static let searchTravel: String = "여행 검색"
+        static let navigationTitle: String = "내가 작성한 글 목록"
     }
     
     private enum Section: CaseIterable {
@@ -59,6 +60,12 @@ final class MyPostListVC: UIViewController {
         setupLayout()
         setupDataSource()
         setData()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        self.navigationController?.navigationBar.isHidden = true
     }
     
     // MARK: - Functions
@@ -109,7 +116,8 @@ private extension MyPostListVC {
         myPostListView.collectionViewLayout = collectionLayout()
         myPostListView.delegate = self
         
-        tlNavigationBar.setupTitle(to: "내가 작성한 글 목록")
+        tlNavigationBar.setupTitle(to: Constants.navigationTitle)
+        view.backgroundColor = TLColor.black
     }
     
     private func setupDataSource() {
