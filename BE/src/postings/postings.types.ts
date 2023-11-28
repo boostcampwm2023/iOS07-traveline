@@ -6,13 +6,19 @@ export const periods = [
   '일주일 ~',
   '한 달 ~',
 ];
+export type PeriodType = (typeof periods)[number];
+
 export const headcounts = ['1인', '2인', '3인', '4인', '5인 이상'];
+export type HeadcountType = (typeof headcounts)[number];
+
 export const budgets = [
   '0 - 10만 원',
   '10 - 50만 원',
   '50 - 100만 원',
   '100만 원 ~',
 ];
+export type BudgetType = (typeof budgets)[number];
+
 export const locations = [
   '서울',
   '부산',
@@ -32,6 +38,8 @@ export const locations = [
   '강원',
   '제주',
 ];
+export type LocationType = (typeof locations)[number];
+
 export const themes = [
   '힐링',
   '액티비티',
@@ -43,6 +51,13 @@ export const themes = [
   '쇼핑',
   '효도',
 ];
+export type ThemeType = (typeof themes)[number];
+
 export const withWhos = ['반려동물', '가족', '친구', '연인'];
+export type WithWhoType = (typeof withWhos)[number];
+
 export const vehicles = ['대중교통', '자차'];
+export type VehicleType = (typeof vehicles)[number];
+
 export const seasons = ['봄', '여름', '가을', '겨울'];
+export type SeasonType = (typeof seasons)[number];

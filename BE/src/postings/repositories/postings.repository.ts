@@ -19,12 +19,6 @@ export class PostingsRepository {
       where: { id },
       relations: {
         writer: true,
-        budget: true,
-        headcount: true,
-        location: true,
-        period: true,
-        season: true,
-        vehicle: true,
       },
     });
   }

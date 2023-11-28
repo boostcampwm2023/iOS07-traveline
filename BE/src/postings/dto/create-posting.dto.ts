@@ -10,6 +10,12 @@ import {
   IsDateString,
 } from 'class-validator';
 import {
+  BudgetType,
+  HeadcountType,
+  LocationType,
+  ThemeType,
+  VehicleType,
+  WithWhoType,
   budgets,
   headcounts,
   locations,
@@ -37,18 +43,18 @@ export class CreatePostingDto {
   @IsOptional()
   @IsString()
   @IsIn(headcounts)
-  headcount: string;
+  headcount: HeadcountType;
 
   @ApiProperty()
   @IsOptional()
   @IsString()
   @IsIn(budgets)
-  budget: string;
+  budget: BudgetType;
 
   @ApiProperty()
   @IsString()
   @IsIn(locations)
-  location: string;
+  location: LocationType;
 
   @ApiProperty()
   @IsOptional()
@@ -56,7 +62,7 @@ export class CreatePostingDto {
   @ArrayMaxSize(3)
   @IsArray()
   @IsIn(themes, { each: true })
-  theme: string[];
+  theme: ThemeType[];
 
   @ApiProperty()
   @IsOptional()
@@ -64,11 +70,11 @@ export class CreatePostingDto {
   @ArrayMaxSize(3)
   @IsArray()
   @IsIn(withWhos, { each: true })
-  withWho: string[];
+  withWho: WithWhoType[];
 
   @ApiProperty()
   @IsOptional()
   @IsString()
   @IsIn(vehicles)
-  vehicle: string;
+  vehicle: VehicleType;
 }

@@ -20,7 +20,10 @@ export class LikedsRepository {
     return this.likesRepository.save(liked);
   }
 
-  toggle(liked: Liked) {
-    return this.likesRepository.update(liked, { isDeleted: !liked.isDeleted });
+  toggle(postingId: string, userId: string, isDeleted: boolean) {
+    return this.likesRepository.update(
+      { posting: postingId, user: userId },
+      { isDeleted: !isDeleted }
+    );
   }
 }
