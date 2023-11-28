@@ -44,6 +44,12 @@ export class PostingsService {
   //   return `This action returns all postings`;
   // }
 
+  async findAllBytitle(keyword: string) {
+    const titles = await this.postingsRepository.findAllByTitle(keyword);
+
+    return titles.filter((e) => e.report.length <= 5).map((e) => e.title);
+  }
+
   async findOne(id: string) {
     const posting = await this.postingsRepository.findOne(id);
 

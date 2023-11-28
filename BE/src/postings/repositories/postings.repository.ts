@@ -1,7 +1,7 @@
 import { POSTINGS_REPOSITORY } from '../postings.constants';
 import { Posting } from '../entities/posting.entity';
 import { Inject, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 
 @Injectable()
 export class PostingsRepository {
@@ -20,6 +20,13 @@ export class PostingsRepository {
       relations: {
         writer: true,
       },
+    });
+  }
+
+  async findAllByTitle(keyword: string) {
+    return this.postingsRepository.find({
+      where: { title: Like(`${keyword}%`) },
+      select: ['title'],
     });
   }
 

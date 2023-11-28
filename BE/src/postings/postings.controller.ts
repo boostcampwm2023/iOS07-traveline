@@ -9,6 +9,7 @@ import {
   Put,
   UseGuards,
   Req,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { PostingsService } from './postings.service';
 import { CreatePostingDto } from './dto/create-posting.dto';
@@ -55,6 +56,17 @@ export class PostingsController {
   // search(@Query() searchPostingDto: SearchPostingDto) {
   //   //return this.postingsService.search(searchPostingDto);
   // }
+
+  @Get('/titles')
+  @ApiOperation({
+    summary: '포스팅 제목 검색 API',
+    description:
+      '전달된 키워드로 시작하는 제목을 가진 포스팅의 제목을 반환한다.',
+  })
+  @ApiOkResponse({ description: 'OK', type: [String] })
+  searchByKeyWord(@Query('keyword', new DefaultValuePipe('')) keyword: string) {
+    return this.postingsService.findAllBytitle(keyword);
+  }
 
   @Get(':id')
   @ApiBearerAuth()
@@ -103,17 +115,6 @@ export class PostingsController {
     const userId = request['user'].id;
     return this.postingsService.remove(id, userId);
   }
-
-  // @Get('/titles')
-  // @ApiOperation({
-  //   summary: '포스팅 제목 검색 API',
-  //   description:
-  //     '전달된 키워드로 시작하는 제목을 가진 포스팅의 제목을 반환한다.',
-  // })
-  // @ApiOkResponse({ description: 'OK', type: [String] })
-  // searchByKeyWord(@Query('keyword') keyword: string) {
-  //   //return this.postingsService.searchByKeyWord(keyword);
-  // }
 
   @Post(':id/like')
   @ApiBearerAuth()
