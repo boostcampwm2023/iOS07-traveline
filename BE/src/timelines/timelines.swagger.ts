@@ -47,3 +47,17 @@ export const create_OK = {
   },
   id: 'f983e062-9b15-4c43-a09f-72bb2bd4e99d',
 };
+
+export const findOne_OK = {
+  id: 'f983e062-9b15-4c43-a09f-72bb2bd4e99d',
+  title: 'from st',
+  day: 1,
+  description:
+    'we arrived Seoul Station early, so we waited while eating in the market...',
+  image: null,
+  coordX: null,
+  coordY: null,
+  date: '2023-08-16',
+  place: 'GS25',
+  time: '07:25',
+};
