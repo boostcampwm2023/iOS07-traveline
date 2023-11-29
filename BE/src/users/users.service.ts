@@ -45,11 +45,7 @@ export class UsersService {
   }
 
   async findUserById(id: string) {
-    const user = await this.userRepository.findById(id);
-    if (!user) {
-      return false;
-    }
-    return true;
+    return this.userRepository.findById(id);
   }
 
   async getUserInfoById(id: string): Promise<UserInfoDto> {

@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { HttpService } from '@nestjs/axios';
@@ -19,7 +20,27 @@ export class AuthService {
     private readonly usersService: UsersService
   ) {}
 
-  async refresh(request) {}
+  async refresh(request) {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    if (type !== 'Bearer') {
+      throw new BadRequestException('JWT가 아닙니다.');
+    } else if (!token) {
+      throw new BadRequestException('토큰이 존재하지 않습니다.');
+    }
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_SECRET_REFRESH,
+      });
+      const id = payload.id;
+      const user = await this.usersService.findUserById(id);
+      if (!user) {
+        throw new UnauthorizedException('회원 정보가 존재하지 않습니다.');
+      }
+      return this.jwtService.signAsync(payload);
+    } catch {
+      throw new UnauthorizedException('올바르지 않은 토큰입니다.');
+    }
+  }
 
   getPublicKey(n: string, e: string) {
     // 비대칭 암호화 공개키 생성을 위한 함수
@@ -98,9 +119,9 @@ export class AuthService {
 
   async loginForDev(createAuthForDevDto: CreateAuthRequestForDevDto) {
     const id = createAuthForDevDto.id;
-    const userExists = this.usersService.findUserById(id);
+    const user = this.usersService.findUserById(id);
 
-    if (userExists) {
+    if (user) {
       const payload = { id };
       return {
         accessToken: await this.jwtService.signAsync(payload),
@@ -112,7 +133,9 @@ export class AuthService {
     }
 
     throw new BadRequestException(
-      '개발용 로그인 API에서는 회원가입이 불가능합니다.'
+      '회원 정보가 존재하지 않습니다.' +
+        '개발용 로그인 API에서는 회원가입이 불가능합니다.' +
+        '개발용 회원 생성은 백엔드 팀원에게 문의해주세요.'
     );
   }
 
