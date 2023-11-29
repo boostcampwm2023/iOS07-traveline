@@ -99,16 +99,16 @@ final class TimelineVC: UIViewController {
         
         if isOwner {
             menuItems = [
-                .init(title: "수정하기", handler: { _ in
+                .init(title: Literal.Action.modify, handler: { _ in
                     // TODO: - 수정하기 연결
                 }),
-                .init(title: "삭제하기", attributes: .destructive, handler: { _ in
+                .init(title: Literal.Action.delete, attributes: .destructive, handler: { _ in
                     // TODO: - 삭제하기 연결
                 })
             ]
         } else {
             menuItems = [
-                .init(title: "신고하기", attributes: .destructive, handler: { _ in
+                .init(title: Literal.Action.report, attributes: .destructive, handler: { _ in
                     // TODO: - 신고하기 연결
                 })
             ]
