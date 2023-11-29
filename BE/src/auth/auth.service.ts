@@ -27,16 +27,20 @@ export class AuthService {
     } else if (!token) {
       throw new BadRequestException('토큰이 존재하지 않습니다.');
     }
+    console.log('token');
     try {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET_REFRESH,
       });
       const id = payload.id;
+      console.log(id);
       const user = await this.usersService.findUserById(id);
       if (!user) {
         throw new UnauthorizedException('회원 정보가 존재하지 않습니다.');
       }
-      return this.jwtService.signAsync(payload);
+      console.log('user exists');
+      const accessToken = await this.jwtService.signAsync({ id });
+      return { accessToken };
     } catch {
       throw new UnauthorizedException('올바르지 않은 토큰입니다.');
     }
