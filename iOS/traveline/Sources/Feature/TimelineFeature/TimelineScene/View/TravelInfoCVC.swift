@@ -9,7 +9,7 @@
 import UIKit
 
 protocol TravelInfoDelegate: AnyObject {
-    func likeChanged(to isLiked: Bool)
+    func likeChanged()
 }
 
 final class TravelInfoCVC: UICollectionViewCell {
@@ -80,8 +80,7 @@ final class TravelInfoCVC: UICollectionViewCell {
     }
     
     @objc private func likeButtonPressed() {
-        likeButton.isSelected.toggle()
-        delegate?.likeChanged(to: likeButton.isSelected)
+        delegate?.likeChanged()
     }
     
 }

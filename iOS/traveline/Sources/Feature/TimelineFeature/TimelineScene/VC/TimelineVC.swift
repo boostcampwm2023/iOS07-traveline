@@ -6,6 +6,7 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
+import Combine
 import UIKit
 
 final class TimelineVC: UIViewController {
@@ -24,10 +25,6 @@ final class TimelineVC: UIViewController {
     // MARK: - UI Components
     
     private lazy var tlNavigationBar: TLNavigationBar = .init(vc: self)
-        .addRightButton(
-            image: TLImage.Travel.more,
-            menu: .init(children: menuItems)
-        )
     
     private lazy var timelineCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
@@ -47,17 +44,23 @@ final class TimelineVC: UIViewController {
     
     // MARK: - Properties
     
-    // TODO: - dummy 제거
-    private let dummyCardList = TimelineSample.makeCardList()
+    // TODO: - Diffable DataSource 사용
+    private var travelInfoDataSource: TimelineTravelInfo?
+    private var timelineCardDataSource: TimelineCardList = []
     
-    private let menuItems: [UIAction] = [
-        .init(title: "수정하기", handler: { _ in
-            // TODO: - 수정하기 연결
-        }),
-        .init(title: "삭제하기", attributes: .destructive, handler: { _ in
-            // TODO: - 삭제하기 연결
-        })
-    ]
+    private var cancellables: Set<AnyCancellable> = .init()
+    private let viewModel: TimelineViewModel
+    
+    // MARK: - Initializer
+    
+    init(viewModel: TimelineViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Life Cycle
     
@@ -67,6 +70,8 @@ final class TimelineVC: UIViewController {
         setupAttributes()
         setupLayout()
         setupCompositionalLayout()
+        bind()
+        viewModel.sendAction(.enterToTimeline)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -89,6 +94,31 @@ final class TimelineVC: UIViewController {
         navigationController?.pushViewController(timelineWritingVC, animated: true)
     }
     
+    private func setNavigationRightButton(isOwner: Bool) {
+        var menuItems: [UIAction] = []
+        
+        if isOwner {
+            menuItems = [
+                .init(title: "수정하기", handler: { _ in
+                    // TODO: - 수정하기 연결
+                }),
+                .init(title: "삭제하기", attributes: .destructive, handler: { _ in
+                    // TODO: - 삭제하기 연결
+                })
+            ]
+        } else {
+            menuItems = [
+                .init(title: "신고하기", attributes: .destructive, handler: { _ in
+                    // TODO: - 신고하기 연결
+                })
+            ]
+        }
+        
+        tlNavigationBar.addRightButton(
+            image: TLImage.Travel.more,
+            menu: .init(children: menuItems)
+        )
+    }
 }
 
 // MARK: - Setup Functions
@@ -193,6 +223,36 @@ private extension TimelineVC {
         return section
     }
     
+    func bind() {
+        viewModel.$state
+            .map(\.travelInfo)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, travelInfo in
+                owner.travelInfoDataSource = travelInfo
+                owner.timelineCollectionView.reloadData()
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .map(\.timelineCardList)
+            .withUnretained(self)
+            .sink { owner, cardlist in
+                print(cardlist)
+                owner.timelineCardDataSource = cardlist
+                owner.timelineCollectionView.reloadData()
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .map(\.isOwner)
+            .withUnretained(self)
+            .sink { owner, isOwner in
+                owner.setNavigationRightButton(isOwner: isOwner)
+                owner.createPostingButton.isHidden = !isOwner
+            }
+            .store(in: &cancellables)
+    }
 }
 
 // MARK: - UICollectionView Delegate, DataSource
@@ -218,7 +278,7 @@ extension TimelineVC: UICollectionViewDataSource {
         case 0:
             return 1
         case 1:
-            return dummyCardList.count
+            return timelineCardDataSource.count
         default:
             return 1
         }
@@ -227,14 +287,15 @@ extension TimelineVC: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch indexPath.section {
         case 0:
+            guard let travelInfoDataSource else { return UICollectionViewCell() }
             let cell = collectionView.dequeue(cell: TravelInfoCVC.self, for: indexPath)
-            cell.setData(from: TimelineSample.makeTravelInfo())
+            cell.setData(from: travelInfoDataSource)
             cell.delegate = self
             return cell
             
         case 1:
             let cell = collectionView.dequeue(cell: TimelineCardCVC.self, for: indexPath)
-            cell.setData(by: dummyCardList[indexPath.row])
+            cell.setData(by: timelineCardDataSource[indexPath.row])
             let lastRow = collectionView.numberOfItems(inSection: indexPath.section) - 1
             if indexPath.row == lastRow { cell.changeToLast() }
             return cell
@@ -258,9 +319,8 @@ extension TimelineVC: UICollectionViewDataSource {
 // MARK: - TravelInfo Delegate
 
 extension TimelineVC: TravelInfoDelegate {
-    func likeChanged(to isLiked: Bool) {
-        // TODO: - 좋아요 변경 처리
-        print("Like Changed")
+    func likeChanged() {
+        viewModel.sendAction(.likeButtonPressed)
     }
 }
 
@@ -270,9 +330,13 @@ extension TimelineVC: TimelineDateHeaderDelegate {
     func goToMapView() {
         showMapView()
     }
+    
+    func changeDay(to day: Int) {
+        viewModel.sendAction(.changeDay(day))
+    }
 }
 
 @available(iOS 17, *)
 #Preview {
-    UINavigationController(rootViewController: TimelineVC())
+    UINavigationController(rootViewController: TimelineVC(viewModel: TimelineViewModel()))
 }
