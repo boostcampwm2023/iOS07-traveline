@@ -80,3 +80,22 @@ export const remove_OK = {
   place: 'GS25 in station',
   time: '07:22',
 };
+
+export const findAll_OK = [
+  {
+    id: 'ae12a997-159c-40d1-b3c6-62af7fd981d1',
+    title: '두근두근 출발 날 😍',
+    place: '서울역',
+    time: '07:30',
+    description:
+      '서울역의 상징성은 정치적으로도 연관이 깊다. 호남선, 전라선, 장항선은 ...',
+  },
+  {
+    id: '68dafaa0-ea2a-448e-b5d5-531133d22513',
+    title: '대전역 도착 🚉',
+    place: '대전역',
+    time: '10:30',
+    description:
+      '1905년 경부선 개통과 함께 개업했다. 충청남도 회덕군에 속한 작은 마...',
+  },
+];
