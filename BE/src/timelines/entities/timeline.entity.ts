@@ -24,11 +24,11 @@ export class Timeline {
   @Column({ length: 255, nullable: true })
   image: string;
 
-  @Column({ type: 'float', nullable: true })
-  coord_x: number;
+  @Column({ name: 'coord_x', type: 'float', nullable: true })
+  coordX: number;
 
-  @Column({ type: 'float', nullable: true })
-  coord_y: number;
+  @Column({ name: 'coord_y', type: 'float', nullable: true })
+  coordY: number;
 
   @Column({ type: 'date' })
   date: string;
