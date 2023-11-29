@@ -75,7 +75,7 @@ export class Posting {
   @Column({ type: 'json', nullable: true })
   withWho: WithWho[];
 
-  @OneToMany(() => Timeline, (timeline) => timeline.postings)
+  @OneToMany(() => Timeline, (timeline) => timeline.posting)
   timelines: Timeline[];
 
   @OneToMany(() => Liked, (liked) => liked.postings)
