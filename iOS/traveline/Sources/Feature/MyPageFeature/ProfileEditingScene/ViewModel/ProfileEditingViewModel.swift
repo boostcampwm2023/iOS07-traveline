@@ -11,25 +11,25 @@ import Combine
 
 enum ProfileEditingAction: BaseAction {
     case imageDidChange(ProfileEditingViewModel.ImageState)
-    case nickNameDidChange(String)
+    case nicknameDidChange(String)
     case tapCompleteButton
 }
 
 enum ProfileEditingSideEffect: BaseSideEffect {
     case updateImageState(ProfileEditingViewModel.ImageState)
-    case validateNickName(String)
+    case validateNickname(String)
     case updateProfile
 }
 
 struct ProfileEditingState: BaseState {
     
     var isCompletable: Bool = false
-    var nickNameState: ProfileEditingViewModel.NickNameState = .unchanged
+    var nicknameState: ProfileEditingViewModel.NicknameState = .unchanged
 }
 
 final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, ProfileEditingSideEffect, ProfileEditingState> {
     
-    enum NickNameState {
+    enum NicknameState {
         case unchanged
         case available
         case duplicated
@@ -51,20 +51,18 @@ final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, Profile
         case album
     }
     
-    private let profile: Profile
+    let profile: Profile
     private var imageState: ImageState = .none
-    var currentNickName: String
     
     init(profile: Profile) {
         self.profile = profile
-        self.currentNickName = profile.name
         super.init()
     }
     
     override func transform(action: Action) -> SideEffectPublisher {
         switch action {
-        case let .nickNameDidChange(text):
-            return .just(ProfileEditingSideEffect.validateNickName(text))
+        case let .nicknameDidChange(text):
+            return .just(ProfileEditingSideEffect.validateNickname(text))
             
         case let .imageDidChange(state):
             return .just(ProfileEditingSideEffect.updateImageState(state))
@@ -78,16 +76,16 @@ final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, Profile
         var newState = state
         
         switch effect {
-        case let .validateNickName(text):
-            newState.nickNameState = updateNickNameState(text)
-            newState.isCompletable = completeButtonState(imageState: imageState, nickNameState: newState.nickNameState)
+        case let .validateNickname(text):
+            newState.nicknameState = updateNicknameState(text)
+            newState.isCompletable = completeButtonState(imageState: imageState, nicknameState: newState.nicknameState)
             
         case .updateProfile:
             updateProfile()
             
         case let .updateImageState(imageState):
             self.imageState = imageState
-            newState.isCompletable = completeButtonState(imageState: imageState, nickNameState: newState.nickNameState)
+            newState.isCompletable = completeButtonState(imageState: imageState, nicknameState: newState.nicknameState)
         }
         
         return newState
@@ -98,36 +96,37 @@ final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, Profile
 
 extension ProfileEditingViewModel {
     
-    private func completeButtonState(imageState: ImageState, nickNameState: NickNameState) -> Bool {
-        switch (imageState, nickNameState) {
+    private func completeButtonState(imageState: ImageState, nicknameState: NicknameState) -> Bool {
+        switch (imageState, nicknameState) {
         case (_, .available): return true
         case (.album, .unchanged): return true
         case (.basic, .unchanged): return true
         default: return false
         }
     }
-    private func updateNickNameState(_ nickName: String) -> NickNameState {
-        guard isValidStringLength(nickName: nickName) else {
+    
+    private func updateNicknameState(_ nickname: String) -> NicknameState {
+        guard isValidStringLength(nickname: nickname) else {
             return .exceededStringLength
         }
-        guard isAvailable(nickName: nickName) else {
+        guard isAvailable(nickname: nickname) else {
             return .duplicated
         }
-        guard isNewNickName(nickName) else {
+        guard isNewNickname(nickname) else {
             return .unchanged
         }
         return .available
     }
     
-    private func isNewNickName(_ nickName: String) -> Bool {
-        return profile.name != nickName
+    private func isNewNickname(_ nickname: String) -> Bool {
+        return profile.name != nickname
     }
     
-    private func isValidStringLength(nickName: String) -> Bool {
-        return nickName.count < 11
+    private func isValidStringLength(nickname: String) -> Bool {
+        return nickname.count < 11
     }
     
-    private func isAvailable(nickName: String) -> Bool {
+    private func isAvailable(nickname: String) -> Bool {
         // TODO: 중복검사 요청 구현
         return true
     }

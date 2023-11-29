@@ -154,7 +154,8 @@ extension ProfileEditingVC {
     private func setupAttributes() {
         view.backgroundColor = TLColor.black
         
-        nickNameTextField.text = viewModel.currentNickName
+        nickNameTextField.text = viewModel.profile.name
+        imageView.setImage(from: viewModel.profile.imageURL)
         
         tlNavigationBar.delegate = self
         
@@ -214,7 +215,7 @@ extension ProfileEditingVC {
             .textPublisher
             .withUnretained(self)
             .sink { owner, text in
-                owner.viewModel.sendAction(.nickNameDidChange(text))
+                owner.viewModel.sendAction(.nicknameDidChange(text))
             }
             .store(in: &cancellables)
         
@@ -228,7 +229,7 @@ extension ProfileEditingVC {
             .store(in: &cancellables)
         
         viewModel.$state
-            .map(\.nickNameState)
+            .map(\.nicknameState)
             .removeDuplicates()
             .withUnretained(self)
             .sink { owner, state in
