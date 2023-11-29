@@ -33,11 +33,13 @@ final class LoginViewModel: BaseViewModel<LoginAction, LoginSideEffect, LoginSta
     override func transform(action: LoginAction) -> SideEffectPublisher {
         switch action {
         case .startAppleLogin:
-            requestAppleLogin()
+            return requestAppleLogin()
+            
         case let .successAppleLogin(auth):
-            handleAppleAuth(auth)
+            return handleAppleAuth(auth)
+            
         case .failAppleLogin:
-                .just(LoginSideEffect.completeAppleLogin(false))
+            return .just(LoginSideEffect.completeAppleLogin(false))
         }
     }
     
@@ -47,6 +49,7 @@ final class LoginViewModel: BaseViewModel<LoginAction, LoginSideEffect, LoginSta
         switch effect {
         case let .requestAppleLogin(request):
             newState.appleIDRequests = [request]
+            
         case let .completeAppleLogin(isSuccess):
             newState.isSuccessLogin = isSuccess
         }
@@ -68,7 +71,6 @@ private extension LoginViewModel {
             return .just(LoginSideEffect.completeAppleLogin(false))
         }
         
-        let userIdentifier = appleIDCredential.user
         if let identityToken = appleIDCredential.identityToken,
            let identityTokenString = String(data: identityToken, encoding: .utf8) {
             // TODO: 로그인 API에 identityTokenString 담아서 로그인하기
