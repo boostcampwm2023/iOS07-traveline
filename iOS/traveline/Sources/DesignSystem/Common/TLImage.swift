@@ -9,6 +9,7 @@
 import Foundation
 
 enum TLImage {
+    
     enum Tag {
         static let close = TravelineAsset.Images.close.image
     }
@@ -30,6 +31,7 @@ enum TLImage {
         static let closeBlack = TravelineAsset.Images.closeBlack.image
         static let search = TravelineAsset.Images.search.image
         static let close = TravelineAsset.Images.closeMedium.image
+        static let logo = TravelineAsset.Images.travelineLogo.image
     }
     
     enum Travel {
