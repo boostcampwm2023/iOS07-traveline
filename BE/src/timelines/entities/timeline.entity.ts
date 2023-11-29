@@ -1,12 +1,18 @@
 import { Posting } from 'src/postings/entities/posting.entity';
-import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Timeline {
-  @PrimaryColumn({ type: 'char', length: 36 })
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'varchar', length: 14 })
+  @Column({ length: 14 })
   title: string;
 
   @Column({ type: 'int' })
@@ -18,28 +24,25 @@ export class Timeline {
   @Column({ length: 255, nullable: true })
   image: string;
 
-  @Column({ type: 'float', nullable: true })
-  coord_x: number;
+  @Column({ name: 'coord_x', type: 'float', nullable: true })
+  coordX: number;
 
-  @Column({ type: 'float', nullable: true })
-  coord_y: number;
+  @Column({ name: 'coord_y', type: 'float', nullable: true })
+  coordY: number;
 
   @Column({ type: 'date' })
-  date: Date;
+  date: string;
 
   @Column({ length: 50 })
   place: string;
 
-  @Column({ type: 'timestamp' })
-  time: Date;
-
-  @Column({ type: 'char', length: 36 })
-  posting: string;
+  @Column({ type: 'char', length: '5' })
+  time: string;
 
   @ManyToOne(() => Posting, (posting) => posting.timelines, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn({ name: 'posting', referencedColumnName: 'id' })
-  postings: Posting;
+  @JoinColumn({ name: 'posting' })
+  posting: Posting;
 }
