@@ -55,8 +55,10 @@ export class TimelinesService {
     return this.timelinesRepository.update(id, updatedTimeline);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} timeline`;
+  async remove(id: string) {
+    const timeline = await this.timelinesRepository.findOne(id);
+
+    return this.timelinesRepository.remove(timeline);
   }
 
   private initialize(

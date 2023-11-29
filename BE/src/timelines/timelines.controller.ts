@@ -26,7 +26,12 @@ import {
 } from '@nestjs/swagger';
 import { Timeline } from './entities/timeline.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { create_OK, findOne_OK, update_OK } from './timelines.swagger';
+import {
+  create_OK,
+  findOne_OK,
+  remove_OK,
+  update_OK,
+} from './timelines.swagger';
 
 @ApiBearerAuth('accessToken')
 @UseGuards(AuthGuard)
@@ -115,13 +120,11 @@ export class TimelinesController {
 
   @Delete(':id')
   @ApiOperation({
-    summary: 'id에 해당하는 상세 Timeline 삭제',
-    description: 'id에 해당하는 상세 Timeline을 삭제한다.',
+    summary: 'id에 해당하는 타임라인 삭제',
+    description: 'id에 해당하는 상세 타임라인을 삭제합니다.',
   })
-  @ApiOkResponse({
-    description: 'OK',
-  })
-  remove(@Param('id') id: string) {
-    return this.timelinesService.remove(+id);
+  @ApiOkResponse({ schema: { example: remove_OK } })
+  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<Timeline> {
+    return this.timelinesService.remove(id);
   }
 }

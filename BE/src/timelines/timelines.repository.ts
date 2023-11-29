@@ -21,4 +21,8 @@ export class TimelinesRepository {
   async update(id: string, timeline: Timeline) {
     return this.timelineRepository.update(id, timeline);
   }
+
+  async remove(timeline: Timeline) {
+    return this.timelineRepository.remove(timeline);
+  }
 }
