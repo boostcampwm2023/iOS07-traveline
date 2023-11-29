@@ -35,8 +35,8 @@ export class AuthController {
       'body로 전달받은 회원 정보를 확인하고 존재하는 회원이면 로그인을, 존재하지 않는 회원이면 회원가입을 진행합니다.',
   })
   @ApiOkResponse({ description: 'OK', type: CreateAuthResponseDto })
-  login(@Body() createAuthDto: CreateAuthRequestDto) {
-    return this.authService.login(createAuthDto);
+  login(@Req() request, @Body() createAuthDto: CreateAuthRequestDto) {
+    return this.authService.login(request, createAuthDto);
   }
 
   @Post('login/dev')

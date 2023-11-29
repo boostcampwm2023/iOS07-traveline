@@ -67,8 +67,11 @@ export class AuthService {
     return publicKey;
   }
 
-  async login(createAuthDto: CreateAuthRequestDto) {
-    //로그아웃 상태인지 확인 필요 (로그인 상태일 경우 redirect)
+  async login(request, createAuthDto: CreateAuthRequestDto) {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    if (type === 'Bearer' && token) {
+      throw new BadRequestException('JWT가 이미 존재합니다.');
+    }
     const idToken = createAuthDto.idToken;
     const decodedIdTokenHeader = jwt.decode(idToken, {
       complete: true,
@@ -95,7 +98,15 @@ export class AuthService {
     });
 
     console.log(decodedPayload);
-    //검증 로직 필요 - 테스트 해서 나오는 값 보고 검증 진행 예정
+
+    if (
+      decodedPayload.iss !== 'https://appleid.apple.com' ||
+      decodedPayload.aud !== process.env.CLIENT_ID
+    ) {
+      throw new UnauthorizedException(
+        'identity 토큰 내의 정보가 올바르지 않습니다.'
+      );
+    }
 
     const appleId = decodedPayload.sub;
     let user = await this.usersService.getUserInfoByResourceId(appleId);
