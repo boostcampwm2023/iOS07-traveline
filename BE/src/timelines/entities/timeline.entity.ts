@@ -36,7 +36,7 @@ export class Timeline {
   @Column({ length: 50 })
   place: string;
 
-  @Column({ type: 'time' })
+  @Column({ type: 'char', length: '5' })
   time: string;
 
   @ManyToOne(() => Posting, (posting) => posting.timelines, {
