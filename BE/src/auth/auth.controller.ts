@@ -38,23 +38,13 @@ export class AuthController {
     return this.authService.login(createAuthDto);
   }
 
-  @Post('logout')
-  @ApiOperation({
-    summary: '로그아웃 API',
-    description: 'body로 전달받은 회원 정보를 확인하고 로그아웃을 진행한다.',
-  })
-  @ApiOkResponse({ description: 'OK' })
-  logout(@Body() createAuthDto: CreateAuthRequestDto) {
-    //return this.authService.logout(createAuthDto);
-  }
-
   @Delete('withdrawal')
   @ApiOperation({
     summary: '탈퇴 API',
     description: 'body로 전달받은 회원 정보를 확인하고 회원 정보를 삭제한다.',
   })
   @ApiOkResponse({ description: 'OK' })
-  remove(@Param('id') id: string) {
-    //return this.authService.remove(+id);
+  withdrawal(@Param('id') id: string) {
+    //return this.authService.withdrawal(+id);
   }
 }

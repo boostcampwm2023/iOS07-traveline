@@ -38,15 +38,15 @@ export class AuthService {
   }
 
   async login(createAuthDto: CreateAuthRequestDto) {
+    //로그아웃 상태인지 확인 필요 (로그인 상태일 경우 redirect)
     const idToken = createAuthDto.idToken;
     const decodedIdTokenHeader = jwt.decode(idToken, {
       complete: true,
     }).header;
 
-    // const res = await this.httpService.get(
-    //   'https://appleid.apple.com/auth/keys'
-    // );
-    const res = 'sss';
+    const res = await this.httpService.get(
+      'https://appleid.apple.com/auth/keys'
+    );
     const publicKeyArr = JSON.parse(res.toString()).keys;
 
     let publicKey;
@@ -91,5 +91,5 @@ export class AuthService {
     };
   }
 
-  logout(request) {}
+  withdrawal() {}
 }
