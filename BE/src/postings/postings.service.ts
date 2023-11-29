@@ -65,7 +65,7 @@ export class PostingsService {
     return [
       ...new Set(
         titles
-          .filter((e) => e.report.length <= BLOCKING_LIMIT)
+          .filter((e) => e.reports.length <= BLOCKING_LIMIT)
           .map((e) => e.title)
       ),
     ];
@@ -78,7 +78,7 @@ export class PostingsService {
       throw new NotFoundException('게시글이 존재하지 않습니다.');
     }
 
-    if (posting.report.length > BLOCKING_LIMIT) {
+    if (posting.reports.length > BLOCKING_LIMIT) {
       throw new ForbiddenException('차단된 게시글입니다.');
     }
 

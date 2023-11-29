@@ -6,7 +6,6 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  RelationId,
 } from 'typeorm';
 import { Liked } from './liked.entity';
 import { Report } from './report.entity';
@@ -43,9 +42,6 @@ export class Posting {
   @Column({ length: 255, nullable: true, default: null })
   thumbnail: string;
 
-  @RelationId((posting: Posting) => posting.likeds)
-  liked: { user: string; posting: string }[];
-
   @Column({ name: 'start_date', type: 'date' })
   startDate: Date;
 
@@ -78,9 +74,6 @@ export class Posting {
 
   @Column({ type: 'json', nullable: true })
   withWho: WithWho[];
-
-  @RelationId((posting: Posting) => posting.reports)
-  report: { reporter: string; posting: string }[];
 
   @OneToMany(() => Timeline, (timeline) => timeline.postings)
   timelines: Timeline[];

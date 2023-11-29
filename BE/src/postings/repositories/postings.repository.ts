@@ -13,6 +13,8 @@ import {
   Theme,
   WithWho,
 } from '../postings.types';
+import { Liked } from '../entities/liked.entity';
+import { Report } from '../entities/report.entity';
 
 @Injectable()
 export class PostingsRepository {
@@ -26,12 +28,13 @@ export class PostingsRepository {
   }
 
   async findOne(id: string) {
-    return this.postingsRepository.findOne({
-      where: { id },
-      relations: {
-        writer: true,
-      },
-    });
+    return this.postingsRepository
+      .createQueryBuilder('p')
+      .leftJoinAndSelect('p.writer', 'w')
+      .leftJoinAndSelect('p.reports', 'r')
+      .leftJoinAndSelect('p.likeds', 'l', 'l.isDeleted = false')
+      .where('p.id = :id', { id })
+      .getOne();
   }
 
   async findAll(
