@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTimelineDto } from './dto/create-timeline.dto';
 import { UpdateTimelineDto } from './dto/update-timeline.dto';
 import { TimelinesRepository } from './timelines.repository';
@@ -33,8 +37,14 @@ export class TimelinesService {
     return `This action returns all timelines`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} timeline`;
+  async findOne(id: string) {
+    const timeline = await this.timelinesRepository.findOne(id);
+
+    if (!timeline) {
+      throw new NotFoundException('타임라인이 존재하지 않습니다.');
+    }
+
+    return timeline;
   }
 
   update(id: number, updateTimelineDto: UpdateTimelineDto) {

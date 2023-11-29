@@ -13,4 +13,8 @@ export class TimelinesRepository {
   async save(timeline: Timeline) {
     return this.timelineRepository.save(timeline);
   }
+
+  async findOne(id: string) {
+    return this.timelineRepository.findOneBy({ id });
+  }
 }

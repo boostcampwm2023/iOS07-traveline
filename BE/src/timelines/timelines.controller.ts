@@ -9,6 +9,7 @@ import {
   Put,
   UseGuards,
   Req,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { TimelinesService } from './timelines.service';
 import { CreateTimelineDto } from './dto/create-timeline.dto';
@@ -17,6 +18,7 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -24,7 +26,7 @@ import {
 } from '@nestjs/swagger';
 import { Timeline } from './entities/timeline.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { create_OK } from './timelines.swagger';
+import { create_OK, findOne_OK } from './timelines.swagger';
 
 @ApiBearerAuth('accessToken')
 @UseGuards(AuthGuard)
@@ -36,6 +38,15 @@ import { create_OK } from './timelines.swagger';
       message: '로그인이 필요한 서비스 입니다.',
       error: 'Unauthorized',
       statusCode: 401,
+    },
+  },
+})
+@ApiNotFoundResponse({
+  schema: {
+    example: {
+      message: '타임라인이 존재하지 않습니다.',
+      error: 'Not Found',
+      statusCode: 404,
     },
   },
 })
@@ -58,7 +69,7 @@ export class TimelinesController {
       },
     },
   })
-  create(
+  async create(
     @Req() request,
     @Body() createTimelineDto: CreateTimelineDto
   ): Promise<Timeline> {
@@ -81,15 +92,12 @@ export class TimelinesController {
 
   @Get(':id')
   @ApiOperation({
-    summary: 'id에 해당하는 상세 Timeline 반환',
-    description: 'id에 해당하는 상세 Timeline을 반환한다.',
+    summary: '특정 타임라인 반환',
+    description: 'id에 해당하는 타임라인을 반환합니다.',
   })
-  @ApiOkResponse({
-    description: 'OK',
-    type: Timeline,
-  })
-  findOne(@Param('id') id: string) {
-    return this.timelinesService.findOne(+id);
+  @ApiOkResponse({ schema: { example: findOne_OK } })
+  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Timeline> {
+    return this.timelinesService.findOne(id);
   }
 
   @Put(':id')
