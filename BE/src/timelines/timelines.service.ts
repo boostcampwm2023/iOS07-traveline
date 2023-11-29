@@ -33,8 +33,12 @@ export class TimelinesService {
     return this.timelinesRepository.save(timeline);
   }
 
-  findAll() {
-    return `This action returns all timelines`;
+  async findAll(postingId: string, day: number) {
+    const timelines = await this.timelinesRepository.findAll(postingId, day);
+
+    return timelines.map((timeline) => {
+      return { ...timeline, description: timeline.description + '...' };
+    });
   }
 
   async findOne(id: string) {
@@ -56,7 +60,7 @@ export class TimelinesService {
   }
 
   async remove(id: string) {
-    const timeline = await this.timelinesRepository.findOne(id);
+    const timeline = await this.findOne(id);
 
     return this.timelinesRepository.remove(timeline);
   }

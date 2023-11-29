@@ -18,6 +18,17 @@ export class TimelinesRepository {
     return this.timelineRepository.findOneBy({ id });
   }
 
+  async findAll(posting: string, day: number) {
+    return this.timelineRepository
+      .createQueryBuilder()
+      .select(['id', 'title', 'place', 'time', 'image'])
+      .addSelect('SUBSTRING(description, 1, 40) AS description')
+      .where('posting = :posting', { posting })
+      .andWhere('day = :day', { day })
+      .orderBy('time', 'ASC')
+      .getRawMany();
+  }
+
   async update(id: string, timeline: Timeline) {
     return this.timelineRepository.update(id, timeline);
   }

@@ -10,6 +10,8 @@ import {
   UseGuards,
   Req,
   ParseUUIDPipe,
+  ParseIntPipe,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { TimelinesService } from './timelines.service';
 import { CreateTimelineDto } from './dto/create-timeline.dto';
@@ -28,6 +30,7 @@ import { Timeline } from './entities/timeline.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
 import {
   create_OK,
+  findAll_OK,
   findOne_OK,
   remove_OK,
   update_OK,
@@ -84,15 +87,16 @@ export class TimelinesController {
 
   @Get()
   @ApiOperation({
-    summary: 'postingId에 해당하는 게시글의 모든 Timeline 반환',
-    description: 'postingId에 해당하는 게시글의 모든 Timeline을 반환한다.',
+    summary: '게시글의 Day N에 해당하는 모든 타임라인 반환',
+    description:
+      'postingId에 해당하는 게시글의 Day N에 해당하는 모든 타임라인을 반환합니다.',
   })
-  @ApiOkResponse({
-    description: 'OK',
-    type: [Timeline],
-  })
-  findAll(@Query('postingId') postingId: string) {
-    return this.timelinesService.findAll();
+  @ApiOkResponse({ schema: { example: findAll_OK } })
+  async findAll(
+    @Query('postingId', ParseUUIDPipe) postingId: string,
+    @Query('day', new DefaultValuePipe(1), ParseIntPipe) day: number
+  ): Promise<Timeline[]> {
+    return this.timelinesService.findAll(postingId, day);
   }
 
   @Get(':id')
