@@ -64,13 +64,13 @@ final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, Profile
     override func transform(action: Action) -> SideEffectPublisher {
         switch action {
         case let .nickNameDidChange(text):
-                .just(ProfileEditingSideEffect.validateNickName(text))
+            return .just(ProfileEditingSideEffect.validateNickName(text))
             
         case let .imageDidChange(state):
-                .just(ProfileEditingSideEffect.updateImageState(state))
+            return .just(ProfileEditingSideEffect.updateImageState(state))
             
         case .tapCompleteButton:
-                .just(ProfileEditingSideEffect.updateProfile)
+            return .just(ProfileEditingSideEffect.updateProfile)
         }
     }
     
