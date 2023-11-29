@@ -65,20 +65,25 @@ export class PostingsRepository {
     if (location) {
       qb.andWhere('p.location = :location', { location });
     }
+
     if (period) {
       qb.andWhere('p.period = :period', { period });
     }
+
     if (season) {
       qb.andWhere('p.season = :season', { season });
     }
+
     if (vehicle) {
       qb.andWhere('p.vehicle = :vehicle', { vehicle });
     }
+
     if (theme) {
       qb.andWhere('JSON_CONTAINS(p.theme, :theme)', {
         theme: JSON.stringify(theme),
       });
     }
+
     if (withWho) {
       qb.andWhere('JSON_CONTAINS(p.withWho, :withWho)', {
         withWho: JSON.stringify(withWho),
