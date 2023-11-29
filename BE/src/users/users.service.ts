@@ -44,6 +44,14 @@ export class UsersService {
     return `This action removes a #${id} user`;
   }
 
+  async findUserById(id: string) {
+    const user = await this.userRepository.findById(id);
+    if (!user) {
+      return false;
+    }
+    return true;
+  }
+
   async getUserInfoById(id: string): Promise<UserInfoDto> {
     const user = await this.userRepository.findById(id);
     const avatarPath = user.avatar;
