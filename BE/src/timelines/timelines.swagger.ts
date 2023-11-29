@@ -61,3 +61,9 @@ export const findOne_OK = {
   place: 'GS25',
   time: '07:25',
 };
+
+export const update_OK = {
+  generatedMaps: [],
+  raw: [],
+  affected: 1,
+};
