@@ -14,18 +14,6 @@ export const findOne_OK = {
   vehicle: '대중교통',
   theme: ['힐링', '쇼핑', '감성'],
   withWho: null,
-  likeds: [
-    {
-      user: '000056789012345678901234567890123456',
-      posting: '22550a18-fe73-42d7-9c64-6e7da27660e7',
-      isDeleted: false,
-    },
-    {
-      user: '123456789012345678901234567890123456',
-      posting: '22550a18-fe73-42d7-9c64-6e7da27660e7',
-      isDeleted: true,
-    },
-  ],
   writer: {
     id: '000056789012345678901234567890123456',
     name: 'pong',
@@ -33,8 +21,8 @@ export const findOne_OK = {
     resourceId: 'km',
     socialType: 1,
   },
-  liked: 2,
-  report: 0,
+  likeds: 2,
+  reports: 0,
   isLiked: true,
   isOwner: false,
 };
@@ -69,8 +57,8 @@ export const search_OK = [
       resourceId: 'temp',
       socialType: 1,
     },
-    liked: [],
-    report: [
+    likeds: [],
+    reports: [
       {
         reporter: '000056789012345678901234567890123456',
         posting: 'c0fc7b89-97fc-4e02-99b4-80a958c98172',
@@ -100,13 +88,13 @@ export const search_OK = [
       resourceId: 'km',
       socialType: 1,
     },
-    liked: [
+    likeds: [
       {
         user: '123456789012345678901234567890123456',
         posting: '51336ad1-3769-4827-bfb1-1080df368532',
       },
     ],
-    report: [],
+    reports: [],
   },
   {
     id: 'e9c76262-cb37-45a4-b713-a08a625b79d7',
@@ -131,7 +119,7 @@ export const search_OK = [
       resourceId: 'km',
       socialType: 1,
     },
-    liked: [
+    likeds: [
       {
         user: '000056789012345678901234567890123456',
         posting: 'e9c76262-cb37-45a4-b713-a08a625b79d7',
@@ -141,7 +129,7 @@ export const search_OK = [
         posting: 'e9c76262-cb37-45a4-b713-a08a625b79d7',
       },
     ],
-    report: [],
+    reports: [],
   },
 ];
 
@@ -198,8 +186,8 @@ export const remove_OK = {
     resourceId: 'temp',
     socialType: 1,
   },
-  liked: [],
-  report: [],
+  likeds: [],
+  reports: [],
 };
 
 export const like_OK = {

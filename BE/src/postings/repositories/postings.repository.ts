@@ -26,12 +26,13 @@ export class PostingsRepository {
   }
 
   async findOne(id: string) {
-    return this.postingsRepository.findOne({
-      where: { id },
-      relations: {
-        writer: true,
-      },
-    });
+    return this.postingsRepository
+      .createQueryBuilder('p')
+      .leftJoinAndSelect('p.writer', 'w')
+      .leftJoinAndSelect('p.reports', 'r')
+      .leftJoinAndSelect('p.likeds', 'l', 'l.isDeleted = false')
+      .where('p.id = :id', { id })
+      .getOne();
   }
 
   async findAll(
@@ -64,20 +65,25 @@ export class PostingsRepository {
     if (location) {
       qb.andWhere('p.location = :location', { location });
     }
+
     if (period) {
       qb.andWhere('p.period = :period', { period });
     }
+
     if (season) {
       qb.andWhere('p.season = :season', { season });
     }
+
     if (vehicle) {
       qb.andWhere('p.vehicle = :vehicle', { vehicle });
     }
+
     if (theme) {
       qb.andWhere('JSON_CONTAINS(p.theme, :theme)', {
         theme: JSON.stringify(theme),
       });
     }
+
     if (withWho) {
       qb.andWhere('JSON_CONTAINS(p.withWho, :withWho)', {
         withWho: JSON.stringify(withWho),

@@ -123,13 +123,13 @@ export class PostingsController {
   async findOne(@Req() request, @Param('id', ParseUUIDPipe) id: string) {
     const userId = request['user'].id;
     const posting = await this.postingsService.findOne(id);
-    console.log(posting);
+
     return {
       ...posting,
       days: this.createDaysList(posting.startDate, posting.days),
-      liked: posting.liked.length,
-      report: posting.report.length,
-      isLiked: posting.liked.some((liked) => liked.user === userId),
+      reports: posting.reports.length,
+      likeds: posting.likeds.length,
+      isLiked: posting.likeds.some((liked) => liked.user === userId),
       isOwner: posting.writer.id === userId,
     };
   }
