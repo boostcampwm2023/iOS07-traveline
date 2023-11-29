@@ -17,7 +17,7 @@ final class RootContainerVC: UIViewController {
     
     // MARK: - UI Components
     
-    private let sideMenuVC: SideMenuVC = SideMenuVC()
+    private let sideMenuVC: SideMenuVC = .init(viewModel: SideMenuViewModel())
     private let homeVC: HomeVC = .init(viewModel: HomeViewModel())
     private let shadowView: UIView = .init()
     private var navigationVC: UINavigationController?
