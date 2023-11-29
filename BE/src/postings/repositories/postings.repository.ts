@@ -13,8 +13,6 @@ import {
   Theme,
   WithWho,
 } from '../postings.types';
-import { Liked } from '../entities/liked.entity';
-import { Report } from '../entities/report.entity';
 
 @Injectable()
 export class PostingsRepository {
