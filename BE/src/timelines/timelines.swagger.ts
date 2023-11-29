@@ -67,3 +67,16 @@ export const update_OK = {
   raw: [],
   affected: 1,
 };
+
+export const remove_OK = {
+  title: 'from st 😍',
+  day: 1,
+  description:
+    'we arrived Seoul Station early, so we waited while eating in the market...',
+  image: null,
+  coordX: null,
+  coordY: null,
+  date: '2023-08-16',
+  place: 'GS25 in station',
+  time: '07:22',
+};
