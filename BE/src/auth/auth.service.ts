@@ -1,10 +1,16 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { HttpService } from '@nestjs/axios';
 import * as jwt from 'jsonwebtoken';
 import { UsersService } from 'src/users/users.service';
 import { isArray } from 'class-validator';
 import { CreateAuthRequestDto } from './dto/create-auth-request.dto';
+import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
@@ -89,6 +95,25 @@ export class AuthService {
         expiresIn: '30d',
       }),
     };
+  }
+
+  async loginForDev(createAuthForDevDto: CreateAuthRequestForDevDto) {
+    const id = createAuthForDevDto.id;
+    const userExists = this.usersService.findUserById(id);
+    if (userExists) {
+      const payload = { id };
+      return {
+        accessToken: await this.jwtService.signAsync(payload),
+        refreshToken: await this.jwtService.signAsync(payload, {
+          expiresIn: '30d',
+          secret: process.env.JWT_SECRET_REFRESH,
+        }),
+      };
+    }
+
+    throw new BadRequestException(
+      '개발용 로그인 API에서는 회원가입이 불가능합니다.'
+    );
   }
 
   withdrawal() {}
