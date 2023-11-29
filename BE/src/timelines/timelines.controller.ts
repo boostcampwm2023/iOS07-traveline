@@ -8,36 +8,62 @@ import {
   Query,
   Put,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { TimelinesService } from './timelines.service';
 import { CreateTimelineDto } from './dto/create-timeline.dto';
 import { UpdateTimelineDto } from './dto/update-timeline.dto';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Timeline } from './entities/timeline.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { create_OK } from './timelines.swagger';
 
+@ApiBearerAuth('accessToken')
 @UseGuards(AuthGuard)
 @Controller('timelines')
 @ApiTags('Timelines API')
+@ApiUnauthorizedResponse({
+  schema: {
+    example: {
+      message: '로그인이 필요한 서비스 입니다.',
+      error: 'Unauthorized',
+      statusCode: 401,
+    },
+  },
+})
 export class TimelinesController {
   constructor(private readonly timelinesService: TimelinesService) {}
 
   @Post()
   @ApiOperation({
-    summary: 'Timeline 정보 저장',
-    description: 'Timeline 정보를 저장한다.',
+    summary: '타임라인 생성',
+    description: '사용자가 입력한 정보를 토대로 새로운 타임라인을 생성합니다.',
   })
-  @ApiCreatedResponse({
-    description: 'Created',
-    type: CreateTimelineDto,
+  @ApiCreatedResponse({ schema: { example: create_OK } })
+  @ApiForbiddenResponse({
+    schema: {
+      example: {
+        message:
+          '본인이 작성한 게시글에 대해서만 타임라인을 생성할 수 있습니다.',
+        error: 'Forbidden',
+        statusCode: 403,
+      },
+    },
   })
-  create(@Body() createTimelineDto: CreateTimelineDto) {
-    return this.timelinesService.create(createTimelineDto);
+  create(
+    @Req() request,
+    @Body() createTimelineDto: CreateTimelineDto
+  ): Promise<Timeline> {
+    const userId = request['user'].id;
+    return this.timelinesService.create(userId, createTimelineDto);
   }
 
   @Get()

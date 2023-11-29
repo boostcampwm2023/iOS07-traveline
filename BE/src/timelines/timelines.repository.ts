@@ -9,4 +9,8 @@ export class TimelinesRepository {
     @Inject(TIMELINES_REPOSITORY)
     private timelineRepository: Repository<Timeline>
   ) {}
+
+  async save(timeline: Timeline) {
+    return this.timelineRepository.save(timeline);
+  }
 }

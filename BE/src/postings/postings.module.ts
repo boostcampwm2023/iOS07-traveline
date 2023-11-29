@@ -18,5 +18,6 @@ import { UsersModule } from '../users/users.module';
     LikedsRepository,
     ReportsRepository,
   ],
+  exports: [PostingsModule],
 })
 export class PostingsModule {}
