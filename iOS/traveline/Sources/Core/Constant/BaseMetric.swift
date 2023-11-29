@@ -15,4 +15,9 @@ enum BaseMetric {
         static let width: CGFloat = UIScreen.main.bounds.width
         static let height: CGFloat = UIScreen.main.bounds.height
     }
+    
+    enum Adjust {
+        static let width: CGFloat = ScreenSize.width / 375
+        static let height: CGFloat = ScreenSize.height / 812
+    }
 }

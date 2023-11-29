@@ -20,6 +20,7 @@ enum TLColor {
     static let lightGray = TravelineAsset.Colors.lightGray.color
     static let mediumGray = TravelineAsset.Colors.mediumGray.color
     static let white = TravelineAsset.Colors.white.color
+    static let pressedWhite = TravelineAsset.Colors.pressedWhite.color
     static let backgroundGray = TravelineAsset.Colors.backgroundGray.color
     static let lineGray = TravelineAsset.Colors.lineGray.color
     static let dimmed = TravelineAsset.Colors.dimmed.color
