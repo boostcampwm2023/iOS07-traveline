@@ -12,6 +12,6 @@ struct TimelineTravelInfo: Hashable {
     let travelTitle: String
     let startDate: String
     let endDate: String
-    let isLiked: Bool
+    var isLiked: Bool
     let tags: [Tag]
 }
