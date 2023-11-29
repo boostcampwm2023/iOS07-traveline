@@ -10,7 +10,6 @@ import { UsersService } from 'src/users/users.service';
 import { isArray } from 'class-validator';
 import { CreateAuthRequestDto } from './dto/create-auth-request.dto';
 import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
-import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
@@ -87,12 +86,12 @@ export class AuthService {
       }
     }
 
-    const accessPayload = { id: user.id, type: 'access' };
-    const refreshPayload = { id: user.id, type: 'refresh' };
+    const payload = { id: user.id };
     return {
-      accessToken: await this.jwtService.signAsync(accessPayload),
-      refreshToken: await this.jwtService.signAsync(refreshPayload, {
+      accessToken: await this.jwtService.signAsync(payload),
+      refreshToken: await this.jwtService.signAsync(payload, {
         expiresIn: '30d',
+        secret: process.env.JWT_SECRET_REFRESH,
       }),
     };
   }
@@ -100,6 +99,7 @@ export class AuthService {
   async loginForDev(createAuthForDevDto: CreateAuthRequestForDevDto) {
     const id = createAuthForDevDto.id;
     const userExists = this.usersService.findUserById(id);
+
     if (userExists) {
       const payload = { id };
       return {
