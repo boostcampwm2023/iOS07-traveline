@@ -6,6 +6,8 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
+import AuthenticationServices
+import Combine
 import UIKit
 
 final class LoginVC: UIViewController {
@@ -28,6 +30,22 @@ final class LoginVC: UIViewController {
     
     private let appleLoginButton: AppleLoginButton = .init()
     
+    // MARK: - Properties
+    
+    private let viewModel: LoginViewModel
+    private var cancellabels: Set<AnyCancellable> = .init()
+    
+    // MARK: - Initialzier
+    
+    init(viewModel: LoginViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - Life Cycle
     
     override func viewDidLoad() {
@@ -35,6 +53,7 @@ final class LoginVC: UIViewController {
         
         setupAttributes()
         setupLayout()
+        bind()
     }
 }
 
@@ -62,10 +81,55 @@ private extension LoginVC {
             appleLoginButton.heightAnchor.constraint(equalToConstant: Metric.height)
         ])
     }
+    
+    func bind() {
+        appleLoginButton
+            .tapPublisher
+            .withUnretained(self)
+            .sink { owner, _ in
+                owner.viewModel.sendAction(.startAppleLogin)
+            }
+            .store(in: &cancellabels)
+        
+        viewModel.$state
+            .compactMap(\.appleIDRequests)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, requests in
+                let controller = ASAuthorizationController(authorizationRequests: requests)
+                controller.delegate = owner
+                controller.presentationContextProvider = owner as? ASAuthorizationControllerPresentationContextProviding
+                controller.performRequests()
+            }
+            .store(in: &cancellabels)
+        
+        viewModel.$state
+            .map(\.isSuccessLogin)
+            .filter { $0 }
+            .withUnretained(self)
+            .sink { owner, _ in
+                // TODO: 로그인 성공 후 로직 구현
+            }
+            .store(in: &cancellabels)
+    }
+}
+
+// MARK: - ASAuthorizationControllerDelegate
+
+extension LoginVC: ASAuthorizationControllerDelegate {
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        viewModel.sendAction(.successAppleLogin(authorization))
+    }
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        viewModel.sendAction(.failAppleLogin)
+    }
 }
 
 @available(iOS 17, *)
 #Preview("LoginVC") {
-    let view = LoginVC()
+    let vm = LoginViewModel()
+    let view = LoginVC(viewModel: vm)
     return view
 }
