@@ -154,7 +154,13 @@ extension RootContainerVC: SideMenuDelegate {
         
         switch menuItem {
         case .profileEdit:
-            navigationVC?.pushViewController(ProfileEditingVC(), animated: true)
+            let profile = Profile(
+                id: "1234",
+                imageURL: "leaf",
+                name: "hongki"
+            )
+            let viewModel = ProfileEditingViewModel(profile: profile)
+            navigationVC?.pushViewController(ProfileEditingVC(viewModel: viewModel), animated: true)
         case .myPostList:
             // TODO: - myPostListView 만들면 변경하기
             navigationVC?.pushViewController(MyPostListVC(), animated: true)

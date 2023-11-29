@@ -6,6 +6,7 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
+import Combine
 import PhotosUI
 import UIKit
 
@@ -87,6 +88,22 @@ final class ProfileEditingVC: UIViewController {
         return label
     }()
     
+    // MARK: - Properties
+    
+    private var cancellables: Set<AnyCancellable> = .init()
+    private let viewModel: ProfileEditingViewModel
+    
+    // MARK: - Initialize
+    
+    init(viewModel: ProfileEditingViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - Life Cycle
     
     override func viewDidLoad() {
@@ -94,6 +111,7 @@ final class ProfileEditingVC: UIViewController {
         
         setupAttributes()
         setupLayout()
+        bind()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -110,6 +128,7 @@ final class ProfileEditingVC: UIViewController {
         [
             UIAlertAction(title: Constants.selectBaseImage, style: .default) { _ in
                 self.imageView.image = nil
+                self.viewModel.sendAction(.imageDidChange(.basic))
             },
             UIAlertAction(title: Constants.selectInAlbum, style: .default) { _ in
                 var config = PHPickerConfiguration()
@@ -126,10 +145,6 @@ final class ProfileEditingVC: UIViewController {
         present(alert, animated: true)
     }
     
-    @objc private func completeButtonTapped() {
-        // action
-    }
-    
 }
 
 // MARK: - Setup Functions
@@ -138,6 +153,10 @@ extension ProfileEditingVC {
     
     private func setupAttributes() {
         view.backgroundColor = TLColor.black
+        
+        nickNameTextField.text = viewModel.currentNickName
+        
+        tlNavigationBar.delegate = self
         
         imageEditButton.addTarget(self, action: #selector(imageEditButtonTapped), for: .touchUpInside)
     }
@@ -189,6 +208,37 @@ extension ProfileEditingVC {
             captionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin)
         ])
     }
+    
+    func bind() {
+        nickNameTextField
+            .textPublisher
+            .withUnretained(self)
+            .sink { owner, text in
+                owner.viewModel.sendAction(.nickNameDidChange(text))
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .map(\.isCompletable)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, isCompleteable in
+                owner.tlNavigationBar.isRightButtonEnabled(isCompleteable)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .map(\.nickNameState)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, state in
+                let text = state.text
+                let color = state == .available ? TLColor.main : TLColor.error
+                owner.captionLabel.setText(to: text)
+                owner.captionLabel.setColor(to: color)
+            }
+            .store(in: &cancellables)
+    }
 }
 
 // MARK: - PHPickerViewControllerDelegate
@@ -207,18 +257,19 @@ extension ProfileEditingVC: PHPickerViewControllerDelegate {
             DispatchQueue.main.async {
                 guard let selectedImage = image as? UIImage else { return }
                 self.imageView.image = selectedImage
+                self.viewModel.sendAction(.imageDidChange(.album))
             }
         }
     }
     
 }
 
-/*
-@available(iOS 17, *)
-#Preview("ProfileEditingVC") {
-    let profileEditingVC = ProfileEditingVC()
-    let homeNV = UINavigationController(rootViewController: profileEditingVC)
-    return homeNV
+// MARK: - TLNavigationBarDelegate
+
+extension ProfileEditingVC: TLNavigationBarDelegate {
+    func rightButtonDidTapped() {
+        viewModel.sendAction(.tapCompleteButton)
+        self.navigationController?.popViewController(animated: true)
+    }
 }
 
-*/
