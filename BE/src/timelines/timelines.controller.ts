@@ -26,7 +26,7 @@ import {
 } from '@nestjs/swagger';
 import { Timeline } from './entities/timeline.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { create_OK, findOne_OK } from './timelines.swagger';
+import { create_OK, findOne_OK, update_OK } from './timelines.swagger';
 
 @ApiBearerAuth('accessToken')
 @UseGuards(AuthGuard)
@@ -102,17 +102,15 @@ export class TimelinesController {
 
   @Put(':id')
   @ApiOperation({
-    summary: 'id에 해당하는 상세 Timeline 수정',
-    description: 'id에 해당하는 상세 Timeline을 수정한다.',
+    summary: 'id에 해당하는 타임라인 수정',
+    description: 'id에 해당하는 타임라인을 수정합니다.',
   })
-  @ApiOkResponse({
-    description: 'OK',
-  })
-  update(
-    @Param('id') id: string,
+  @ApiOkResponse({ schema: { example: update_OK } })
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTimelineDto: UpdateTimelineDto
   ) {
-    return this.timelinesService.update(+id, updateTimelineDto);
+    return this.timelinesService.update(id, updateTimelineDto);
   }
 
   @Delete(':id')

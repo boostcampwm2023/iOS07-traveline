@@ -17,4 +17,8 @@ export class TimelinesRepository {
   async findOne(id: string) {
     return this.timelineRepository.findOneBy({ id });
   }
+
+  async update(id: string, timeline: Timeline) {
+    return this.timelineRepository.update(id, timeline);
+  }
 }

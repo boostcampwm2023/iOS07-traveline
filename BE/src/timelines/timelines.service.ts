@@ -47,15 +47,21 @@ export class TimelinesService {
     return timeline;
   }
 
-  update(id: number, updateTimelineDto: UpdateTimelineDto) {
-    return `This action updates a #${id} timeline`;
+  async update(id: string, updateTimelineDto: UpdateTimelineDto) {
+    await this.findOne(id);
+    const updatedTimeline = this.initialize(updateTimelineDto);
+    updatedTimeline.id = id;
+
+    return this.timelinesRepository.update(id, updatedTimeline);
   }
 
   remove(id: number) {
     return `This action removes a #${id} timeline`;
   }
 
-  private initialize(timelineDto: CreateTimelineDto): Timeline {
+  private initialize(
+    timelineDto: CreateTimelineDto | UpdateTimelineDto
+  ): Timeline {
     const timeline = new Timeline();
     timeline.title = timelineDto.title;
     timeline.day = timelineDto.day;
