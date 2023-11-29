@@ -19,11 +19,11 @@ export class AuthGuard implements CanActivate {
     }
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.JWT_SECRET,
+        secret: process.env.JWT_SECRET_ACCESS,
       });
       request['user'] = payload;
     } catch {
-      throw new UnauthorizedException('유효하지 않은 토큰입니다.');
+      throw new UnauthorizedException('올바르지 않은 토큰입니다.');
     }
     return true;
   }

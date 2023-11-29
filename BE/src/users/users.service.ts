@@ -4,11 +4,9 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { UserInfoDto } from './dto/user-info.dto';
-import { CreateAuthDto } from 'src/auth/dto/create-auth.dto';
 import { StorageService } from 'src/storage/storage.service';
 import { UserRepository } from './users.repository';
 import { CheckDuplicatedNameResponseDto } from './dto/check-duplicated-name-response.dto';
-import { UserNameDto } from './dto/user-name.dto';
 
 @Injectable()
 export class UsersService {
@@ -17,15 +15,40 @@ export class UsersService {
     private readonly storageService: StorageService
   ) {}
 
-  createUser(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new user';
+  nameGenerator() {
+    const length = Math.floor(Math.random() * 14) + 1;
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let name = '';
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      name += characters[randomIndex];
+    }
+    return name;
+  }
+
+  async createUser(resourceId: string) {
+    let name = this.nameGenerator();
+    while (true) {
+      const user = await this.userRepository.findByName(name);
+      if (!user) {
+        break;
+      }
+      name = this.nameGenerator();
+    }
+    const socialType = 1;
+    const createUserDto = { name, resourceId, socialType };
+    return this.userRepository.save(createUserDto);
   }
 
   deleteUser(id: number) {
     return `This action removes a #${id} user`;
   }
 
-  async getUserInfo(id: string): Promise<UserInfoDto> {
+  async findUserById(id: string) {
+    return this.userRepository.findById(id);
+  }
+
+  async getUserInfoById(id: string): Promise<UserInfoDto> {
     const user = await this.userRepository.findById(id);
     const avatarPath = user.avatar;
     try {
@@ -36,6 +59,10 @@ export class UsersService {
       );
     }
     return { name: user.name, avatar: user.avatar };
+  }
+
+  async getUserInfoByResourceId(resourceId: string) {
+    return this.userRepository.findByResourceId(resourceId);
   }
 
   async updateUserInfo(id, name: string, file: Express.Multer.File) {

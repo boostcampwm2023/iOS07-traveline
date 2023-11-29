@@ -42,7 +42,7 @@ export class UsersController {
     type: UserInfoDto,
   })
   async findOne(@Req() request) {
-    return this.usersService.getUserInfo(request['user'].id);
+    return this.usersService.getUserInfoById(request['user'].id);
   }
 
   @Put()
