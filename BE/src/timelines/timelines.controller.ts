@@ -93,6 +93,11 @@ export class TimelinesController {
     description:
       'postingId에 해당하는 게시글의 Day N에 해당하는 모든 타임라인을 반환합니다.',
   })
+  @ApiQuery({
+    name: 'day',
+    description: 'Day N의 N (default: 1)',
+    required: false,
+  })
   @ApiOkResponse({ schema: { example: findAll_OK } })
   async findAll(
     @Query('postingId', ParseUUIDPipe) postingId: string,
