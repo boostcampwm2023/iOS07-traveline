@@ -38,6 +38,26 @@ export class CreateTimelineDto {
   image: string;
 
   @ApiProperty({
+    required: false,
+    type: 'double',
+    example: 126.970606917394,
+    description: '장소의 X 좌표',
+  })
+  @IsOptional()
+  @IsNumber()
+  coordX: number;
+
+  @ApiProperty({
+    required: false,
+    type: 'double',
+    example: 37.5546788388674,
+    description: '장소의 Y 좌표',
+  })
+  @IsOptional()
+  @IsNumber()
+  coordY: number;
+
+  @ApiProperty({
     example: '2023-11-29',
     description: '해당 타임라인에 작성한 여행 날짜',
   })
