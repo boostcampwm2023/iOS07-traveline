@@ -32,20 +32,6 @@ struct PostingResponseDTO: Decodable {
     let isOwner: Bool
 }
 
-struct LikedsDTO: Decodable {
-    let user: String
-    let posting: String
-    let isDeleted: Bool
-}
-
-struct WriterDTO: Decodable {
-    let id: String
-    let name: String
-    let avatar: String?
-    let resourceId: String
-    let socialType: Int
-}
-
 // MARK: - Mapping
 
 extension PostingResponseDTO {
