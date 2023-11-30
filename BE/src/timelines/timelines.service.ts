@@ -3,11 +3,13 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
+import axios from 'axios';
 import { CreateTimelineDto } from './dto/create-timeline.dto';
 import { UpdateTimelineDto } from './dto/update-timeline.dto';
 import { TimelinesRepository } from './timelines.repository';
 import { Timeline } from './entities/timeline.entity';
 import { PostingsService } from '../postings/postings.service';
+import { KAKAO_KEYWORD_SEARCH } from './timelines.constants';
 
 @Injectable()
 export class TimelinesService {
@@ -27,7 +29,7 @@ export class TimelinesService {
       );
     }
 
-    const timeline = this.initialize(createTimelineDto);
+    const timeline = await this.initialize(createTimelineDto);
     timeline.posting = posting;
 
     return this.timelinesRepository.save(timeline);
@@ -53,7 +55,7 @@ export class TimelinesService {
 
   async update(id: string, updateTimelineDto: UpdateTimelineDto) {
     await this.findOne(id);
-    const updatedTimeline = this.initialize(updateTimelineDto);
+    const updatedTimeline = await this.initialize(updateTimelineDto);
     updatedTimeline.id = id;
 
     return this.timelinesRepository.update(id, updatedTimeline);
@@ -65,19 +67,27 @@ export class TimelinesService {
     return this.timelinesRepository.remove(timeline);
   }
 
-  private initialize(
+  private async initialize(
     timelineDto: CreateTimelineDto | UpdateTimelineDto
-  ): Timeline {
+  ): Promise<Timeline> {
     const timeline = new Timeline();
-    timeline.title = timelineDto.title;
-    timeline.day = timelineDto.day;
-    timeline.description = timelineDto.description;
-    timeline.image = timelineDto.image;
-    timeline.coordX = timelineDto.coordX;
-    timeline.coordY = timelineDto.coordY;
-    timeline.date = timelineDto.date;
-    timeline.place = timelineDto.place;
-    timeline.time = timelineDto.time;
+    const coordinates = await this.findCoordinates(timelineDto.place);
+    Object.assign(timeline, timelineDto);
+    Object.assign(timeline, coordinates);
+    // timeline.image = timelineDto.image;
     return timeline;
+  }
+
+  private async findCoordinates(place: string) {
+    const url = `${KAKAO_KEYWORD_SEARCH}?query=${place}&size=1`;
+    const {
+      data: { documents },
+    } = await axios.get(url, {
+      headers: { Authorization: `KakaoAK ${process.env.KAKAO_REST_API_KEY}` },
+    });
+
+    return documents.length < 1
+      ? {}
+      : { coordX: documents[0].x, coordY: documents[0].y };
   }
 }

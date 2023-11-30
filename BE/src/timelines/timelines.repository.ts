@@ -21,7 +21,15 @@ export class TimelinesRepository {
   async findAll(posting: string, day: number) {
     return this.timelineRepository
       .createQueryBuilder()
-      .select(['id', 'title', 'place', 'time', 'image'])
+      .select([
+        'id',
+        'title',
+        'place',
+        'time',
+        'image',
+        'coord_x AS coordX',
+        'coord_y AS coordY',
+      ])
       .addSelect('SUBSTRING(description, 1, 40) AS description')
       .where('posting = :posting', { posting })
       .andWhere('day = :day', { day })
