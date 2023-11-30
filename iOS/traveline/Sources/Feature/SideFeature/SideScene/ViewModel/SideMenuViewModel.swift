@@ -14,15 +14,12 @@ enum SideMenuAction: BaseAction {
 }
 
 enum SideMenuSideEffect: BaseSideEffect {
-    case loadProfile
+    case loadProfile(Profile)
 }
 
 struct SideMenuState: BaseState {
-    var profile: Profile = .init(
-        id: "",
-        imageURL: "",
-        name: ""
-    )
+    
+    var profile: Profile = .empty
 }
 
 final class SideMenuViewModel: BaseViewModel<SideMenuAction, SideMenuSideEffect, SideMenuState> {
@@ -30,7 +27,7 @@ final class SideMenuViewModel: BaseViewModel<SideMenuAction, SideMenuSideEffect,
     override func transform(action: Action) -> SideEffectPublisher {
         switch action {
         case .viewDidLoad:
-            return .just(.loadProfile)
+            return loadProfile()
         }
     }
 
@@ -38,8 +35,8 @@ final class SideMenuViewModel: BaseViewModel<SideMenuAction, SideMenuSideEffect,
         var newState = state
         
         switch effect {
-        case .loadProfile:
-            newState.profile = loadProfile()
+        case .loadProfile(let profile):
+            newState.profile = profile
         }
         
         return newState
@@ -47,11 +44,13 @@ final class SideMenuViewModel: BaseViewModel<SideMenuAction, SideMenuSideEffect,
 }
 
 private extension SideMenuViewModel {
-    func loadProfile() -> Profile {
+    func loadProfile() -> SideEffectPublisher {
         // TODO: - 프로필을 로드하는 로직. 추후 변경
-        return Profile(
+        let profile = Profile(
             id: "1234",
             imageURL: "https://avatars.githubusercontent.com/u/91725382?s=400&u=29b8023a56a09685aaab53d4eb0dd556254cd902&v=4",
-            name: "hongki")
+            name: "hongki"
+        )
+        return .just(SideMenuSideEffect.loadProfile(profile))
     }
 }
