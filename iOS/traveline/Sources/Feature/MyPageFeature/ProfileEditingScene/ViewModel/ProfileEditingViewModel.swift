@@ -6,8 +6,9 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
-import Foundation
 import Combine
+import Foundation
+import OSLog
 
 enum ProfileEditingAction: BaseAction {
     case imageDidChange(ProfileEditingViewModel.ImageState)
@@ -68,7 +69,7 @@ final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, Profile
             return .just(ProfileEditingSideEffect.updateImageState(state))
             
         case .tapCompleteButton:
-            return .just(ProfileEditingSideEffect.updateProfile)
+            return updateProfile()
         }
     }
     
@@ -81,7 +82,7 @@ final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, Profile
             newState.isCompletable = completeButtonState(imageState: imageState, nicknameState: newState.nicknameState)
             
         case .updateProfile:
-            updateProfile()
+            os_log("update profile")
             
         case let .updateImageState(imageState):
             self.imageState = imageState
@@ -131,7 +132,8 @@ extension ProfileEditingViewModel {
         return true
     }
     
-    private func updateProfile() {
-        // TODO: 프로필 업데이트 구현
+    private func updateProfile() -> SideEffectPublisher {
+        // TODO: 프로필 업데이트 구현(서버 프로필 데이터 및 로컬 프로필 데이터 갱신)
+        return .just(ProfileEditingSideEffect.updateProfile)
     }
 }
