@@ -46,7 +46,6 @@ export class SearchPostingDto {
     default: 0,
     description: '몇 번째 페이지부터 게시글을 가져올지 나타냅니다.',
   })
-  @Transform(({ value }) => parseInt(value))
   @IsOptional()
   @IsNumber()
   offset: number = 0;
@@ -56,7 +55,6 @@ export class SearchPostingDto {
     default: 20,
     description: 'offset에서부터 몇 개의 게시글을 반환하는지 나타냅니다.',
   })
-  @Transform(({ value }) => parseInt(value))
   @IsOptional()
   @IsNumber()
   limit: number = 20;
