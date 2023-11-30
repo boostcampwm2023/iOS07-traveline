@@ -11,6 +11,7 @@ import { UsersService } from 'src/users/users.service';
 import { isArray } from 'class-validator';
 import { CreateAuthRequestDto } from './dto/create-auth-request.dto';
 import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -77,27 +78,38 @@ export class AuthService {
       complete: true,
     }).header;
 
-    const res = await this.httpService.get(
-      'https://appleid.apple.com/auth/keys'
+    const getResult = await firstValueFrom(
+      this.httpService.get('https://appleid.apple.com/auth/keys')
     );
-    const publicKeyArr = JSON.parse(res.toString()).keys;
+    const publicKeyArr = getResult.data.keys;
+    console.log(publicKeyArr);
 
     let publicKey;
     for (let i = 0; i < publicKeyArr.length; i++) {
       if (
-        publicKeyArr.kid == decodedIdTokenHeader.kid &&
-        publicKeyArr.alg == decodedIdTokenHeader.alg
+        publicKeyArr[i].kid == decodedIdTokenHeader.kid &&
+        publicKeyArr[i].alg == decodedIdTokenHeader.alg
       ) {
         publicKey = this.getPublicKey(publicKeyArr[i].n, publicKeyArr[i].e);
         break;
       }
     }
 
-    const decodedPayload = await this.jwtService.verifyAsync(idToken, {
-      secret: publicKey,
-    });
+    if (!publicKey) {
+      throw new InternalServerErrorException();
+    }
 
-    console.log(decodedPayload);
+    const decodedResult = jwt.verify(idToken, publicKey, {
+      algorithms: ['RS256'],
+    });
+    console.log(decodedResult);
+
+    let decodedPayload;
+    if (typeof decodedResult === 'string') {
+      decodedPayload = JSON.parse(decodedResult);
+    } else {
+      decodedPayload = decodedResult;
+    }
 
     if (
       decodedPayload.iss !== 'https://appleid.apple.com' ||
@@ -148,11 +160,100 @@ export class AuthService {
     }
 
     throw new BadRequestException(
-      '회원 정보가 존재하지 않습니다.' +
-        '개발용 로그인 API에서는 회원가입이 불가능합니다.' +
+      '회원 정보가 존재하지 않습니다. ' +
+        '개발용 로그인 API에서는 회원가입이 불가능합니다. ' +
         '개발용 회원 생성은 백엔드 팀원에게 문의해주세요.'
     );
   }
 
-  withdrawal() {}
+  clientSecretGenerator(clientId) {
+    const header = { alg: 'ES256', kid: process.env.KEY_ID };
+    const iat = Math.floor(Date.now() / 1000);
+    const exp = iat + 60 * 60;
+    const payload = {
+      iss: process.env.TEAM_ID,
+      iat,
+      exp,
+      aud: 'https://appleid.apple.com',
+      sub: clientId,
+    };
+    return jwt.sign(payload, process.env.SECRET_FOR_APPLE, {
+      algorithm: 'ES256',
+      header,
+    });
+  }
+
+  async withdrawal(request, deleteAuthDto) {
+    //클라이언트 측에서 다시 apple에 로그인 요청을 보내고 identity token과 authorization code를 함께 넘겨준다.
+
+    const idToken = deleteAuthDto.idToken;
+    const authorizationCode = deleteAuthDto.authorizationCode;
+
+    const decodedIdTokenHeader = jwt.decode(idToken, {
+      complete: true,
+    }).header;
+
+    const getResult = await firstValueFrom(
+      this.httpService.get('https://appleid.apple.com/auth/keys')
+    );
+    const publicKeyArr = getResult.data.keys;
+    console.log(publicKeyArr);
+
+    let publicKey;
+    for (let i = 0; i < publicKeyArr.length; i++) {
+      if (
+        publicKeyArr[i].kid == decodedIdTokenHeader.kid &&
+        publicKeyArr[i].alg == decodedIdTokenHeader.alg
+      ) {
+        publicKey = this.getPublicKey(publicKeyArr[i].n, publicKeyArr[i].e);
+        break;
+      }
+    }
+
+    if (!publicKey) {
+      throw new InternalServerErrorException();
+    }
+
+    const decodedResult = jwt.verify(idToken, publicKey, {
+      algorithms: ['RS256'],
+    });
+
+    let decodedPayload;
+    if (typeof decodedResult === 'string') {
+      decodedPayload = JSON.parse(decodedResult);
+    } else {
+      decodedPayload = decodedResult;
+    }
+
+    if (
+      decodedPayload.iss !== 'https://appleid.apple.com' ||
+      decodedPayload.aud !== process.env.CLIENT_ID
+    ) {
+      throw new UnauthorizedException(
+        'identity 토큰 내의 정보가 올바르지 않습니다.'
+      );
+    }
+
+    const clientId = decodedPayload.aud;
+    const clientSecret = this.clientSecretGenerator(clientId);
+    const payload = {
+      code: authorizationCode,
+      client_id: clientId,
+      grant_type: 'authorization_code',
+      client_secret: clientSecret,
+    };
+
+    const postResult = await firstValueFrom(
+      this.httpService.post('https://appleid.apple.com/auth/token', payload)
+    );
+
+    const info = postResult.data;
+    const token = info.refresh_token;
+    const revoke = { client_id: clientId, client_secret: clientSecret, token };
+
+    const revokeResult = await firstValueFrom(
+      this.httpService.post('https://appleid.apple.com/auth/revoke', revoke)
+    );
+    console.log(revokeResult.data);
+  }
 }

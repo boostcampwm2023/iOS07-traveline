@@ -1,17 +1,10 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Get,
-  Req,
-} from '@nestjs/common';
+import { Controller, Post, Body, Delete, Get, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateAuthRequestDto } from './dto/create-auth-request.dto';
 import { CreateAuthResponseDto } from './dto/create-auth-response';
 import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
+import { DeleteAuthDto } from './dto/delete-auth.dto';
 
 @Controller('auth')
 @ApiTags('Auth API')
@@ -58,7 +51,7 @@ export class AuthController {
     description: 'body로 전달받은 회원 정보를 확인하고 회원 정보를 삭제한다.',
   })
   @ApiOkResponse({ description: 'OK' })
-  withdrawal(@Param('id') id: string) {
-    //return this.authService.withdrawal(+id);
+  withdrawal(@Req() request, @Body() deleteAuthDto: DeleteAuthDto) {
+    return this.authService.withdrawal(request, deleteAuthDto);
   }
 }
