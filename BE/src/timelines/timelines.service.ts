@@ -71,23 +71,19 @@ export class TimelinesService {
     timelineDto: CreateTimelineDto | UpdateTimelineDto
   ): Promise<Timeline> {
     const timeline = new Timeline();
-    const coordinates = await this.findCoordinates(timelineDto.place);
     Object.assign(timeline, timelineDto);
-    Object.assign(timeline, coordinates);
     // timeline.image = timelineDto.image;
     return timeline;
   }
 
-  private async findCoordinates(place: string) {
-    const url = `${KAKAO_KEYWORD_SEARCH}?query=${place}&size=1`;
+  async findCoordinates(place: string, offset: number, limit: number) {
+    const url = `${KAKAO_KEYWORD_SEARCH}?query=${place}&page=${offset}&size=${limit}`;
     const {
       data: { documents },
     } = await axios.get(url, {
       headers: { Authorization: `KakaoAK ${process.env.KAKAO_REST_API_KEY}` },
     });
 
-    return documents.length < 1
-      ? {}
-      : { coordX: documents[0].x, coordY: documents[0].y };
+    return documents;
   }
 }

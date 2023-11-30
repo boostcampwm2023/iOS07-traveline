@@ -23,6 +23,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -31,6 +32,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import {
   create_OK,
   findAll_OK,
+  findCoordinates_OK,
   findOne_OK,
   remove_OK,
   update_OK,
@@ -91,12 +93,43 @@ export class TimelinesController {
     description:
       'postingId에 해당하는 게시글의 Day N에 해당하는 모든 타임라인을 반환합니다.',
   })
+  @ApiQuery({
+    name: 'day',
+    description: 'Day N의 N (default: 1)',
+    required: false,
+  })
   @ApiOkResponse({ schema: { example: findAll_OK } })
   async findAll(
     @Query('postingId', ParseUUIDPipe) postingId: string,
     @Query('day', new DefaultValuePipe(1), ParseIntPipe) day: number
   ): Promise<Timeline[]> {
     return this.timelinesService.findAll(postingId, day);
+  }
+
+  @Get('map')
+  @ApiOperation({
+    summary: '장소에 대한 지도 검색 결과 반환',
+    description:
+      '타임라인에 장소를 입력하면 서버에서 카카오 지도 API로 검색한 결과를 반환합니다.',
+  })
+  @ApiQuery({ name: 'place', description: '검색할 장소', required: true })
+  @ApiQuery({
+    name: 'offset',
+    description: 'offset번째 페이지 (default: 1)',
+    required: false,
+  })
+  @ApiQuery({
+    name: 'limit',
+    description: 'limit 개의 검색 결과 반환 (default: 15)',
+    required: false,
+  })
+  @ApiOkResponse({ schema: { example: findCoordinates_OK } })
+  async findCoordinates(
+    @Query('place') place: string,
+    @Query('offset', new DefaultValuePipe(1), ParseIntPipe) offset: number,
+    @Query('limit', new DefaultValuePipe(15), ParseIntPipe) limit: number
+  ) {
+    return this.timelinesService.findCoordinates(place, offset, limit);
   }
 
   @Get(':id')
