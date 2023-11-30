@@ -6,8 +6,9 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
-import UIKit
+import Combine
 import PhotosUI
+import UIKit
 
 final class TimelineWritingVC: UIViewController {
     
@@ -64,14 +65,24 @@ final class TimelineWritingVC: UIViewController {
         return view
     }()
     
-    // MARK: - Life Cycle
+    // MARK: - Properties
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    private var cancellables: Set<AnyCancellable> = .init()
+    private var viewModel: TimelineWritingViewModel
+    
+    // MARK: - Initialize
+    
+    init(viewModel: TimelineWritingViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
         
         setupAttributes()
         setupLayout()
-        dateLabel.setText(to: "2023년 11월 9일")
+        bind()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Functions
@@ -84,10 +95,6 @@ final class TimelineWritingVC: UIViewController {
         picker.delegate = self
         
         self.present(picker, animated: true)
-    }
-    
-    @objc private func completeButtonTapped() {
-        // action
     }
     
     @objc private func selectLocationButtonTapped() {
@@ -164,7 +171,8 @@ private extension TimelineWritingVC {
         textView.delegate = self
         
         tlNavigationBar.delegate = self
-        tlNavigationBar.setupTitle(to: "Day01") // TODO: - 추후 서버통신 후 수정
+        tlNavigationBar.setupTitle(to: "Day \(viewModel.day)")
+        dateLabel.setText(to: viewModel.date)
         
         let imageTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectImageButtonTapped))
         let timeTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectTimeButtonTapped))
@@ -180,8 +188,17 @@ private extension TimelineWritingVC {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(scrollViewTouched))
         tapGesture.delegate = self
         scrollView.addGestureRecognizer(tapGesture)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardNotification), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardNotification), name: UIResponder.keyboardWillHideNotification, object: nil)
+        [
+            UIResponder.keyboardWillHideNotification,
+            UIResponder.keyboardWillShowNotification
+        ].forEach {
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(keyboardNotification),
+                name: $0,
+                object: nil
+            )
+        }
     }
     
     func setupLayout() {
@@ -229,6 +246,26 @@ private extension TimelineWritingVC {
         ])
     }
     
+    private func bind() {
+        
+        titleTextField
+            .textPublisher
+            .withUnretained(self)
+            .sink { owner, text in
+                owner.viewModel.sendAction(.titleDidChange(text))
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .map(\.isCompletable)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, isCompletable in
+                owner.tlNavigationBar.isRightButtonEnabled(isCompletable)
+            }
+            .store(in: &cancellables)
+    }
+    
 }
 
 // MARK: - UITextViewDelegate
@@ -247,6 +284,11 @@ extension TimelineWritingVC: UITextViewDelegate {
             textView.text = Constants.contentPlaceholder
             textView.textColor = TLColor.disabledGray
         }
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        guard let text = textView.text else { return }
+        viewModel.sendAction(.contentDidChange(text))
     }
     
 }
@@ -285,9 +327,12 @@ extension TimelineWritingVC: LocationSearchDelegate {
 
 extension TimelineWritingVC: TLNavigationBarDelegate {
     func rightButtonDidTapped() {
-        // TODO: 네비게이션 바 완료 버튼 선택
+        // TODO: 생성할 타임라인 정보 넘겨주기 구현
+        viewModel.sendAction(.tapCompleteButton(TimelineDetailInfo.empty))
     }
 }
+
+// MARK: - UIGestureRecognizerDelegate
 
 extension TimelineWritingVC: UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
@@ -297,11 +342,4 @@ extension TimelineWritingVC: UIGestureRecognizerDelegate {
         }
         return false
     }
-}
-
-@available(iOS 17, *)
-#Preview("TimelineWritingVC") {
-    let timelineWritingVC = TimelineWritingVC()
-    let homeNV = UINavigationController(rootViewController: timelineWritingVC)
-    return homeNV
 }
