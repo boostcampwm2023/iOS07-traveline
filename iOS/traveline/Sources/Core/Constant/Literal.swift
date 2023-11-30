@@ -107,4 +107,10 @@ enum Literal {
             static let winter: String = "겨울"
         }
     }
+    
+    enum Action {
+        static let modify: String = "수정하기"
+        static let delete: String = "삭제하기"
+        static let report: String = "신고하기"
+    }
 }

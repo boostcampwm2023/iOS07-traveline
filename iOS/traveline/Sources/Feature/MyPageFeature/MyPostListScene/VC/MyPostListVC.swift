@@ -155,7 +155,7 @@ private extension MyPostListVC {
 
 extension MyPostListVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let timelineVC = TimelineVC()
+        let timelineVC = TimelineVC(viewModel: TimelineViewModel())
         self.navigationController?.pushViewController(timelineVC, animated: true)
     }
 }
