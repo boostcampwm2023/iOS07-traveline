@@ -12,8 +12,9 @@ enum HomeSideEffect: BaseSideEffect {
     case showRecent
     case showRelated(String)
     case showResult(String)
-    case showList
+    case showHomeList(TravelList)
     case showFilter(FilterType)
     case saveFilter([Filter])
     case showTravelWriting
+    case loadFailed(Error)
 }
