@@ -28,7 +28,7 @@ final class ProfileLabel: UIView {
         return view
     }()
     
-    private let idLabel: TLLabel = .init(font: TLFont.subtitle1, text: "otoolz", color: TLColor.white)
+    private let idLabel: TLLabel = .init(font: TLFont.subtitle1, text: "", color: TLColor.white)
     
     let editButton: UIButton = {
         var config = UIButton.Configuration.plain()
@@ -59,6 +59,12 @@ final class ProfileLabel: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Functions
+    
+    func updateProfile(_ profile: Profile) {
+        idLabel.setText(to: profile.name)
+        imageView.setImage(from: profile.imageURL)
+    }
 }
 
 // MARK: - Setup Functions
@@ -92,11 +98,4 @@ private extension ProfileLabel {
         ])
     }
     
-}
-
-@available(iOS 17, *)
-#Preview("ProfileLabel") {
-    let view = ProfileLabel()
-    
-    return view
 }

@@ -6,6 +6,7 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
+import Combine
 import UIKit
 
 protocol SideMenuDelegate: AnyObject {
@@ -71,7 +72,20 @@ final class SideMenuVC: UIViewController {
     
     // MARK: - Properties
     
+    private var cancellables: Set<AnyCancellable> = .init()
+    private let viewModel: SideMenuViewModel
     weak var delegate: SideMenuDelegate?
+    
+    // MARK: - Initializer
+    
+    init(viewModel: SideMenuViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Life Cycle
     
@@ -80,6 +94,8 @@ final class SideMenuVC: UIViewController {
         
         setupAttributes()
         setupLayout()
+        bind()
+        viewModel.sendAction(.viewDidLoad)
     }
     
     // MARK: - Functions
@@ -128,6 +144,17 @@ private extension SideMenuVC {
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin)
         ])
+    }
+    
+    func bind() {
+        viewModel.$state
+            .map(\.profile)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, profile in
+                owner.profileButton.updateProfile(profile)
+            }
+            .store(in: &cancellables)
     }
     
 }

@@ -12,4 +12,10 @@ struct Profile: Hashable {
     let id: String
     let imageURL: String
     let name: String
+    
+    static let empty: Profile = .init(
+        id: Literal.empty,
+        imageURL: Literal.empty,
+        name: Literal.empty
+    )
 }
