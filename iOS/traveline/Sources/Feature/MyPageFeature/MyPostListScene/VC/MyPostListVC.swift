@@ -6,6 +6,7 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
+import Combine
 import UIKit
 
 final class MyPostListVC: UIViewController {
@@ -45,21 +46,36 @@ final class MyPostListVC: UIViewController {
     
     // MARK: - Properties
     
+    private var cancellables: Set<AnyCancellable> = .init()
+    private let viewModel: MyPostListViewModel
+    
     private typealias DataSource = UICollectionViewDiffableDataSource<Section, TravelListInfo>
     private typealias Snapshot = NSDiffableDataSourceSnapshot<Section, TravelListInfo>
     
     private var dataSource: DataSource?
-    private var myPostList: TravelList = []
+    
+    // MARK: - Initialize
+    
+    init(viewModel: MyPostListViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+        
+        setupAttributes()
+        setupLayout()
+        setupDataSource()
+        bind()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        myPostList.append(contentsOf: TravelListSample.make())
-        setupAttributes()
-        setupLayout()
-        setupDataSource()
-        setData()
+        
+        viewModel.sendAction(.viewDidLoad)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -69,20 +85,6 @@ final class MyPostListVC: UIViewController {
     }
     
     // MARK: - Functions
-    
-    private func setData() {
-        var snapshot = Snapshot()
-        snapshot.appendSections([.travels])
-        snapshot.appendItems(myPostList, toSection: .travels)
-        
-        dataSource?.apply(snapshot, animatingDifferences: true)
-    }
-    
-    // TODO: - 추후에 지워질 샘플 함수
-    func sampleData() {
-        myPostList.append(contentsOf: TravelListSample.make())
-        setData()
-    }
     
     private func collectionLayout() -> UICollectionViewCompositionalLayout {
         let size = NSCollectionLayoutSize(
@@ -142,13 +144,27 @@ private extension MyPostListVC {
             tlNavigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tlNavigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tlNavigationBar.heightAnchor.constraint(equalToConstant: BaseMetric.tlheight),
-            myPostListView.topAnchor.constraint(equalTo: tlNavigationBar.bottomAnchor, constant: 24),
+            myPostListView.topAnchor.constraint(equalTo: tlNavigationBar.bottomAnchor),
             myPostListView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             myPostListView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             myPostListView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
     
+    private func bind() {
+        viewModel.$state
+            .map(\.travelList)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, list in
+                var snapshot = Snapshot()
+                snapshot.appendSections([.travels])
+                snapshot.appendItems(list, toSection: .travels)
+                
+                owner.dataSource?.apply(snapshot, animatingDifferences: true)
+            }
+            .store(in: &cancellables)
+    }
 }
 
 // MARK: - extension UICollectionViewDelegate
@@ -158,11 +174,4 @@ extension MyPostListVC: UICollectionViewDelegate {
         let timelineVC = VCFactory.makeTimelineVC()
         self.navigationController?.pushViewController(timelineVC, animated: true)
     }
-}
-
-@available(iOS 17, *)
-#Preview("MyPostListVC") {
-    let vc = MyPostListVC()
-   // vc.sampleData()
-    return vc.view
 }
