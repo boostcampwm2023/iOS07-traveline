@@ -10,6 +10,7 @@ import UIKit
 
 protocol TimelineDateHeaderDelegate: AnyObject {
     func goToMapView()
+    func changeDay(to index: Int)
 }
 
 final class TimelineDateHeaderView: UICollectionReusableView {
@@ -103,7 +104,7 @@ final class TimelineDateHeaderView: UICollectionReusableView {
         
         setupAttributes()
         setupLayout()
-        setDate()
+        setDate(to: 1)
     }
     
     required init?(coder: NSCoder) {
@@ -112,9 +113,8 @@ final class TimelineDateHeaderView: UICollectionReusableView {
     
     // MARK: - Functions
     
-    private func setDate() {
-        // TODO: - 날짜 선택 시 마다 변경
-        dayLabel.setText(to: "Day 1")
+    private func setDate(to day: Int) {
+        dayLabel.setText(to: "Day \(day)")
     }
     
     @objc private func mapViewButtonPressed() {
@@ -173,7 +173,10 @@ private extension TimelineDateHeaderView {
 
 extension TimelineDateHeaderView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // TODO: - 날짜 선택 시 View update, delegate action 전달
+        delegate?.changeDay(to: indexPath.row)
+        
+        // TODO: - 날짜 데이터 연결
+        setDate(to: indexPath.row + 1)
     }
 }
 
