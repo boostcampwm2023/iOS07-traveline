@@ -12,7 +12,7 @@ import Foundation
     
     var wrappedValue: T? {
         get {
-            return KeychainManager.read(forKey: key) as? T
+           KeychainManager.read(forKey: key) as? T
         }
         set {
             if newValue == nil {

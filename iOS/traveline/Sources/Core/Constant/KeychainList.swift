@@ -1,5 +1,5 @@
 //
-//  KeychainKey.swift
+//  KeychainList.swift
 //  traveline
 //
 //  Created by 김영인 on 2023/11/29.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum KeychainKey {
+enum KeychainList {
     @KeychainWrapper<String>(key: "accessToken") static var accessToken
     @KeychainWrapper<String>(key: "refreshToken") static var refreshToken
 }
