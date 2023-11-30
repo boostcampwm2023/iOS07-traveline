@@ -23,7 +23,7 @@ enum TravelListSample {
             .init(id: "1",
                   imageURL: "",
                   title: "부산여행",
-                  profile: Profile(id: "1", imageURL: "", name: "영인"),
+                  profile: Profile(imageURL: "", name: "영인"),
                   like: 10,
                   isLiked: false,
                   tags: TravelListSample.makeTags()
@@ -35,7 +35,7 @@ enum TravelListSample {
             .init(id: "1",
                   imageURL: "",
                   title: "부산여행",
-                  profile: Profile(id: "1", imageURL: "", name: "영인"),
+                  profile: Profile(imageURL: "", name: "영인"),
                   like: 10,
                   isLiked: false,
                   tags: TravelListSample.makeTags()
@@ -43,7 +43,7 @@ enum TravelListSample {
             .init(id: "2",
                   imageURL: "",
                   title: "속초여행",
-                  profile: Profile(id: "2", imageURL: "", name: "0inn"),
+                  profile: Profile(imageURL: "", name: "0inn"),
                   like: 20,
                   isLiked: true,
                   tags: TravelListSample.makeTags()
@@ -51,7 +51,7 @@ enum TravelListSample {
             .init(id: "3",
                   imageURL: "",
                   title: "제주도여행",
-                  profile: Profile(id: "3", imageURL: "", name: "youngin"),
+                  profile: Profile(imageURL: "", name: "youngin"),
                   like: 30,
                   isLiked: true,
                   tags: TravelListSample.makeTags()
@@ -59,7 +59,7 @@ enum TravelListSample {
             .init(id: "4",
                   imageURL: "",
                   title: "제주도여행",
-                  profile: Profile(id: "3", imageURL: "", name: "youngin"),
+                  profile: Profile(imageURL: "", name: "youngin"),
                   like: 30,
                   isLiked: false,
                   tags: TravelListSample.makeTags()
@@ -67,7 +67,7 @@ enum TravelListSample {
             .init(id: "5",
                   imageURL: "",
                   title: "제주도여행",
-                  profile: Profile(id: "4", imageURL: "", name: "youngin"),
+                  profile: Profile(imageURL: "", name: "youngin"),
                   like: 30,
                   isLiked: true,
                   tags: TravelListSample.makeTags()
@@ -75,7 +75,7 @@ enum TravelListSample {
             .init(id: "6",
                   imageURL: "",
                   title: "제주도여행",
-                  profile: Profile(id: "5", imageURL: "", name: "youngin"),
+                  profile: Profile(imageURL: "", name: "youngin"),
                   like: 0,
                   isLiked: false,
                   tags: TravelListSample.makeTags()
