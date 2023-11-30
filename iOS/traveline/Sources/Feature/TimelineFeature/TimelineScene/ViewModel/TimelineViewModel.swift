@@ -21,6 +21,7 @@ enum TimelineSideEffect: BaseSideEffect {
     case loadTimelineCardList(TimelineCardList)
     case removeRegacyCards
     case toggleLike
+    case loadFailed(Error)
 }
 
 struct TimelineState: BaseState {
@@ -37,6 +38,15 @@ struct TimelineState: BaseState {
 }
 
 final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect, TimelineState> {
+    
+    private let fetchTravelInfoUseCase: FetchTravelInfoUseCase
+    
+    init(fetchTravelInfoUseCase: FetchTravelInfoUseCase) {
+        self.fetchTravelInfoUseCase = fetchTravelInfoUseCase
+    }
+    
+    // MARK: - Transform
+    
     override func transform(action: TimelineAction) -> SideEffectPublisher {
         switch action {
         case .enterToTimeline:
@@ -71,6 +81,10 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
             
         case .toggleLike:
             newState.travelInfo.isLiked.toggle()
+            
+        case .loadFailed(_):
+            // TODO: - 서버 통신 실패 시 state 처리
+            break
         }
         
         return newState
@@ -83,7 +97,7 @@ private extension TimelineViewModel {
     func fetchTimeline() -> SideEffectPublisher {
         Publishers.Merge(
             fetchTimelineCardInfo(),
-            fetchTimelineTravelInfo()
+            fetchTravelInfo()
         ).eraseToAnyPublisher()
     }
     
@@ -91,14 +105,15 @@ private extension TimelineViewModel {
         return .just(TimelineSideEffect.removeRegacyCards)
     }
     
-    // TODO: - 서버 연결 후 수정
-    func fetchTimelineTravelInfo() -> SideEffectPublisher {
-        return Future { promise in
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
-                promise(.success(.loadTimeline(TimelineSample.makeTravelInfo())))
+    func fetchTravelInfo() -> SideEffectPublisher {
+        return fetchTravelInfoUseCase.execute(id: "불러올 게시글 ID 값")
+            .map { travelInfo in
+                return TimelineSideEffect.loadTimeline(travelInfo)
             }
-        }
-        .eraseToAnyPublisher()
+            .catch { error in
+                return Just(TimelineSideEffect.loadFailed(error))
+            }
+            .eraseToAnyPublisher()
     }
     
     // TODO: - 서버 연결 후 수정

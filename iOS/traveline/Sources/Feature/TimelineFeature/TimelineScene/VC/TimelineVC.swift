@@ -338,5 +338,5 @@ extension TimelineVC: TimelineDateHeaderDelegate {
 
 @available(iOS 17, *)
 #Preview {
-    UINavigationController(rootViewController: TimelineVC(viewModel: TimelineViewModel()))
+    UINavigationController(rootViewController: VCFactory.makeTimelineVC())
 }
