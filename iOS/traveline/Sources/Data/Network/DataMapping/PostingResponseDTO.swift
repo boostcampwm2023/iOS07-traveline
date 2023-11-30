@@ -30,17 +30,6 @@ struct PostingResponseDTO: Decodable {
     let report: Int
     let isLiked: Bool
     let isOwner: Bool
-    
-    func toDomain() -> TimelineTravelInfo {
-        return .init(
-            travelTitle: title,
-            startDate: startDate,
-            endDate: endDate,
-            isLiked: isLiked,
-            // TODO: - 태그 합치는 작업
-            tags: []
-        )
-    }
 }
 
 struct LikedsDTO: Decodable {
@@ -55,4 +44,19 @@ struct WriterDTO: Decodable {
     let avatar: String?
     let resourceId: String
     let socialType: Int
+}
+
+// MARK: - Mapping
+
+extension PostingResponseDTO {
+    func toDomain() -> TimelineTravelInfo {
+        return .init(
+            travelTitle: title,
+            startDate: startDate,
+            endDate: endDate,
+            isLiked: isLiked,
+            // TODO: - 태그 합치는 작업
+            tags: []
+        )
+    }
 }
