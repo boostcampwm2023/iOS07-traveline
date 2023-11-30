@@ -1,5 +1,5 @@
 //
-//  PostingResponseDTO.swift
+//  PostingDetailResponseDTO.swift
 //  traveline
 //
 //  Created by 김태현 on 11/30/23.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct PostingResponseDTO: Decodable {
+struct PostingDetailResponseDTO: Decodable {
     let id: String
     let title: String
     let createdAt: String
@@ -34,7 +34,7 @@ struct PostingResponseDTO: Decodable {
 
 // MARK: - Mapping
 
-extension PostingResponseDTO {
+extension PostingDetailResponseDTO {
     func toDomain() -> TimelineTravelInfo {
         return .init(
             travelTitle: title,

@@ -18,13 +18,13 @@ final class TimelineRepositoryImpl: TimelineRepository {
     
     func fetchTravelInfo(id: String) async throws -> TimelineTravelInfo {
         // EndPoint 만들어주고
-        let postingResponseDTO = try await network.request(
+        let postingDetailResponseDTO = try await network.request(
             endPoint: PostingEndPoint.specificPosting,
-            type: PostingResponseDTO.self
+            type: PostingDetailResponseDTO.self
         )
         
         // 받아온 데이터 Domain으로 변경 (Data -> Domain 역할)
-        return postingResponseDTO.toDomain()
+        return postingDetailResponseDTO.toDomain()
     }
     
 }
