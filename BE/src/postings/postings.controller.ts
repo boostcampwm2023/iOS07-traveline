@@ -24,6 +24,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -106,6 +107,11 @@ export class PostingsController {
     summary: '게시글 제목 목록 반환',
     description:
       '전달된 키워드로 시작하는 제목을 가진 포스팅의 제목을 반환합니다.',
+  })
+  @ApiQuery({
+    name: 'keyword',
+    description: "검색어 (default: '')",
+    required: false,
   })
   @ApiOkResponse({ schema: { example: searchByWord_OK } })
   async searchByKeyWord(
