@@ -11,6 +11,7 @@ import Foundation
 
 enum TimelineAction: BaseAction {
     case enterToTimeline
+    case fetchTimelineCard
     case changeDay(Int)
     case likeButtonPressed
 }
@@ -41,8 +42,11 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
         case .enterToTimeline:
             fetchTimeline()
             
-        case .changeDay(_):
+        case .fetchTimelineCard:
             fetchTimelineCardInfo()
+            
+        case .changeDay(_):
+            fetchTimelineCard()
             
         case .likeButtonPressed:
             .just(TimelineSideEffect.toggleLike)
@@ -63,6 +67,7 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
             
         case .removeRegacyCards:
             newState.timelineCardList.removeAll()
+            sendAction(.fetchTimelineCard)
             
         case .toggleLike:
             newState.travelInfo.isLiked.toggle()
@@ -83,10 +88,7 @@ private extension TimelineViewModel {
     }
     
     func fetchTimelineCard() -> SideEffectPublisher {
-        Publishers.Merge(
-            removeRegacyCardInfo(),
-            fetchTimelineCardInfo()
-        ).eraseToAnyPublisher()
+        return .just(TimelineSideEffect.removeRegacyCards)
     }
     
     // TODO: - 서버 연결 후 수정
@@ -97,10 +99,6 @@ private extension TimelineViewModel {
             }
         }
         .eraseToAnyPublisher()
-    }
-    
-    func removeRegacyCardInfo() -> SideEffectPublisher {
-        return .just(TimelineSideEffect.removeRegacyCards)
     }
     
     // TODO: - 서버 연결 후 수정
