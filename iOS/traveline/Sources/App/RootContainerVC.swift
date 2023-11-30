@@ -155,7 +155,6 @@ extension RootContainerVC: SideMenuDelegate {
         switch menuItem {
         case .profileEdit:
             let profile = Profile(
-                id: "1234",
                 imageURL: "leaf",
                 name: "hongki"
             )

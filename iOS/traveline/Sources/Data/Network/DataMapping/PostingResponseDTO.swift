@@ -39,7 +39,6 @@ extension PostingResponseDTO {
             imageURL: thumbnail ?? Literal.empty,
             title: title,
             profile: .init(
-                id: writer.id,
                 imageURL: writer.avatar ?? Literal.empty,
                 name: writer.name
             ),
