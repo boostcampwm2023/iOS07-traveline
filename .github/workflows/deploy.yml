@@ -1,4 +1,4 @@
-name: CI
+name: CD
 
 on:
   push:
@@ -46,4 +46,4 @@ jobs:
             docker pull traveline/traveline-docker
             docker stop traveline-container || true
             docker rm traveline-container || true
-            docker run -e DB_HOST=${{ secrets.DB_HOST }} -e DB_PORT=${{ secrets.DB_PORT }} -e DB_USER=${{ secrets.DB_USER }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} -e DB_DATABASE=${{ secrets.DB_DATABASE }} -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} -e AWS_REGION=${{ secrets.AWS_REGION }} -e JWT_SECRET=${{ secrets.JWT_SECRET }} -d -p ${{secrets.EXTERNAL_PORT}}:${{secrets.INTERNAL_PORT}} --name traveline-container traveline/traveline-docker
+            docker run -e DB_HOST=${{ secrets.DB_HOST }} -e DB_PORT=${{ secrets.DB_PORT }} -e DB_USER=${{ secrets.DB_USER }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} -e DB_DATABASE=${{ secrets.DB_DATABASE }} -e AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} -e AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} -e AWS_REGION=${{ secrets.AWS_REGION }} -e JWT_SECRET_ACCESS=${{ secrets.JWT_SECRET_ACCESS }} -e JWT_SECRET_REFRESH=${{ secrets.JWT_SECRET_REFRESH }} -e CLIENT_ID=${{ secrets.CLIENT_ID }} -d -p ${{secrets.EXTERNAL_PORT}}:${{secrets.INTERNAL_PORT}} --name traveline-container traveline/traveline-docker
