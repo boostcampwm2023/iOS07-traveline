@@ -148,7 +148,7 @@ private extension HomeVC {
         homeListView.didSelectHomeList
             .withUnretained(self)
             .sink { owner, _  in
-                let timelineVC = TimelineVC(viewModel: TimelineViewModel())
+                let timelineVC = VCFactory.makeTimelineVC()
                 owner.navigationController?.pushViewController(
                     timelineVC,
                     animated: true
