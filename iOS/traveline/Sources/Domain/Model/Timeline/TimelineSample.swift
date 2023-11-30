@@ -139,13 +139,13 @@ enum TimelineSample {
     static func makeDetailInfo() -> TimelineDetailInfo {
         .init(
             id: "1",
-            day: "Day 1",
             title: "광안리 최고~",
+            day: 1,
+            description: "어쩌고 저쩌고 이러쿵 저러쿵",
+            imageURL: "",
             date: "2023.11.23",
-            time: "오후 02:00",
             location: "광안리 해수욕장",
-            content: "어쩌고 저쩌고 이러쿵 저러쿵",
-            imageURL: ""
+            time: "오후 02:00"
         )
     }
 }

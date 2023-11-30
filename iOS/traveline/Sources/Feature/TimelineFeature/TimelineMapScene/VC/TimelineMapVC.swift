@@ -59,20 +59,9 @@ final class TimelineMapVC: UIViewController {
     
     @objc private func showTimelineDetail() {
         if let selected = selectedAnnotation as? TLMarkerAnnotation {
-            let info = selected.cardInfo
-            let timelineDetailVC = TimelineDetailVC(
-                info: .init(
-                    id: "1",
-                    day: "Day 1",
-                    title: info.title,
-                    date: "2023.11.23",
-                    time: "오후 02:00",
-                    location: info.subtitle,
-                    content: info.content,
-                    imageURL: ""
-                )
-            )
-            
+            let id = selected.cardInfo.detailId
+            let viewModel = TimelineDetailViewModel(timelineId: String(id))
+            let timelineDetailVC = TimelineDetailVC(viewModel: viewModel)
             navigationController?.pushViewController(timelineDetailVC, animated: true)
         }
         

@@ -6,6 +6,7 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
+import Combine
 import UIKit
 
 final class TimelineDetailVC: UIViewController {
@@ -61,14 +62,21 @@ final class TimelineDetailVC: UIViewController {
     private let timeLabel: TLImageLabel = .init(image: TLImage.Travel.time)
     private let locationLabel: TLImageLabel = .init(image: TLImage.Travel.location)
     
+    // MARK: - Properties
+    
+    private var cancellables: Set<AnyCancellable> = .init()
+    private let viewModel: TimelineDetailViewModel
+    
     // MARK: - Initialize
     
-    init(info: TimelineDetailInfo) {
+    init(viewModel: TimelineDetailViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         
-        initInfo(from: info)
         setupAttributes()
         setupLayout()
+        bind()
+        viewModel.sendAction(.viewDidLoad)
     }
     
     required init?(coder: NSCoder) {
@@ -76,18 +84,30 @@ final class TimelineDetailVC: UIViewController {
     }
     
     private func initInfo(from info: TimelineDetailInfo) {
-        tlNavigationBar.setupTitle(to: info.day)
-        titleLabel.setText(to: info.title)
-        dateLabel.setText(to: info.date)
-        timeLabel.setText(to: info.time)
-        locationLabel.setText(to: info.location)
-        contentView.setText(to: info.content)
+        guard let image = info.imageURL else { return }
+        imageView.setImage(from: image)
     }
     
     // MARK: - Functions
     
     private func aspectRatio(from image: UIImage) -> CGFloat {
         return image.size.width / image.size.height
+    }
+    
+    private func updateUI(with info: TimelineDetailInfo) {
+        tlNavigationBar.setupTitle(to: "Day \(info.day)")
+        titleLabel.setText(to: info.title)
+        dateLabel.setText(to: info.date)
+        timeLabel.setText(to: info.time)
+        locationLabel.setText(to: info.location ?? Literal.empty)
+        contentView.setText(to: info.description)
+        guard let url = info.imageURL else {
+            imageView.isHidden = true
+            return
+        }
+        imageView.isHidden = false
+        imageView.setImage(from: url)
+        
     }
     
 }
@@ -157,21 +177,18 @@ private extension TimelineDetailVC {
         stackView.setCustomSpacing(Metric.belowLine, after: line)
         
     }
+    
+    private func bind() {
+        
+        viewModel.$state
+            .map(\.timelineDetailInfo)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, info in
+                owner.updateUI(with: info)
+                print(info.imageURL)
+            }
+            .store(in: &cancellables)
+    }
 }
 
-@available(iOS 17, *)
-#Preview("TimelineDetailVC") {
-    let info = TimelineDetailInfo(
-        id: "a1b2c3d4",
-        day: "day02",
-        title: "광안리 짱",
-        date: "2023년 12월 15일",
-        time: "오후 02:00",
-        location: "부산 광안리 해수욕장",
-        content: "광안리 짱짱맨",
-        imageURL: "http://sigan.nermoo.bballa"
-    )
-    let timelineDetailVC = TimelineDetailVC(info: info)
-    let homeNV = UINavigationController(rootViewController: timelineDetailVC)
-    return homeNV
-}

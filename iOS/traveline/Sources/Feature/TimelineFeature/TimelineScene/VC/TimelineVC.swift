@@ -259,9 +259,8 @@ private extension TimelineVC {
 
 extension TimelineVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let timelineDetailVC = TimelineDetailVC(
-            info: TimelineSample.makeDetailInfo()
-        )
+        let viewModel = TimelineDetailViewModel(timelineId: "1212")
+        let timelineDetailVC = TimelineDetailVC(viewModel: viewModel)
         
         navigationController?.pushViewController(timelineDetailVC, animated: true)
     }
