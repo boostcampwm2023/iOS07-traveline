@@ -19,14 +19,7 @@ enum TimelineDetailSideEffect: BaseSideEffect {
 }
 
 struct TimelineDetailState: BaseState {
-    var timelineDetailInfo: TimelineDetailInfo = .init(
-        id: Literal.empty,
-        title: Literal.empty,
-        day: 1,
-        description: Literal.empty,
-        date: Literal.empty,
-        time: Literal.empty
-    )
+    var timelineDetailInfo: TimelineDetailInfo = .empty
 }
 
 final class TimelineDetailViewModel: BaseViewModel<TimelineDetailAction, TimelineDetailSideEffect, TimelineDetailState> {

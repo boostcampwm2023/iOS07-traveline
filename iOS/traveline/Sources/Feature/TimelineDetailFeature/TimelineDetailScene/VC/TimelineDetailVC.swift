@@ -83,11 +83,6 @@ final class TimelineDetailVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func initInfo(from info: TimelineDetailInfo) {
-        guard let image = info.imageURL else { return }
-        imageView.setImage(from: image)
-    }
-    
     // MARK: - Functions
     
     private func aspectRatio(from image: UIImage) -> CGFloat {

@@ -44,6 +44,15 @@ struct TimelineDetailInfo: Hashable {
         self.time = time
     }
     
+    static let empty: TimelineDetailInfo = .init(
+        id: Literal.empty,
+        title: Literal.empty,
+        day: 0,
+        description: Literal.empty,
+        date: Literal.empty,
+        time: Literal.empty
+    )
+    
     static func == (lhs: TimelineDetailInfo, rhs: TimelineDetailInfo) -> Bool {
         lhs.id == rhs.id
     }
