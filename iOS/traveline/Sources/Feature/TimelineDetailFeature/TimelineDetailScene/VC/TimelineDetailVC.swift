@@ -107,7 +107,6 @@ final class TimelineDetailVC: UIViewController {
         }
         imageView.isHidden = false
         imageView.setImage(from: url)
-        
     }
     
 }
@@ -186,7 +185,6 @@ private extension TimelineDetailVC {
             .withUnretained(self)
             .sink { owner, info in
                 owner.updateUI(with: info)
-                print(info.imageURL)
             }
             .store(in: &cancellables)
     }
