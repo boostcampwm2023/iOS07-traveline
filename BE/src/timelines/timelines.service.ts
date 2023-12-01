@@ -8,6 +8,7 @@ import { CreateTimelineDto } from './dto/create-timeline.dto';
 import { UpdateTimelineDto } from './dto/update-timeline.dto';
 import { TimelinesRepository } from './timelines.repository';
 import { Timeline } from './entities/timeline.entity';
+import { StorageService } from '../storage/storage.service';
 import { PostingsService } from '../postings/postings.service';
 import { KAKAO_KEYWORD_SEARCH } from './timelines.constants';
 
@@ -15,10 +16,15 @@ import { KAKAO_KEYWORD_SEARCH } from './timelines.constants';
 export class TimelinesService {
   constructor(
     private readonly timelinesRepository: TimelinesRepository,
-    private readonly postingsService: PostingsService
+    private readonly postingsService: PostingsService,
+    private readonly storageService: StorageService
   ) {}
 
-  async create(userId: string, createTimelineDto: CreateTimelineDto) {
+  async create(
+    userId: string,
+    file: Express.Multer.File,
+    createTimelineDto: CreateTimelineDto
+  ) {
     const posting = await this.postingsService.findOne(
       createTimelineDto.posting
     );
@@ -31,6 +37,12 @@ export class TimelinesService {
 
     const timeline = await this.initialize(createTimelineDto);
     timeline.posting = posting;
+
+    if (file) {
+      const filePath = `${userId}/${posting.id}`;
+      const { path } = await this.storageService.upload(filePath, file);
+      timeline.image = path;
+    }
 
     return this.timelinesRepository.save(timeline);
   }

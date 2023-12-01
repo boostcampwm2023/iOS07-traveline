@@ -12,12 +12,16 @@ import {
   ParseUUIDPipe,
   ParseIntPipe,
   DefaultValuePipe,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { TimelinesService } from './timelines.service';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateTimelineDto } from './dto/create-timeline.dto';
 import { UpdateTimelineDto } from './dto/update-timeline.dto';
 import {
   ApiBearerAuth,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
@@ -64,10 +68,15 @@ export class TimelinesController {
   constructor(private readonly timelinesService: TimelinesService) {}
 
   @Post()
+  @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({
     summary: '타임라인 생성',
-    description: '사용자가 입력한 정보를 토대로 새로운 타임라인을 생성합니다.',
+    description:
+      '사용자가 입력한 정보를 토대로 새로운 타임라인을 생성합니다.' +
+      '실제론 이미지 저장도 되지만, swagger에선 이미지를 입력 받게 하면 나머지 데이터 입력 부분이 애매해져서 아직 잘 모르겠네요 ㅠ 나중에 수정하겠습니다.' +
+      '일단 swagger로는 이미지 없는 타임라인 생성만 가능합니다,,,',
   })
+  @ApiConsumes('multipart/form-data')
   @ApiCreatedResponse({ schema: { example: create_OK } })
   @ApiForbiddenResponse({
     schema: {
@@ -81,10 +90,12 @@ export class TimelinesController {
   })
   async create(
     @Req() request,
-    @Body() createTimelineDto: CreateTimelineDto
+    @UploadedFile() file: Express.Multer.File,
+    @Body()
+    createTimelineDto: CreateTimelineDto
   ): Promise<Timeline> {
     const userId = request['user'].id;
-    return this.timelinesService.create(userId, createTimelineDto);
+    return this.timelinesService.create(userId, file, createTimelineDto);
   }
 
   @Get()
