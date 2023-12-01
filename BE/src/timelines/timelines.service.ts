@@ -64,12 +64,8 @@ export class TimelinesService {
     );
   }
 
-  async findOne(id: string) {
-    const timeline = await this.timelinesRepository.findOne(id);
-
-    if (!timeline) {
-      throw new NotFoundException('타임라인이 존재하지 않습니다.');
-    }
+  async findOneWithURL(id: string) {
+    const timeline = await this.findOne(id);
 
     if (timeline.image) {
       timeline.image = await this.storageService.getImageUrl(timeline.image);
@@ -89,6 +85,10 @@ export class TimelinesService {
   async remove(id: string) {
     const timeline = await this.findOne(id);
 
+    if (timeline.image) {
+      await this.storageService.delete(timeline.image);
+    }
+
     return this.timelinesRepository.remove(timeline);
   }
 
@@ -97,6 +97,16 @@ export class TimelinesService {
   ): Promise<Timeline> {
     const timeline = new Timeline();
     Object.assign(timeline, timelineDto);
+    return timeline;
+  }
+
+  private async findOne(id: string) {
+    const timeline = await this.timelinesRepository.findOne(id);
+
+    if (!timeline) {
+      throw new NotFoundException('타임라인이 존재하지 않습니다.');
+    }
+
     return timeline;
   }
 

@@ -150,7 +150,7 @@ export class TimelinesController {
   })
   @ApiOkResponse({ schema: { example: findOne_OK } })
   async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Timeline> {
-    return this.timelinesService.findOne(id);
+    return this.timelinesService.findOneWithURL(id);
   }
 
   @Put(':id')
