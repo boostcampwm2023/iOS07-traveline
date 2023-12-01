@@ -11,10 +11,16 @@ import Combine
 
 final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> {
     
+    private let homeUseCase: HomeUseCase
+    
+    init(homeUseCase: HomeUseCase) {
+        self.homeUseCase = homeUseCase
+    }
+    
     override func transform(action: Action) -> SideEffectPublisher {
         switch action {
         case .viewDidLoad, .cancelSearch:
-            return .just(HomeSideEffect.showList)
+            return fetchHomeList()
             
         case .startSearch:
             return .just(HomeSideEffect.showRecent)
@@ -62,9 +68,9 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             newState.isSearching = false
             newState.resultFilters = .make()
             
-        case .showList:
+        case let .showHomeList(travelList):
             // TODO: - 서버 연동 후 수정
-            newState.travelList = TravelListSample.make()
+            newState.travelList = travelList
             newState.homeViewType = .home
             newState.isSearching = false
             
@@ -81,8 +87,27 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             
         case .showTravelWriting:
             newState.moveToTravelWriting = true
+            
+        case let .loadFailed(error):
+            // TODO: - 통신 실패 시 State 처리
+            print(error)
         }
         
         return newState
+    }
+}
+
+// MARK: - Fetch
+
+extension HomeViewModel {
+    func fetchHomeList() -> SideEffectPublisher {
+        return homeUseCase.fetchHomeList()
+            .map { travelList in
+                return HomeSideEffect.showHomeList(travelList)
+            }
+            .catch { error in
+                return Just(HomeSideEffect.loadFailed(error))
+            }
+            .eraseToAnyPublisher()
     }
 }

@@ -9,6 +9,7 @@
 import Foundation
 
 enum PostingEndPoint {
+    case postingList
     case specificPosting
 }
 

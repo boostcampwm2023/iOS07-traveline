@@ -47,7 +47,6 @@ private extension SideMenuViewModel {
     func loadProfile() -> SideEffectPublisher {
         // TODO: - 프로필을 로드하는 로직. 추후 변경
         let profile = Profile(
-            id: "1234",
             imageURL: "https://avatars.githubusercontent.com/u/91725382?s=400&u=29b8023a56a09685aaab53d4eb0dd556254cd902&v=4",
             name: "hongki"
         )
