@@ -85,7 +85,6 @@ private extension TimelineWritingViewModel {
     
     func checkFilledContent(_ content: String) -> SideEffectPublisher {
         isFilledContent = !content.isEmpty
-        print("content\(content)")
         return .just(SideEffect.checkFilledContent)
     }
     
