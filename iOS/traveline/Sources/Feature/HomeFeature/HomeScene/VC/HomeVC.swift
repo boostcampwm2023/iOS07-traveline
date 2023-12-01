@@ -275,8 +275,7 @@ extension HomeVC: TLBottomSheetDelegate {
 
 @available(iOS 17, *)
 #Preview("HomeVC") {
-    let homeViewModel = HomeViewModel()
-    let homeVC = HomeVC(viewModel: homeViewModel)
+    let homeVC = VCFactory.makeHomeVC()
     let homeNV = UINavigationController(rootViewController: homeVC)
     return homeNV
 }

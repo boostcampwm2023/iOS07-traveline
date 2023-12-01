@@ -18,7 +18,7 @@ final class RootContainerVC: UIViewController {
     // MARK: - UI Components
     
     private let sideMenuVC: SideMenuVC = .init(viewModel: SideMenuViewModel())
-    private let homeVC: HomeVC = .init(viewModel: HomeViewModel())
+    private let homeVC: HomeVC = VCFactory.makeHomeVC()
     private let shadowView: UIView = .init()
     private var navigationVC: UINavigationController?
     private var selectedVC: UIViewController?
@@ -155,7 +155,6 @@ extension RootContainerVC: SideMenuDelegate {
         switch menuItem {
         case .profileEdit:
             let profile = Profile(
-                id: "1234",
                 imageURL: "leaf",
                 name: "hongki"
             )
