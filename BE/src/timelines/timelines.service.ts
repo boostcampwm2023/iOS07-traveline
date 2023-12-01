@@ -8,6 +8,7 @@ import { CreateTimelineDto } from './dto/create-timeline.dto';
 import { UpdateTimelineDto } from './dto/update-timeline.dto';
 import { TimelinesRepository } from './timelines.repository';
 import { Timeline } from './entities/timeline.entity';
+import { StorageService } from '../storage/storage.service';
 import { PostingsService } from '../postings/postings.service';
 import { KAKAO_KEYWORD_SEARCH } from './timelines.constants';
 
@@ -15,10 +16,15 @@ import { KAKAO_KEYWORD_SEARCH } from './timelines.constants';
 export class TimelinesService {
   constructor(
     private readonly timelinesRepository: TimelinesRepository,
-    private readonly postingsService: PostingsService
+    private readonly postingsService: PostingsService,
+    private readonly storageService: StorageService
   ) {}
 
-  async create(userId: string, createTimelineDto: CreateTimelineDto) {
+  async create(
+    userId: string,
+    file: Express.Multer.File,
+    createTimelineDto: CreateTimelineDto
+  ) {
     const posting = await this.postingsService.findOne(
       createTimelineDto.posting
     );
@@ -32,37 +38,72 @@ export class TimelinesService {
     const timeline = await this.initialize(createTimelineDto);
     timeline.posting = posting;
 
+    if (file) {
+      const filePath = `${userId}/${posting.id}`;
+      const { path } = await this.storageService.upload(filePath, file);
+      timeline.image = path;
+    }
+
     return this.timelinesRepository.save(timeline);
   }
 
   async findAll(postingId: string, day: number) {
     const timelines = await this.timelinesRepository.findAll(postingId, day);
 
-    return timelines.map((timeline) => {
-      return { ...timeline, description: timeline.description + '...' };
-    });
+    return Promise.all(
+      timelines.map(async (timeline) => {
+        const imageUrl = timeline.image
+          ? await this.storageService.getImageUrl(timeline.image)
+          : null;
+        return {
+          ...timeline,
+          description: timeline.description + '...',
+          image: imageUrl,
+        };
+      })
+    );
   }
 
-  async findOne(id: string) {
-    const timeline = await this.timelinesRepository.findOne(id);
+  async findOneWithURL(id: string) {
+    const timeline = await this.findOne(id);
 
-    if (!timeline) {
-      throw new NotFoundException('타임라인이 존재하지 않습니다.');
+    if (timeline.image) {
+      timeline.image = await this.storageService.getImageUrl(timeline.image);
     }
 
     return timeline;
   }
 
-  async update(id: string, updateTimelineDto: UpdateTimelineDto) {
-    await this.findOne(id);
+  async update(
+    id: string,
+    userId: string,
+    image: Express.Multer.File,
+    updateTimelineDto: UpdateTimelineDto
+  ) {
+    const timeline = await this.findOne(id);
+
+    if (timeline.image) {
+      await this.storageService.delete(timeline.image);
+    }
+
     const updatedTimeline = await this.initialize(updateTimelineDto);
     updatedTimeline.id = id;
+
+    if (image) {
+      const imagePath = `${userId}/${id}`;
+      const { path } = await this.storageService.upload(imagePath, image);
+      updatedTimeline.image = path;
+    }
 
     return this.timelinesRepository.update(id, updatedTimeline);
   }
 
   async remove(id: string) {
     const timeline = await this.findOne(id);
+
+    if (timeline.image) {
+      await this.storageService.delete(timeline.image);
+    }
 
     return this.timelinesRepository.remove(timeline);
   }
@@ -72,7 +113,16 @@ export class TimelinesService {
   ): Promise<Timeline> {
     const timeline = new Timeline();
     Object.assign(timeline, timelineDto);
-    // timeline.image = timelineDto.image;
+    return timeline;
+  }
+
+  private async findOne(id: string) {
+    const timeline = await this.timelinesRepository.findOne(id);
+
+    if (!timeline) {
+      throw new NotFoundException('타임라인이 존재하지 않습니다.');
+    }
+
     return timeline;
   }
 

@@ -9,6 +9,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 
 export class CreateTimelineDto {
   @ApiProperty({ example: '서울역에서 출발~', maxLength: 14, minLength: 1 })
@@ -18,6 +19,7 @@ export class CreateTimelineDto {
   title: string;
 
   @ApiProperty({ example: 1, description: 'Day1에서의 1' })
+  @Transform(({ value }) => parseInt(value))
   @IsNumber()
   day: number;
 
@@ -32,10 +34,13 @@ export class CreateTimelineDto {
   @MaxLength(500)
   description: string;
 
-  @ApiProperty({ required: false, description: '업로드하는 사진' })
+  @ApiProperty({
+    required: false,
+    type: 'file',
+    description: '업로드하는 사진',
+  })
   @IsOptional()
-  @IsString()
-  image: string;
+  image: Express.Multer.File;
 
   @ApiProperty({
     required: false,
@@ -44,6 +49,7 @@ export class CreateTimelineDto {
     description: '장소의 X 좌표',
   })
   @IsOptional()
+  @Transform(({ value }) => parseFloat(value))
   @IsNumber()
   coordX: number;
 
@@ -54,6 +60,7 @@ export class CreateTimelineDto {
     description: '장소의 Y 좌표',
   })
   @IsOptional()
+  @Transform(({ value }) => parseFloat(value))
   @IsNumber()
   coordY: number;
 
