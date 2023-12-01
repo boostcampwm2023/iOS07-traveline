@@ -74,10 +74,26 @@ export class TimelinesService {
     return timeline;
   }
 
-  async update(id: string, updateTimelineDto: UpdateTimelineDto) {
-    await this.findOne(id);
+  async update(
+    id: string,
+    userId: string,
+    image: Express.Multer.File,
+    updateTimelineDto: UpdateTimelineDto
+  ) {
+    const timeline = await this.findOne(id);
+
+    if (timeline.image) {
+      await this.storageService.delete(timeline.image);
+    }
+
     const updatedTimeline = await this.initialize(updateTimelineDto);
     updatedTimeline.id = id;
+
+    if (image) {
+      const imagePath = `${userId}/${id}`;
+      const { path } = await this.storageService.upload(imagePath, image);
+      updatedTimeline.image = path;
+    }
 
     return this.timelinesRepository.update(id, updatedTimeline);
   }
