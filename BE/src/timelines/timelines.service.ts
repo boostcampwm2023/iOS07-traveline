@@ -50,9 +50,18 @@ export class TimelinesService {
   async findAll(postingId: string, day: number) {
     const timelines = await this.timelinesRepository.findAll(postingId, day);
 
-    return timelines.map((timeline) => {
-      return { ...timeline, description: timeline.description + '...' };
-    });
+    return Promise.all(
+      timelines.map(async (timeline) => {
+        const imageUrl = timeline.image
+          ? await this.storageService.getImageUrl(timeline.image)
+          : null;
+        return {
+          ...timeline,
+          description: timeline.description + '...',
+          image: imageUrl,
+        };
+      })
+    );
   }
 
   async findOne(id: string) {
@@ -60,6 +69,10 @@ export class TimelinesService {
 
     if (!timeline) {
       throw new NotFoundException('타임라인이 존재하지 않습니다.');
+    }
+
+    if (timeline.image) {
+      timeline.image = await this.storageService.getImageUrl(timeline.image);
     }
 
     return timeline;
@@ -84,7 +97,6 @@ export class TimelinesService {
   ): Promise<Timeline> {
     const timeline = new Timeline();
     Object.assign(timeline, timelineDto);
-    // timeline.image = timelineDto.image;
     return timeline;
   }
 
