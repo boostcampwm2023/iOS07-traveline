@@ -17,12 +17,12 @@ struct PostingDetailResponseDTO: Decodable {
     let endDate: String
     let days: [String]
     let period: String
-    let headcount: String
+    let headcount: String?
     let budget: String?
     let location: String
     let season: String
     let vehicle: String?
-    let theme: [String]
+    let theme: [String]?
     let withWho: String?
     let likeds: [LikedsDTO]
     let writer: WriterDTO
