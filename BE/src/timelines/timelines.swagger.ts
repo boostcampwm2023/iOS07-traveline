@@ -34,7 +34,8 @@ export const create_OK = {
   },
   coordX: '126.970606917394',
   coordY: '37.5546788388674',
-  image: null,
+  image:
+    '123456789012345678901234567890123456/4d2084e5-0b1f-449a-9908-2918bd384f661a1a8809-2ee7-4a39-ab02-e7b50f4ded4e.jpg',
   id: '01d97f2b-515c-4a44-91b8-dfa48d806b00',
 };
 
