@@ -71,6 +71,10 @@ export class PostingsService {
     ];
   }
 
+  async findAllByWriter(userId: string) {
+    return this.postingsRepository.findAllByWriter(userId);
+  }
+
   async findOne(id: string) {
     const posting = await this.postingsRepository.findOne(id);
 

@@ -111,6 +111,15 @@ export class PostingsRepository {
     });
   }
 
+  async findAllByWriter(userId: string) {
+    return this.postingsRepository
+      .createQueryBuilder('p')
+      .leftJoinAndSelect('p.writer', 'w')
+      .where('p.writer = :userId', { userId })
+      .orderBy('post.createdAt', 'DESC')
+      .getMany();
+  }
+
   async update(id: string, posting: Posting) {
     return this.postingsRepository.update(id, posting);
   }
