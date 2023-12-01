@@ -43,8 +43,10 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
         switch action {
         case .titleDidChange(let title):
             return checkFilledTitle(title)
+            
         case .contentDidChange(let content):
             return checkFilledContent(content)
+            
         case .tapCompleteButton(let info):
             return createTimeline(with: info)
         }
@@ -56,8 +58,10 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
         switch effect {
         case .checkFilledTitle:
             newState.isCompletable = completeButtonState()
+            
         case .checkFilledContent:
             newState.isCompletable = completeButtonState()
+            
         case .createTimeline:
             break
         }
