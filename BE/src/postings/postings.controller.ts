@@ -33,6 +33,7 @@ import { Report } from './entities/report.entity';
 import { AuthGuard } from '../auth/auth.guard';
 import {
   create_OK,
+  findMyPosting_OK,
   findOne_OK,
   like_OK,
   remove_OK,
@@ -102,7 +103,7 @@ export class PostingsController {
     return this.postingsService.findAll(searchPostingDto);
   }
 
-  @Get('/titles')
+  @Get('titles')
   @ApiOperation({
     summary: '게시글 제목 목록 반환',
     description:
@@ -118,6 +119,17 @@ export class PostingsController {
     @Query('keyword', new DefaultValuePipe('')) keyword: string
   ): Promise<string[]> {
     return this.postingsService.findAllBytitle(keyword);
+  }
+
+  @Get('mine')
+  @ApiOperation({
+    summary: '내가 작성한 목록 반환',
+    description: '현재 로그인한 사용자가 작성한 모든 게시글을 반환합니다.',
+  })
+  @ApiOkResponse({ schema: { example: findMyPosting_OK } })
+  async findMyPosting(@Req() request) {
+    const userId = request['user'].id;
+    return this.postingsService.findAllByWriter(userId);
   }
 
   @Get(':id')
