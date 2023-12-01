@@ -247,7 +247,6 @@ private extension TimelineWritingVC {
     }
     
     private func bind() {
-        
         titleTextField
             .textPublisher
             .withUnretained(self)

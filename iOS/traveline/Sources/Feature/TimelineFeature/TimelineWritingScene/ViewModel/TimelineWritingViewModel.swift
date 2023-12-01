@@ -79,13 +79,12 @@ private extension TimelineWritingViewModel {
     }
     
     func checkFilledTitle(_ title: String) -> SideEffectPublisher {
-        isFilledTitle = title != ""
-        print("title\(title)")
+        isFilledTitle = !title.isEmpty
         return .just(SideEffect.checkFilledTitle)
     }
     
     func checkFilledContent(_ content: String) -> SideEffectPublisher {
-        isFilledContent = content != ""
+        isFilledContent = !content.isEmpty
         print("content\(content)")
         return .just(SideEffect.checkFilledContent)
     }
