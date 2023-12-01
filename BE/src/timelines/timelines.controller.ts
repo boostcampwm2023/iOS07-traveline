@@ -68,7 +68,7 @@ export class TimelinesController {
   constructor(private readonly timelinesService: TimelinesService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('image'))
   @ApiOperation({
     summary: '타임라인 생성',
     description:
@@ -90,12 +90,12 @@ export class TimelinesController {
   })
   async create(
     @Req() request,
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() image: Express.Multer.File,
     @Body()
     createTimelineDto: CreateTimelineDto
   ): Promise<Timeline> {
     const userId = request['user'].id;
-    return this.timelinesService.create(userId, file, createTimelineDto);
+    return this.timelinesService.create(userId, image, createTimelineDto);
   }
 
   @Get()

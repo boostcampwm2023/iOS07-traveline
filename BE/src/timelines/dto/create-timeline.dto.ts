@@ -34,10 +34,13 @@ export class CreateTimelineDto {
   @MaxLength(500)
   description: string;
 
-  @ApiProperty({ required: false, description: '업로드하는 사진' })
+  @ApiProperty({
+    required: false,
+    type: 'file',
+    description: '업로드하는 사진',
+  })
   @IsOptional()
-  @IsString()
-  image: string;
+  image: Express.Multer.File;
 
   @ApiProperty({
     required: false,
