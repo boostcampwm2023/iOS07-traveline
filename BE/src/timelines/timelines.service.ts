@@ -87,6 +87,7 @@ export class TimelinesService {
     updateTimelineDto: UpdateTimelineDto
   ) {
     const timeline = await this.findOne(id);
+    const isThumbnail = timeline.image === timeline.posting.thumbnail;
 
     if (timeline.image) {
       await this.storageService.delete(timeline.image);
@@ -101,7 +102,16 @@ export class TimelinesService {
       updatedTimeline.image = path;
     }
 
-    return this.timelinesRepository.update(id, updatedTimeline);
+    const updatedResult = await this.timelinesRepository.update(
+      id,
+      updatedTimeline
+    );
+
+    if (isThumbnail) {
+      await this.findOneAndUpdateThumbnail(timeline.posting.id);
+    }
+
+    return updatedResult;
   }
 
   async remove(id: string) {
@@ -109,13 +119,7 @@ export class TimelinesService {
     await this.timelinesRepository.remove(timeline);
 
     if (timeline.image === timeline.posting.thumbnail) {
-      const result = await this.timelinesRepository.findOneWithNonEmptyImage(
-        timeline.posting.id
-      );
-      await this.postingsRepository.updateThumbnail(
-        timeline.posting.id,
-        result ? result.image : ''
-      );
+      await this.findOneAndUpdateThumbnail(timeline.posting.id);
     }
 
     if (timeline.image) {
@@ -152,5 +156,14 @@ export class TimelinesService {
     });
 
     return documents;
+  }
+
+  private async findOneAndUpdateThumbnail(postingId: string) {
+    const result =
+      await this.timelinesRepository.findOneWithNonEmptyImage(postingId);
+    await this.postingsRepository.updateThumbnail(
+      postingId,
+      result ? result.image : ''
+    );
   }
 }
