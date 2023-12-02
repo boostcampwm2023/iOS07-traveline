@@ -26,11 +26,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 @UseGuards(AuthGuard)
 @Controller('users')
 @ApiTags('Users API')
+@ApiBearerAuth('accessToken')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @ApiBearerAuth()
   @ApiOperation({
     summary: 'id에 해당하는 User 정보 반환',
     description:
@@ -47,7 +47,6 @@ export class UsersController {
   }
 
   @Put()
-  @ApiBearerAuth()
   @ApiOperation({
     summary: 'id에 해당하는 User 정보 수정',
     description:
@@ -70,17 +69,16 @@ export class UsersController {
   update(
     @Req() request,
     @Body() updateUserDto: UpdateUserDto,
-    @UploadedFile() file: Express.Multer.File
+    @UploadedFile() image: Express.Multer.File
   ) {
     return this.usersService.updateUserInfo(
       request['user'].id,
       updateUserDto,
-      file
+      image
     );
   }
 
   @Get('duplicate')
-  @ApiBearerAuth()
   @ApiOperation({
     summary: 'name 중복 검사',
     description: 'name과 동일한 이름이 DB에 존재하는지 확인합니다.',
