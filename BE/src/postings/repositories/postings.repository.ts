@@ -127,4 +127,8 @@ export class PostingsRepository {
   async remove(posting: Posting) {
     return this.postingsRepository.remove(posting);
   }
+
+  async updateThumbnail(id: string, thumbnail: string) {
+    return this.postingsRepository.update(id, { thumbnail });
+  }
 }

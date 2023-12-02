@@ -7,9 +7,9 @@ export const create_OK = {
   place: '서울역',
   time: '07:30',
   posting: {
-    id: '4e8076d2-48e6-4397-8652-3e163d1c09b3',
-    title: 'bread lover❤️',
-    createdAt: '2023-11-30T02:39:18.314Z',
+    id: '9a0396ba-4892-436a-a97c-58be59b59327',
+    title: '대전 여행😎 ',
+    createdAt: '2023-12-02T08:36:04.676Z',
     thumbnail: null,
     startDate: '2023-08-16',
     endDate: '2023-08-18',
@@ -51,6 +51,24 @@ export const findOne_OK = {
   date: '2023-08-16',
   place: '서울역',
   time: '07:30',
+  posting: {
+    id: '9a0396ba-4892-436a-a97c-58be59b59327',
+    title: '대전 여행😎 ',
+    createdAt: '2023-12-02T08:36:04.676Z',
+    thumbnail:
+      '123456789012345678901234567890123456/9a0396ba-4892-436a-a97c-58be59b59327e735eca5-21e8-4c0b-bbce-abd54f0643dc.jpg',
+    startDate: '2023-08-16',
+    endDate: '2023-08-18',
+    days: 3,
+    period: '2박 3일',
+    headcount: '5인 이상',
+    budget: '10 - 50만 원',
+    location: '대전',
+    season: '여름',
+    vehicle: null,
+    theme: ['힐링', '맛집'],
+    withWho: ['가족'],
+  },
 };
 
 export const update_OK = {
@@ -71,6 +89,24 @@ export const remove_OK = {
   date: '2023-08-16',
   place: '서울역',
   time: '07:30',
+  posting: {
+    id: '9a0396ba-4892-436a-a97c-58be59b59327',
+    title: '대전 여행😎 ',
+    createdAt: '2023-12-02T08:36:04.676Z',
+    thumbnail:
+      '123456789012345678901234567890123456/9a0396ba-4892-436a-a97c-58be59b59327e735eca5-21e8-4c0b-bbce-abd54f0643dc.jpg',
+    startDate: '2023-08-16',
+    endDate: '2023-08-18',
+    days: 3,
+    period: '2박 3일',
+    headcount: '5인 이상',
+    budget: '10 - 50만 원',
+    location: '대전',
+    season: '여름',
+    vehicle: null,
+    theme: ['힐링', '맛집'],
+    withWho: ['가족'],
+  },
 };
 
 export const findAll_OK = [

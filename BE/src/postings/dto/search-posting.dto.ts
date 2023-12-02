@@ -25,7 +25,6 @@ export class SearchPostingDto {
   @ApiProperty({
     required: false,
     description: '검색어가 제목에 포함될 경우 검색됩니다.',
-    example: 'bread',
   })
   @IsOptional()
   @IsString()
@@ -43,18 +42,20 @@ export class SearchPostingDto {
 
   @ApiProperty({
     required: false,
-    default: 0,
+    default: 1,
     description: '몇 번째 페이지부터 게시글을 가져올지 나타냅니다.',
   })
+  @Transform(({ value }) => parseInt(value))
   @IsOptional()
   @IsNumber()
-  offset: number = 0;
+  offset: number = 1;
 
   @ApiProperty({
     required: false,
     default: 20,
     description: 'offset에서부터 몇 개의 게시글을 반환하는지 나타냅니다.',
   })
+  @Transform(({ value }) => parseInt(value))
   @IsOptional()
   @IsNumber()
   limit: number = 20;

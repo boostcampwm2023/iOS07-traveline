@@ -7,7 +7,7 @@ import {
   IsIn,
   ArrayMaxSize,
   IsArray,
-  IsDateString,
+  IsISO8601,
 } from 'class-validator';
 import {
   Budget,
@@ -32,14 +32,14 @@ export class CreatePostingDto {
   title: string;
 
   @ApiProperty({ example: '2023-12-13', description: 'YYYY-MM-DD 형식' })
-  @IsDateString()
+  @IsISO8601({ strict: true })
   startDate: string;
 
   @ApiProperty({
     example: '2023-12-15',
     description: 'YYYY-MM-DD 형식, startDate보다 이른 날짜일 수 없습니다.',
   })
-  @IsDateString()
+  @IsISO8601({ strict: true })
   endDate: string;
 
   @ApiProperty({ required: false, enum: Headcount })

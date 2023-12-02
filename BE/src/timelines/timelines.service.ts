@@ -11,11 +11,13 @@ import { Timeline } from './entities/timeline.entity';
 import { StorageService } from '../storage/storage.service';
 import { PostingsService } from '../postings/postings.service';
 import { KAKAO_KEYWORD_SEARCH } from './timelines.constants';
+import { PostingsRepository } from '../postings/repositories/postings.repository';
 
 @Injectable()
 export class TimelinesService {
   constructor(
     private readonly timelinesRepository: TimelinesRepository,
+    private readonly postingsRepository: PostingsRepository,
     private readonly postingsService: PostingsService,
     private readonly storageService: StorageService
   ) {}
@@ -42,6 +44,10 @@ export class TimelinesService {
       const filePath = `${userId}/${posting.id}`;
       const { path } = await this.storageService.upload(filePath, file);
       timeline.image = path;
+
+      if (!posting.thumbnail) {
+        await this.postingsRepository.updateThumbnail(posting.id, path);
+      }
     }
 
     return this.timelinesRepository.save(timeline);
@@ -81,6 +87,7 @@ export class TimelinesService {
     updateTimelineDto: UpdateTimelineDto
   ) {
     const timeline = await this.findOne(id);
+    const isThumbnail = timeline.image === timeline.posting.thumbnail;
 
     if (timeline.image) {
       await this.storageService.delete(timeline.image);
@@ -95,17 +102,31 @@ export class TimelinesService {
       updatedTimeline.image = path;
     }
 
-    return this.timelinesRepository.update(id, updatedTimeline);
+    const updatedResult = await this.timelinesRepository.update(
+      id,
+      updatedTimeline
+    );
+
+    if (isThumbnail) {
+      await this.findOneAndUpdateThumbnail(timeline.posting.id);
+    }
+
+    return updatedResult;
   }
 
   async remove(id: string) {
     const timeline = await this.findOne(id);
+    await this.timelinesRepository.remove(timeline);
+
+    if (timeline.image === timeline.posting.thumbnail) {
+      await this.findOneAndUpdateThumbnail(timeline.posting.id);
+    }
 
     if (timeline.image) {
       await this.storageService.delete(timeline.image);
     }
 
-    return this.timelinesRepository.remove(timeline);
+    return timeline;
   }
 
   private async initialize(
@@ -135,5 +156,14 @@ export class TimelinesService {
     });
 
     return documents;
+  }
+
+  private async findOneAndUpdateThumbnail(postingId: string) {
+    const result =
+      await this.timelinesRepository.findOneWithNonEmptyImage(postingId);
+    await this.postingsRepository.updateThumbnail(
+      postingId,
+      result ? result.image : ''
+    );
   }
 }

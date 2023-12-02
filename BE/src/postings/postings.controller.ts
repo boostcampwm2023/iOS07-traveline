@@ -20,6 +20,7 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiConflictResponse,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -73,6 +74,7 @@ export class PostingsController {
     summary: '게시글 생성',
     description: '사용자가 입력한 정보를 토대로 새로운 게시글을 생성합니다.',
   })
+  @ApiConsumes('application/x-www-form-urlencoded')
   @ApiCreatedResponse({ schema: { example: create_OK } })
   @ApiBadRequestResponse({
     schema: {
@@ -157,6 +159,7 @@ export class PostingsController {
     summary: '게시글 수정',
     description: 'id 값에 해당되는 게시글을 수정합니다.',
   })
+  @ApiConsumes('application/x-www-form-urlencoded')
   @ApiOkResponse({ schema: { example: update_OK } })
   async update(
     @Req() request,

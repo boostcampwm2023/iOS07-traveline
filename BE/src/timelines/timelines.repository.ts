@@ -15,7 +15,10 @@ export class TimelinesRepository {
   }
 
   async findOne(id: string) {
-    return this.timelineRepository.findOneBy({ id });
+    return this.timelineRepository.findOne({
+      where: { id },
+      relations: { posting: true },
+    });
   }
 
   async findAll(posting: string, day: number) {
@@ -35,6 +38,14 @@ export class TimelinesRepository {
       .andWhere('day = :day', { day })
       .orderBy('time', 'ASC')
       .getRawMany();
+  }
+
+  async findOneWithNonEmptyImage(posting: string) {
+    return this.timelineRepository
+      .createQueryBuilder()
+      .where('posting = :posting', { posting })
+      .andWhere('image IS NOT NULL AND image != ""')
+      .getOne();
   }
 
   async update(id: string, timeline: Timeline) {
