@@ -12,6 +12,7 @@ import { isArray } from 'class-validator';
 import { CreateAuthRequestDto } from './dto/create-auth-request.dto';
 import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
 import { firstValueFrom } from 'rxjs';
+import { JwksClient } from 'jwks-rsa';
 
 @Injectable()
 export class AuthService {
@@ -47,62 +48,38 @@ export class AuthService {
     }
   }
 
-  getPublicKey(n: string, e: string) {
-    // 비대칭 암호화 공개키 생성을 위한 함수
-    const bufferN = Buffer.from(n, 'hex');
-    const bufferE = Buffer.from(e, 'hex');
-
-    const publicKey = {
-      type: 'rsa',
-      format: 'der',
-      key: Buffer.concat([
-        Buffer.from([
-          0x30, 0x81, 0x9f, 0x30, 0x0d, 0x06, 0x09, 0x2a, 0x86, 0x48, 0x86,
-          0xf7, 0x0d, 0x01, 0x01, 0x01, 0x05, 0x00, 0x03, 0x81, 0x8d, 0x00,
-        ]),
-        bufferN,
-        Buffer.from([0x02, 0x03]),
-        bufferE,
-      ]),
-    };
-    return publicKey;
-  }
-
   async login(request, createAuthDto: CreateAuthRequestDto) {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     if (type === 'Bearer' && token) {
       throw new BadRequestException('JWT가 이미 존재합니다.');
     }
     const idToken = createAuthDto.idToken;
-    const decodedIdTokenHeader = jwt.decode(idToken, {
+    const kid = jwt.decode(idToken, {
       complete: true,
-    }).header;
+    }).header.kid;
 
-    const getResult = await firstValueFrom(
-      this.httpService.get('https://appleid.apple.com/auth/keys')
-    );
-    const publicKeyArr = getResult.data.keys;
-    console.log(publicKeyArr);
+    console.log('kid');
+    console.log(kid);
+    console.log();
 
-    let publicKey;
-    for (let i = 0; i < publicKeyArr.length; i++) {
-      if (
-        publicKeyArr[i].kid == decodedIdTokenHeader.kid &&
-        publicKeyArr[i].alg == decodedIdTokenHeader.alg
-      ) {
-        publicKey = this.getPublicKey(publicKeyArr[i].n, publicKeyArr[i].e);
-        break;
-      }
-    }
+    const client = new JwksClient({
+      jwksUri: 'https://appleid.apple.com/auth/keys',
+    });
 
-    if (!publicKey) {
-      throw new InternalServerErrorException();
-    }
+    const key = await client.getSigningKey(kid);
+    const verifyingKey = key.getPublicKey();
 
-    const decodedResult = jwt.verify(idToken, publicKey, {
+    console.log('verifying key');
+    console.log(verifyingKey);
+    console.log();
+
+    const decodedResult = jwt.verify(idToken, verifyingKey, {
       algorithms: ['RS256'],
     });
+
+    console.log('decoded result');
     console.log(decodedResult);
+    console.log();
 
     let decodedPayload;
     if (typeof decodedResult === 'string') {
@@ -110,6 +87,10 @@ export class AuthService {
     } else {
       decodedPayload = decodedResult;
     }
+
+    console.log('decoded payload');
+    console.log(decodedPayload);
+    console.log();
 
     if (
       decodedPayload.iss !== 'https://appleid.apple.com' ||
@@ -133,6 +114,9 @@ export class AuthService {
         throw new InternalServerErrorException();
       }
     }
+    console.log('user');
+    console.log(user);
+    console.log();
 
     const payload = { id: user.id };
     return {
@@ -146,7 +130,8 @@ export class AuthService {
 
   async loginForDev(createAuthForDevDto: CreateAuthRequestForDevDto) {
     const id = createAuthForDevDto.id;
-    const user = this.usersService.findUserById(id);
+    const user = await this.usersService.findUserById(id);
+    console.log(user);
 
     if (user) {
       const payload = { id };
@@ -157,6 +142,9 @@ export class AuthService {
           secret: process.env.JWT_SECRET_REFRESH,
         }),
       };
+    } else {
+      const payload = { id };
+      console.log(await this.jwtService.signAsync(payload));
     }
 
     throw new BadRequestException(
@@ -177,10 +165,15 @@ export class AuthService {
       aud: 'https://appleid.apple.com',
       sub: clientId,
     };
-    return jwt.sign(payload, process.env.SECRET_FOR_APPLE, {
+
+    //!!!추후 삭제 및 수정 필요!!!!
+    const key = `p8 비밀키값`;
+
+    return jwt.sign(payload, key, {
       algorithm: 'ES256',
       header,
     });
+    //!!!추후 삭제 및 수정 필요!!!!
   }
 
   async withdrawal(request, deleteAuthDto) {
@@ -189,34 +182,32 @@ export class AuthService {
     const idToken = deleteAuthDto.idToken;
     const authorizationCode = deleteAuthDto.authorizationCode;
 
-    const decodedIdTokenHeader = jwt.decode(idToken, {
+    const kid = jwt.decode(idToken, {
       complete: true,
-    }).header;
+    }).header.kid;
 
-    const getResult = await firstValueFrom(
-      this.httpService.get('https://appleid.apple.com/auth/keys')
-    );
-    const publicKeyArr = getResult.data.keys;
-    console.log(publicKeyArr);
+    console.log('kid');
+    console.log(kid);
+    console.log();
 
-    let publicKey;
-    for (let i = 0; i < publicKeyArr.length; i++) {
-      if (
-        publicKeyArr[i].kid == decodedIdTokenHeader.kid &&
-        publicKeyArr[i].alg == decodedIdTokenHeader.alg
-      ) {
-        publicKey = this.getPublicKey(publicKeyArr[i].n, publicKeyArr[i].e);
-        break;
-      }
-    }
+    const client = new JwksClient({
+      jwksUri: 'https://appleid.apple.com/auth/keys',
+    });
 
-    if (!publicKey) {
-      throw new InternalServerErrorException();
-    }
+    const key = await client.getSigningKey(kid);
+    const verifyingKey = key.getPublicKey();
 
-    const decodedResult = jwt.verify(idToken, publicKey, {
+    console.log('verifying key');
+    console.log(verifyingKey);
+    console.log();
+
+    const decodedResult = jwt.verify(idToken, verifyingKey, {
       algorithms: ['RS256'],
     });
+
+    console.log('decoded result');
+    console.log(decodedResult);
+    console.log();
 
     let decodedPayload;
     if (typeof decodedResult === 'string') {
@@ -224,6 +215,10 @@ export class AuthService {
     } else {
       decodedPayload = decodedResult;
     }
+
+    console.log('decoded payload');
+    console.log(decodedPayload);
+    console.log();
 
     if (
       decodedPayload.iss !== 'https://appleid.apple.com' ||
@@ -243,17 +238,22 @@ export class AuthService {
       client_secret: clientSecret,
     };
 
-    const postResult = await firstValueFrom(
+    const tokenRequestResult = await firstValueFrom(
       this.httpService.post('https://appleid.apple.com/auth/token', payload)
     );
 
-    const info = postResult.data;
+    const info = tokenRequestResult.data;
+    console.log('토큰 요청 결과');
+    console.log(info);
+    console.log();
+
     const token = info.refresh_token;
     const revoke = { client_id: clientId, client_secret: clientSecret, token };
 
-    const revokeResult = await firstValueFrom(
+    const revokeRequetResult = await firstValueFrom(
       this.httpService.post('https://appleid.apple.com/auth/revoke', revoke)
     );
-    console.log(revokeResult.data);
+    console.log('revoke 결과');
+    console.log(revokeRequetResult.data);
   }
 }
