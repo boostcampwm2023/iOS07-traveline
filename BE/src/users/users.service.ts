@@ -76,9 +76,6 @@ export class UsersService {
     const nameChange = 'name' in updateUserDto;
     const deleteAvatar = updateUserDto.isAvatarDeleted;
 
-    console.log(deleteAvatar);
-    console.log(typeof deleteAvatar);
-
     if (!nameChange && !newAvatarFile && !deleteAvatar) {
       throw new BadRequestException('변경 사항이 없습니다.');
     }
