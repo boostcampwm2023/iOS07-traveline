@@ -49,6 +49,7 @@ final class HomeSearchView: UIView {
     
     private var dataSource: DataSource!
     
+    let didDeleteKeyword: PassthroughSubject<String, Never> = .init()
     let didSelectKeyword: PassthroughSubject<String, Never> = .init()
     
     // MARK: - Initializer
@@ -73,6 +74,8 @@ final class HomeSearchView: UIView {
         ) { collectionView, indexPath, searchKeyword in
             let cell = collectionView.dequeue(cell: SearchCVC.self, for: indexPath)
             cell.setupData(item: searchKeyword)
+            cell.delegate = self
+            
             return cell
         }
         
@@ -147,6 +150,14 @@ private extension HomeSearchView {
             searchCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
             searchCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+    }
+}
+
+// MARK: - SearchCVCDelegate
+
+extension HomeSearchView: SearchCVCDelegate {
+    func deleteKeyword(_ keyword: String) {
+        didDeleteKeyword.send(keyword)
     }
 }
 
