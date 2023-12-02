@@ -154,23 +154,19 @@ export class PostingsService {
     postingDto: CreatePostingDto | UpdatePostingDto
   ): Promise<Posting> {
     const posting = new Posting();
-    posting.title = postingDto.title;
-    posting.startDate = new Date(postingDto.startDate);
-    posting.endDate = new Date(postingDto.endDate);
+    Object.assign(posting, postingDto);
     posting.days = this.calculateDays(posting.startDate, posting.endDate);
     posting.period = this.findPeriod(posting.days);
-    posting.headcount = postingDto.headcount;
-    posting.budget = postingDto.budget;
-    posting.location = postingDto.location;
     posting.season = this.findSeason(posting.startDate);
-    posting.vehicle = postingDto.vehicle;
-    posting.theme = postingDto.theme;
-    posting.withWho = postingDto.withWho;
     return posting;
   }
 
   private calculateDays(startDate: Date, endDate: Date): number {
-    return (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24) + 1;
+    return (
+      (new Date(endDate).getTime() - new Date(startDate).getTime()) /
+        (1000 * 3600 * 24) +
+      1
+    );
   }
 
   private findPeriod(days: number): Period {
@@ -188,7 +184,7 @@ export class PostingsService {
   }
 
   private findSeason(startDate: Date): Season {
-    const month = startDate.getMonth() + 1;
+    const month = new Date(startDate).getMonth() + 1;
     return month >= 3 && month <= 5
       ? Season.봄
       : month >= 6 && month <= 9
