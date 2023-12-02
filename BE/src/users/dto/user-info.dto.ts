@@ -1,8 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsString, MaxLength, MinLength } from 'class-validator';
 
 export class UserInfoDto {
-  @IsOptional()
   @IsString()
   @MinLength(1)
   @MaxLength(14)
@@ -10,7 +9,6 @@ export class UserInfoDto {
   name: string;
 
   @IsString()
-  @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ nullable: true })
   avatar: string;
 }
