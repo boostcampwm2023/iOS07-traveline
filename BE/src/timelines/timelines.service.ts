@@ -11,11 +11,13 @@ import { Timeline } from './entities/timeline.entity';
 import { StorageService } from '../storage/storage.service';
 import { PostingsService } from '../postings/postings.service';
 import { KAKAO_KEYWORD_SEARCH } from './timelines.constants';
+import { PostingsRepository } from '../postings/repositories/postings.repository';
 
 @Injectable()
 export class TimelinesService {
   constructor(
     private readonly timelinesRepository: TimelinesRepository,
+    private readonly postingsRepository: PostingsRepository,
     private readonly postingsService: PostingsService,
     private readonly storageService: StorageService
   ) {}
@@ -42,6 +44,10 @@ export class TimelinesService {
       const filePath = `${userId}/${posting.id}`;
       const { path } = await this.storageService.upload(filePath, file);
       timeline.image = path;
+
+      if (!posting.thumbnail) {
+        await this.postingsRepository.updateThumbnail(posting.id, path);
+      }
     }
 
     return this.timelinesRepository.save(timeline);
