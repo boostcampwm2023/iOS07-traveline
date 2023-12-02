@@ -39,6 +39,9 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             
         case .createTravel:
             return .just(HomeSideEffect.showTravelWriting)
+            
+        case let .deleteKeyword(keyword):
+            return deleteSearchKeyword(keyword)
         }
     }
     
@@ -97,9 +100,9 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
     }
 }
 
-// MARK: - Fetch
+// MARK: - Functions
 
-extension HomeViewModel {
+private extension HomeViewModel {
     func fetchHomeList() -> SideEffectPublisher {
         return homeUseCase.fetchHomeList()
             .map { travelList in
@@ -122,4 +125,10 @@ extension HomeViewModel {
         homeUseCase.saveRecentKeyword(keyword)
     }
     
+    func deleteSearchKeyword(_ keyword: String) -> SideEffectPublisher {
+        return homeUseCase.deleteRecentKeyword(keyword)
+            .map { recentKeywordList in
+                return HomeSideEffect.showRecent(recentKeywordList)
+            }.eraseToAnyPublisher()
+    }
 }
