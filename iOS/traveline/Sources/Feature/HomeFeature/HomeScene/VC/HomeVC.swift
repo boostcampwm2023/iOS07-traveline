@@ -163,6 +163,16 @@ private extension HomeVC {
             }
             .store(in: &cancellables)
         
+        homeSearchView.didSelectKeyword
+            .withUnretained(self)
+            .sink { owner, keyword in
+                owner.viewModel.sendAction(.searchDone(keyword))
+                owner.homeSearchView.isHidden = true
+                owner.searchController.searchBar.text = keyword
+                owner.searchController.searchBar.resignFirstResponder()
+            }
+            .store(in: &cancellables)
+        
         viewModel.$state
             .map(\.travelList)
             .removeDuplicates()
