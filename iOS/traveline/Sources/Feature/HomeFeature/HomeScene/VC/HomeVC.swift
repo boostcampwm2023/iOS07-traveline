@@ -184,7 +184,6 @@ private extension HomeVC {
         viewModel.$state
             .filter { $0.isSearching }
             .map(\.homeViewType)
-            .removeDuplicates()
             .withUnretained(self)
             .sink { owner, type in
                 let type: SearchViewType = (type == .recent) ? .recent : .related
