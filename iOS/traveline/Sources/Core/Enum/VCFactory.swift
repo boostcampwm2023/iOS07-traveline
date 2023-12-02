@@ -27,4 +27,10 @@ enum VCFactory {
         return HomeVC(viewModel: viewModel)
     }
     
+    static func makeMyPostListVC() -> MyPostListVC {
+        let repository = PostingRepositoryMock()
+        let useCase = MyPostListUseCaseImpl(repository: repository)
+        let viewModel = MyPostListViewModel(myPostListUseCase: useCase)
+        return MyPostListVC(viewModel: viewModel)
+    }
 }
