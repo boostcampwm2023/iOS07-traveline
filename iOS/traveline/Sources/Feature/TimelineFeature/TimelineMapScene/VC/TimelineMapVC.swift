@@ -60,10 +60,7 @@ final class TimelineMapVC: UIViewController {
     @objc private func showTimelineDetail() {
         if let selected = selectedAnnotation as? TLMarkerAnnotation {
             let id = selected.cardInfo.detailId
-            let repositoryMock = TimelineDetailRepositoryMock()
-            let useCase = TimelineDetailUseCaseImpl(repository: repositoryMock)
-            let viewModel = TimelineDetailViewModel(timelineDetailUseCase: useCase, timelineId: String(id))
-            let timelineDetailVC = TimelineDetailVC(viewModel: viewModel)
+            let timelineDetailVC = VCFactory.makeTimelineDetailVC(with: String(id))
             navigationController?.pushViewController(timelineDetailVC, animated: true)
         }
         
