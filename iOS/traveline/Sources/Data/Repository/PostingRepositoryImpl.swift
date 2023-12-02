@@ -43,4 +43,10 @@ final class PostingRepositoryImpl: PostingRepository {
         }
     }
     
+    func deleteRecentKeyword(_ keyword: String) {
+        guard let savedKeywordList = UserDefaultsList.recentSearchKeyword else { return }
+        let deletedKeywordList = savedKeywordList.filter({ $0 != keyword })
+        UserDefaultsList.recentSearchKeyword = deletedKeywordList
+    }
+    
 }
