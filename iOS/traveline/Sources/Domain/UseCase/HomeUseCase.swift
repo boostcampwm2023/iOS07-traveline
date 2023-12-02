@@ -13,6 +13,7 @@ protocol HomeUseCase {
     func fetchHomeList() -> AnyPublisher<TravelList, Error>
     func fetchRecentKeyword() -> AnyPublisher<SearchKeywordList, Never>
     func saveRecentKeyword(_ keyword: String)
+    func deleteRecentKeyword(_ keyword: String) -> AnyPublisher<SearchKeywordList, Never>
 }
 
 final class HomeUseCaseImpl: HomeUseCase {
@@ -47,6 +48,11 @@ final class HomeUseCaseImpl: HomeUseCase {
     
     func saveRecentKeyword(_ keyword: String) {
         repository.saveRecentKeyword(keyword)
+    }
+    
+    func deleteRecentKeyword(_ keyword: String) -> AnyPublisher<SearchKeywordList, Never> {
+        repository.deleteRecentKeyword(keyword)
+        return fetchRecentKeyword()
     }
     
 }
