@@ -11,6 +11,8 @@ import Foundation
 
 protocol HomeUseCase {
     func fetchHomeList() -> AnyPublisher<TravelList, Error>
+    func fetchRecentKeyword() -> AnyPublisher<SearchKeywordList, Never>
+    func saveRecentKeyword(_ keyword: String)
 }
 
 final class HomeUseCaseImpl: HomeUseCase {
@@ -33,6 +35,18 @@ final class HomeUseCaseImpl: HomeUseCase {
                 }
             }
         }.eraseToAnyPublisher()
+    }
+    
+    func fetchRecentKeyword() -> AnyPublisher<SearchKeywordList, Never> {
+        if let keywordList = repository.fetchRecentKeyword()?.reversed() {
+            let recentKeywordList = keywordList.map { SearchKeyword(type: .recent, title: $0) }
+            return .just(recentKeywordList)
+        }
+        return .just([])
+    }
+    
+    func saveRecentKeyword(_ keyword: String) {
+        repository.saveRecentKeyword(keyword)
     }
     
 }
