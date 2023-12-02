@@ -10,7 +10,6 @@ import {
   Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UserInfoDto } from './dto/user-info.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -19,10 +18,10 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { CheckDuplicatedNameResponseDto } from './dto/check-duplicated-name-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { UserNameDto } from './dto/user-name.dto';
+import { Users, getUsersDuplicate } from './users.swagger';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @UseGuards(AuthGuard)
 @Controller('users')
@@ -39,7 +38,9 @@ export class UsersController {
   })
   @ApiOkResponse({
     description: 'OK',
-    type: UserInfoDto,
+    schema: {
+      example: Users,
+    },
   })
   async findOne(@Req() request) {
     return this.usersService.getUserInfoById(request['user'].id);
@@ -54,24 +55,29 @@ export class UsersController {
   })
   @ApiOkResponse({
     description: 'OK',
-    type: UserInfoDto,
+    schema: {
+      example: Users,
+    },
   })
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
-    type: UserNameDto,
     description:
       'json과 함께 새로운 프로필 사진을 전송해주세요. ' +
       '프로필사진 변경사항이 없을 경우 파일을 전송하지 않으시면 됩니다. ' +
-      '닉네임 변경사항이 없을 경우 기존 닉네임을 전송해주시면 됩니다.',
+      '닉네임 변경사항이 없을 경우 name 필드를 생략해주시면 됩니다.',
   })
   update(
     @Req() request,
-    @Body() userNameDto: UserNameDto,
+    @Body() updateUserDto: UpdateUserDto,
     @UploadedFile() file: Express.Multer.File
   ) {
-    const name = userNameDto.name;
-    return this.usersService.updateUserInfo(request['user'].id, name, file);
+    console.log(updateUserDto);
+    return this.usersService.updateUserInfo(
+      request['user'].id,
+      updateUserDto,
+      file
+    );
   }
 
   @Get('duplicate')
@@ -82,7 +88,7 @@ export class UsersController {
   })
   @ApiOkResponse({
     description: 'OK',
-    type: CheckDuplicatedNameResponseDto,
+    schema: { example: getUsersDuplicate },
   })
   checkDuplicatedName(@Query('name') name: string) {
     return this.usersService.checkDuplicatedName(name);
