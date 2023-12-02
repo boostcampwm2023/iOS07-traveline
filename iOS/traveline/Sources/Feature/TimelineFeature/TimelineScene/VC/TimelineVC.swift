@@ -264,7 +264,9 @@ private extension TimelineVC {
 
 extension TimelineVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let viewModel = TimelineDetailViewModel(timelineId: "1212")
+        let repositoryMock = TimelineDetailRepositoryMock()
+        let useCase = TimelineDetailUseCaseImpl(repository: repositoryMock)
+        let viewModel = TimelineDetailViewModel(timelineDetailUseCase: useCase, timelineId: "1212")
         let timelineDetailVC = TimelineDetailVC(viewModel: viewModel)
         
         navigationController?.pushViewController(timelineDetailVC, animated: true)
