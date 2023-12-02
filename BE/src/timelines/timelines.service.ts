@@ -106,12 +106,23 @@ export class TimelinesService {
 
   async remove(id: string) {
     const timeline = await this.findOne(id);
+    await this.timelinesRepository.remove(timeline);
+
+    if (timeline.image === timeline.posting.thumbnail) {
+      const result = await this.timelinesRepository.findOneWithNonEmptyImage(
+        timeline.posting.id
+      );
+      await this.postingsRepository.updateThumbnail(
+        timeline.posting.id,
+        result ? result.image : ''
+      );
+    }
 
     if (timeline.image) {
       await this.storageService.delete(timeline.image);
     }
 
-    return this.timelinesRepository.remove(timeline);
+    return timeline;
   }
 
   private async initialize(
