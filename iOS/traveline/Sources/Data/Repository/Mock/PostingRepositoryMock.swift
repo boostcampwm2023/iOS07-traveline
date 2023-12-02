@@ -17,4 +17,22 @@ final class PostingRepositoryMock: PostingRepository {
         return mockData
     }
     
+    func fetchRecentKeyword() -> [String]? {
+        return UserDefaultsList.recentSearchKeyword
+    }
+    
+    func saveRecentKeyword(_ keyword: String) {
+        if let savedKeywordList = UserDefaultsList.recentSearchKeyword {
+            let deDuplicationList = savedKeywordList.filter({ $0 != keyword })
+            if deDuplicationList.count < 15 {
+                UserDefaultsList.recentSearchKeyword = deDuplicationList + [keyword]
+            } else {
+                let removeOldestKeyword = deDuplicationList.dropFirst()
+                UserDefaultsList.recentSearchKeyword = removeOldestKeyword + [keyword]
+            }
+        } else {
+            UserDefaultsList.recentSearchKeyword = [keyword]
+        }
+    }
+    
 }
