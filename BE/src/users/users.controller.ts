@@ -34,7 +34,8 @@ export class UsersController {
   @ApiOperation({
     summary: 'id에 해당하는 User 정보 반환',
     description:
-      'id에 해당하는 User 정보를 반환합니다. avatar는 프로필 사진의 URL에 해당하는 값입니다.',
+      'id에 해당하는 User 정보를 반환합니다. avatar는 프로필 사진의 URL에 해당하는 값입니다.' +
+      'avatar 값이 null인 경우는 기본 프로필사진을 의미합니다.',
   })
   @ApiOkResponse({
     description: 'OK',
@@ -50,7 +51,8 @@ export class UsersController {
   @ApiOperation({
     summary: 'id에 해당하는 User 정보 수정',
     description:
-      'id에 해당하는 User 정보를 수정합니다. avatar는 새로운 프로필 사진의 URL에 해당하는 값입니다.',
+      'id에 해당하는 User 정보를 수정합니다. avatar는 새로운 프로필 사진의 URL에 해당하는 값입니다.' +
+      'avatar 값이 null인 경우는 기본 프로필사진을 의미합니다.',
   })
   @ApiOkResponse({
     description: 'OK',
@@ -63,8 +65,9 @@ export class UsersController {
   @ApiBody({
     description:
       'json과 함께 새로운 프로필 사진을 전송해주세요. ' +
-      '프로필사진 변경사항이 없을 경우 파일을 전송하지 않으시면 됩니다. ' +
-      '닉네임 변경사항이 없을 경우 name 필드를 생략해주시면 됩니다.',
+      '프로필사진을 기본 사진으로 변경할 경우 파일을 전송하지 않으시면 됩니다. ' +
+      '프로필 사진 변경이 없을 경우 기존 사진을 다시 보내주시면 됩니다. ' +
+      '닉네임 변경사항이 없을 경우 기존 name을 전송해주시면 됩니다.',
   })
   update(
     @Req() request,
