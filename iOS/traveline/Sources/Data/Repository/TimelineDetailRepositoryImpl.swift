@@ -26,5 +26,4 @@ final class TimelineDetailRepositoryImpl: TimelineDetailRepository {
         return timelineDetailResponseDTO.toDomain()
     }
     
-    
 }
