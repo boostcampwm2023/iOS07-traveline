@@ -93,7 +93,7 @@ final class TLTagListView: UIView {
     }
     
     @objc private func selectTag(_ sender: TLTag) {
-        if let tagType, !tagType.isMultiple {
+        if let tagType, !tagType.isMultiple, selectedTag != sender {
             selectedTag?.isSelected = false
             selectedTag = sender
         }
