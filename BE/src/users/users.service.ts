@@ -7,6 +7,7 @@ import { UserInfoDto } from './dto/user-info.dto';
 import { StorageService } from 'src/storage/storage.service';
 import { UserRepository } from './users.repository';
 import { CheckDuplicatedNameResponseDto } from './dto/check-duplicated-name-response.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -40,8 +41,14 @@ export class UsersService {
     return this.userRepository.save(createUserDto);
   }
 
-  deleteUser(id: number) {
-    return `This action removes a #${id} user`;
+  async deleteUser(id: string) {
+    const deleteResult = await this.userRepository.delete(id);
+    if (deleteResult.affected == 0) {
+      throw new BadRequestException('존재하지 않는 사용자 입니다.');
+    } else if (deleteResult.affected > 1) {
+      throw new InternalServerErrorException();
+    }
+    return true;
   }
 
   async findUserById(id: string) {
@@ -51,12 +58,8 @@ export class UsersService {
   async getUserInfoById(id: string): Promise<UserInfoDto> {
     const user = await this.userRepository.findById(id);
     const avatarPath = user.avatar;
-    try {
+    if (user.avatar !== null) {
       user.avatar = await this.storageService.getImageUrl(avatarPath);
-    } catch {
-      throw new InternalServerErrorException(
-        '사용자 프로필 사진을 찾을 수 없습니다.'
-      );
     }
     return { name: user.name, avatar: user.avatar };
   }
@@ -65,77 +68,66 @@ export class UsersService {
     return this.userRepository.findByResourceId(resourceId);
   }
 
-  async updateUserInfo(id, name: string, file: Express.Multer.File) {
-    const user = await this.userRepository.findById(id);
-    const result = new UserInfoDto();
+  async updateUserInfo(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    newAvatarFile: Express.Multer.File
+  ): Promise<UserInfoDto> {
+    const nameChange = 'name' in updateUserDto;
+    const deleteAvatar = updateUserDto.isAvatarDeleted;
 
-    //프로필사진, 닉네임 변화 모두 없음
-    if (!file && name === user.name) {
+    if (!nameChange && !newAvatarFile && !deleteAvatar) {
       throw new BadRequestException('변경 사항이 없습니다.');
     }
 
-    result.name = name;
-
-    //닉네임만 변경
-    if (!file) {
-      result.avatar = user.avatar;
+    if (deleteAvatar && newAvatarFile) {
+      throw new BadRequestException('요구사항이 충돌합니다.');
     }
 
-    //닉네임과 프로필 모두 변경
-    else {
-      if (user.avatar != 'default') {
-        try {
-          await this.storageService.delete(user.avatar);
-        } catch (error) {
-          throw new InternalServerErrorException(
-            '사용자의 기존 프로필 사진 삭제에 실패하였습니다.'
-          );
-        }
-        return true;
+    const originalUserInfo = await this.userRepository.findById(id);
+
+    //이름 변경이 있는 경우
+    if (nameChange) {
+      if (originalUserInfo.name === updateUserDto.name) {
+        throw new BadRequestException('기존 닉네임과 동일합니다.');
       }
+      const name = updateUserDto.name;
+      await this.userRepository.update(id, { name });
+    }
 
-      try {
-        const uploadResult = await this.storageService.upload(`${id}/`, file);
-        const path = uploadResult.path;
-        result.avatar = path;
-      } catch {
-        throw new InternalServerErrorException(
-          '새로운 프로필 사진 업로드에 실패하였습니다.'
-        );
+    //프로필을 기본이미지로 변경하고 싶어 하는 경우
+    if (deleteAvatar) {
+      //이미지 삭제, avatar는 null
+      if (originalUserInfo.avatar !== null) {
+        await this.storageService.delete(originalUserInfo.avatar);
       }
-    }
-    try {
-      await this.userRepository.update(id, result);
-    } catch {
-      throw new InternalServerErrorException(
-        '사용자 정보 갱신에 실패하였습니다.'
-      );
+      const avatar = null;
+      await this.userRepository.update(id, { avatar });
     }
 
-    try {
-      result.avatar = await this.storageService.getImageUrl(result.avatar);
-    } catch {
-      throw new InternalServerErrorException(
-        '사용자 프로필 사진을 찾을 수 없습니다.'
+    //새 프로필을 등록하고 싶어 하는 경우
+    if (newAvatarFile) {
+      if (originalUserInfo.avatar !== null) {
+        await this.storageService.delete(originalUserInfo.avatar);
+      }
+      const uploadResult = await this.storageService.upload(
+        `${id}/`,
+        newAvatarFile
       );
+      const avatar = uploadResult.path;
+      await this.userRepository.update(id, { avatar });
     }
 
-    return result;
+    return this.getUserInfoById(id);
   }
 
   async checkDuplicatedName(
     name: string
   ): Promise<CheckDuplicatedNameResponseDto> {
-    try {
-      const duplicatedUser = await this.userRepository.findByName(name);
-      if (!duplicatedUser) {
-        return { isDuplicated: false };
-      }
-      return { isDuplicated: true };
-    } catch {
-      throw new InternalServerErrorException(
-        '닉네임 중복 검사에 실패하였습니다.'
-      );
+    const duplicatedUser = await this.userRepository.findByName(name);
+    if (!duplicatedUser) {
+      return { isDuplicated: false };
     }
+    return { isDuplicated: true };
   }
 }
