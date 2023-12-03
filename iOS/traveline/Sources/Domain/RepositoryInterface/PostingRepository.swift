@@ -10,4 +10,5 @@ import Foundation
 
 protocol PostingRepository {
     func fetchPostingList() async throws -> TravelList
+    func fetchMyPostingList() async throws -> TravelList
 }

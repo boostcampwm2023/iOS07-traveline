@@ -6,8 +6,6 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
-import Foundation
-
 import Combine
 import Foundation
 
@@ -28,7 +26,7 @@ final class MyPostListUseCaseImpl: MyPostListUseCase {
             Task { [weak self] in
                 guard let self else { return }
                 do {
-                    let travelList = try await self.repository.fetchPostingList()
+                    let travelList = try await self.repository.fetchMyPostingList()
                     promise(.success(travelList))
                 } catch {
                     promise(.failure(error))

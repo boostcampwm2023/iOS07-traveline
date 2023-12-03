@@ -10,12 +10,16 @@ import Foundation
 
 enum PostingEndPoint {
     case postingList
+    case myPostingList
     case specificPosting
 }
 
 extension PostingEndPoint: EndPoint {
     var path: String {
-        return "/postings"
+        switch self {
+        case .myPostingList: return "/postings/mine"
+        default : return "/postings"
+        }
     }
     
     var httpMethod: HTTPMethod {
