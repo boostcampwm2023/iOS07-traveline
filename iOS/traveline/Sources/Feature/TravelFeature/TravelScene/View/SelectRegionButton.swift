@@ -50,7 +50,7 @@ private extension SelectRegionButton {
         
         config.attributedTitle = attrTitle
         config.image = TLImage.Travel.location
-        config.imagePadding = 4.0
+        config.imagePadding = 12.0
         config.contentInsets = .zero
         
         configuration = config

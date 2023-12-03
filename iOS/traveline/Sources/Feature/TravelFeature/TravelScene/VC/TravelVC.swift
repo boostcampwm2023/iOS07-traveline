@@ -221,6 +221,14 @@ private extension TravelVC {
     }
     
     func bind() {
+        titleTextField
+            .textPublisher
+            .withUnretained(self)
+            .sink { owner, text in
+                owner.viewModel.sendAction(.titleEdited(text))
+            }
+            .store(in: &cancellables)
+        
         viewModel.$state
             .map(\.canPost)
             .removeDuplicates()
@@ -262,10 +270,13 @@ private extension TravelVC {
             .store(in: &cancellables)
         
         viewModel.$state
-            .compactMap(\.errorMsg)
+            .compactMap(\.titleValidation)
+            .filter { $0 == .invalidate }
+            .removeDuplicates()
             .withUnretained(self)
-            .sink { _, msg in
-               print("errorMsg: \(msg)")
+            .sink { _, _ in
+                // TODO: - 토스트로 띄우기
+                print("제목은 1 - 14자 이내만 가능합니다.")
             }
             .store(in: &cancellables)
     }
@@ -282,11 +293,6 @@ extension TravelVC: UIScrollViewDelegate {
 // MARK: - UITextField Delegate
 
 extension TravelVC: UITextFieldDelegate {
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        guard let text = textField.text else { return }
-        viewModel.sendAction(.titleEdited(text))
-    }
-    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         dismissKeyboard()
         return true

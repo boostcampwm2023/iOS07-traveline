@@ -23,7 +23,7 @@ enum TravelSideEffect: BaseSideEffect {
     case saveStartDate(Date)
     case saveEndDate(Date)
     case postTravel(TravelID?)
-    case invalidTitle
+    case validateTitle(TitleValidation)
     case error(String)
 }
 
@@ -32,9 +32,13 @@ struct TravelState: BaseState {
     var region: String = Literal.empty
     var startDate: Date = .now
     var endDate: Date = .now
-    var isValidTitle: Bool = false
+    var titleValidation: TitleValidation?
     var travelID: TravelID?
     var errorMsg: String?
+    
+    var isValidTitle: Bool {
+        titleValidation == .valid
+    }
     
     var isValidDate: Bool {
         startDate <= endDate
@@ -82,7 +86,6 @@ final class TravelViewModel: BaseViewModel<TravelAction, TravelSideEffect, Trave
         switch effect {
         case let .saveTitle(title):
             newState.titleText = title
-            newState.isValidTitle = true
             
         case let .saveRegion(region):
             newState.region = region
@@ -100,8 +103,8 @@ final class TravelViewModel: BaseViewModel<TravelAction, TravelSideEffect, Trave
         case let .error(msg):
             newState.errorMsg = msg
             
-        case .invalidTitle:
-            newState.isValidTitle = false
+        case let .validateTitle(validation):
+            newState.titleValidation = validation
         }
         
         return newState
@@ -112,13 +115,12 @@ final class TravelViewModel: BaseViewModel<TravelAction, TravelSideEffect, Trave
 // MARK: - Validation
 
 private extension TravelViewModel {
-    // TODO: - 정규식을 통한 제목 유효성 검사
     func validate(title: String) -> SideEffectPublisher {
-        if 1...14 ~= title.count {
-            Just(TravelSideEffect.saveTitle(title)).eraseToAnyPublisher()
-        } else {
-            Just(TravelSideEffect.invalidTitle).eraseToAnyPublisher()
-        }
+        let titleValidation = travelUseCase.validate(title: title)
+        return Publishers.Merge(
+            Just(TravelSideEffect.validateTitle(titleValidation)),
+            Just(TravelSideEffect.saveTitle(title))
+        ).eraseToAnyPublisher()
     }
 }
 

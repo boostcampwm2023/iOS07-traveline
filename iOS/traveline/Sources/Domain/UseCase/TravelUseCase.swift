@@ -9,7 +9,13 @@
 import Combine
 import Foundation
 
+enum TitleValidation {
+    case valid
+    case invalidate
+}
+
 protocol TravelUseCase {
+    func validate(title: String) -> TitleValidation
     func createTravel(data: TravelRequest) -> AnyPublisher<TravelID, Error>
 }
 
@@ -19,6 +25,10 @@ final class TravelUseCaseImpl: TravelUseCase {
     
     init(repository: TravelRepository) {
         self.repository = repository
+    }
+    
+    func validate(title: String) -> TitleValidation {
+        return 1...14 ~= title.count ? .valid : .invalidate
     }
     
     func createTravel(data: TravelRequest) -> AnyPublisher<TravelID, Error> {
