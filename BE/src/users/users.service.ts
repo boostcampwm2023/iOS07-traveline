@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserInfoDto } from './dto/user-info.dto';
 import { StorageService } from 'src/storage/storage.service';
 import { UserRepository } from './users.repository';
@@ -45,8 +41,6 @@ export class UsersService {
     const deleteResult = await this.userRepository.delete(id);
     if (deleteResult.affected == 0) {
       throw new BadRequestException('존재하지 않는 사용자 입니다.');
-    } else if (deleteResult.affected > 1) {
-      throw new InternalServerErrorException();
     }
     return true;
   }
@@ -73,51 +67,29 @@ export class UsersService {
     updateUserDto: UpdateUserDto,
     newAvatarFile: Express.Multer.File
   ): Promise<UserInfoDto> {
-    const nameChange = 'name' in updateUserDto;
-    const deleteAvatar = updateUserDto.isAvatarDeleted;
-
-    if (!nameChange && !newAvatarFile && !deleteAvatar) {
-      throw new BadRequestException('변경 사항이 없습니다.');
-    }
-
-    if (deleteAvatar && newAvatarFile) {
-      throw new BadRequestException('요구사항이 충돌합니다.');
-    }
-
+    const name = updateUserDto.name;
     const originalUserInfo = await this.userRepository.findById(id);
 
-    //이름 변경이 있는 경우
-    if (nameChange) {
-      if (originalUserInfo.name === updateUserDto.name) {
-        throw new BadRequestException('기존 닉네임과 동일합니다.');
-      }
-      const name = updateUserDto.name;
-      await this.userRepository.update(id, { name });
+    let updatedUserInfo = {};
+    if (originalUserInfo.name !== name) {
+      updatedUserInfo = { ...updatedUserInfo, name };
     }
 
-    //프로필을 기본이미지로 변경하고 싶어 하는 경우
-    if (deleteAvatar) {
-      //이미지 삭제, avatar는 null
-      if (originalUserInfo.avatar !== null) {
-        await this.storageService.delete(originalUserInfo.avatar);
-      }
-      const avatar = null;
-      await this.userRepository.update(id, { avatar });
+    if (originalUserInfo.avatar !== null) {
+      await this.storageService.delete(originalUserInfo.avatar);
+      updatedUserInfo = { ...updatedUserInfo, avatar: null };
     }
 
-    //새 프로필을 등록하고 싶어 하는 경우
     if (newAvatarFile) {
-      if (originalUserInfo.avatar !== null) {
-        await this.storageService.delete(originalUserInfo.avatar);
-      }
       const uploadResult = await this.storageService.upload(
         `${id}/`,
         newAvatarFile
       );
       const avatar = uploadResult.path;
-      await this.userRepository.update(id, { avatar });
+      updatedUserInfo = { ...updatedUserInfo, avatar };
     }
 
+    await this.userRepository.update(id, updatedUserInfo);
     return this.getUserInfoById(id);
   }
 
