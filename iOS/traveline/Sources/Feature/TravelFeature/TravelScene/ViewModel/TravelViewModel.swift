@@ -22,8 +22,9 @@ enum TravelSideEffect: BaseSideEffect {
     case saveRegion(String)
     case saveStartDate(Date)
     case saveEndDate(Date)
-    case postTravel([Tag])
+    case postTravel(TravelID?)
     case invalidTitle
+    case error(String)
 }
 
 struct TravelState: BaseState {
@@ -32,6 +33,8 @@ struct TravelState: BaseState {
     var startDate: Date = .now
     var endDate: Date = .now
     var isValidTitle: Bool = false
+    var travelID: TravelID?
+    var errorMsg: String?
     
     var isValidDate: Bool {
         startDate <= endDate
@@ -43,6 +46,14 @@ struct TravelState: BaseState {
 }
 
 final class TravelViewModel: BaseViewModel<TravelAction, TravelSideEffect, TravelState> {
+    
+    private let travelUseCase: TravelUseCase
+    
+    init(travelUseCase: TravelUseCase) {
+        self.travelUseCase = travelUseCase
+    }
+    
+    // MARK: - Transform
     
     override func transform(action: TravelAction) -> SideEffectPublisher {
         switch action {
@@ -59,10 +70,11 @@ final class TravelViewModel: BaseViewModel<TravelAction, TravelSideEffect, Trave
             Just(TravelSideEffect.saveEndDate(endDate)).eraseToAnyPublisher()
             
         case let .donePressed(tags):
-            // TODO: - Posting API
-            Just(TravelSideEffect.postTravel(tags)).eraseToAnyPublisher()
+            postTravel(tags)
         }
     }
+    
+    // MARK: - ReduceState
     
     override func reduceState(state: TravelState, effect: TravelSideEffect) -> TravelState {
         var newState = state
@@ -82,9 +94,11 @@ final class TravelViewModel: BaseViewModel<TravelAction, TravelSideEffect, Trave
         case let .saveEndDate(endDate):
             newState.endDate = endDate
             
-        case let .postTravel(tags):
-            // TODO: - Posting 성공 이후 State (타임라인 화면으로 이동?)
-            break
+        case let .postTravel(id):
+            newState.travelID = id
+            
+        case let .error(msg):
+            newState.errorMsg = msg
             
         case .invalidTitle:
             newState.isValidTitle = false
@@ -105,5 +119,28 @@ private extension TravelViewModel {
         } else {
             Just(TravelSideEffect.invalidTitle).eraseToAnyPublisher()
         }
+    }
+}
+
+// MARK: - UseCase
+
+private extension TravelViewModel {
+    func postTravel(_ tags: [Tag]) -> SideEffectPublisher {
+        let travelReqeust = TravelRequest(
+            title: state.titleText,
+            region: state.region,
+            startDate: state.startDate,
+            endDate: state.endDate,
+            tags: tags
+        )
+        
+        return travelUseCase.createTravel(data: travelReqeust)
+            .map { id in
+                TravelSideEffect.postTravel(id)
+            }
+            .catch { _ in
+                Just(TravelSideEffect.error("postTravel에 실패했습니다."))
+            }
+            .eraseToAnyPublisher()
     }
 }

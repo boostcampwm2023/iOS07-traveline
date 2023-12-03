@@ -224,16 +224,16 @@ private extension TravelVC {
         viewModel.$state
             .map(\.canPost)
             .removeDuplicates()
-            .sink { [weak owner = self] canPost in
-                guard let owner else { return }
+            .withUnretained(self)
+            .sink { owner, canPost in
                 owner.tlNavigationBar.isRightButtonEnabled(canPost)
             }
             .store(in: &cancellables)
         
         viewModel.$state
             .map(\.startDate)
-            .sink { [weak owner = self] startDate in
-                guard let owner else { return }
+            .withUnretained(self)
+            .sink { owner, startDate in
                 owner.selectPeriodView.endDatePicker.minimumDate = startDate
             }
             .store(in: &cancellables)
@@ -241,9 +241,31 @@ private extension TravelVC {
         viewModel.$state
             .map(\.endDate)
             .removeDuplicates()
-            .sink { [weak owner = self] endDate in
-                guard let owner else { return }
+            .withUnretained(self)
+            .sink { owner, endDate in
                 owner.selectPeriodView.endDatePicker.date = endDate
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .compactMap(\.travelID)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, id in
+                print("travelID: \(id.value)")
+                let timelineVC = VCFactory.makeTimelineVC()
+                guard var vcs = owner.navigationController?.viewControllers else { return }
+                vcs.removeLast()
+                vcs.append(timelineVC)
+                owner.navigationController?.setViewControllers(vcs, animated: true)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .compactMap(\.errorMsg)
+            .withUnretained(self)
+            .sink { _, msg in
+               print("errorMsg: \(msg)")
             }
             .store(in: &cancellables)
     }
@@ -299,5 +321,5 @@ extension TravelVC: TLNavigationBarDelegate {
 
 @available(iOS 17, *)
 #Preview {
-    return UINavigationController(rootViewController: TravelVC(viewModel: TravelViewModel()))
+    return UINavigationController(rootViewController: VCFactory.makeTravelVC())
 }

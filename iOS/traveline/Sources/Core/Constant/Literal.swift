@@ -11,6 +11,10 @@ import Foundation
 enum Literal {
     static let empty: String = ""
     
+    enum InfoPlistKey {
+        static let baseURL: String = "BaseURL"
+    }
+    
     enum Tag {
         static let region: String = "지역"
         static let period: String = "기간"
@@ -39,7 +43,7 @@ enum Literal {
             static let under50: String = "10 - 50"
             static let under100: String = "50 - 100"
             static let over100: String = "100 -"
-            static let won: String = "만원"
+            static let won: String = "만 원"
         }
         
         enum PeopleDetail {

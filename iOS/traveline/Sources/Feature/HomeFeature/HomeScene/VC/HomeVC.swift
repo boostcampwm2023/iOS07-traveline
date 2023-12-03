@@ -230,7 +230,7 @@ private extension HomeVC {
             .filter { $0 }
             .withUnretained(self)
             .sink { owner, _ in
-                let travelVC = TravelVC(viewModel: TravelViewModel())
+                let travelVC = VCFactory.makeTravelVC()
                 owner.navigationController?.pushViewController(travelVC, animated: true)
             }
             .store(in: &cancellables)
