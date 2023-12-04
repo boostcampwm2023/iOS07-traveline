@@ -17,4 +17,5 @@ enum HomeAction: BaseAction {
     case startFilter(FilterType)
     case addFilter([Filter])
     case createTravel
+    case deleteKeyword(String)
 }
