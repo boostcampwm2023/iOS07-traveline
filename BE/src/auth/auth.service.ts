@@ -8,7 +8,6 @@ import { JwtService } from '@nestjs/jwt';
 import { HttpService } from '@nestjs/axios';
 import * as jwt from 'jsonwebtoken';
 import { UsersService } from 'src/users/users.service';
-import { isArray } from 'class-validator';
 import { CreateAuthRequestDto } from './dto/create-auth-request.dto';
 import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
 import { firstValueFrom } from 'rxjs';
@@ -34,25 +33,18 @@ export class AuthService {
         secret: process.env.JWT_SECRET_REFRESH,
       });
       const id = payload.id;
-      console.log(id);
       const user = await this.usersService.findUserById(id);
       if (!user) {
         throw new UnauthorizedException('회원 정보가 존재하지 않습니다.');
       }
-      console.log('user exists');
       const accessToken = await this.jwtService.signAsync({ id });
       return { accessToken };
     } catch {
-      throw new UnauthorizedException('올바르지 않은 토큰입니다.');
+      throw new UnauthorizedException('다시 로그인해주세요.');
     }
   }
 
-  async login(request, createAuthDto: CreateAuthRequestDto) {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    if (type === 'Bearer' && token) {
-      throw new BadRequestException('JWT가 이미 존재합니다.');
-    }
-    const idToken = createAuthDto.idToken;
+  async decodeIdToken(idToken) {
     const kid = jwt.decode(idToken, {
       complete: true,
     }).header.kid;
@@ -68,28 +60,32 @@ export class AuthService {
       algorithms: ['RS256'],
     });
 
-    let decodedPayload;
-    if (typeof decodedResult === 'string') {
-      decodedPayload = JSON.parse(decodedResult);
-    } else {
-      decodedPayload = decodedResult;
-    }
+    const decodedIdToken =
+      typeof decodedResult === 'string'
+        ? JSON.parse(decodedResult)
+        : decodedResult;
 
     if (
-      decodedPayload.iss !== 'https://appleid.apple.com' ||
-      decodedPayload.aud !== process.env.CLIENT_ID
+      decodedIdToken.iss !== 'https://appleid.apple.com' ||
+      decodedIdToken.aud !== process.env.CLIENT_ID
     ) {
       throw new UnauthorizedException(
         'identity 토큰 내의 정보가 올바르지 않습니다.'
       );
     }
+    return decodedIdToken;
+  }
 
-    const appleId = decodedPayload.sub;
-    let user = await this.usersService.getUserInfoByResourceId(appleId);
-
-    if (isArray(user)) {
-      throw new InternalServerErrorException();
+  async login(request, createAuthDto: CreateAuthRequestDto) {
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    if (type === 'Bearer' && token) {
+      throw new BadRequestException('JWT가 이미 존재합니다.');
     }
+    const idToken = createAuthDto.idToken;
+
+    const appleId = (await this.decodeIdToken(idToken)).sub;
+
+    let user = await this.usersService.getUserInfoByResourceId(appleId);
 
     if (!user) {
       user = await this.usersService.createUser(appleId);
@@ -111,7 +107,6 @@ export class AuthService {
   async loginForDev(createAuthForDevDto: CreateAuthRequestForDevDto) {
     const id = createAuthForDevDto.id;
     const user = await this.usersService.findUserById(id);
-    console.log(user);
 
     if (user) {
       const payload = { id };
@@ -122,9 +117,6 @@ export class AuthService {
           secret: process.env.JWT_SECRET_REFRESH,
         }),
       };
-    } else {
-      const payload = { id };
-      console.log(await this.jwtService.signAsync(payload));
     }
 
     throw new BadRequestException(
@@ -145,73 +137,30 @@ export class AuthService {
       aud: 'https://appleid.apple.com',
       sub: clientId,
     };
-    console.log(header);
-    console.log(payload);
 
-    //!!!추후 삭제 및 수정 필요!!!!
-    const key = '';
+    const key = process.env.AUTH_KEY;
 
     return jwt.sign(payload, key, {
       algorithm: 'ES256',
       header,
     });
-    //!!!추후 삭제 및 수정 필요!!!!
   }
 
   async withdrawal(request, deleteAuthDto) {
-    //클라이언트 측에서 다시 apple에 로그인 요청을 보내고 identity token과 authorization code를 함께 넘겨준다.
+    const revokeUser = await this.usersService.findUserById(request['user'].id);
 
     const idToken = deleteAuthDto.idToken;
     const authorizationCode = deleteAuthDto.authorizationCode;
 
-    const kid = jwt.decode(idToken, {
-      complete: true,
-    }).header.kid;
+    const decodedIdToken = await this.decodeIdToken(idToken);
 
-    console.log('kid');
-    console.log(kid);
-    console.log();
-
-    const client = new JwksClient({
-      jwksUri: 'https://appleid.apple.com/auth/keys',
-    });
-
-    const key = await client.getSigningKey(kid);
-    const verifyingKey = key.getPublicKey();
-
-    console.log('verifying key');
-    console.log(verifyingKey);
-    console.log();
-
-    const decodedResult = jwt.verify(idToken, verifyingKey, {
-      algorithms: ['RS256'],
-    });
-
-    console.log('decoded result');
-    console.log(decodedResult);
-    console.log();
-
-    let decodedPayload;
-    if (typeof decodedResult === 'string') {
-      decodedPayload = JSON.parse(decodedResult);
-    } else {
-      decodedPayload = decodedResult;
-    }
-
-    console.log('decoded payload');
-    console.log(decodedPayload);
-    console.log();
-
-    if (
-      decodedPayload.iss !== 'https://appleid.apple.com' ||
-      decodedPayload.aud !== process.env.CLIENT_ID
-    ) {
-      throw new UnauthorizedException(
-        'identity 토큰 내의 정보가 올바르지 않습니다.'
+    if (decodedIdToken.sub !== revokeUser.resourceId) {
+      throw new BadRequestException(
+        'identify 토큰과 access 토큰 내의 회원정보가 충돌합니다.'
       );
     }
 
-    const clientId = decodedPayload.aud;
+    const clientId = decodedIdToken.aud;
     const clientSecret = this.clientSecretGenerator(clientId);
     const payload = {
       code: authorizationCode,
@@ -219,9 +168,6 @@ export class AuthService {
       grant_type: 'authorization_code',
       client_secret: clientSecret,
     };
-    console.log('payload');
-    console.log(payload);
-    console.log();
 
     const tokenRequestResult = await firstValueFrom(
       this.httpService.post('https://appleid.apple.com/auth/token', payload, {
@@ -230,10 +176,6 @@ export class AuthService {
     );
 
     const info = tokenRequestResult.data;
-    console.log('토큰 요청 결과');
-    console.log(info);
-    console.log();
-
     const token = info.refresh_token;
     const revoke = {
       client_id: clientId,
@@ -246,18 +188,11 @@ export class AuthService {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       })
     );
-    console.log('revoke 결과');
-    console.log(revokeRequetResult);
-    console.log();
-    console.log('상태코드');
-    console.log(revokeRequetResult.status);
-    console.log();
+
     if (revokeRequetResult.status === 200) {
-      const appleId = decodedPayload;
-      const revokeUser =
-        await this.usersService.getUserInfoByResourceId(appleId);
-      const id = revokeUser.id;
-      this.usersService.deleteUser(id);
+      await this.usersService.deleteUser(revokeUser.id);
+      return { revoke: true };
     }
+    return { revoke: false };
   }
 }
