@@ -29,7 +29,6 @@ export class AuthService {
     } else if (!token) {
       throw new BadRequestException('토큰이 존재하지 않습니다.');
     }
-    console.log('token');
     try {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET_REFRESH,
@@ -58,10 +57,6 @@ export class AuthService {
       complete: true,
     }).header.kid;
 
-    console.log('kid');
-    console.log(kid);
-    console.log();
-
     const client = new JwksClient({
       jwksUri: 'https://appleid.apple.com/auth/keys',
     });
@@ -69,17 +64,9 @@ export class AuthService {
     const key = await client.getSigningKey(kid);
     const verifyingKey = key.getPublicKey();
 
-    console.log('verifying key');
-    console.log(verifyingKey);
-    console.log();
-
     const decodedResult = jwt.verify(idToken, verifyingKey, {
       algorithms: ['RS256'],
     });
-
-    console.log('decoded result');
-    console.log(decodedResult);
-    console.log();
 
     let decodedPayload;
     if (typeof decodedResult === 'string') {
@@ -87,10 +74,6 @@ export class AuthService {
     } else {
       decodedPayload = decodedResult;
     }
-
-    console.log('decoded payload');
-    console.log(decodedPayload);
-    console.log();
 
     if (
       decodedPayload.iss !== 'https://appleid.apple.com' ||
@@ -114,9 +97,6 @@ export class AuthService {
         throw new InternalServerErrorException();
       }
     }
-    console.log('user');
-    console.log(user);
-    console.log();
 
     const payload = { id: user.id };
     return {
@@ -165,9 +145,11 @@ export class AuthService {
       aud: 'https://appleid.apple.com',
       sub: clientId,
     };
+    console.log(header);
+    console.log(payload);
 
     //!!!추후 삭제 및 수정 필요!!!!
-    const key = `p8 비밀키값`;
+    const key = '';
 
     return jwt.sign(payload, key, {
       algorithm: 'ES256',
@@ -237,9 +219,14 @@ export class AuthService {
       grant_type: 'authorization_code',
       client_secret: clientSecret,
     };
+    console.log('payload');
+    console.log(payload);
+    console.log();
 
     const tokenRequestResult = await firstValueFrom(
-      this.httpService.post('https://appleid.apple.com/auth/token', payload)
+      this.httpService.post('https://appleid.apple.com/auth/token', payload, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      })
     );
 
     const info = tokenRequestResult.data;
@@ -248,12 +235,29 @@ export class AuthService {
     console.log();
 
     const token = info.refresh_token;
-    const revoke = { client_id: clientId, client_secret: clientSecret, token };
+    const revoke = {
+      client_id: clientId,
+      client_secret: clientSecret,
+      token,
+    };
 
     const revokeRequetResult = await firstValueFrom(
-      this.httpService.post('https://appleid.apple.com/auth/revoke', revoke)
+      this.httpService.post('https://appleid.apple.com/auth/revoke', revoke, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      })
     );
     console.log('revoke 결과');
-    console.log(revokeRequetResult.data);
+    console.log(revokeRequetResult);
+    console.log();
+    console.log('상태코드');
+    console.log(revokeRequetResult.status);
+    console.log();
+    if (revokeRequetResult.status === 200) {
+      const appleId = decodedPayload;
+      const revokeUser =
+        await this.usersService.getUserInfoByResourceId(appleId);
+      const id = revokeUser.id;
+      this.usersService.deleteUser(id);
+    }
   }
 }

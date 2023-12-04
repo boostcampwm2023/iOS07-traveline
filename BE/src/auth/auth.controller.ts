@@ -1,10 +1,19 @@
-import { Controller, Post, Body, Delete, Get, Req } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Delete,
+  Get,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateAuthRequestDto } from './dto/create-auth-request.dto';
 import { CreateAuthResponseDto } from './dto/create-auth-response';
 import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
 import { DeleteAuthDto } from './dto/delete-auth.dto';
+import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
 @ApiTags('Auth API')
@@ -45,6 +54,7 @@ export class AuthController {
     return this.authService.loginForDev(createAuthForDevDto);
   }
 
+  @UseGuards(AuthGuard)
   @Delete('withdrawal')
   @ApiOperation({
     summary: '탈퇴 API',
