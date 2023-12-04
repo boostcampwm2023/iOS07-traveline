@@ -135,11 +135,7 @@ export const search_OK = [
 
 export const create_OK = { id: 'c89f207a-f528-4d53-8ac2-1356fa22eb21' };
 
-export const update_OK = {
-  generatedMaps: [],
-  raw: [],
-  affected: 1,
-};
+export const update_OK = { id: '4d365e7c-3e82-472d-bf87-7faf65d9377d' };
 
 export const remove_OK = {
   title: 'bread lover',
@@ -167,11 +163,7 @@ export const remove_OK = {
   reports: [],
 };
 
-export const like_OK = {
-  posting: 'c89f207a-f528-4d53-8ac2-1356fa22eb21',
-  user: '123456789012345678901234567890123456',
-  isDeleted: false,
-};
+export const like_OK = { isLiked: false };
 
 export const report_OK = {
   posting: 'c0265845-4991-4f04-a5c3-4cf12207d675',

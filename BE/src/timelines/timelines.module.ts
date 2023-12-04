@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { TimelinesService } from './timelines.service';
 import { TimelinesController } from './timelines.controller';
 import { timelinesProviders } from './timelines.providers';
@@ -14,7 +15,13 @@ import { postingsProviders } from '../postings/postings.providers';
 import { StorageModule } from '../storage/storage.module';
 
 @Module({
-  imports: [DatabaseModule, PostingsModule, UsersModule, StorageModule],
+  imports: [
+    DatabaseModule,
+    PostingsModule,
+    UsersModule,
+    StorageModule,
+    HttpModule,
+  ],
   controllers: [TimelinesController],
   providers: [
     ...timelinesProviders,

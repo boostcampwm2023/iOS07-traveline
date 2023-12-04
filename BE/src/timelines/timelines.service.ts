@@ -3,7 +3,8 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
-import axios from 'axios';
+import { firstValueFrom } from 'rxjs';
+import { HttpService } from '@nestjs/axios';
 import { CreateTimelineDto } from './dto/create-timeline.dto';
 import { UpdateTimelineDto } from './dto/update-timeline.dto';
 import { TimelinesRepository } from './timelines.repository';
@@ -19,7 +20,8 @@ export class TimelinesService {
     private readonly timelinesRepository: TimelinesRepository,
     private readonly postingsRepository: PostingsRepository,
     private readonly postingsService: PostingsService,
-    private readonly storageService: StorageService
+    private readonly storageService: StorageService,
+    private readonly httpService: HttpService
   ) {}
 
   async create(
@@ -151,9 +153,11 @@ export class TimelinesService {
     const url = `${KAKAO_KEYWORD_SEARCH}?query=${place}&page=${offset}&size=${limit}`;
     const {
       data: { documents },
-    } = await axios.get(url, {
-      headers: { Authorization: `KakaoAK ${process.env.KAKAO_REST_API_KEY}` },
-    });
+    } = await firstValueFrom(
+      this.httpService.get(url, {
+        headers: { Authorization: `KakaoAK ${process.env.KAKAO_REST_API_KEY}` },
+      })
+    );
 
     return documents;
   }

@@ -20,8 +20,8 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiConflictResponse,
-  ApiConsumes,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -140,6 +140,15 @@ export class PostingsController {
     description: 'id 값에 해당되는 게시글을 반환합니다.',
   })
   @ApiOkResponse({ schema: { example: findOne_OK } })
+  @ApiForbiddenResponse({
+    schema: {
+      example: {
+        message: '차단된 게시글입니다.',
+        error: 'Forbidden',
+        statusCode: 403,
+      },
+    },
+  })
   async findOne(@Req() request, @Param('id', ParseUUIDPipe) id: string) {
     const userId = request['user'].id;
     const posting = await this.postingsService.findOne(id);
@@ -159,15 +168,24 @@ export class PostingsController {
     summary: '게시글 수정',
     description: 'id 값에 해당되는 게시글을 수정합니다.',
   })
-  @ApiConsumes('application/x-www-form-urlencoded')
   @ApiOkResponse({ schema: { example: update_OK } })
+  @ApiForbiddenResponse({
+    schema: {
+      example: {
+        message: '본인이 작성한 게시글만 수정할 수 있습니다.',
+        error: 'Forbidden',
+        statusCode: 403,
+      },
+    },
+  })
   async update(
     @Req() request,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePostingDto: UpdatePostingDto
   ) {
     const userId = request['user'].id;
-    return this.postingsService.update(id, userId, updatePostingDto);
+    await this.postingsService.update(id, userId, updatePostingDto);
+    return { id };
   }
 
   @Delete(':id')
@@ -176,6 +194,15 @@ export class PostingsController {
     description: 'id 값에 해당되는 게시글을 삭제합니다.',
   })
   @ApiOkResponse({ schema: { example: remove_OK } })
+  @ApiForbiddenResponse({
+    schema: {
+      example: {
+        message: '본인이 작성한 게시글만 삭제할 수 있습니다.',
+        error: 'Forbidden',
+        statusCode: 403,
+      },
+    },
+  })
   async remove(
     @Req() request,
     @Param('id', ParseUUIDPipe) id: string
@@ -189,7 +216,7 @@ export class PostingsController {
     summary: '게시글 좋아요 토글',
     description: 'id 값에 해당하는 게시글에 좋아요가 추가되거나 삭제됩니다.',
   })
-  @ApiOkResponse({ schema: { examples: [update_OK, like_OK] } })
+  @ApiOkResponse({ schema: { example: like_OK } })
   async toggleLike(@Req() request, @Param('id', ParseUUIDPipe) id: string) {
     const userId = request['user'].id;
     return this.postingsService.toggleLike(id, userId);
