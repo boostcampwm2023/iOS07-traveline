@@ -21,6 +21,7 @@ import {
   ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -139,6 +140,15 @@ export class PostingsController {
     description: 'id 값에 해당되는 게시글을 반환합니다.',
   })
   @ApiOkResponse({ schema: { example: findOne_OK } })
+  @ApiForbiddenResponse({
+    schema: {
+      example: {
+        message: '차단된 게시글입니다.',
+        error: 'Forbidden',
+        statusCode: 403,
+      },
+    },
+  })
   async findOne(@Req() request, @Param('id', ParseUUIDPipe) id: string) {
     const userId = request['user'].id;
     const posting = await this.postingsService.findOne(id);
@@ -159,6 +169,15 @@ export class PostingsController {
     description: 'id 값에 해당되는 게시글을 수정합니다.',
   })
   @ApiOkResponse({ schema: { example: update_OK } })
+  @ApiForbiddenResponse({
+    schema: {
+      example: {
+        message: '본인이 작성한 게시글만 수정할 수 있습니다.',
+        error: 'Forbidden',
+        statusCode: 403,
+      },
+    },
+  })
   async update(
     @Req() request,
     @Param('id', ParseUUIDPipe) id: string,
@@ -174,6 +193,15 @@ export class PostingsController {
     description: 'id 값에 해당되는 게시글을 삭제합니다.',
   })
   @ApiOkResponse({ schema: { example: remove_OK } })
+  @ApiForbiddenResponse({
+    schema: {
+      example: {
+        message: '본인이 작성한 게시글만 삭제할 수 있습니다.',
+        error: 'Forbidden',
+        statusCode: 403,
+      },
+    },
+  })
   async remove(
     @Req() request,
     @Param('id', ParseUUIDPipe) id: string
