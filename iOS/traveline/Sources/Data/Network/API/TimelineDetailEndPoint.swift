@@ -13,7 +13,8 @@ enum TimelineDetailEndPoint {
 }
 
 extension TimelineDetailEndPoint: EndPoint {
-    var path: String {
+    
+    var path: String? {
         switch self {
         case .specificTimeline(let id): return "/timelines/\(id)"
         }

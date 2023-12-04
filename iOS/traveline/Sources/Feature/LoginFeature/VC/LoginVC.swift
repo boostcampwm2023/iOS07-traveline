@@ -107,7 +107,7 @@ private extension LoginVC {
             .map(\.isSuccessLogin)
             .filter { $0 }
             .withUnretained(self)
-            .sink { owner, _ in
+            .sink { _, _ in
                 // TODO: 로그인 성공 후 로직 구현
             }
             .store(in: &cancellabels)
