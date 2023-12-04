@@ -29,7 +29,7 @@ final class SelectImageButton: UIView {
         return view
     }()
     
-    private let cancelButton: UIButton = {
+    let cancelButton: UIButton = {
         let button = UIButton()
         button.setImage(TLImage.Common.closeBlack, for: .normal)
         button.tintColor = TLColor.white
@@ -86,12 +86,7 @@ final class SelectImageButton: UIView {
     
     // MARK: - Functions
     
-    @objc private func cancelButtonTapped() {
-        imageView.image = nil
-        updateView()
-    }
-    
-    private func updateView() {
+    func updateView() {
         selectView.isHidden = hasImage
         imageView.isHidden = !hasImage
         cancelButton.isHidden = !hasImage
@@ -112,7 +107,6 @@ private extension SelectImageButton {
         selectViewLabel.setText(to: "선택")
         view.backgroundColor = TLColor.backgroundGray
         updateView()
-        cancelButton.addTarget(self, action: #selector(cancelButtonTapped), for: .touchUpInside)
     }
     
     func setupLayout() {
@@ -162,16 +156,4 @@ private extension SelectImageButton {
             selectViewLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
-}
-
-@available(iOS 17, *)
-#Preview("TimelineWritingVC") {
-    let view = UIView()
-    let button = SelectImageButton()
-    view.addSubview(button)
-    
-    button.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-    button.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-    
-    return view
 }

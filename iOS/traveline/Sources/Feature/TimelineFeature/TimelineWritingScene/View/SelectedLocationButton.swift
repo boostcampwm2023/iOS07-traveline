@@ -19,7 +19,7 @@ final class SelectLocationButton: UIView {
     
     private let icon: UIImageView = .init(image: TLImage.Travel.locationDisable)
     private let label: TLLabel = .init(font: TLFont.body1, color: TLColor.disabledGray)
-    private let cancelButton: UIButton = {
+    let cancelButton: UIButton = {
         let button = UIButton()
         button.setImage(TLImage.Tag.close, for: .normal)
         
@@ -64,9 +64,7 @@ final class SelectLocationButton: UIView {
         updateLayout()
     }
     
-    @objc private func cancelTapped() {
-        setText(to: Constants.defaultText)
-    }
+    
     
 }
 
@@ -74,7 +72,6 @@ final class SelectLocationButton: UIView {
 
 private extension SelectLocationButton {
     func setupAttributes() {
-        cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
         setText(to: Constants.defaultText)
     }
     
@@ -107,14 +104,3 @@ private extension SelectLocationButton {
     }
 }
 
-@available(iOS 17, *)
-#Preview("SelectedLocationButton") {
-    let view = UIView()
-    let button = SelectLocationButton()
-    view.addSubview(button)
-    
-    button.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-    button.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-    
-    return view
-}

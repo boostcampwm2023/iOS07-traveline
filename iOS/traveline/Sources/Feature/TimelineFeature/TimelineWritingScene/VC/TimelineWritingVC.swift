@@ -29,6 +29,7 @@ final class TimelineWritingVC: UIViewController {
         static let contentPlaceholder: String = "내용을 입력해주세요. *"
         static let complete: String = "완료"
         static let selectTime: String = "시간선택"
+        static let selectLocation: String = "선택한 장소"
         static let alertContentVCKey = "contentViewController"
     }
     
@@ -127,6 +128,7 @@ final class TimelineWritingVC: UIViewController {
     
     private func updateTime() {
         selectTime.setText(to: timePickerVC.time)
+        viewModel.sendAction(.timeDidChange(timePickerVC.time))
     }
     
     @objc private func scrollViewTouched() {
@@ -146,6 +148,17 @@ final class TimelineWritingVC: UIViewController {
             actionKeyboardWillHide()
         default: break
         }
+    }
+    
+    @objc private func imageButtonCancelTapped() {
+        selectImageButton.setImage(nil)
+        viewModel.sendAction(.imageDidChange(nil))
+        selectImageButton.updateView()
+    }
+    
+    @objc private func locationButtonCancelTapped() {
+        selectLocation.setText(to: Constants.selectLocation)
+        viewModel.sendAction(.placeDidChange(Literal.empty))
     }
     
     private func actionKeyboardWillShow(_ keyboardFrame: CGRect) {
@@ -171,13 +184,18 @@ private extension TimelineWritingVC {
         textView.delegate = self
         
         tlNavigationBar.delegate = self
-        tlNavigationBar.setupTitle(to: "Day \(viewModel.day)")
-        dateLabel.setText(to: viewModel.date)
+        tlNavigationBar.setupTitle(to: "Day \(viewModel.timelineDetailRequest.day)")
+        dateLabel.setText(to: viewModel.timelineDetailRequest.date)
         
         let imageTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectImageButtonTapped))
         let timeTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectTimeButtonTapped))
         let locationTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectLocationButtonTapped))
         
+        selectImageButton.cancelButton.addTarget(self, action: #selector(imageButtonCancelTapped), for: .touchUpInside)
+        selectLocation.cancelButton.addTarget(self, action: #selector(locationButtonCancelTapped), for: .touchUpInside)
+        
+        
+
         selectImageButton.addGestureRecognizer(imageTapGesture)
         selectTime.addGestureRecognizer(timeTapGesture)
         selectLocation.addGestureRecognizer(locationTapGesture)
@@ -308,6 +326,7 @@ extension TimelineWritingVC: PHPickerViewControllerDelegate {
             DispatchQueue.main.async {
                 guard let selectedImage = image as? UIImage else { return }
                 self.selectImageButton.setImage(selectedImage)
+                self.viewModel.sendAction(.imageDidChange(selectedImage.pngData()))
             }
         }
     }
@@ -319,6 +338,7 @@ extension TimelineWritingVC: PHPickerViewControllerDelegate {
 extension TimelineWritingVC: LocationSearchDelegate {
     func selectedLocation(result: String) {
         selectLocation.setText(to: result)
+        viewModel.sendAction(.placeDidChange(result))
     }
 }
 
