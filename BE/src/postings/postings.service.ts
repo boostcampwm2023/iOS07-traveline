@@ -126,13 +126,15 @@ export class PostingsService {
     const liked = await this.likedsRepository.findOne(postingId, userId);
 
     if (liked) {
-      return this.likedsRepository.toggle(postingId, userId, liked.isDeleted);
+      await this.likedsRepository.toggle(postingId, userId, liked.isDeleted);
+      return { isLiked: liked.isDeleted };
     }
 
     const newLiked = new Liked();
     newLiked.posting = postingId;
     newLiked.user = userId;
-    return this.likedsRepository.save(newLiked);
+    await this.likedsRepository.save(newLiked);
+    return { isLiked: true };
   }
 
   async report(postingId: string, userId: string) {

@@ -167,11 +167,7 @@ export const remove_OK = {
   reports: [],
 };
 
-export const like_OK = {
-  posting: 'c89f207a-f528-4d53-8ac2-1356fa22eb21',
-  user: '123456789012345678901234567890123456',
-  isDeleted: false,
-};
+export const like_OK = { isLiked: false };
 
 export const report_OK = {
   posting: 'c0265845-4991-4f04-a5c3-4cf12207d675',

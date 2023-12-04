@@ -189,7 +189,7 @@ export class PostingsController {
     summary: '게시글 좋아요 토글',
     description: 'id 값에 해당하는 게시글에 좋아요가 추가되거나 삭제됩니다.',
   })
-  @ApiOkResponse({ schema: { examples: [update_OK, like_OK] } })
+  @ApiOkResponse({ schema: { example: like_OK } })
   async toggleLike(@Req() request, @Param('id', ParseUUIDPipe) id: string) {
     const userId = request['user'].id;
     return this.postingsService.toggleLike(id, userId);
