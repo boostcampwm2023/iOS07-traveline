@@ -64,21 +64,18 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             newState.searchList = recentSearchKeywordList
             newState.homeViewType = .recent
             newState.curFilter = nil
-            newState.isSearching = true
             
         case let .showRelated(text):
             // TODO: - 서버 연동 후 수정
             newState.searchList = SearchKeywordSample.makeRelatedList()
             newState.homeViewType = (text.isEmpty) ? .recent : .related
             newState.searchText = text
-            newState.isSearching = true
             
         case let .showResult(keyword):
             // TODO: - 서버 연동 후 수정
             newState.travelList = TravelListSample.make()
             newState.homeViewType = .result
             newState.searchText = keyword
-            newState.isSearching = false
             newState.resultFilters = .make()
             saveSearchKeyword(keyword)
             
@@ -86,7 +83,6 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             // TODO: - 서버 연동 후 수정
             newState.travelList = travelList
             newState.homeViewType = .home
-            newState.isSearching = false
             
         case let .showFilter(type):
             newState.curFilter = (state.homeViewType == .home) ? state.homeFilters[type] : state.resultFilters[type]
