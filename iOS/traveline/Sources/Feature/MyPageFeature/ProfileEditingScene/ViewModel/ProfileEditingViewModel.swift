@@ -38,6 +38,7 @@ struct CaptionOptions {
     var text: String {
         switch self.validateType {
         case .unchanged: return " "
+        case .tooShort: return "2글자이상 입력하세요."
         case .available: return "사용가능한 닉네임입니다."
         case .duplicated: return "이미 사용중인 닉네임입니다."
         case .exceededStringLength: return "닉네임은 10자 이내만 가능합니다."

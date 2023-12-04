@@ -17,6 +17,7 @@ protocol ProfileEditingUseCase {
 
 enum NicknameValidationState {
     case unchanged
+    case tooShort
     case available
     case duplicated
     case exceededStringLength
@@ -46,6 +47,9 @@ final class ProfileEditingUseCaseImpl: ProfileEditingUseCase {
     }
     
     func validate(nickname: String) -> AnyPublisher<NicknameValidationState, Never> {
+        guard isTooShort(nickname) == false else {
+            return .just(.tooShort)
+        }
         guard isValidStringLength(nickname) else {
             return .just(.exceededStringLength)
         }
@@ -72,6 +76,9 @@ final class ProfileEditingUseCaseImpl: ProfileEditingUseCase {
         return profile.name != nickname
     }
     
+    private func isTooShort(_ nickname: String) -> Bool {
+        return nickname.count < 2
+    }
     private func isValidStringLength(_ nickname: String) -> Bool {
         return nickname.count < 11
     }
