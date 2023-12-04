@@ -8,8 +8,6 @@
 
 import Foundation
 
-import Foundation
-
 protocol TimelineDetailRepository {
     func fetchTimelineDetailInfo(id: String) async throws -> TimelineDetailInfo
 }
