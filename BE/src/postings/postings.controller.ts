@@ -184,7 +184,8 @@ export class PostingsController {
     @Body() updatePostingDto: UpdatePostingDto
   ) {
     const userId = request['user'].id;
-    return this.postingsService.update(id, userId, updatePostingDto);
+    await this.postingsService.update(id, userId, updatePostingDto);
+    return { id };
   }
 
   @Delete(':id')

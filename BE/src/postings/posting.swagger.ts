@@ -135,11 +135,7 @@ export const search_OK = [
 
 export const create_OK = { id: 'c89f207a-f528-4d53-8ac2-1356fa22eb21' };
 
-export const update_OK = {
-  generatedMaps: [],
-  raw: [],
-  affected: 1,
-};
+export const update_OK = { id: '4d365e7c-3e82-472d-bf87-7faf65d9377d' };
 
 export const remove_OK = {
   title: 'bread lover',
