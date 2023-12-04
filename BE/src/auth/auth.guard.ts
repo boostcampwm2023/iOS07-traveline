@@ -6,10 +6,14 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private readonly usersService: UsersService
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -21,6 +25,11 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET_ACCESS,
       });
+      const id = payload.id;
+      const userInfo = await this.usersService.findUserById(id);
+      if (!userInfo) {
+        throw new UnauthorizedException('회원 정보가 존재하지 않습니다.');
+      }
       request['user'] = payload;
     } catch {
       throw new UnauthorizedException('올바르지 않은 토큰입니다.');
