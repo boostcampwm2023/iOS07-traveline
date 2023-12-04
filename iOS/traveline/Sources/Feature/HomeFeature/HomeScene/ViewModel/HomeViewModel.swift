@@ -80,7 +80,6 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         case let .showHomeList(travelList):
             // TODO: - 서버 연동 후 수정
             newState.travelList = travelList
-            newState.homeViewType = .home
             
         case let .showFilter(type):
             newState.curFilter = (state.homeViewType == .home) ? state.homeFilters[type] : state.resultFilters[type]
