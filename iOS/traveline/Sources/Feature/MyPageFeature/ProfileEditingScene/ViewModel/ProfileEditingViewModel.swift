@@ -11,40 +11,48 @@ import Foundation
 import OSLog
 
 enum ProfileEditingAction: BaseAction {
+    case viewDidLoad
     case imageDidChange(ProfileEditingViewModel.ImageState)
     case nicknameDidChange(String)
-    case tapCompleteButton
+    case tapCompleteButton(Profile)
 }
 
 enum ProfileEditingSideEffect: BaseSideEffect {
+    case fetchProfile(Profile)
+    case error(String)
     case updateImageState(ProfileEditingViewModel.ImageState)
-    case validateNickname(String)
+    case validateNickname(CaptionOptions)
     case updateProfile
 }
 
 struct ProfileEditingState: BaseState {
     
     var isCompletable: Bool = false
-    var nicknameState: ProfileEditingViewModel.NicknameState = .unchanged
+    var profile: Profile = .empty
+    var caption: CaptionOptions = .init(validateType: .unchanged)
+}
+
+struct CaptionOptions {
+    var validateType: NicknameValidationState
+    
+    var text: String {
+        switch self.validateType {
+        case .unchanged: return " "
+        case .available: return "사용가능한 닉네임입니다."
+        case .duplicated: return "이미 사용중인 닉네임입니다."
+        case .exceededStringLength: return "닉네임은 10자 이내만 가능합니다."
+        }
+    }
+    
+    var isError: Bool {
+        switch self.validateType {
+        case .unchanged, .available: return false
+        default: return true
+        }
+    }
 }
 
 final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, ProfileEditingSideEffect, ProfileEditingState> {
-    
-    enum NicknameState {
-        case unchanged
-        case available
-        case duplicated
-        case exceededStringLength
-        
-        var text: String {
-            switch self {
-            case .unchanged: return " "
-            case .available: return "사용가능한 닉네임입니다."
-            case .duplicated: return "이미 사용중인 닉네임입니다."
-            case .exceededStringLength: return "닉네임은 10자 이내만 가능합니다."
-            }
-        }
-    }
     
     enum ImageState {
         case none
@@ -52,24 +60,28 @@ final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, Profile
         case album
     }
     
-    let profile: Profile
     private var imageState: ImageState = .none
+    private var changedNickname: String = ""
+    private let useCase: ProfileEditingUseCase
     
-    init(profile: Profile) {
-        self.profile = profile
+    init(useCase: ProfileEditingUseCase) {
+        self.useCase = useCase
         super.init()
     }
     
     override func transform(action: Action) -> SideEffectPublisher {
         switch action {
-        case let .nicknameDidChange(text):
-            return .just(ProfileEditingSideEffect.validateNickname(text))
+        case .viewDidLoad:
+            return fetchProfile()
+        case let .nicknameDidChange(nickname):
+            changedNickname = nickname
+            return validate(changedNickname)
             
         case let .imageDidChange(state):
             return .just(ProfileEditingSideEffect.updateImageState(state))
             
-        case .tapCompleteButton:
-            return updateProfile()
+        case .tapCompleteButton(let profile):
+            return updateProfile(profile: profile)
         }
     }
     
@@ -77,16 +89,22 @@ final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, Profile
         var newState = state
         
         switch effect {
-        case let .validateNickname(text):
-            newState.nicknameState = updateNicknameState(text)
-            newState.isCompletable = completeButtonState(imageState: imageState, nicknameState: newState.nicknameState)
+        case let .fetchProfile(profile):
+            newState.profile = profile
+            
+        case .error:
+            break
+            
+        case let .validateNickname(caption):
+            newState.caption = caption
+            newState.isCompletable = completeButtonState(imageState: imageState, nicknameState: newState.caption.validateType)
             
         case .updateProfile:
             os_log("update profile")
             
         case let .updateImageState(imageState):
             self.imageState = imageState
-            newState.isCompletable = completeButtonState(imageState: imageState, nicknameState: newState.nicknameState)
+            newState.isCompletable = completeButtonState(imageState: imageState, nicknameState: newState.caption.validateType)
         }
         
         return newState
@@ -97,7 +115,18 @@ final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, Profile
 
 extension ProfileEditingViewModel {
     
-    private func completeButtonState(imageState: ImageState, nicknameState: NicknameState) -> Bool {
+    private func fetchProfile() -> SideEffectPublisher {
+        return useCase.fetchProfile()
+            .map { profile in
+                return .fetchProfile(profile)
+            }
+            .catch { _ in
+                return Just(.error("profile fetch error"))
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    private func completeButtonState(imageState: ImageState, nicknameState: NicknameValidationState) -> Bool {
         switch (imageState, nicknameState) {
         case (_, .available): return true
         case (.album, .unchanged): return true
@@ -106,34 +135,23 @@ extension ProfileEditingViewModel {
         }
     }
     
-    private func updateNicknameState(_ nickname: String) -> NicknameState {
-        guard isValidStringLength(nickname: nickname) else {
-            return .exceededStringLength
-        }
-        guard isAvailable(nickname: nickname) else {
-            return .duplicated
-        }
-        guard isNewNickname(nickname) else {
-            return .unchanged
-        }
-        return .available
+    private func validate(_ nickname: String) -> SideEffectPublisher {
+        return useCase.validate(nickname: nickname)
+            .map { validationState in
+                let caption = CaptionOptions(validateType: validationState)
+                return .validateNickname(caption)
+            }
+            .eraseToAnyPublisher()
     }
     
-    private func isNewNickname(_ nickname: String) -> Bool {
-        return profile.name != nickname
-    }
-    
-    private func isValidStringLength(nickname: String) -> Bool {
-        return nickname.count < 11
-    }
-    
-    private func isAvailable(nickname: String) -> Bool {
-        // TODO: 중복검사 요청 구현
-        return true
-    }
-    
-    private func updateProfile() -> SideEffectPublisher {
-        // TODO: 프로필 업데이트 구현(서버 프로필 데이터 및 로컬 프로필 데이터 갱신)
-        return .just(ProfileEditingSideEffect.updateProfile)
+    private func updateProfile(profile: Profile) -> SideEffectPublisher {
+        return useCase.fetchProfile()
+            .map { profile in
+                return .updateProfile
+            }
+            .catch { _ in
+                return Just(.error("profile update error"))
+            }
+            .eraseToAnyPublisher()
     }
 }
