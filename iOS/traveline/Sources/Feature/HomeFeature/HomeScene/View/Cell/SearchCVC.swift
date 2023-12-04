@@ -6,7 +6,12 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
+import Combine
 import UIKit
+
+protocol SearchCVCDelegate: AnyObject {
+    func deleteKeyword(_ keyword: String)
+}
 
 final class SearchCVC: UICollectionViewCell {
     
@@ -14,11 +19,18 @@ final class SearchCVC: UICollectionViewCell {
     
     private let tlSearchInfoView: TLSearchInfoView = .init()
     
+    // MARK: - Properties
+    
+    private var cancellables: Set<AnyCancellable> = .init()
+    
+    weak var delegate: SearchCVCDelegate?
+    
     // MARK: - Initializer
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        setupAttributes()
         setupLayout()
     }
     
@@ -36,6 +48,18 @@ final class SearchCVC: UICollectionViewCell {
 // MARK: - Setup Functions
 
 private extension SearchCVC {
+    func setupAttributes() {
+        tlSearchInfoView.closeButton
+            .tapPublisher
+            .withUnretained(self)
+            .sink { owner, _ in
+                if let keyword = owner.tlSearchInfoView.keyword {
+                    owner.delegate?.deleteKeyword(keyword)
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
     func setupLayout() {
         addSubview(tlSearchInfoView)
         tlSearchInfoView.translatesAutoresizingMaskIntoConstraints = false

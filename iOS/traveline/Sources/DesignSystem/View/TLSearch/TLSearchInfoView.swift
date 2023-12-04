@@ -36,12 +36,18 @@ final class TLSearchInfoView: UIView {
         color: TLColor.white
     )
     
-    private let closeButton: UIButton = {
+    let closeButton: UIButton = {
         let button = UIButton()
         button.setImage(TLImage.Common.close, for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
         return button
     }()
+    
+    // MARK: - Properties
+    
+    var keyword: String? {
+        titleLabel.text
+    }
     
     // MARK: - Initializer
     
