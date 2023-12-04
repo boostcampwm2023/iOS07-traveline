@@ -10,22 +10,39 @@ import Foundation
 
 enum TimelineDetailEndPoint {
     case specificTimeline(String)
+    case createTimeline(TimelineDetailRequestDTO)
 }
 
 extension TimelineDetailEndPoint: EndPoint {
     
     var path: String? {
         switch self {
-        case .specificTimeline(let id): return "/timelines/\(id)"
+        case .specificTimeline(let id): 
+            return "/timelines/\(id)"
+            
+        case .createTimeline:
+            return "/timelines"
         }
     }
     
     var httpMethod: HTTPMethod {
-        return .GET
+        switch self {
+        case .specificTimeline:
+            return .GET
+            
+        case .createTimeline:
+            return .POST
+        }
     }
     
     var body: Encodable? {
-        return nil
+        switch self {
+        case .specificTimeline:
+            return nil
+            
+        case .createTimeline(let timelineDetail):
+            return timelineDetail
+        }
     }
     
     var header: [String: String] {
