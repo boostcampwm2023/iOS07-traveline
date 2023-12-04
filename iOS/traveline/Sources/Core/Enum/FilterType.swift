@@ -80,6 +80,6 @@ enum FilterType: Equatable, CaseIterable, Hashable {
     }
     
     static var allCases: [FilterType] {
-        return [.total, .sort] + TagType.allCases.map { .tagtype($0) }
+        return [.sort] + TagType.allCases.map { .tagtype($0) }
     }
 }

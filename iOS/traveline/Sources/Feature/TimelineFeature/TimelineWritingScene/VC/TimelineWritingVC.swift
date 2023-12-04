@@ -242,7 +242,7 @@ private extension TimelineWritingVC {
             titleTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
             textView.topAnchor.constraint(equalTo: selectImageButton.bottomAnchor, constant: Metric.spacing),
-            textView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            textView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor)
         ])
     }
     

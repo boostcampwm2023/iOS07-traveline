@@ -69,6 +69,7 @@ final class HomeVC: UIViewController {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = false
+        viewModel.sendAction(.viewWillAppear)
     }
     
     // MARK: - Functions
@@ -145,6 +146,24 @@ private extension HomeVC {
             .withUnretained(self)
             .sink { owner, _ in
                 owner.viewModel.sendAction(.createTravel)
+            }
+            .store(in: &cancellables)
+        
+        homeListView.didSelectHomeList
+            .withUnretained(self)
+            .sink { owner, _  in
+                let timelineVC = VCFactory.makeTimelineVC()
+                owner.navigationController?.pushViewController(
+                    timelineVC,
+                    animated: true
+                )
+            }
+            .store(in: &cancellables)
+        
+        homeListView.didSelectFilterType
+            .withUnretained(self)
+            .sink { owner, type in
+                owner.viewModel.sendAction(.startFilter(type))
             }
             .store(in: &cancellables)
         
