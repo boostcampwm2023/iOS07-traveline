@@ -101,7 +101,10 @@ export class PostingsRepository {
       qb.orderBy('p.createdAt', 'DESC');
     }
 
-    return qb.offset(offset).limit(limit).getMany();
+    return qb
+      .skip((offset - 1) * limit)
+      .take(limit)
+      .getMany();
   }
 
   async findAllByTitle(keyword: string) {
