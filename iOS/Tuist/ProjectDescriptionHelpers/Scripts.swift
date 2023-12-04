@@ -10,6 +10,7 @@ import ProjectDescription
 public extension TargetScript {
     static let swiftLintShell = TargetScript.pre(
         path: .relativeToRoot("Scripts/SwiftLintRunScript.sh"),
-        name: "SwiftLintShell"
+        name: "SwiftLintShell",
+        basedOnDependencyAnalysis: false
     )
 }
