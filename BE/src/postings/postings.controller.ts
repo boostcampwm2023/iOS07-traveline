@@ -20,7 +20,6 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiConflictResponse,
-  ApiConsumes,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
@@ -159,7 +158,6 @@ export class PostingsController {
     summary: '게시글 수정',
     description: 'id 값에 해당되는 게시글을 수정합니다.',
   })
-  @ApiConsumes('application/x-www-form-urlencoded')
   @ApiOkResponse({ schema: { example: update_OK } })
   async update(
     @Req() request,
