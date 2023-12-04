@@ -31,8 +31,8 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         case .startSearch:
             return fetchRecentKeyword()
             
-        case let .searching(text):
-            return .just(HomeSideEffect.showRelated(text))
+        case let .searching(searchKeyword):
+            return fetchRelatedKeyword(searchKeyword)
             
         case let .searchDone(text):
             return .just(HomeSideEffect.showResult(text))
@@ -65,11 +65,9 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             newState.homeViewType = .recent
             newState.curFilter = nil
             
-        case let .showRelated(text):
-            // TODO: - 서버 연동 후 수정
-            newState.searchList = SearchKeywordSample.makeRelatedList()
-            newState.homeViewType = (text.isEmpty) ? .recent : .related
-            newState.searchText = text
+        case let .showRelated(relatedSearchKeywordList):
+            newState.searchList = relatedSearchKeywordList
+            newState.homeViewType = .related
             
         case let .showResult(keyword):
             // TODO: - 서버 연동 후 수정
@@ -139,5 +137,18 @@ private extension HomeViewModel {
             .map { recentKeywordList in
                 return HomeSideEffect.showRecent(recentKeywordList)
             }.eraseToAnyPublisher()
+    }
+    
+    func fetchRelatedKeyword(_ keyword: String) -> SideEffectPublisher {
+        if keyword.isEmpty { return fetchRecentKeyword() }
+        
+        return homeUseCase.fetchRelatedKeyword(keyword)
+            .map { relatedKeywordList in
+                return HomeSideEffect.showRelated(relatedKeywordList)
+            }
+            .catch { error in
+                return Just(HomeSideEffect.loadFailed(error))
+            }
+            .eraseToAnyPublisher()
     }
 }
