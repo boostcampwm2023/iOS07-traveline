@@ -184,4 +184,3 @@ private extension TimelineDetailVC {
             .store(in: &cancellables)
     }
 }
-
