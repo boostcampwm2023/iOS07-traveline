@@ -14,6 +14,7 @@ protocol HomeUseCase {
     func fetchRecentKeyword() -> AnyPublisher<SearchKeywordList, Never>
     func saveRecentKeyword(_ keyword: String)
     func deleteRecentKeyword(_ keyword: String) -> AnyPublisher<SearchKeywordList, Never>
+    func fetchRelatedKeyword(_ keyword: String) -> AnyPublisher<SearchKeywordList, Error>
 }
 
 final class HomeUseCaseImpl: HomeUseCase {
@@ -64,6 +65,20 @@ final class HomeUseCaseImpl: HomeUseCase {
     func deleteRecentKeyword(_ keyword: String) -> AnyPublisher<SearchKeywordList, Never> {
         repository.deleteRecentKeyword(keyword)
         return fetchRecentKeyword()
+    }
+    
+    func fetchRelatedKeyword(_ keyword: String) -> AnyPublisher<SearchKeywordList, Error> {
+        return Future { promise in
+            Task { [weak self] in
+                guard let self else { return }
+                do {
+                    let relatedKeyword = try await self.repository.fetchPostingTitleList(keyword)
+                    promise(.success(relatedKeyword))
+                } catch {
+                    promise(.failure(error))
+                }
+            }
+        }.eraseToAnyPublisher()
     }
     
 }
