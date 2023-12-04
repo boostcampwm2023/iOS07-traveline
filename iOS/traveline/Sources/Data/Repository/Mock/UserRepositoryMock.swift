@@ -27,10 +27,13 @@ final class UserRepositoryMock: UserRepository {
         return mockData
     }
     
-    func updateUserInfo(with newProfile: Profile) async throws -> Profile {
+    func updateUserInfo(name: String, imageData: Data?) async throws -> Profile {
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
-        return newProfile
+        return .init(
+            imageURL: "https://avatars.githubusercontent.com/u/91725382?s=400&u=29b8023a56a09685aaab53d4eb0dd556254cd902&v=4",
+            name: "hongki"
+        )
     }
     
     func checkDuplication(name: String) async throws -> Bool {

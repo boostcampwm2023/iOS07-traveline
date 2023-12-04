@@ -24,7 +24,7 @@ final class UserRepositoryImpl: UserRepository {
         return userResponseDTO.toDomain()
     }
     
-    func updateUserInfo(with newProfile: Profile) async throws -> Profile {
+    func updateUserInfo(name: String, imageData: Data?) async throws -> Profile {
         // TODO: - Request UIser Info 로직 추가
         return .empty
     }

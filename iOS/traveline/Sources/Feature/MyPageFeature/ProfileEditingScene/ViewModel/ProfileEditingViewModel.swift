@@ -12,15 +12,15 @@ import OSLog
 
 enum ProfileEditingAction: BaseAction {
     case viewDidLoad
-    case imageDidChange(ProfileEditingViewModel.ImageState)
+    case imageDidChange(Bool)
     case nicknameDidChange(String)
-    case tapCompleteButton(Profile)
+    case tapCompleteButton(Data?)
 }
 
 enum ProfileEditingSideEffect: BaseSideEffect {
     case fetchProfile(Profile)
     case error(String)
-    case updateImageState(ProfileEditingViewModel.ImageState)
+    case updateImageState(Bool)
     case validateNickname(CaptionOptions)
     case updateProfile
 }
@@ -54,13 +54,7 @@ struct CaptionOptions {
 
 final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, ProfileEditingSideEffect, ProfileEditingState> {
     
-    enum ImageState {
-        case none
-        case basic
-        case album
-    }
-    
-    private var imageState: ImageState = .none
+    private var isChangedImage: Bool = false
     private var changedNickname: String = ""
     private let useCase: ProfileEditingUseCase
     
@@ -80,8 +74,8 @@ final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, Profile
         case let .imageDidChange(state):
             return .just(ProfileEditingSideEffect.updateImageState(state))
             
-        case .tapCompleteButton(let profile):
-            return updateProfile(profile: profile)
+        case .tapCompleteButton(let imageData):
+            return updateProfile(with: imageData)
         }
     }
     
@@ -97,14 +91,14 @@ final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, Profile
             
         case let .validateNickname(caption):
             newState.caption = caption
-            newState.isCompletable = completeButtonState(imageState: imageState, nicknameState: newState.caption.validateType)
+            newState.isCompletable = completeButtonState(isChangedImage: isChangedImage, nicknameState: newState.caption.validateType)
             
         case .updateProfile:
             os_log("update profile")
             
-        case let .updateImageState(imageState):
-            self.imageState = imageState
-            newState.isCompletable = completeButtonState(imageState: imageState, nicknameState: newState.caption.validateType)
+        case let .updateImageState(isChangedImage):
+            self.isChangedImage = isChangedImage
+            newState.isCompletable = completeButtonState(isChangedImage: isChangedImage, nicknameState: newState.caption.validateType)
         }
         
         return newState
@@ -126,11 +120,10 @@ extension ProfileEditingViewModel {
             .eraseToAnyPublisher()
     }
     
-    private func completeButtonState(imageState: ImageState, nicknameState: NicknameValidationState) -> Bool {
-        switch (imageState, nicknameState) {
+    private func completeButtonState(isChangedImage: Bool, nicknameState: NicknameValidationState) -> Bool {
+        switch (isChangedImage, nicknameState) {
         case (_, .available): return true
-        case (.album, .unchanged): return true
-        case (.basic, .unchanged): return true
+        case (true, .unchanged): return true
         default: return false
         }
     }
@@ -144,9 +137,10 @@ extension ProfileEditingViewModel {
             .eraseToAnyPublisher()
     }
     
-    private func updateProfile(profile: Profile) -> SideEffectPublisher {
+    private func updateProfile(with imageData: Data?) -> SideEffectPublisher {
+       // return useCase.update(name: changedNickname, imageData: imageData)
         return useCase.fetchProfile()
-            .map { profile in
+            .map { _ in
                 return .updateProfile
             }
             .catch { _ in

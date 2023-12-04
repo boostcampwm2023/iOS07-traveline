@@ -12,7 +12,7 @@ import Foundation
 protocol ProfileEditingUseCase {
     func fetchProfile() -> AnyPublisher<Profile, Error>
     func validate(nickname: String) -> AnyPublisher<NicknameValidationState, Never>
-    func update(_ profile: Profile) -> AnyPublisher<Profile, Error>
+    func update(name: String, imageData: Data?) -> AnyPublisher<Profile, Error>
 }
 
 enum NicknameValidationState {
@@ -76,12 +76,12 @@ final class ProfileEditingUseCaseImpl: ProfileEditingUseCase {
         return nickname.count < 11
     }
     
-    func update(_ profile: Profile) -> AnyPublisher<Profile, Error> {
+    func update(name: String, imageData: Data?) -> AnyPublisher<Profile, Error> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
                 do {
-                    let profile = try await self.repository.updateUserInfo(with: profile)
+                    let profile = try await self.repository.updateUserInfo(name: name, imageData: imageData)
                     promise(.success(profile))
                 } catch {
                     promise(.failure(error))

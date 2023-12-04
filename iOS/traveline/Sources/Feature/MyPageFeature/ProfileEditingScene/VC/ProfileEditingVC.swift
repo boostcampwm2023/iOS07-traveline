@@ -129,7 +129,7 @@ final class ProfileEditingVC: UIViewController {
         [
             UIAlertAction(title: Constants.selectBaseImage, style: .default) { _ in
                 self.imageView.image = nil
-                self.viewModel.sendAction(.imageDidChange(.basic))
+                self.viewModel.sendAction(.imageDidChange(true))
             },
             UIAlertAction(title: Constants.selectInAlbum, style: .default) { _ in
                 var config = PHPickerConfiguration()
@@ -264,7 +264,7 @@ extension ProfileEditingVC: PHPickerViewControllerDelegate {
             DispatchQueue.main.async {
                 guard let selectedImage = image as? UIImage else { return }
                 self.imageView.image = selectedImage
-                self.viewModel.sendAction(.imageDidChange(.album))
+                self.viewModel.sendAction(.imageDidChange(true))
             }
         }
     }
@@ -275,7 +275,7 @@ extension ProfileEditingVC: PHPickerViewControllerDelegate {
 
 extension ProfileEditingVC: TLNavigationBarDelegate {
     func rightButtonDidTapped() {
-        viewModel.sendAction(.tapCompleteButton(Profile(imageURL: "", name: "")))
+        viewModel.sendAction(.tapCompleteButton(imageView.image?.pngData()))
         self.navigationController?.popViewController(animated: true)
     }
 }

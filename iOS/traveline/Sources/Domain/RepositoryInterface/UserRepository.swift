@@ -10,6 +10,6 @@ import Foundation
 
 protocol UserRepository {
     func fetchUserInfo() async throws -> Profile
-    func updateUserInfo(with newProfile: Profile) async throws -> Profile
+    func updateUserInfo(name: String, imageData: Data?) async throws -> Profile
     func checkDuplication(name: String) async throws -> Bool
 }
