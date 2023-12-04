@@ -50,4 +50,16 @@ enum VCFactory {
         let viewModel = TravelViewModel(travelUseCase: useCase)
         return TravelVC(viewModel: viewModel)
     }
+    
+    static func makeTimelineWritingVC() -> TimelineWritingVC {
+        let repository = TimelineDetailRepositoryMock()
+        let useCase = TimelineWritingUseCaseImpl(repository: repository)
+        let viewModel = TimelineWritingViewModel(
+            useCase: useCase,
+            postId: "1234",
+            date: "2022년 3월 5일",
+            day: 1
+        )
+        return TimelineWritingVC(viewModel: viewModel)
+    }
 }
