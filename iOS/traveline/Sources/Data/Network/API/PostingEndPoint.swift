@@ -10,23 +10,42 @@ import Foundation
 
 enum PostingEndPoint {
     case postingList
+    case createPosting(TravelRequestDTO)
     case specificPosting
 }
 
 extension PostingEndPoint: EndPoint {
-    var path: String {
-        return "/postings"
+    
+    var path: String? {
+        let curPath: String = "/postings"
+        
+        switch self {
+        case .postingList, .createPosting:
+            return curPath
+        case .specificPosting:
+            return "/postings"
+        }
     }
     
     var httpMethod: HTTPMethod {
-        return .GET
+        switch self {
+        case .createPosting:
+            return .POST
+        case .postingList, .specificPosting:
+            return .GET
+        }
     }
     
     var body: Encodable? {
-        return nil
+        switch self {
+        case let .createPosting(travel):
+            return travel
+        default:
+            return nil
+        }
     }
     
     var header: [String: String] {
-        return [:]
+        return HeaderType.authorization.value
     }
 }

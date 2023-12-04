@@ -221,19 +221,27 @@ private extension TravelVC {
     }
     
     func bind() {
+        titleTextField
+            .textPublisher
+            .withUnretained(self)
+            .sink { owner, text in
+                owner.viewModel.sendAction(.titleEdited(text))
+            }
+            .store(in: &cancellables)
+        
         viewModel.$state
             .map(\.canPost)
             .removeDuplicates()
-            .sink { [weak owner = self] canPost in
-                guard let owner else { return }
+            .withUnretained(self)
+            .sink { owner, canPost in
                 owner.tlNavigationBar.isRightButtonEnabled(canPost)
             }
             .store(in: &cancellables)
         
         viewModel.$state
             .map(\.startDate)
-            .sink { [weak owner = self] startDate in
-                guard let owner else { return }
+            .withUnretained(self)
+            .sink { owner, startDate in
                 owner.selectPeriodView.endDatePicker.minimumDate = startDate
             }
             .store(in: &cancellables)
@@ -241,9 +249,34 @@ private extension TravelVC {
         viewModel.$state
             .map(\.endDate)
             .removeDuplicates()
-            .sink { [weak owner = self] endDate in
-                guard let owner else { return }
+            .withUnretained(self)
+            .sink { owner, endDate in
                 owner.selectPeriodView.endDatePicker.date = endDate
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .compactMap(\.travelID)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, id in
+                print("travelID: \(id.value)")
+                let timelineVC = VCFactory.makeTimelineVC()
+                guard var vcs = owner.navigationController?.viewControllers else { return }
+                vcs.removeLast()
+                vcs.append(timelineVC)
+                owner.navigationController?.setViewControllers(vcs, animated: true)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .compactMap(\.titleValidation)
+            .filter { $0 == .invalidate }
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { _, _ in
+                // TODO: - 토스트로 띄우기
+                print("제목은 1 - 14자 이내만 가능합니다.")
             }
             .store(in: &cancellables)
     }
@@ -260,11 +293,6 @@ extension TravelVC: UIScrollViewDelegate {
 // MARK: - UITextField Delegate
 
 extension TravelVC: UITextFieldDelegate {
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        guard let text = textField.text else { return }
-        viewModel.sendAction(.titleEdited(text))
-    }
-    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         dismissKeyboard()
         return true
@@ -299,5 +327,5 @@ extension TravelVC: TLNavigationBarDelegate {
 
 @available(iOS 17, *)
 #Preview {
-    return UINavigationController(rootViewController: TravelVC(viewModel: TravelViewModel()))
+    return UINavigationController(rootViewController: VCFactory.makeTravelVC())
 }
