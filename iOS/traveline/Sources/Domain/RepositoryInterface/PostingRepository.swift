@@ -15,4 +15,5 @@ protocol PostingRepository {
     func saveRecentKeyword(_ keyword: String)
     func saveRecentKeywordList(_ keywordList: [String])
     func deleteRecentKeyword(_ keyword: String)
+    func fetchPostingTitleList(_ keyword: String) async throws -> SearchKeywordList
 }

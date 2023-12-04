@@ -46,4 +46,18 @@ final class PostingRepositoryMock: PostingRepository {
         UserDefaultsList.recentSearchKeyword = deletedKeywordList
     }
     
+    func fetchPostingTitleList(_ keyword: String) async throws -> SearchKeywordList {
+        try await Task.sleep(nanoseconds: 1_000)
+        
+        let mockTitleList: SearchKeywordList = [
+            SearchKeyword(type: .related, title: keyword, searchedKeyword: keyword),
+            SearchKeyword(type: .related, title: keyword + "테스트2", searchedKeyword: keyword),
+            SearchKeyword(type: .related, title: keyword + "스트테3", searchedKeyword: keyword),
+            SearchKeyword(type: .related, title: keyword + "트테스4", searchedKeyword: keyword),
+            SearchKeyword(type: .related, title: keyword + "5", searchedKeyword: keyword),
+            SearchKeyword(type: .related, title: keyword + "6", searchedKeyword: keyword)
+        ]
+        return mockTitleList
+    }
+    
 }
