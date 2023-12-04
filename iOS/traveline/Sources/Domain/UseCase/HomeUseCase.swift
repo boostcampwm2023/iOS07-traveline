@@ -47,7 +47,18 @@ final class HomeUseCaseImpl: HomeUseCase {
     }
     
     func saveRecentKeyword(_ keyword: String) {
-        repository.saveRecentKeyword(keyword)
+        if let savedKeywordList = repository.fetchRecentKeyword() {
+            let deDuplicationList = savedKeywordList.filter({ $0 != keyword })
+            
+            if deDuplicationList.count < 15 {
+                repository.saveRecentKeywordList(deDuplicationList + [keyword])
+            } else {
+                let removeOldestKeyword = deDuplicationList.dropFirst()
+                repository.saveRecentKeywordList(removeOldestKeyword + [keyword])
+            }
+        } else {
+            repository.saveRecentKeyword(keyword)
+        }
     }
     
     func deleteRecentKeyword(_ keyword: String) -> AnyPublisher<SearchKeywordList, Never> {

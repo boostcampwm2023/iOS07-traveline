@@ -23,16 +23,14 @@ final class PostingRepositoryMock: PostingRepository {
     
     func saveRecentKeyword(_ keyword: String) {
         if let savedKeywordList = UserDefaultsList.recentSearchKeyword {
-            let deDuplicationList = savedKeywordList.filter({ $0 != keyword })
-            if deDuplicationList.count < 15 {
-                UserDefaultsList.recentSearchKeyword = deDuplicationList + [keyword]
-            } else {
-                let removeOldestKeyword = deDuplicationList.dropFirst()
-                UserDefaultsList.recentSearchKeyword = removeOldestKeyword + [keyword]
-            }
+            UserDefaultsList.recentSearchKeyword = savedKeywordList + [keyword]
         } else {
             UserDefaultsList.recentSearchKeyword = [keyword]
         }
+    }
+    
+    func saveRecentKeywordList(_ keywordList: [String]) {
+        UserDefaultsList.recentSearchKeyword = keywordList
     }
     
     func deleteRecentKeyword(_ keyword: String) {
