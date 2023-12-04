@@ -2,6 +2,7 @@ disabled_rules:
 - shorthand_operator
 - todo
 - trailing_whitespace
+- line_length
 
 opt_in_rules:
 - force_unwrapping
@@ -15,9 +16,6 @@ excluded:
 nesting:
   type_level:
     warning: 2
-
-line_length:
-  warning: 150
 
 identifier_name:
     min_length:

@@ -243,7 +243,6 @@ private extension TimelineVC {
             .map(\.timelineCardList)
             .withUnretained(self)
             .sink { owner, cardlist in
-                print(cardlist)
                 owner.timelineCardDataSource = cardlist
                 owner.timelineCollectionView.reloadData()
             }

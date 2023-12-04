@@ -25,6 +25,6 @@ public extension Project {
                 ]
             ]
         ],
-        
+        "BaseURL": "$(BASE_URL)"
     ]
 }

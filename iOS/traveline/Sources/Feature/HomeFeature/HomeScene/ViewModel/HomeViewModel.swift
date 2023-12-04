@@ -23,7 +23,7 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             return fetchHomeList()
             
         case .startSearch:
-            return .just(HomeSideEffect.showRecent)
+            return fetchRecentKeyword()
             
         case let .searching(text):
             return .just(HomeSideEffect.showRelated(text))
@@ -39,6 +39,9 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             
         case .createTravel:
             return .just(HomeSideEffect.showTravelWriting)
+            
+        case let .deleteKeyword(keyword):
+            return deleteSearchKeyword(keyword)
         }
     }
     
@@ -46,9 +49,8 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         var newState = state
         
         switch effect {
-        case .showRecent:
-            // TODO: - 서버 연동 후 수정
-            newState.searchList = SearchKeywordSample.makeRecentList()
+        case let .showRecent(recentSearchKeywordList):
+            newState.searchList = recentSearchKeywordList
             newState.homeViewType = .recent
             newState.curFilter = nil
             newState.isSearching = true
@@ -60,13 +62,14 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             newState.searchText = text
             newState.isSearching = true
             
-        case let .showResult(text):
+        case let .showResult(keyword):
             // TODO: - 서버 연동 후 수정
             newState.travelList = TravelListSample.make()
             newState.homeViewType = .result
-            newState.searchText = text
+            newState.searchText = keyword
             newState.isSearching = false
             newState.resultFilters = .make()
+            saveSearchKeyword(keyword)
             
         case let .showHomeList(travelList):
             // TODO: - 서버 연동 후 수정
@@ -97,9 +100,9 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
     }
 }
 
-// MARK: - Fetch
+// MARK: - Functions
 
-extension HomeViewModel {
+private extension HomeViewModel {
     func fetchHomeList() -> SideEffectPublisher {
         return homeUseCase.fetchHomeList()
             .map { travelList in
@@ -109,5 +112,23 @@ extension HomeViewModel {
                 return Just(HomeSideEffect.loadFailed(error))
             }
             .eraseToAnyPublisher()
+    }
+    
+    func fetchRecentKeyword() -> SideEffectPublisher {
+        return homeUseCase.fetchRecentKeyword()
+            .map { recentKeywordList in
+                return HomeSideEffect.showRecent(recentKeywordList)
+            }.eraseToAnyPublisher()
+    }
+    
+    func saveSearchKeyword(_ keyword: String) {
+        homeUseCase.saveRecentKeyword(keyword)
+    }
+    
+    func deleteSearchKeyword(_ keyword: String) -> SideEffectPublisher {
+        return homeUseCase.deleteRecentKeyword(keyword)
+            .map { recentKeywordList in
+                return HomeSideEffect.showRecent(recentKeywordList)
+            }.eraseToAnyPublisher()
     }
 }

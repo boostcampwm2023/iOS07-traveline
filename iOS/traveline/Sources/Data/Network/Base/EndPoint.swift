@@ -9,14 +9,15 @@
 import Foundation
 
 protocol EndPoint {
-    var path: String { get }
+    var path: String? { get }
     var httpMethod: HTTPMethod { get }
     var body: Encodable? { get }
     var header: [String: String] { get }
 }
 
 extension EndPoint {
-    var baseURL: String {
-        return "baseURL"
+    
+    var baseURL: String? {
+        return Bundle.main.object(forInfoDictionaryKey: Literal.InfoPlistKey.baseURL) as? String
     }
 }

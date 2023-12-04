@@ -13,7 +13,7 @@ final class SelectPeriodView: UIView {
     private enum Constants {
         static let startDateTitle: String = "출발일 *"
         static let endDateTitle: String = "도착일 *"
-        static let imageHeight: CGFloat = 20.0
+        static let imageHeight: CGFloat = 22.0
         static let spacing: CGFloat = 12.0
         static let radius: CGFloat = 12.0
         static let localeIdentifier: String = "ko_KR"
