@@ -28,6 +28,21 @@ enum VCFactory {
         return HomeVC(viewModel: viewModel)
     }
     
+    static func makeTimelineDetailVC(with id: String) -> TimelineDetailVC {
+        // TODO: - 서버 연결 후 Rpository 변경
+        let repository = TimelineDetailRepositoryMock()
+        let useCase = TimelineDetailUseCaseImpl(repository: repository)
+        let viewModel = TimelineDetailViewModel(timelineDetailUseCase: useCase, timelineId: id)
+        return TimelineDetailVC(viewModel: viewModel)
+    }
+    
+    static func makeMyPostListVC() -> MyPostListVC {
+        let repository = PostingRepositoryMock()
+        let useCase = MyPostListUseCaseImpl(repository: repository)
+        let viewModel = MyPostListViewModel(myPostListUseCase: useCase)
+        return MyPostListVC(viewModel: viewModel)
+    }
+    
     static func makeTravelVC() -> TravelVC {
 //        let repository = TravelRepositoryMock()
         let repository = TravelRepositoryImpl(network: network)

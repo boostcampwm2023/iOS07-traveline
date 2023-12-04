@@ -25,6 +25,15 @@ final class PostingRepositoryImpl: PostingRepository {
         return postingListResponseDTO.map { $0.toDomain() }
     }
     
+    func fetchMyPostingList() async throws -> TravelList {
+        let postingListResponseDTO = try await network.request(
+            endPoint: PostingEndPoint.postingList,
+            type: PostingListResponseDTO.self
+        )
+        
+        return postingListResponseDTO.map { $0.toDomain() }
+    }
+    
     func fetchRecentKeyword() -> [String]? {
         return UserDefaultsList.recentSearchKeyword
     }
