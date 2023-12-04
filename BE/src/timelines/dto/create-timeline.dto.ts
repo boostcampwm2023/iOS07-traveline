@@ -46,7 +46,8 @@ export class CreateTimelineDto {
     required: false,
     type: 'double',
     example: 126.970606917394,
-    description: '장소의 X 좌표',
+    description:
+      '장소의 X 좌표 (값을 보내지 않을 때는 Send empty value를 체크하지 말아주세요)',
   })
   @IsOptional()
   @Transform(({ value }) => parseFloat(value))
@@ -57,7 +58,8 @@ export class CreateTimelineDto {
     required: false,
     type: 'double',
     example: 37.5546788388674,
-    description: '장소의 Y 좌표',
+    description:
+      '장소의 Y 좌표 (값을 보내지 않을 때는 Send empty value를 체크하지 말아주세요)',
   })
   @IsOptional()
   @Transform(({ value }) => parseFloat(value))
