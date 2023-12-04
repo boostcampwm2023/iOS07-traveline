@@ -5,6 +5,7 @@ export class DeleteAuthDto {
   @ApiProperty()
   @IsString()
   idToken: string;
+
   @ApiProperty()
   @IsString()
   authorizationCode: string;

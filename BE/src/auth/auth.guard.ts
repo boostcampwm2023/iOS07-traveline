@@ -31,8 +31,12 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException('회원 정보가 존재하지 않습니다.');
       }
       request['user'] = payload;
-    } catch {
-      throw new UnauthorizedException('올바르지 않은 토큰입니다.');
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      } else {
+        throw new UnauthorizedException('다시 로그인해주세요.');
+      }
     }
     return true;
   }

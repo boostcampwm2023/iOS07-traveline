@@ -10,10 +10,10 @@ import {
 import { AuthService } from './auth.service';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateAuthRequestDto } from './dto/create-auth-request.dto';
-import { CreateAuthResponseDto } from './dto/create-auth-response';
 import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
 import { DeleteAuthDto } from './dto/delete-auth.dto';
 import { AuthGuard } from './auth.guard';
+import { login, refresh, withdrawal } from './auth.swagger';
 
 @Controller('auth')
 @ApiTags('Auth API')
@@ -22,10 +22,10 @@ export class AuthController {
 
   @Get('refresh')
   @ApiOperation({
-    summary: 'access token 발급 API',
-    description: 'access token을 재발급받는 API 입니다.',
+    summary: 'access token 재발급 API',
+    description: 'refresh token을 이용해 access token을 재발급받는 API 입니다.',
   })
-  @ApiOkResponse({ description: 'OK' })
+  @ApiOkResponse({ description: 'OK', schema: { example: refresh } })
   refresh(@Req() request) {
     return this.authService.refresh(request);
   }
@@ -34,9 +34,9 @@ export class AuthController {
   @ApiOperation({
     summary: '로그인 또는 회원가입 API',
     description:
-      'body로 전달받은 회원 정보를 확인하고 존재하는 회원이면 로그인을, 존재하지 않는 회원이면 회원가입을 진행합니다.',
+      '전달받은 idToken 내의 회원 정보를 확인하고 존재하는 회원이면 로그인을, 존재하지 않는 회원이면 회원가입을 진행합니다.',
   })
-  @ApiOkResponse({ description: 'OK', type: CreateAuthResponseDto })
+  @ApiOkResponse({ description: 'OK', schema: { example: login } })
   login(@Req() request, @Body() createAuthDto: CreateAuthRequestDto) {
     return this.authService.login(request, createAuthDto);
   }
@@ -45,11 +45,11 @@ export class AuthController {
   @ApiOperation({
     summary: '개발용 로그인 API',
     description:
-      'body로 전달받은 회원 id를 확인하고 존재하는 회원이면 로그인을 진행합니다.' +
+      '전달받은 회원 id를 확인하고 존재하는 회원이면 로그인을 진행합니다.' +
       '개발 테스트용 API에서는 회원가입이 불가합니다.' +
       '회원 생성이 필요한 경우 백엔드 팀원에게 요청해주세요.',
   })
-  @ApiOkResponse({ description: 'OK', type: CreateAuthResponseDto })
+  @ApiOkResponse({ description: 'OK', schema: { example: login } })
   loginForDev(@Body() createAuthForDevDto: CreateAuthRequestForDevDto) {
     return this.authService.loginForDev(createAuthForDevDto);
   }
@@ -58,9 +58,13 @@ export class AuthController {
   @Delete('withdrawal')
   @ApiOperation({
     summary: '탈퇴 API',
-    description: 'body로 전달받은 회원 정보를 확인하고 회원 정보를 삭제한다.',
+    description:
+      '전달받은 idToken과 authorizationCode를 이용해 탈퇴를 진행합니다.',
   })
-  @ApiOkResponse({ description: 'OK' })
+  @ApiOkResponse({
+    description: 'OK',
+    schema: { example: withdrawal },
+  })
   withdrawal(@Req() request, @Body() deleteAuthDto: DeleteAuthDto) {
     return this.authService.withdrawal(request, deleteAuthDto);
   }
