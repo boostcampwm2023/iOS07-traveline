@@ -11,7 +11,7 @@ import Foundation
 enum HomeSideEffect: BaseSideEffect {
     case showHome
     case showRecent(SearchKeywordList)
-    case showRelated(String)
+    case showRelated(SearchKeywordList)
     case showResult(String)
     case showHomeList(TravelList)
     case showFilter(FilterType)

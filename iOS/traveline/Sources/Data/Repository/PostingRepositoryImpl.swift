@@ -56,4 +56,14 @@ final class PostingRepositoryImpl: PostingRepository {
         UserDefaultsList.recentSearchKeyword = deletedKeywordList
     }
     
+    func fetchPostingTitleList(_ keyword: String) async throws -> SearchKeywordList {
+        let postingTitleListResponseDTO = try await network.request(
+            endPoint: PostingEndPoint.postingList,
+            type: PostingTitleListResponseDTO.self
+        )
+        
+        return postingTitleListResponseDTO
+            .map { SearchKeyword(type: .related, title: $0, searchedKeyword: keyword) }
+    }
+    
 }
