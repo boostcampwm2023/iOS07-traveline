@@ -88,9 +88,10 @@ export class PostingsController {
   async create(
     @Req() request,
     @Body() createPostingDto: CreatePostingDto
-  ): Promise<Posting> {
+  ): Promise<{ id: string }> {
     const userId = request['user'].id;
-    return this.postingsService.create(userId, createPostingDto);
+    const { id } = await this.postingsService.create(userId, createPostingDto);
+    return { id };
   }
 
   @Get()

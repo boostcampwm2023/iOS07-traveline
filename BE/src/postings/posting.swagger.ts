@@ -133,30 +133,7 @@ export const search_OK = [
   },
 ];
 
-export const create_OK = {
-  title: 'bread lover❤️',
-  startDate: '2023-08-16T00:00:00.000Z',
-  endDate: '2023-08-18T00:00:00.000Z',
-  days: 3,
-  period: '2박 3일',
-  headcount: '5인 이상',
-  budget: '10 - 50만 원',
-  location: '대전',
-  season: '여름',
-  vehicle: null,
-  theme: ['힐링', '맛집'],
-  withWho: ['가족'],
-  writer: {
-    id: '123456789012345678901234567890123456',
-    name: 'lemon',
-    avatar: null,
-    resourceId: 'temp',
-    socialType: 1,
-  },
-  thumbnail: null,
-  id: 'c89f207a-f528-4d53-8ac2-1356fa22eb21',
-  createdAt: '2023-11-28T14:13:28.668Z',
-};
+export const create_OK = { id: 'c89f207a-f528-4d53-8ac2-1356fa22eb21' };
 
 export const update_OK = {
   generatedMaps: [],
