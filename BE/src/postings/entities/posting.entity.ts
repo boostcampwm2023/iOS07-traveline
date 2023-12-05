@@ -72,7 +72,7 @@ export class Posting {
   @Column({ type: 'json', nullable: true })
   theme: Theme[];
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ name: 'with_who', type: 'json', nullable: true })
   withWho: WithWho[];
 
   @OneToMany(() => Timeline, (timeline) => timeline.posting)
