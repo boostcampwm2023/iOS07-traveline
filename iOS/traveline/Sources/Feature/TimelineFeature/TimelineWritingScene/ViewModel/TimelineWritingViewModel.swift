@@ -47,12 +47,12 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
     ) {
         self.useCase = useCase
         self.timelineDetailRequest = .init(
-            title: "",
+            title: Literal.empty,
             day: day,
-            time: "",
+            time: Literal.empty,
             date: date,
-            place: "",
-            content: "",
+            place: Literal.empty,
+            content: Literal.empty,
             posting: postId
         )
     }
