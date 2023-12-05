@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsString, MaxLength, MinLength } from 'class-validator';
+import {
+  IsArray,
+  IsEmail,
+  IsIP,
+  IsNumber,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -15,4 +23,15 @@ export class CreateUserDto {
   @IsNumber()
   @ApiProperty()
   socialType: number;
+
+  @ApiProperty()
+  @IsEmail()
+  @MinLength(4)
+  @MaxLength(35)
+  email: string;
+
+  @ApiProperty()
+  @IsArray()
+  @IsIP(4, { each: true })
+  allowedIp: string[];
 }

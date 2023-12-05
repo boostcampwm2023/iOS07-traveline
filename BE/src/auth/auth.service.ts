@@ -76,7 +76,7 @@ export class AuthService {
     return decodedIdToken;
   }
 
-  async login(request, createAuthDto: CreateAuthRequestDto, ipAddress: ip) {
+  async login(request, createAuthDto: CreateAuthRequestDto, ipAddress: string) {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     if (type === 'Bearer' && token) {
       throw new BadRequestException('JWT가 이미 존재합니다.');
@@ -89,13 +89,25 @@ export class AuthService {
 
     if (!user) {
       const email = createAuthDto.email;
-      user = await this.usersService.createUser(appleId, email);
+      user = await this.usersService.createUser(appleId, email, ipAddress);
       if (!user) {
         throw new InternalServerErrorException();
+      }
+    } else {
+      const allowedIpArray = user.allowedIp;
+      const bannedIpArray = user.bannedIp;
+      if (ipAddress in bannedIpArray) {
+        throw new UnauthorizedException(
+          '접속하신 IP에서의 계정 접근이 차단되어있습니다.'
+        );
+      }
+      if (!(ipAddress in allowedIpArray)) {
+        //메일 전송
       }
     }
 
     const payload = { id: user.id };
+
     return {
       accessToken: await this.jwtService.signAsync(payload),
       refreshToken: await this.jwtService.signAsync(payload, {
