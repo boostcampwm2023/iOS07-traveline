@@ -76,7 +76,7 @@ export class AuthService {
     return decodedIdToken;
   }
 
-  async login(request, createAuthDto: CreateAuthRequestDto) {
+  async login(request, createAuthDto: CreateAuthRequestDto, ipAddress: ip) {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     if (type === 'Bearer' && token) {
       throw new BadRequestException('JWT가 이미 존재합니다.');
