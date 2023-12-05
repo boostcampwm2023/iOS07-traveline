@@ -53,7 +53,7 @@ final class TimelineCardView: UIView {
     
     func setData(cardInfo: TimelineCardInfo) {
         titleLabel.setText(to: cardInfo.title)
-        subtitleLabel.setText(to: cardInfo.subtitle)
+        subtitleLabel.setText(to: cardInfo.place)
         contentLabel.setText(to: cardInfo.content)
         thumbnailImageView.setImage(from: cardInfo.thumbnailURL)
     }
