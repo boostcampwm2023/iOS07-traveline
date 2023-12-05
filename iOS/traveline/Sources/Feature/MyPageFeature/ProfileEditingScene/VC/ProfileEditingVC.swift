@@ -112,6 +112,7 @@ final class ProfileEditingVC: UIViewController {
         setupAttributes()
         setupLayout()
         bind()
+        viewModel.sendAction(.viewDidLoad)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -128,7 +129,7 @@ final class ProfileEditingVC: UIViewController {
         [
             UIAlertAction(title: Constants.selectBaseImage, style: .default) { _ in
                 self.imageView.image = nil
-                self.viewModel.sendAction(.imageDidChange(.basic))
+                self.viewModel.sendAction(.imageDidChange(true))
             },
             UIAlertAction(title: Constants.selectInAlbum, style: .default) { _ in
                 var config = PHPickerConfiguration()
@@ -153,9 +154,6 @@ extension ProfileEditingVC {
     
     private func setupAttributes() {
         view.backgroundColor = TLColor.black
-        
-        nickNameTextField.text = viewModel.profile.name
-        imageView.setImage(from: viewModel.profile.imageURL)
         
         tlNavigationBar.delegate = self
         
@@ -229,14 +227,22 @@ extension ProfileEditingVC {
             .store(in: &cancellables)
         
         viewModel.$state
-            .map(\.nicknameState)
+            .map(\.caption)
+            .withUnretained(self)
+            .sink { owner, caption in
+                owner.captionLabel.setText(to: caption.text)
+                owner.captionLabel.setColor(to: caption.isError ? TLColor.error : TLColor.main)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .map(\.profile)
             .removeDuplicates()
             .withUnretained(self)
-            .sink { owner, state in
-                let text = state.text
-                let color = state == .available ? TLColor.main : TLColor.error
-                owner.captionLabel.setText(to: text)
-                owner.captionLabel.setColor(to: color)
+            .sink { owner, profile in
+                owner.nickNameTextField.text = profile.name
+                owner.imageView.setImage(from: profile.imageURL)
+                
             }
             .store(in: &cancellables)
     }
@@ -258,7 +264,7 @@ extension ProfileEditingVC: PHPickerViewControllerDelegate {
             DispatchQueue.main.async {
                 guard let selectedImage = image as? UIImage else { return }
                 self.imageView.image = selectedImage
-                self.viewModel.sendAction(.imageDidChange(.album))
+                self.viewModel.sendAction(.imageDidChange(true))
             }
         }
     }
@@ -269,7 +275,7 @@ extension ProfileEditingVC: PHPickerViewControllerDelegate {
 
 extension ProfileEditingVC: TLNavigationBarDelegate {
     func rightButtonDidTapped() {
-        viewModel.sendAction(.tapCompleteButton)
+        viewModel.sendAction(.tapCompleteButton(imageView.image?.pngData()))
         self.navigationController?.popViewController(animated: true)
     }
 }
