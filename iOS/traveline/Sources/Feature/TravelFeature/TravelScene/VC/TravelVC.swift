@@ -260,8 +260,7 @@ private extension TravelVC {
             .removeDuplicates()
             .withUnretained(self)
             .sink { owner, id in
-                print("travelID: \(id.value)")
-                let timelineVC = VCFactory.makeTimelineVC()
+                let timelineVC = VCFactory.makeTimelineVC(id: id)
                 guard var vcs = owner.navigationController?.viewControllers else { return }
                 vcs.removeLast()
                 vcs.append(timelineVC)
