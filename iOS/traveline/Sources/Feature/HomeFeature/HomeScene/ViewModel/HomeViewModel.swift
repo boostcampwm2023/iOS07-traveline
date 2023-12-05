@@ -43,6 +43,9 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         case let .addFilter(filterList):
             return .just(HomeSideEffect.saveFilter(filterList))
             
+        case let .filterChanged(filters):
+            return fetchSearchList(from: filters)
+            
         case .createTravel:
             return .just(HomeSideEffect.showTravelWriting)
             
