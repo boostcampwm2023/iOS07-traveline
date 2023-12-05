@@ -16,9 +16,9 @@ final class PostingRepositoryImpl: PostingRepository {
         self.network = network
     }
     
-    func fetchPostingList() async throws -> TravelList {
+    func fetchPostingList(with query: SearchQuery) async throws -> TravelList {
         let postingListResponseDTO = try await network.request(
-            endPoint: PostingEndPoint.postingList,
+            endPoint: PostingEndPoint.postingList(query),
             type: PostingListResponseDTO.self
         )
         
@@ -27,7 +27,7 @@ final class PostingRepositoryImpl: PostingRepository {
     
     func fetchMyPostingList() async throws -> TravelList {
         let postingListResponseDTO = try await network.request(
-            endPoint: PostingEndPoint.postingList,
+            endPoint: PostingEndPoint.myPostingList,
             type: PostingListResponseDTO.self
         )
         
@@ -58,7 +58,7 @@ final class PostingRepositoryImpl: PostingRepository {
     
     func fetchPostingTitleList(_ keyword: String) async throws -> SearchKeywordList {
         let postingTitleListResponseDTO = try await network.request(
-            endPoint: PostingEndPoint.postingList,
+            endPoint: PostingEndPoint.myPostingList,
             type: PostingTitleListResponseDTO.self
         )
         

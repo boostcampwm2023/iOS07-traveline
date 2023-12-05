@@ -16,7 +16,7 @@ final class PostingRepositoryMock: PostingRepository {
         return mockData
     }
     
-    func fetchPostingList() async throws -> TravelList {
+    func fetchPostingList(with query: SearchQuery) async throws -> TravelList {
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
         let mockData = TravelListSample.make()
