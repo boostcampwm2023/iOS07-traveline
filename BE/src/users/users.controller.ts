@@ -68,6 +68,10 @@ export class UsersController {
       '프로필사진을 기본 사진으로 변경할 경우 파일을 전송하지 않으시면 됩니다. ' +
       '프로필 사진 변경이 없을 경우 기존 사진을 다시 보내주시면 됩니다. ' +
       '닉네임 변경사항이 없을 경우 기존 name을 전송해주시면 됩니다.',
+    schema: {
+      type: 'object',
+      properties: { name: { type: 'string' }, image: { type: 'file' } },
+    },
   })
   update(
     @Req() request,
