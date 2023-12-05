@@ -346,3 +346,8 @@ export const findCoordinates_OK = [
     y: '37.553341424711675',
   },
 ];
+
+export const translate_OK = {
+  description:
+    "Seongsimdang is a bakery located in Daejeon Metropolitan City. It is famous for fried Soboro or chives bread, and is famous for making Pope Francis' meal bread during Pope Francis' visit to Korea in 2014. Along with Gunsan Yi Seongdang, Seoul Napoleon, Jeonju PNB Pungnyeon Confectionery, and Busan B&C, it is also considered one of the top five bakeries in Korea.[1] There are five stores, including Euneungjeongi, Daejeon Station, Daejeon Convention Center, Lotte Department Store, and Daejeon Branch, but they do not open stores other than Daejeon. Sungsimdang, which operated the KTX express service and was available in other regions, ended its operation of the KTX express baggage center on December 25, 2022.",
+};
