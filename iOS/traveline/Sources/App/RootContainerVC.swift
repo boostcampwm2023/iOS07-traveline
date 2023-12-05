@@ -166,7 +166,10 @@ extension RootContainerVC: SideMenuDelegate {
             let myPostListVC = VCFactory.makeMyPostListVC()
             navigationVC?.pushViewController(myPostListVC, animated: true)
         case .setting:
-            let viewModel = SettingViewModel()
+            let network = NetworkManager(urlSession: URLSession.shared)
+            let repository = AuthRepositoryImpl(network: network)
+            let useCase = SettingUseCaseImpl(repository: repository)
+            let viewModel = SettingViewModel(useCase: useCase)
             navigationVC?.pushViewController(SettingVC(viewModel: viewModel), animated: true)
         }
     }

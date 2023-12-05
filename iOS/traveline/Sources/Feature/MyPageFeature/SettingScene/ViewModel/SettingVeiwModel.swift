@@ -6,6 +6,7 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
+import Combine
 import Foundation
 
 enum SettingAction: BaseAction {
@@ -14,8 +15,9 @@ enum SettingAction: BaseAction {
 }
 
 enum SettingSideEffect: BaseSideEffect {
-    case requestLogout
+    case logout
     case requestWithdraw
+    case error(String)
 }
 
 struct SettingState: BaseState {
@@ -23,6 +25,12 @@ struct SettingState: BaseState {
 }
 
 final class SettingViewModel: BaseViewModel<SettingAction, SettingSideEffect, SettingState> {
+    
+    private let useCase: SettingUseCase
+    
+    init(useCase: SettingUseCase) {
+        self.useCase = useCase
+    }
     
     override func transform(action: Action) -> SideEffectPublisher {
         switch action {
@@ -37,14 +45,19 @@ final class SettingViewModel: BaseViewModel<SettingAction, SettingSideEffect, Se
 
 extension SettingViewModel {
     private func reqeustLogout() -> SideEffectPublisher {
-        // TODO: - 로그아웃 요청 로직
-        print("logout!!!")
-        return .just(.requestLogout)
+        useCase.logout()
+        return .just(.logout)
     }
     
     private func requestWithdraw() -> SideEffectPublisher {
         // TODO: - 회원탈퇴 요청 로직
-        print("탈퇴!!!")
-        return .just(.requestWithdraw)
+        return useCase.requestWithdrawal()
+            .map { _ in
+                return .requestWithdraw
+            }
+            .catch { _ in
+                return Just(.error("failed request withdrawal"))
+            }
+            .eraseToAnyPublisher()
     }
 }
