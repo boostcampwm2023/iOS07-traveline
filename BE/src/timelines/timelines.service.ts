@@ -164,7 +164,7 @@ export class TimelinesService {
 
   async translate(id: string) {
     const { description } = await this.findOne(id);
-    const url = 'https://openapi.naver.com/v1/papago/n2mt';
+    const url = 'https://naveropenapi.apigw.ntruss.com/nmt/v1/translation';
     const body = {
       source: 'ko',
       target: 'en',
@@ -177,9 +177,9 @@ export class TimelinesService {
     } = await firstValueFrom(
       this.httpService.post(url, body, {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-          'X-Naver-Client-Id': process.env.NAVER_CLIENT_ID,
-          'X-Naver-Client-Secret': process.env.NAVER_CLIENT_SECRET,
+          'Content-Type': 'application/json',
+          'X-NCP-APIGW-API-KEY-ID': process.env.X_NCP_APIGW_API_KEY_ID,
+          'X-NCP-APIGW-API-KEY': process.env.X_NCP_APIGW_API_KEY,
         },
       })
     );
