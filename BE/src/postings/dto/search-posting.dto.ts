@@ -1,4 +1,4 @@
-import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import {
@@ -85,38 +85,54 @@ export class SearchPostingDto {
   @ApiProperty({
     required: false,
     enum: Location,
-    description: '여행위치 태그',
+    description:
+      '여행위치 태그 (Swagger에선 2개 이상 선택해야만 테스트가 가능합니다)',
+    isArray: true,
   })
   @IsOptional()
-  @IsString()
-  @IsIn(locations)
-  location: Location;
+  @IsString({ each: true })
+  @IsArray()
+  @IsIn(locations, { each: true })
+  location: Location[];
 
   @ApiProperty({
     required: false,
     enum: Theme,
-    description: '여행테마 태그 (1개만 선택 가능)',
+    description:
+      '여행테마 태그 (Swagger에선 2개 이상 선택해야만 테스트가 가능합니다)',
+    isArray: true,
   })
   @IsOptional()
-  @IsString()
-  @IsIn(themes)
-  theme: Theme;
+  @IsString({ each: true })
+  @IsArray()
+  @IsIn(themes, { each: true })
+  theme: Theme[];
 
   @ApiProperty({
     required: false,
     enum: WithWho,
-    description: '누구랑 태그 (1개만 선택 가능)',
+    description:
+      '누구랑 태그 (Swagger에선 2개 이상 선택해야만 테스트가 가능합니다)',
+    isArray: true,
   })
   @IsOptional()
-  @IsString()
-  @IsIn(withWhos)
-  withWho: WithWho;
+  @IsString({ each: true })
+  @IsArray()
+  @IsIn(withWhos, { each: true })
+  withWho: WithWho[];
 
-  @ApiProperty({ required: false, enum: Season, description: '여행계절 태그' })
+  @ApiProperty({
+    required: false,
+    enum: Season,
+    description:
+      '여행계절 태그 (Swagger에선 2개 이상 선택해야만 테스트가 가능합니다)',
+    isArray: true,
+  })
   @IsOptional()
-  @IsString()
-  @IsIn(seasons)
-  season: Season;
+  @IsString({ each: true })
+  @IsArray()
+  @IsIn(seasons, { each: true })
+  season: Season[];
 
   @ApiProperty({ required: false, enum: Vehicle, description: '이동수단 태그' })
   @IsOptional()
