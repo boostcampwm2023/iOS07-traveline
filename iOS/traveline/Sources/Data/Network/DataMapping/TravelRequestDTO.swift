@@ -16,16 +16,18 @@ struct TravelRequestDTO: Encodable {
 
 extension TravelRequest {
     func toDTO() -> TravelRequestDTO {
-        .init(
+        let tagManager = TagManager.init(tags: tags)
+        
+        return .init(
             title: title,
             location: region,
             startDate: startDate.toString(),
             endDate: endDate.toString(),
-            headcount: tags.filter { $0.type == .people }.first?.title,
-            budget: (tags.filter { $0.type == .cost }.first?.title ?? "") + Literal.Tag.CostDetail.won,
-            vehicle: tags.filter { $0.type == .transportation }.first?.title,
-            theme: tags.filter { $0.type == .theme }.map(\.title),
-            withWho: tags.filter { $0.type == .with }.map(\.title)
+            headcount: tagManager.toDTO(type: .people),
+            budget: (tagManager.toDTO(type: .cost) ?? "0") + Literal.Tag.CostDetail.won,
+            vehicle: tagManager.toDTO(type: .transportation),
+            theme: tagManager.toDTO(type: .theme),
+            withWho: tagManager.toDTO(type: .with)
         )
     }
 }
