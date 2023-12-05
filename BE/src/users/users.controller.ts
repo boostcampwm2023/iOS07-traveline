@@ -72,7 +72,11 @@ export class UsersController {
       type: 'object',
       required: ['name'],
       properties: {
-        name: { type: 'string' },
+        name: {
+          type: 'string',
+          example: '레몬',
+          description: '변경할 사용자 이름',
+        },
         image: {
           type: 'file',
           description: '프로필 사진으로 등록하려는 이미지',
