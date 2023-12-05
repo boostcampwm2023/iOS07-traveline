@@ -158,7 +158,9 @@ extension RootContainerVC: SideMenuDelegate {
                 imageURL: "leaf",
                 name: "hongki"
             )
-            let viewModel = ProfileEditingViewModel(profile: profile)
+            let repositoryMock = UserRepositoryMock()
+            let useCase = ProfileEditingUseCaseImpl(repository: repositoryMock)
+            let viewModel = ProfileEditingViewModel(useCase: useCase)
             navigationVC?.pushViewController(ProfileEditingVC(viewModel: viewModel), animated: true)
         case .myPostList:
             let myPostListVC = VCFactory.makeMyPostListVC()
