@@ -20,13 +20,10 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
     override func transform(action: Action) -> SideEffectPublisher {
         switch action {
         case .viewWillAppear:
-            return .just(HomeSideEffect.showHome)
+            return .just(HomeSideEffect.showPrevious)
             
         case .viewDidLoad, .cancelSearch:
-            return Publishers.Merge(
-                Just(HomeSideEffect.showHome),
-                fetchHomeList()
-            ).eraseToAnyPublisher()
+            return .just(HomeSideEffect.showHome)
             
         case .startSearch:
             return fetchRecentKeyword()
@@ -62,6 +59,11 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             newState.moveToTravelWriting = false
             newState.curFilter = nil
             newState.homeViewType = .home
+        
+        case .showPrevious:
+            newState.moveToTravelWriting = false
+            newState.curFilter = nil
+            newState.homeViewType = state.homeViewType
             
         case let .showRecent(recentSearchKeywordList):
             newState.searchList = recentSearchKeywordList
