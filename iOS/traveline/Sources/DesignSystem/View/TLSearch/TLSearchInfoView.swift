@@ -36,12 +36,18 @@ final class TLSearchInfoView: UIView {
         color: TLColor.white
     )
     
-    private let closeButton: UIButton = {
+    let closeButton: UIButton = {
         let button = UIButton()
         button.setImage(TLImage.Common.close, for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
         return button
     }()
+    
+    // MARK: - Properties
+    
+    var keyword: String? {
+        titleLabel.text
+    }
     
     // MARK: - Initializer
     
@@ -61,6 +67,13 @@ final class TLSearchInfoView: UIView {
         titleLabel.setText(to: item.title)
         closeButton.isHidden = (item.type == .related)
         searchIcon.isHidden = (item.type == .recent)
+        
+        if let searchedKeyword = item.searchedKeyword {
+            titleLabel.setColor(
+                to: TLColor.main,
+                range: item.title.findCommonPrefixRange(searchedKeyword)
+            )
+        }
     }
 }
 

@@ -69,6 +69,7 @@ final class HomeVC: UIViewController {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = false
+        viewModel.sendAction(.viewWillAppear)
     }
     
     // MARK: - Functions
@@ -137,6 +138,9 @@ private extension HomeVC {
     }
     
     func bind() {
+        bindListView()
+        bindSearchView()
+        
         createTravelButton
             .tapPublisher
             .withUnretained(self)
@@ -184,7 +188,6 @@ private extension HomeVC {
         viewModel.$state
             .filter { $0.isSearching }
             .map(\.homeViewType)
-            .removeDuplicates()
             .withUnretained(self)
             .sink { owner, type in
                 let type: SearchViewType = (type == .recent) ? .recent : .related
@@ -230,8 +233,47 @@ private extension HomeVC {
             .filter { $0 }
             .withUnretained(self)
             .sink { owner, _ in
-                let travelVC = TravelVC(viewModel: TravelViewModel())
+                let travelVC = VCFactory.makeTravelVC()
                 owner.navigationController?.pushViewController(travelVC, animated: true)
+            }
+            .store(in: &cancellables)
+    }
+    
+    func bindListView() {
+        homeListView.didSelectHomeList
+            .withUnretained(self)
+            .sink { owner, _  in
+                let timelineVC = VCFactory.makeTimelineVC()
+                owner.navigationController?.pushViewController(
+                    timelineVC,
+                    animated: true
+                )
+            }
+            .store(in: &cancellables)
+        
+        homeListView.didSelectFilterType
+            .withUnretained(self)
+            .sink { owner, type in
+                owner.viewModel.sendAction(.startFilter(type))
+            }
+            .store(in: &cancellables)
+    }
+    
+    func bindSearchView() {
+        homeSearchView.didSelectKeyword
+            .withUnretained(self)
+            .sink { owner, keyword in
+                owner.viewModel.sendAction(.searchDone(keyword))
+                owner.homeSearchView.isHidden = true
+                owner.searchController.searchBar.text = keyword
+                owner.searchController.searchBar.resignFirstResponder()
+            }
+            .store(in: &cancellables)
+        
+        homeSearchView.didDeleteKeyword
+            .withUnretained(self)
+            .sink { owner, keyword in
+                owner.viewModel.sendAction(.deleteKeyword(keyword))
             }
             .store(in: &cancellables)
     }

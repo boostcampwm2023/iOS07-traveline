@@ -15,6 +15,7 @@ enum MyPostListAction: BaseAction {
 
 enum MyPostListSideEffect: BaseSideEffect {
     case loadMyPostList(TravelList)
+    case loadFailed
 }
 
 struct MyPostListState: BaseState {
@@ -22,6 +23,12 @@ struct MyPostListState: BaseState {
 }
 
 final class MyPostListViewModel: BaseViewModel<MyPostListAction, MyPostListSideEffect, MyPostListState> {
+    
+    private let myPostListUseCase: MyPostListUseCase
+    
+    init(myPostListUseCase: MyPostListUseCase) {
+        self.myPostListUseCase = myPostListUseCase
+    }
     
     override func transform(action: Action) -> SideEffectPublisher {
         switch action {
@@ -36,6 +43,8 @@ final class MyPostListViewModel: BaseViewModel<MyPostListAction, MyPostListSideE
         switch effect {
         case .loadMyPostList(let list):
             newState.travelList = list
+        case .loadFailed:
+            break
         }
         
         return newState
@@ -46,8 +55,13 @@ final class MyPostListViewModel: BaseViewModel<MyPostListAction, MyPostListSideE
 
 extension MyPostListViewModel {
     func loadMyPostList() -> SideEffectPublisher {
-        // TODO: - 여행 리스트 요청 작업
-        let list = TravelListSample.make()
-        return .just(MyPostListSideEffect.loadMyPostList(list))
+        return myPostListUseCase.fetchMyPostList()
+            .map { list in
+                return MyPostListSideEffect.loadMyPostList(list)
+            }
+            .catch { _ in
+                return Just(MyPostListSideEffect.loadFailed)
+            }
+            .eraseToAnyPublisher()
     }
 }

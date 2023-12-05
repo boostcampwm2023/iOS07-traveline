@@ -55,7 +55,7 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
         case .fetchTimelineCard:
             fetchTimelineCardInfo()
             
-        case .changeDay(_):
+        case .changeDay:
             fetchTimelineCard()
             
         case .likeButtonPressed:
@@ -82,7 +82,7 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
         case .toggleLike:
             newState.travelInfo.isLiked.toggle()
             
-        case .loadFailed(_):
+        case .loadFailed:
             // TODO: - 서버 통신 실패 시 state 처리
             break
         }

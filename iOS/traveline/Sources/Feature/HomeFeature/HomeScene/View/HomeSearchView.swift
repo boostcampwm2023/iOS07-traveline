@@ -6,6 +6,7 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
+import Combine
 import UIKit
 
 enum SearchViewType {
@@ -35,6 +36,7 @@ final class HomeSearchView: UIView {
         )
         collectionView.register(cell: SearchCVC.self)
         collectionView.registerHeader(view: RecentHeaderView.self)
+        collectionView.delegate = self
         collectionView.backgroundColor = TLColor.black
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
@@ -46,6 +48,9 @@ final class HomeSearchView: UIView {
     private typealias Snapshot = NSDiffableDataSourceSnapshot<SearchSection, SearchKeyword>
     
     private var dataSource: DataSource!
+    
+    let didDeleteKeyword: PassthroughSubject<String, Never> = .init()
+    let didSelectKeyword: PassthroughSubject<String, Never> = .init()
     
     // MARK: - Initializer
     
@@ -69,6 +74,8 @@ final class HomeSearchView: UIView {
         ) { collectionView, indexPath, searchKeyword in
             let cell = collectionView.dequeue(cell: SearchCVC.self, for: indexPath)
             cell.setupData(item: searchKeyword)
+            cell.delegate = self
+            
             return cell
         }
         
@@ -143,6 +150,24 @@ private extension HomeSearchView {
             searchCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
             searchCollectionView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+    }
+}
+
+// MARK: - SearchCVCDelegate
+
+extension HomeSearchView: SearchCVCDelegate {
+    func deleteKeyword(_ keyword: String) {
+        didDeleteKeyword.send(keyword)
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension HomeSearchView: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let selectedItem = dataSource.itemIdentifier(for: indexPath) {
+            didSelectKeyword.send(selectedItem.title)
+        }
     }
 }
 
