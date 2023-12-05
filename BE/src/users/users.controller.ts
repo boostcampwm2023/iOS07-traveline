@@ -70,7 +70,14 @@ export class UsersController {
       '닉네임 변경사항이 없을 경우 기존 name을 전송해주시면 됩니다.',
     schema: {
       type: 'object',
-      properties: { name: { type: 'string' }, image: { type: 'file' } },
+      required: ['name'],
+      properties: {
+        name: { type: 'string' },
+        image: {
+          type: 'file',
+          description: '프로필 사진으로 등록하려는 이미지',
+        },
+      },
     },
   })
   update(
