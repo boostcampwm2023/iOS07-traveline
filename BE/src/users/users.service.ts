@@ -23,7 +23,7 @@ export class UsersService {
     return name;
   }
 
-  async createUser(resourceId: string) {
+  async createUser(resourceId: string, email: string) {
     let name = this.nameGenerator();
     while (true) {
       const user = await this.userRepository.findByName(name);
@@ -33,7 +33,7 @@ export class UsersService {
       name = this.nameGenerator();
     }
     const socialType = 1;
-    const createUserDto = { name, resourceId, socialType };
+    const createUserDto = { name, resourceId, socialType, email };
     return this.userRepository.save(createUserDto);
   }
 

@@ -88,7 +88,8 @@ export class AuthService {
     let user = await this.usersService.getUserInfoByResourceId(appleId);
 
     if (!user) {
-      user = await this.usersService.createUser(appleId);
+      const email = createAuthDto.email;
+      user = await this.usersService.createUser(appleId, email);
       if (!user) {
         throw new InternalServerErrorException();
       }
