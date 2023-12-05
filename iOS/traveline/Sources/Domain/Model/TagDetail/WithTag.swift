@@ -14,6 +14,25 @@ enum WithTag: DetailTagType {
     case couple
     case pet
     
+    init?(title: String) {
+        switch title {
+        case .family:
+            self = .family
+        case .friend:
+            self = .friend
+        case .couple:
+            self = .couple
+        case .pet:
+            self = .pet
+        default:
+            return nil
+        }
+    }
+    
+    static func ~= (lhs: Self, rhs: String) -> Bool {
+        return lhs.title == rhs
+    }
+    
     var title: String {
         switch self {
         case .family:
@@ -24,6 +43,19 @@ enum WithTag: DetailTagType {
             Literal.Tag.WithDetail.couple
         case .pet:
             Literal.Tag.WithDetail.pet
+        }
+    }
+    
+    var query: String {
+        switch self {
+        case .family:
+            Literal.Query.WithDetail.family
+        case .friend:
+            Literal.Query.WithDetail.friend
+        case .couple:
+            Literal.Query.WithDetail.couple
+        case .pet:
+            Literal.Query.WithDetail.pet
         }
     }
 }

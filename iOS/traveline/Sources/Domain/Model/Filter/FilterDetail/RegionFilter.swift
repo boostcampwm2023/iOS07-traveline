@@ -27,6 +27,51 @@ enum RegionFilter: DetailFilterType {
     case gyeongnam
     case jeju
     
+    init?(title: String) {
+        switch title {
+        case .seoul:
+            self = .seoul
+        case .busan:
+            self = .busan
+        case .daegu:
+            self = .daegu
+        case .incheon:
+            self = .incheon
+        case .gwangju:
+            self = .gwangju
+        case .daejeon:
+            self = .daejeon
+        case .ulsan:
+            self = .ulsan
+        case .sejong:
+            self = .sejong
+        case .gyeonggi:
+            self = .gyeonggi
+        case .gangwon:
+            self = .gangwon
+        case .chungbuk:
+            self = .chungbuk
+        case .chungnam:
+            self = .chungnam
+        case .jeonbuk:
+            self = .jeonbuk
+        case .jeonnam:
+            self = .jeonnam
+        case .gyeongbuk:
+            self = .gyeongbuk
+        case .gyeongnam:
+            self = .gyeongnam
+        case .jeju:
+            self = .jeju
+        default:
+            return nil
+        }
+    }
+    
+    static func ~= (lhs: Self, rhs: String) -> Bool {
+        return lhs.title == rhs
+    }
+    
     var title: String {
         switch self {
         case .seoul:
@@ -63,6 +108,45 @@ enum RegionFilter: DetailFilterType {
             return Literal.Filter.RegionDetail.gyeongnam
         case .jeju:
             return Literal.Filter.RegionDetail.jeju
+        }
+    }
+    
+    var query: String {
+        switch self {
+        case .seoul:
+            return Literal.Query.RegionDetail.seoul
+        case .busan:
+            return Literal.Query.RegionDetail.busan
+        case .daegu:
+            return Literal.Query.RegionDetail.daegu
+        case .incheon:
+            return Literal.Query.RegionDetail.incheon
+        case .gwangju:
+            return Literal.Query.RegionDetail.gwangju
+        case .daejeon:
+            return Literal.Query.RegionDetail.daejeon
+        case .ulsan:
+            return Literal.Query.RegionDetail.ulsan
+        case .sejong:
+            return Literal.Query.RegionDetail.sejong
+        case .gyeonggi:
+            return Literal.Query.RegionDetail.gyeonggi
+        case .gangwon:
+            return Literal.Query.RegionDetail.gangwon
+        case .chungbuk:
+            return Literal.Query.RegionDetail.chungbuk
+        case .chungnam:
+            return Literal.Query.RegionDetail.chungnam
+        case .jeonbuk:
+            return Literal.Query.RegionDetail.jeonbuk
+        case .jeonnam:
+            return Literal.Query.RegionDetail.jeonnam
+        case .gyeongbuk:
+            return Literal.Query.RegionDetail.gyeongbuk
+        case .gyeongnam:
+            return Literal.Query.RegionDetail.gyeongnam
+        case .jeju:
+            return Literal.Query.RegionDetail.jeju
         }
     }
 }
