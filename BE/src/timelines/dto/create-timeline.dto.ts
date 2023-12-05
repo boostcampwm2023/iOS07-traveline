@@ -74,10 +74,12 @@ export class CreateTimelineDto {
   date: string;
 
   @ApiProperty({
+    required: false,
     example: 'GS25 서울역점',
     description: '장소 이름',
     maxLength: 50,
   })
+  @IsOptional()
   @IsString()
   place: string;
 
