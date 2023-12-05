@@ -50,4 +50,11 @@ enum VCFactory {
         let viewModel = TravelViewModel(travelUseCase: useCase)
         return TravelVC(viewModel: viewModel)
     }
+    
+    static func makeSettingVC() -> SettingVC {
+        let repository = AuthRepositoryImpl(network: network)
+        let useCase = SettingUseCaseImpl(repository: repository)
+        let viewModel = SettingViewModel(useCase: useCase)
+        return SettingVC(viewModel: viewModel)
+    }
 }
