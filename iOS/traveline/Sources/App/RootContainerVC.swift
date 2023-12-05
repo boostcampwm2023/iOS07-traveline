@@ -164,7 +164,8 @@ extension RootContainerVC: SideMenuDelegate {
             let viewModel = MyPostListViewModel()
             navigationVC?.pushViewController(MyPostListVC(viewModel: viewModel), animated: true)
         case .setting:
-            navigationVC?.pushViewController(SettingVC(), animated: true)
+            let viewModel = SettingViewModel()
+            navigationVC?.pushViewController(SettingVC(viewModel: viewModel), animated: true)
         }
     }
     
