@@ -85,7 +85,9 @@ export class SearchPostingDto {
   @ApiProperty({
     required: false,
     enum: Location,
-    description: '여행위치 태그',
+    description:
+      '여행위치 태그 (Swagger에선 2개 이상 선택해야만 테스트가 가능합니다)',
+    isArray: true,
   })
   @IsOptional()
   @IsString({ each: true })
@@ -96,7 +98,9 @@ export class SearchPostingDto {
   @ApiProperty({
     required: false,
     enum: Theme,
-    description: '여행테마 태그',
+    description:
+      '여행테마 태그 (Swagger에선 2개 이상 선택해야만 테스트가 가능합니다)',
+    isArray: true,
   })
   @IsOptional()
   @IsString({ each: true })
@@ -107,7 +111,9 @@ export class SearchPostingDto {
   @ApiProperty({
     required: false,
     enum: WithWho,
-    description: '누구랑 태그',
+    description:
+      '누구랑 태그 (Swagger에선 2개 이상 선택해야만 테스트가 가능합니다)',
+    isArray: true,
   })
   @IsOptional()
   @IsString({ each: true })
@@ -115,7 +121,13 @@ export class SearchPostingDto {
   @IsIn(withWhos, { each: true })
   withWho: WithWho[];
 
-  @ApiProperty({ required: false, enum: Season, description: '여행계절 태그' })
+  @ApiProperty({
+    required: false,
+    enum: Season,
+    description:
+      '여행계절 태그 (Swagger에선 2개 이상 선택해야만 테스트가 가능합니다)',
+    isArray: true,
+  })
   @IsOptional()
   @IsString({ each: true })
   @IsArray()
