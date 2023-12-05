@@ -13,7 +13,9 @@ extension UIImageView {
     /// urlString으로부터 이미지를 Load 합니다.
     /// 캐시에 존재한다면 캐시에서 가져오고, 없으면 다운로드합니다.
     /// - Parameter urlString: 이미지 URL 문자열
-    func setImage(from urlString: String) {
+    func setImage(from urlString: String?) {
+        guard let urlString else { return }
+        
         if let cachedImageData = TLImageCache.shared.fetch(urlString) {
             image = UIImage(data: cachedImageData)
             return
