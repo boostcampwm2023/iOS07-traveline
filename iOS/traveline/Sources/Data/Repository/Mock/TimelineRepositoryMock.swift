@@ -9,9 +9,11 @@
 import Foundation
 
 final class TimelineRepositoryMock: TimelineRepository {
-    func fetchTravelInfo(id: String) async throws -> TimelineTravelInfo {
+    
+    func fetchTimelineList(id: TravelID, day: Int) async throws -> TimelineCardList {
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
-        return TimelineSample.makeTravelInfo()
+        let mockData = TimelineSample.makeCardList()
+        return mockData
     }
 }
