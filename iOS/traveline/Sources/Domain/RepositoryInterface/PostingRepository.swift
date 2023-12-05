@@ -15,4 +15,8 @@ protocol PostingRepository {
     func saveRecentKeyword(_ keyword: String)
     func saveRecentKeywordList(_ keywordList: [String])
     func deleteRecentKeyword(_ keyword: String)
+    
+    /// Timeline
+    func fetchTimelineInfo(id: TravelID) async throws -> TimelineTravelInfo
+    func postPostings(data: TravelRequest) async throws -> TravelID
 }
