@@ -252,7 +252,10 @@ export class PostingsController {
     return Array.from({ length: days }, (_, index) => {
       const date = new Date(startDate);
       date.setDate(standardDate.getDate() + index);
-      return `${date.getDate()}${weekdays[date.getDay()]}`;
+      const stringDate = date.getDate().toString();
+      return `${stringDate.length < 2 ? `0${stringDate}` : stringDate} ${
+        weekdays[date.getDay()]
+      }`;
     });
   }
 }
