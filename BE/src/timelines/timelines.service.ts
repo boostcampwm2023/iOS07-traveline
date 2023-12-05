@@ -162,6 +162,31 @@ export class TimelinesService {
     return documents;
   }
 
+  async translate(id: string) {
+    const { description } = await this.findOne(id);
+    const url = 'https://openapi.naver.com/v1/papago/n2mt';
+    const body = {
+      source: 'ko',
+      target: 'en',
+      text: description,
+    };
+    const {
+      data: {
+        message: { result },
+      },
+    } = await firstValueFrom(
+      this.httpService.post(url, body, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          'X-Naver-Client-Id': process.env.NAVER_CLIENT_ID,
+          'X-Naver-Client-Secret': process.env.NAVER_CLIENT_SECRET,
+        },
+      })
+    );
+
+    return { description: result.translatedText };
+  }
+
   private async findOneAndUpdateThumbnail(postingId: string) {
     const result =
       await this.timelinesRepository.findOneWithNonEmptyImage(postingId);
