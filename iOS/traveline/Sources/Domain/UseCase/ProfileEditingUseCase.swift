@@ -11,7 +11,7 @@ import Foundation
 
 protocol ProfileEditingUseCase {
     func fetchProfile() -> AnyPublisher<Profile, Error>
-    func validate(nickname: String) -> AnyPublisher<NicknameValidationState, Never>
+    func validate(nickname: String) -> AnyPublisher<NicknameValidationState, Error>
     func update(name: String, imageData: Data?) -> AnyPublisher<Profile, Error>
 }
 
@@ -46,27 +46,39 @@ final class ProfileEditingUseCaseImpl: ProfileEditingUseCase {
         }.eraseToAnyPublisher()
     }
     
-    func validate(nickname: String) -> AnyPublisher<NicknameValidationState, Never> {
-        guard isTooShort(nickname) == false else {
-            return .just(.tooShort)
-        }
-        guard isValidStringLength(nickname) else {
-            return .just(.exceededStringLength)
-        }
-        guard isChanged(nickname) else {
-            return .just(.unchanged)
-        }
-        
-        return duplicatedState(nickname)
-    }
-    
-    private func duplicatedState(_ nickname: String) -> AnyPublisher<NicknameValidationState, Never> {
+    func validate(nickname: String) -> AnyPublisher<NicknameValidationState, Error> {
         return Future { promise in
-            Task { [weak self] in
-                guard let self else { return }
+            Task {
+                guard self.isTooShort(nickname) == false else {
+                    return promise(.success(.tooShort))
+                }
+                guard self.isValidStringLength(nickname) else {
+                    return promise(.success(.exceededStringLength))
+                }
+                guard self.isChanged(nickname) else {
+                    return promise(.success(.unchanged))
+                }
                 do {
                     let isDuplicated = try await self.repository.checkDuplication(name: nickname)
                     promise(isDuplicated ? .success(.duplicated) : .success(.available))
+                } catch {
+                    promise(.failure(error))
+                }
+            }
+        }.eraseToAnyPublisher()
+    }
+    
+    private func duplicatedState(_ nickname: String) -> AnyPublisher<NicknameValidationState, Error> {
+        return Future { promise in
+            Task {
+                guard self.isTooShort(nickname) == false else {
+                    return promise(.success(.tooShort))
+                }
+                do {
+                    let isDuplicated = try await self.repository.checkDuplication(name: nickname)
+                    promise(isDuplicated ? .success(.duplicated) : .success(.available))
+                } catch {
+                    promise(.failure(error))
                 }
             }
         }.eraseToAnyPublisher()
