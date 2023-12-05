@@ -38,7 +38,7 @@ struct CaptionOptions {
     var text: String {
         switch self.validateType {
         case .unchanged: return " "
-        case .tooShort: return "2글자이상 입력하세요."
+        case .tooShort: return "닉네임은 2자 이상만 가능합니다."
         case .available: return "사용가능한 닉네임입니다."
         case .duplicated: return "이미 사용중인 닉네임입니다."
         case .exceededStringLength: return "닉네임은 10자 이내만 가능합니다."
@@ -134,6 +134,9 @@ extension ProfileEditingViewModel {
             .map { validationState in
                 let caption = CaptionOptions(validateType: validationState)
                 return .validateNickname(caption)
+            }
+            .catch { _ in
+                return Just(.error("validate request error"))
             }
             .eraseToAnyPublisher()
     }

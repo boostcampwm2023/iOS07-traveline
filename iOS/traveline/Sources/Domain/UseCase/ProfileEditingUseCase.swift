@@ -68,22 +68,6 @@ final class ProfileEditingUseCaseImpl: ProfileEditingUseCase {
         }.eraseToAnyPublisher()
     }
     
-    private func duplicatedState(_ nickname: String) -> AnyPublisher<NicknameValidationState, Error> {
-        return Future { promise in
-            Task {
-                guard self.isTooShort(nickname) == false else {
-                    return promise(.success(.tooShort))
-                }
-                do {
-                    let isDuplicated = try await self.repository.checkDuplication(name: nickname)
-                    promise(isDuplicated ? .success(.duplicated) : .success(.available))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
-        }.eraseToAnyPublisher()
-    }
-        
     private func isChanged(_ nickname: String) -> Bool {
         return profile.name != nickname
     }
