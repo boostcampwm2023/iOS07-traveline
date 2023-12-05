@@ -138,7 +138,17 @@ export class AuthService {
       sub: clientId,
     };
 
-    const key = process.env.AUTH_KEY;
+    const key =
+      '-----BEGIN PRIVATE KEY-----\n' +
+      process.env.AUTH_KEY_LINE1 +
+      '\n' +
+      process.env.AUTH_KEY_LINE2 +
+      '\n' +
+      process.env.AUTH_KEY_LINE3 +
+      '\n' +
+      process.env.AUTH_KEY_LINE4 +
+      '\n' +
+      '-----END PRIVATE KEY-----';
 
     return jwt.sign(payload, key, {
       algorithm: 'ES256',
