@@ -89,7 +89,7 @@ private extension TLFilterListView {
         backgroundColor = TLColor.black
     }
     
-    func setupLayout(_ filters: [String]) {
+    func setupLayout(_ filters: [DetailFilter]) {
         [
             scrollView,
             filterStackView
