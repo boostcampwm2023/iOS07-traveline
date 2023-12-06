@@ -60,7 +60,9 @@ export class UsersController {
       example: Users,
     },
   })
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(
+    FileInterceptor('image', { limits: { fileSize: 1024 * 1024 * 2 } })
+  )
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description:

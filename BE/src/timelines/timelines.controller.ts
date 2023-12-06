@@ -157,7 +157,9 @@ export class TimelinesController {
   }
 
   @Put(':id')
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(
+    FileInterceptor('image', { limits: { fileSize: 1024 * 1024 * 2 } })
+  )
   @ApiOperation({
     summary: 'id에 해당하는 타임라인 수정',
     description: 'id에 해당하는 타임라인을 수정합니다.',

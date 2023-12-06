@@ -37,7 +37,7 @@ export class CreateTimelineDto {
   @ApiProperty({
     required: false,
     type: 'file',
-    description: '업로드하는 사진',
+    description: '업로드하는 사진 (파일 크기 2MB까지 가능)',
   })
   @IsOptional()
   image: Express.Multer.File;
