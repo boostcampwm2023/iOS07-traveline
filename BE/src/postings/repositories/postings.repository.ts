@@ -51,13 +51,15 @@ export class PostingsRepository {
   ) {
     const qb = this.postingsRepository
       .createQueryBuilder('p')
+      .leftJoinAndSelect('p.writer', 'u')
+      .where('p.title LIKE :keyword', { keyword: `%${keyword}%` })
       .leftJoin('p.likeds', 'l', 'l.isDeleted = :isDeleted', {
         isDeleted: false,
       })
-      .leftJoinAndSelect('p.writer', 'u')
-      .where('p.title LIKE :keyword', { keyword: `%${keyword}%` })
-      .groupBy('p.id')
-      .addSelect('COUNT(l.posting)', 'likeds');
+      .addSelect('COUNT(l.posting)', 'likeds')
+      .leftJoin('p.reports', 'r')
+      .having('COUNT(r.posting) <= :BLOCKING_LIMIT', { BLOCKING_LIMIT })
+      .groupBy('p.id');
 
     if (budget) {
       qb.where('p.budget = :budget', { budget });
@@ -138,8 +140,8 @@ export class PostingsRepository {
     }
 
     return qb
-      .skip((offset - 1) * limit)
-      .take(limit)
+      .offset((offset - 1) * limit)
+      .limit(limit)
       .getRawMany();
   }
 
