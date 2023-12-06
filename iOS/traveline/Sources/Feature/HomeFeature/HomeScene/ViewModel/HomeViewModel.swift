@@ -20,13 +20,10 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
     override func transform(action: Action) -> SideEffectPublisher {
         switch action {
         case .viewWillAppear:
-            return .just(HomeSideEffect.showHome)
+            return .just(HomeSideEffect.showPrevious)
             
         case .viewDidLoad, .cancelSearch:
-            return Publishers.Merge(
-                Just(HomeSideEffect.showHome),
-                fetchHomeList()
-            ).eraseToAnyPublisher()
+            return .just(HomeSideEffect.showHome)
             
         case .startSearch:
             return fetchRecentKeyword()
@@ -42,6 +39,9 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             
         case let .addFilter(filterList):
             return .just(HomeSideEffect.saveFilter(filterList))
+            
+        case let .filterChanged(filters):
+            return fetchSearchList(from: filters)
             
         case .createTravel:
             return .just(HomeSideEffect.showTravelWriting)
@@ -59,6 +59,11 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             newState.moveToTravelWriting = false
             newState.curFilter = nil
             newState.homeViewType = .home
+        
+        case .showPrevious:
+            newState.moveToTravelWriting = false
+            newState.curFilter = nil
+            newState.homeViewType = state.homeViewType
             
         case let .showRecent(recentSearchKeywordList):
             newState.searchList = recentSearchKeywordList
@@ -109,8 +114,21 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
 // MARK: - Functions
 
 private extension HomeViewModel {
-    func fetchHomeList() -> SideEffectPublisher {
-        return homeUseCase.fetchHomeList()
+    
+    func makeSearchQuery(from filters: FilterDictionary) -> SearchQuery {
+        var query = state.searchQuery
+
+        query.selectedFilter = filters.values
+            .filter { !$0.selected.isEmpty }
+            .flatMap { $0.selected }
+        
+        return query
+    }
+    
+    func fetchSearchList(from filters: FilterDictionary) -> SideEffectPublisher {
+        let query = makeSearchQuery(from: filters)
+        
+        return homeUseCase.fetchSearchList(with: query)
             .map { travelList in
                 return HomeSideEffect.showHomeList(travelList)
             }

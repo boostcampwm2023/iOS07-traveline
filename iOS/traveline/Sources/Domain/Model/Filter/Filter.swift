@@ -18,7 +18,7 @@ extension FilterList {
 
 struct Filter: Hashable {
     let type: FilterType
-    let selected: [String]
+    let selected: [DetailFilter]
     var isSelected: Bool {
         !selected.isEmpty
     }

@@ -29,12 +29,12 @@ final class TLFilterDetailButton: UIButton {
         }
     }
     
-    let title: String
+    let detail: DetailFilter
     
     // MARK: - Initializer
     
-    init(title: String) {
-        self.title = title
+    init(detail: DetailFilter) {
+        self.detail = detail
         super.init(frame: .zero)
         
         setupAttributes()
@@ -56,7 +56,7 @@ final class TLFilterDetailButton: UIButton {
 
 private extension TLFilterDetailButton {
     func setupAttributes() {
-        filterTitleLabel.setText(to: title)
+        filterTitleLabel.setText(to: detail.title)
         backgroundColor = TLColor.black
     }
     

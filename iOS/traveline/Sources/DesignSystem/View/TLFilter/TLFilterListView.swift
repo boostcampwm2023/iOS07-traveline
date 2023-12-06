@@ -60,7 +60,7 @@ final class TLFilterListView: UIView {
         button.isSelected.toggle()
         if !filter.type.isMultiple {
             if button.isSelected {
-                delegate?.filtersDidSelect(Filter(type: filter.type, selected: [button.title]))
+                delegate?.filtersDidSelect(Filter(type: filter.type, selected: [button.detail]))
             } else {
                 delegate?.singleFilterDidUnSelected(Filter(type: filter.type, selected: []))
             }
@@ -70,15 +70,15 @@ final class TLFilterListView: UIView {
     func setupFilter(_ filter: Filter) {
         self.filter = filter
         setupLayout(filter.type.detailFilters)
-        filterButtons.forEach { $0.isSelected = filter.selected.contains($0.title) }
+        filterButtons.forEach { $0.isSelected = filter.selected.contains($0.detail) }
     }
     
     func selectedFilters() -> Filter {
-        Filter(type: filter.type, selected: selectedFilterTitles())
+        Filter(type: filter.type, selected: selectedDetailFilters())
     }
     
-    private func selectedFilterTitles() -> [String] {
-        filterButtons.filter { $0.isSelected }.map { $0.title }
+    private func selectedDetailFilters() -> [DetailFilter] {
+        filterButtons.filter { $0.isSelected }.map { $0.detail }
     }
 }
 
@@ -89,7 +89,7 @@ private extension TLFilterListView {
         backgroundColor = TLColor.black
     }
     
-    func setupLayout(_ filters: [String]) {
+    func setupLayout(_ filters: [DetailFilter]) {
         [
             scrollView,
             filterStackView
@@ -98,7 +98,7 @@ private extension TLFilterListView {
         }
         
         filters.forEach { filter in
-            let button = makeDetailButton(text: filter)
+            let button = makeDetailButton(detailFilter: filter)
             filterStackView.addArrangedSubview(button)
             filterButtons.append(button)
         }
@@ -118,8 +118,8 @@ private extension TLFilterListView {
         ])
     }
     
-    func makeDetailButton(text: String) -> TLFilterDetailButton {
-        let button: TLFilterDetailButton = .init(title: text)
+    func makeDetailButton(detailFilter: DetailFilter) -> TLFilterDetailButton {
+        let button: TLFilterDetailButton = .init(detail: detailFilter)
         button.addTarget(self, action: #selector(detailButtonDidTapped), for: .touchUpInside)
         
         button.translatesAutoresizingMaskIntoConstraints = false

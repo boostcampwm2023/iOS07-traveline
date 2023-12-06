@@ -25,20 +25,30 @@ enum FilterType: Equatable, CaseIterable, Hashable {
         }
     }
     
-    var detailFilters: [String] {
+    var detailFilters: [DetailFilter] {
         switch self {
-        case .empty:
+        case .empty, .total:
             []
         case .sort:
-            SortFilter.allCases.map { $0.title }
-        case .total:
-            TagType.allCases.map { $0.title }
+            SortFilter.allCases.map { DetailFilter.sort($0) }
         case let .tagtype(tag):
             switch tag {
+            case .theme:
+                ThemeTag.allCases.map { DetailFilter.theme($0) }
+            case .region:
+                RegionFilter.allCases.map { DetailFilter.region($0) }
             case .cost:
-                tag.detailTags.map { $0 + Literal.Tag.CostDetail.won }
-            default:
-                tag.detailTags
+                CostTag.allCases.map { DetailFilter.cost($0) }
+            case .people:
+                PeopleTag.allCases.map { DetailFilter.people($0) }
+            case .with:
+                WithTag.allCases.map { DetailFilter.with($0) }
+            case .transportation:
+                TransportationTag.allCases.map { DetailFilter.transportation($0) }
+            case .period:
+                PeriodFilter.allCases.map { DetailFilter.period($0) }
+            case .season:
+                SeasonFilter.allCases.map { DetailFilter.season($0) }
             }
         }
     }

@@ -26,4 +26,17 @@ enum WithTag: DetailTagType {
             Literal.Tag.WithDetail.pet
         }
     }
+    
+    var query: String {
+        switch self {
+        case .family:
+            Literal.Query.WithDetail.family
+        case .friend:
+            Literal.Query.WithDetail.friend
+        case .couple:
+            Literal.Query.WithDetail.couple
+        case .pet:
+            Literal.Query.WithDetail.pet
+        }
+    }
 }

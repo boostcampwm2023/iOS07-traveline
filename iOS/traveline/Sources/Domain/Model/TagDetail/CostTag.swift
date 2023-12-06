@@ -26,4 +26,17 @@ enum CostTag: DetailTagType {
             Literal.Tag.CostDetail.over100
         }
     }
+    
+    var query: String {
+        switch self {
+        case .under10:
+            Literal.Query.CostDetail.under10
+        case .under50:
+            Literal.Query.CostDetail.under50
+        case .under100:
+            Literal.Query.CostDetail.under100
+        case .over100:
+            Literal.Query.CostDetail.over100
+        }
+    }
 }

@@ -202,11 +202,31 @@ private extension HomeVC {
             .store(in: &cancellables)
         
         viewModel.$state
+            .filter { $0.homeViewType == .home }
+            .map(\.homeFilters)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, filters in
+                owner.viewModel.sendAction(.filterChanged(filters))
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
             .filter { $0.homeViewType == .result }
             .map(\.resultFilters)
             .withUnretained(self)
             .sink { owner, filters in
                 owner.homeListView.setupData(list: .sortFilters(filters))
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .filter { $0.homeViewType == .result }
+            .map(\.resultFilters)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, filters in
+                owner.viewModel.sendAction(.filterChanged(filters))
             }
             .store(in: &cancellables)
         

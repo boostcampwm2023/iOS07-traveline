@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum SeasonFilter: DetailFilterType {
+enum SeasonFilter: CaseIterable {
     case spring
     case summer
     case fall
@@ -24,6 +24,19 @@ enum SeasonFilter: DetailFilterType {
             Literal.Filter.SeasonDetail.fall
         case .winter:
             Literal.Filter.SeasonDetail.winter
+        }
+    }
+    
+    var query: String {
+        switch self {
+        case .spring:
+            Literal.Query.SeasonDetail.spring
+        case .summer:
+            Literal.Query.SeasonDetail.summer
+        case .fall:
+            Literal.Query.SeasonDetail.fall
+        case .winter:
+            Literal.Query.SeasonDetail.winter
         }
     }
 }

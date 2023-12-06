@@ -9,7 +9,7 @@
 import Foundation
 
 enum PostingEndPoint {
-    case postingList
+    case postingList(SearchQuery)
     case myPostingList
     case createPosting(TravelRequestDTO) /// 게시글 생성
     case fetchPostingInfo(String) /// 특정 게시글 반환
@@ -24,6 +24,8 @@ extension PostingEndPoint: EndPoint {
         switch self {
         case .myPostingList: 
             return "/postings/mine"
+        case let .postingList(searchQuery):
+            return curPath + searchQuery.makeQuery()
         case let .fetchPostingInfo(id):
             return "\(curPath)/\(id)"
         default:
