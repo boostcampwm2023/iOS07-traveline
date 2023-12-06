@@ -16,29 +16,6 @@ enum PeriodFilter: DetailFilterType {
     case week
     case month
     
-    init?(title: String) {
-        switch title {
-        case PeriodFilter.one.title:
-            self = .one
-        case PeriodFilter.two.title:
-            self = .two
-        case PeriodFilter.three.title:
-            self = .three
-        case PeriodFilter.overThree.title:
-            self = .overThree
-        case PeriodFilter.week.title:
-            self = .week
-        case PeriodFilter.month.title:
-            self = .month
-        default:
-            return nil
-        }
-    }
-    
-    static func ~= (lhs: Self, rhs: String) -> Bool {
-        return lhs.title == rhs
-    }
-    
     var title: String {
         switch self {
         case .one:

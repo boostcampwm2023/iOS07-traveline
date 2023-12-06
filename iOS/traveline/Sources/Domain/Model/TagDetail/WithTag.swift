@@ -14,25 +14,6 @@ enum WithTag: DetailTagType {
     case couple
     case pet
     
-    init?(title: String) {
-        switch title {
-        case .family:
-            self = .family
-        case .friend:
-            self = .friend
-        case .couple:
-            self = .couple
-        case .pet:
-            self = .pet
-        default:
-            return nil
-        }
-    }
-    
-    static func ~= (lhs: Self, rhs: String) -> Bool {
-        return lhs.title == rhs
-    }
-    
     var title: String {
         switch self {
         case .family:

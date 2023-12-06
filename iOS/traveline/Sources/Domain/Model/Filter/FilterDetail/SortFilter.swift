@@ -12,21 +12,6 @@ enum SortFilter: CaseIterable {
     case recent
     case like
     
-    init?(title: String) {
-        switch title {
-        case .recent:
-            self = .recent
-        case .like:
-            self = .like
-        default:
-            return nil
-        }
-    }
-    
-    static func ~= (lhs: Self, rhs: String) -> Bool {
-        return lhs.title == rhs
-    }
-    
     var title: String {
         switch self {
         case .recent:

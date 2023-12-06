@@ -14,25 +14,6 @@ enum SeasonFilter: CaseIterable {
     case fall
     case winter
     
-    init?(title: String) {
-        switch title {
-        case .spring:
-            self = .spring
-        case .summer:
-            self = .summer
-        case .fall:
-            self = .fall
-        case .winter:
-            self = .winter
-        default:
-            return nil
-        }
-    }
-    
-    static func ~= (lhs: Self, rhs: String) -> Bool {
-        return lhs.title == rhs
-    }
-    
     var title: String {
         switch self {
         case .spring:

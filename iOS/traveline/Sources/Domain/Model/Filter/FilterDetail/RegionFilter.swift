@@ -27,51 +27,6 @@ enum RegionFilter: DetailFilterType {
     case gyeongnam
     case jeju
     
-    init?(title: String) {
-        switch title {
-        case .seoul:
-            self = .seoul
-        case .busan:
-            self = .busan
-        case .daegu:
-            self = .daegu
-        case .incheon:
-            self = .incheon
-        case .gwangju:
-            self = .gwangju
-        case .daejeon:
-            self = .daejeon
-        case .ulsan:
-            self = .ulsan
-        case .sejong:
-            self = .sejong
-        case .gyeonggi:
-            self = .gyeonggi
-        case .gangwon:
-            self = .gangwon
-        case .chungbuk:
-            self = .chungbuk
-        case .chungnam:
-            self = .chungnam
-        case .jeonbuk:
-            self = .jeonbuk
-        case .jeonnam:
-            self = .jeonnam
-        case .gyeongbuk:
-            self = .gyeongbuk
-        case .gyeongnam:
-            self = .gyeongnam
-        case .jeju:
-            self = .jeju
-        default:
-            return nil
-        }
-    }
-    
-    static func ~= (lhs: Self, rhs: String) -> Bool {
-        return lhs.title == rhs
-    }
-    
     var title: String {
         switch self {
         case .seoul:

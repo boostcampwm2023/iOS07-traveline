@@ -12,21 +12,6 @@ enum TransportationTag: DetailTagType {
     case publicTransport
     case drive
     
-    init?(title: String) {
-        switch title {
-        case .publicTransport:
-            self = .publicTransport
-        case .drive:
-            self = .drive
-        default:
-            return nil
-        }
-    }
-    
-    static func ~= (lhs: Self, rhs: String) -> Bool {
-        return lhs.title == rhs
-    }
-    
     var title: String {
         switch self {
         case .publicTransport:

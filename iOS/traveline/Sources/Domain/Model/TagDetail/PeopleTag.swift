@@ -15,27 +15,6 @@ enum PeopleTag: DetailTagType {
     case four
     case overFive
     
-    init?(title: String) {
-        switch title {
-        case PeopleTag.one.title:
-            self = .one
-        case PeopleTag.two.title:
-            self = .two
-        case PeopleTag.three.title:
-            self = .three
-        case PeopleTag.four.title:
-            self = .four
-        case PeopleTag.overFive.title:
-            self = .overFive
-        default:
-            return nil
-        }
-    }
-    
-    static func ~= (lhs: Self, rhs: String) -> Bool {
-        return lhs.title == rhs
-    }
-    
     var title: String {
         switch self {
         case .one:

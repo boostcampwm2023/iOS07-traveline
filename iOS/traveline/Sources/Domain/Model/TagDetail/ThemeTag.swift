@@ -19,35 +19,6 @@ enum ThemeTag: DetailTagType {
     case shopping
     case filialPiety
     
-    init?(title: String) {
-        switch title {
-        case .healing:
-            self = .healing
-        case .activity:
-            self = .activity
-        case .camping:
-            self = .camping
-        case .restaurant:
-            self = .restaurant
-        case .art:
-            self = .art
-        case .emotion:
-            self = .emotion
-        case .nature:
-            self = .nature
-        case .shopping:
-            self = .shopping
-        case .filialPiety:
-            self = .filialPiety
-        default:
-            return nil
-        }
-    }
-    
-    static func ~= (lhs: Self, rhs: String) -> Bool {
-        return lhs.title == rhs
-    }
-    
     var title: String {
         switch self {
         case .healing:
