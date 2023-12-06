@@ -14,33 +14,41 @@ protocol Query {
 
 struct SearchQuery: Query {
     var keyword: String?
-    var sorting: SortFilter?
     var offset: Int?
     var limit: Int?
-    var period: PeriodFilter?
-    var headcount: PeopleTag?
-    var budget: CostTag?
-    var vehicle: TransportationTag?
-    var location: [RegionFilter]?
-    var theme: [ThemeTag]?
-    var withWho: [WithTag]?
-    var season: [SeasonFilter]?
+    var selectedFilter: [DetailFilter]?
     
     func makeQuery() -> String {
+        guard let selectedFilter else { return Literal.empty }
         let baseQuery = "?"
         var queries: [String] = []
+        
         if let keyword { queries.append("keyword=\(keyword)") }
-        if let sorting { queries.append("sorting=\(sorting.query)") }
         if let offset { queries.append("offset=\(offset)") }
         if let limit { queries.append("limit=\(limit)") }
-        if let period { queries.append("period=\(period.query)") }
-        if let headcount { queries.append("headcount=\(headcount.query)") }
-        if let budget { queries.append("budget=\(budget.query)") }
-        if let vehicle { queries.append("vehicle=\(vehicle.query)") }
-        if let location { location.forEach { queries.append("location[]=\($0.query)") } }
-        if let theme { theme.forEach { queries.append("theme[]=\($0.query)") } }
-        if let withWho { withWho.forEach { queries.append("withWho[]=\($0.query)") } }
-        if let season { season.forEach { queries.append("season[]=\($0.query)") } }
+
+        selectedFilter.forEach {
+            switch $0 {
+            case let .sort(sorting):
+                queries.append("sorting=\(sorting.query)")
+            case let .theme(theme):
+                queries.append("theme[]=\(theme.query)")
+            case let .region(location):
+                queries.append("location[]=\(location.query)")
+            case let .cost(budget):
+                queries.append("budget=\(budget.query)")
+            case let .people(headcount):
+                queries.append("headcount=\(headcount.query)")
+            case let .with(withWho):
+                queries.append("withWho[]=\(withWho.query)")
+            case let .transportation(vehicle):
+                queries.append("vehicle=\(vehicle.query)")
+            case let .period(period):
+                queries.append("period=\(period.query)")
+            case let .season(season):
+                queries.append("season[]=\(season.query)")
+            }
+        }
         
         if !queries.isEmpty,
            let resultQuery = (baseQuery + queries.joined(separator: "&"))

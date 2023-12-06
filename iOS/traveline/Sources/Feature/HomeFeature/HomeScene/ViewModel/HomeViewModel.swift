@@ -117,32 +117,10 @@ private extension HomeViewModel {
     
     func makeSearchQuery(from filters: FilterDictionary) -> SearchQuery {
         var query = state.searchQuery
-        
-        query.sorting = filters[FilterType.sort]?.selected
-            .compactMap { SortFilter(title: $0) }
-            .first
-        query.period = filters[FilterType.tagtype(.period)]?.selected
-            .compactMap { PeriodFilter(title: $0) }
-            .first
-        query.headcount = filters[FilterType.tagtype(.people)]?.selected
-            .compactMap { PeopleTag(title: $0) }
-            .first
-        query.budget = filters[FilterType.tagtype(.cost)]?.selected
-            .compactMap {
-                CostTag(title: $0.replacingOccurrences(of: Literal.Tag.CostDetail.won, with: Literal.empty))
-            }
-            .first
-        query.vehicle = filters[FilterType.tagtype(.transportation)]?.selected
-            .compactMap { TransportationTag(title: $0) }
-            .first
-        query.location = filters[FilterType.tagtype(.region)]?.selected
-            .compactMap { RegionFilter(title: $0) }
-        query.theme = filters[FilterType.tagtype(.theme)]?.selected
-            .compactMap { ThemeTag(title: $0) }
-        query.withWho = filters[FilterType.tagtype(.with)]?.selected
-            .compactMap { WithTag(title: $0) }
-        query.season = filters[FilterType.tagtype(.season)]?.selected
-            .compactMap { SeasonFilter(title: $0) }
+
+        query.selectedFilter = filters.values
+            .filter { !$0.selected.isEmpty }
+            .flatMap { $0.selected }
         
         return query
     }
