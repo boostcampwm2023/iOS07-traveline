@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct UserResponseDTO: Decodable {
+struct UserResponseDTO: Codable {
     let name: String
     let avatar: String?
 }

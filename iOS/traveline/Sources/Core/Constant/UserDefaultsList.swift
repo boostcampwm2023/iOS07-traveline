@@ -9,6 +9,6 @@
 import Foundation
 
 enum UserDefaultsList {
-    @UserDefaultsWrapper<Profile>(key: "profile") static var profile
+    @UserDefaultsWrapper<UserResponseDTO>(key: "userResponseDTO") static var userResponseDTO
     @UserDefaultsWrapper<[String]>(key: "recentSearchKeyword") static var recentSearchKeyword
 }

@@ -17,18 +17,18 @@ final class UserRepositoryImpl: UserRepository {
     }
     
     func fetchUserInfo() async throws -> Profile {
-        if let profile = UserDefaultsList.profile {
-            return profile
+        if let userResponseDTO = UserDefaultsList.userResponseDTO {
+            return userResponseDTO.toDomain()
         }
         
-        let profile = try await network.request(
+        let userResponseDTO = try await network.request(
             endPoint: UserEndPoint.requestUserInfo,
             type: UserResponseDTO.self
-        ).toDomain()
+        )
         
-        UserDefaultsList.profile = profile
+        UserDefaultsList.userResponseDTO = userResponseDTO
         
-        return profile
+        return userResponseDTO.toDomain()
     }
     
     func updateUserInfo(name: String, imageData: Data?) async throws -> Profile {
