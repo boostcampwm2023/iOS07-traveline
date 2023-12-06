@@ -90,9 +90,15 @@ export class TimelinesController {
     @Req() request,
     @UploadedFile() image: Express.Multer.File,
     @Body() createTimelineDto: CreateTimelineDto
-  ): Promise<Timeline> {
+  ) {
     const userId = request['user'].id;
-    return this.timelinesService.create(userId, image, createTimelineDto);
+    const { id } = await this.timelinesService.create(
+      userId,
+      image,
+      createTimelineDto
+    );
+
+    return { id };
   }
 
   @Get()
@@ -151,7 +157,9 @@ export class TimelinesController {
   }
 
   @Put(':id')
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(
+    FileInterceptor('image', { limits: { fileSize: 1024 * 1024 * 2 } })
+  )
   @ApiOperation({
     summary: 'id에 해당하는 타임라인 수정',
     description: 'id에 해당하는 타임라인을 수정합니다.',
@@ -165,7 +173,8 @@ export class TimelinesController {
     @Body() updateTimelineDto: UpdateTimelineDto
   ) {
     const userId = request['user'].id;
-    return this.timelinesService.update(id, userId, image, updateTimelineDto);
+    await this.timelinesService.update(id, userId, image, updateTimelineDto);
+    return { id };
   }
 
   @Delete(':id')
