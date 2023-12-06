@@ -30,7 +30,8 @@ enum VCFactory {
     
     static func makeHomeVC() -> HomeVC {
         // TODO: - 서버 연결 후 Repository 변경
-        let repository = PostingRepositoryMock()
+//        let repository = PostingRepositoryMock()
+        let repository = PostingRepositoryImpl(network: network)
         let useCase = HomeUseCaseImpl(repository: repository)
         let viewModel = HomeViewModel(homeUseCase: useCase)
         return HomeVC(viewModel: viewModel)
