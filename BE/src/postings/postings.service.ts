@@ -43,7 +43,7 @@ export class PostingsService {
   }
 
   async findAll(dto: SearchPostingDto) {
-    return this.postingsRepository.findAll(
+    const postings = await this.postingsRepository.findAll(
       dto.keyword,
       dto.sorting,
       dto.offset,
@@ -57,6 +57,27 @@ export class PostingsService {
       dto.theme,
       dto.withWho
     );
+
+    return postings.map((posting) => ({
+      id: posting.p_id,
+      title: posting.p_title,
+      created_at: posting.p_created_at,
+      thumbnail: posting.p_thumbnail,
+      period: posting.p_period,
+      headcount: posting.p_headcount,
+      budget: posting.p_budget,
+      location: posting.p_location,
+      season: posting.p_season,
+      vehicle: posting.p_vehicle,
+      withWho: posting.p_with_who,
+      theme: posting.p_theme,
+      writer: {
+        id: posting.u_id,
+        name: posting.u_name,
+        avatar: posting.u_avatar,
+      },
+      likeds: posting.likeds,
+    }));
   }
 
   async findAllBytitle(keyword: string) {
