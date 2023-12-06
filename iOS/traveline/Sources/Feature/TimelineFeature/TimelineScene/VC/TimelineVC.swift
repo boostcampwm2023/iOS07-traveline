@@ -173,7 +173,7 @@ private extension TimelineVC {
     }
     
     func bind() {
-        viewModel.$state
+        viewModel.state
             .map(\.travelInfo)
             .filter { $0 != .empty }
             .removeDuplicates()
@@ -183,7 +183,7 @@ private extension TimelineVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .map(\.timelineCardList)
             .withUnretained(self)
             .sink { owner, cardlist in
@@ -191,7 +191,7 @@ private extension TimelineVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .map(\.isOwner)
             .withUnretained(self)
             .sink { owner, isOwner in

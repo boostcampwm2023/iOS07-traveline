@@ -229,7 +229,7 @@ private extension TravelVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .map(\.canPost)
             .removeDuplicates()
             .withUnretained(self)
@@ -238,7 +238,7 @@ private extension TravelVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .map(\.startDate)
             .withUnretained(self)
             .sink { owner, startDate in
@@ -246,7 +246,7 @@ private extension TravelVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .map(\.endDate)
             .removeDuplicates()
             .withUnretained(self)
@@ -255,7 +255,7 @@ private extension TravelVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .compactMap(\.travelID)
             .removeDuplicates()
             .withUnretained(self)
@@ -268,7 +268,7 @@ private extension TravelVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .compactMap(\.titleValidation)
             .filter { $0 == .invalidate }
             .removeDuplicates()

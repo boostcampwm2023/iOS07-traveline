@@ -217,7 +217,7 @@ extension ProfileEditingVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .map(\.isCompletable)
             .removeDuplicates()
             .withUnretained(self)
@@ -226,7 +226,7 @@ extension ProfileEditingVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .map(\.caption)
             .withUnretained(self)
             .sink { owner, caption in
@@ -235,7 +235,7 @@ extension ProfileEditingVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .map(\.profile)
             .removeDuplicates()
             .withUnretained(self)

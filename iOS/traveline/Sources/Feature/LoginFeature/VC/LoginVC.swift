@@ -91,7 +91,7 @@ private extension LoginVC {
             }
             .store(in: &cancellabels)
         
-        viewModel.$state
+        viewModel.state
             .compactMap(\.appleIDRequests)
             .removeDuplicates()
             .withUnretained(self)
@@ -103,7 +103,7 @@ private extension LoginVC {
             }
             .store(in: &cancellabels)
         
-        viewModel.$state
+        viewModel.state
             .map(\.isSuccessLogin)
             .filter { $0 }
             .withUnretained(self)

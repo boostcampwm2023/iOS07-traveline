@@ -116,7 +116,7 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
 private extension HomeViewModel {
     
     func makeSearchQuery(from filters: FilterDictionary) -> SearchQuery {
-        var query = state.searchQuery
+        var query = currentState.searchQuery
 
         query.selectedFilter = filters.values
             .filter { !$0.selected.isEmpty }

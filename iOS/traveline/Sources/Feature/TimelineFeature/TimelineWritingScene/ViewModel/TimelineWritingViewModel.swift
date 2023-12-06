@@ -61,7 +61,7 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
             return .just(.updateBasicInfo)
             
         case .tapCompleteButton:
-            return createTimeline(with: state.timelineDetailRequest)
+            return createTimeline(with: currentState.timelineDetailRequest)
             
         case .titleDidChange(let title):
             return .just(.updateTitleState(title))

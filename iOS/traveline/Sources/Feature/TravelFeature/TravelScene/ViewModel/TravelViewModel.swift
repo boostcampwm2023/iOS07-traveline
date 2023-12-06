@@ -129,10 +129,10 @@ private extension TravelViewModel {
 private extension TravelViewModel {
     func postTravel(_ tags: [Tag]) -> SideEffectPublisher {
         let travelReqeust = TravelRequest(
-            title: state.titleText,
-            region: state.region,
-            startDate: state.startDate,
-            endDate: state.endDate,
+            title: currentState.titleText,
+            region: currentState.region,
+            startDate: currentState.startDate,
+            endDate: currentState.endDate,
             tags: tags
         )
         

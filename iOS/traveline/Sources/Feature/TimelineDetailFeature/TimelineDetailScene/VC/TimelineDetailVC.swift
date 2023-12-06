@@ -174,7 +174,7 @@ private extension TimelineDetailVC {
     
     private func bind() {
         
-        viewModel.$state
+        viewModel.state
             .map(\.timelineDetailInfo)
             .removeDuplicates()
             .withUnretained(self)

@@ -285,7 +285,7 @@ private extension TimelineWritingVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .map(\.isCompletable)
             .removeDuplicates()
             .withUnretained(self)
@@ -294,7 +294,7 @@ private extension TimelineWritingVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .map(\.timelineDetailRequest)
             .withUnretained(self)
             .sink { owner, detail in
