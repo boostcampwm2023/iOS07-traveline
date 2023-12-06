@@ -22,8 +22,14 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         case .viewWillAppear:
             return .just(HomeSideEffect.showPrevious)
             
-        case .viewDidLoad, .cancelSearch:
+        case .viewDidLoad:
             return .just(HomeSideEffect.showHome)
+            
+        case .cancelSearch:
+            return Publishers.Merge(
+                Just(HomeSideEffect.showHome),
+                fetchHomeList()
+            ).eraseToAnyPublisher()
             
         case .startSearch:
             return fetchRecentKeyword()
@@ -131,6 +137,20 @@ private extension HomeViewModel {
             .flatMap { $0.selected }
         
         return query
+    }
+    
+    func fetchHomeList() -> SideEffectPublisher {
+        var query = makeSearchQuery(from: state.homeFilters)
+        query.offset = 1
+        
+        return homeUseCase.fetchSearchList(with: query)
+            .map { travelList in
+                return HomeSideEffect.showNewList(travelList)
+            }
+            .catch { error in
+                return Just(HomeSideEffect.loadFailed(error))
+            }
+            .eraseToAnyPublisher()
     }
     
     func fetchNewSearchList(from filters: FilterDictionary) -> SideEffectPublisher {
