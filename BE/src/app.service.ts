@@ -1,9 +1,13 @@
+import { MailerService } from '@nestjs-modules/mailer';
 import { StorageService } from './storage/storage.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly storageService: StorageService) {}
+  constructor(
+    private readonly storageService: StorageService,
+    private readonly mailerService: MailerService
+  ) {}
 
   getHello(): string {
     return `
@@ -50,5 +54,21 @@ export class AppService {
 
   async download(filename: string) {
     return this.storageService.getImageUrl(`app/${filename}`);
+  }
+
+  async sendEmail() {
+    try {
+      const result = await this.mailerService.sendMail({
+        to: 'minnie_00@naver.com',
+        subject: '이메일 테스트',
+        template: 'test.ejs',
+        context: {
+          serviceName: 'traveline',
+        },
+      });
+      return result;
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
