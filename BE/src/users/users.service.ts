@@ -4,6 +4,7 @@ import { StorageService } from 'src/storage/storage.service';
 import { UserRepository } from './users.repository';
 import { CheckDuplicatedNameResponseDto } from './dto/check-duplicated-name-response.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserIpDto } from './dto/update-user-ip.dto';
 
 @Injectable()
 export class UsersService {
@@ -107,5 +108,9 @@ export class UsersService {
       return { isDuplicated: false };
     }
     return { isDuplicated: true };
+  }
+
+  async updateUserIp(id: string, updateUserIpDto: UpdateUserIpDto) {
+    return this.userRepository.update(id, updateUserIpDto);
   }
 }
