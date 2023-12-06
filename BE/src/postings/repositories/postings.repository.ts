@@ -1,7 +1,7 @@
-import { POSTINGS_REPOSITORY } from '../postings.constants';
+import { BLOCKING_LIMIT, POSTINGS_REPOSITORY } from '../postings.constants';
 import { Posting } from '../entities/posting.entity';
 import { Inject, Injectable } from '@nestjs/common';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import {
   Budget,
   Headcount,
@@ -51,13 +51,15 @@ export class PostingsRepository {
   ) {
     const qb = this.postingsRepository
       .createQueryBuilder('p')
+      .leftJoinAndSelect('p.writer', 'u')
+      .where('p.title LIKE :keyword', { keyword: `%${keyword}%` })
       .leftJoin('p.likeds', 'l', 'l.isDeleted = :isDeleted', {
         isDeleted: false,
       })
-      .leftJoinAndSelect('p.writer', 'u')
-      .where('p.title LIKE :keyword', { keyword: `%${keyword}%` })
-      .groupBy('p.id')
-      .addSelect('COUNT(l.posting)', 'likeds');
+      .addSelect('COUNT(l.posting)', 'likeds')
+      .leftJoin('p.reports', 'r')
+      .having('COUNT(r.posting) <= :BLOCKING_LIMIT', { BLOCKING_LIMIT })
+      .groupBy('p.id');
 
     if (budget) {
       qb.where('p.budget = :budget', { budget });
@@ -138,16 +140,20 @@ export class PostingsRepository {
     }
 
     return qb
-      .skip((offset - 1) * limit)
-      .take(limit)
+      .offset((offset - 1) * limit)
+      .limit(limit)
       .getRawMany();
   }
 
   async findAllByTitle(keyword: string) {
-    return this.postingsRepository.find({
-      where: { title: Like(`${keyword}%`) },
-      select: ['title'],
-    });
+    return this.postingsRepository
+      .createQueryBuilder('p')
+      .select('DISTINCT p.title', 'title')
+      .where('p.title LIKE :keyword', { keyword: `%${keyword}%` })
+      .leftJoin('p.reports', 'r')
+      .groupBy('p.id')
+      .having('COUNT(r.posting) <= :BLOCKING_LIMIT', { BLOCKING_LIMIT })
+      .getRawMany();
   }
 
   async findAllByWriter(userId: string) {

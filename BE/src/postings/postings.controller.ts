@@ -117,7 +117,7 @@ export class PostingsController {
   @ApiOkResponse({ schema: { example: searchByWord_OK } })
   async searchByKeyWord(
     @Query('keyword', new DefaultValuePipe('')) keyword: string
-  ): Promise<string[]> {
+  ) {
     return this.postingsService.findAllBytitle(keyword);
   }
 
