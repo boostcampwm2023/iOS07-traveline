@@ -19,6 +19,8 @@ extension UserEndPoint: EndPoint {
         switch self {
         case .checkDuplicatedName:
             return "/users/duplicate"
+        case .requestUserInfo:
+            return "/users"
         default:
             return "/users"
         }
@@ -28,6 +30,8 @@ extension UserEndPoint: EndPoint {
         switch self {
         case .updateUserInfo:
             return .PUT
+        case .requestUserInfo:
+            return .GET
         default:
             return .GET
         }
@@ -38,6 +42,6 @@ extension UserEndPoint: EndPoint {
     }
     
     var header: [String: String] {
-        return HeaderType.json.value
+        return HeaderType.authorization.value
     }
 }
