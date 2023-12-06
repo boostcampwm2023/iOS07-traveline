@@ -41,13 +41,16 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             return .just(HomeSideEffect.saveFilter(filterList))
             
         case let .filterChanged(filters):
-            return fetchSearchList(from: filters)
+            return fetchNewSearchList(from: filters)
             
         case .createTravel:
             return .just(HomeSideEffect.showTravelWriting)
             
         case let .deleteKeyword(keyword):
             return deleteSearchKeyword(keyword)
+            
+        case .didScrollToEnd:
+            return fetchNextPage()
         }
     }
     
@@ -82,9 +85,9 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             newState.resultFilters = .make()
             saveSearchKeyword(keyword)
             
-        case let .showHomeList(travelList):
-            // TODO: - 서버 연동 후 수정
+        case let .showNewList(travelList):
             newState.travelList = travelList
+            newState.searchQuery.offset = 2
             
         case let .showFilter(type):
             newState.curFilter = (state.homeViewType == .home) ? state.homeFilters[type] : state.resultFilters[type]
@@ -101,6 +104,10 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         case .showTravelWriting:
             newState.curFilter = nil
             newState.moveToTravelWriting = true
+            
+        case let .showNextPage(travelList):
+            newState.travelList += travelList
+            newState.searchQuery.offset += 1
             
         case let .loadFailed(error):
             // TODO: - 통신 실패 시 State 처리
@@ -125,12 +132,27 @@ private extension HomeViewModel {
         return query
     }
     
-    func fetchSearchList(from filters: FilterDictionary) -> SideEffectPublisher {
+    func fetchNewSearchList(from filters: FilterDictionary) -> SideEffectPublisher {
+        var query = makeSearchQuery(from: filters)
+        query.offset = 1
+        
+        return homeUseCase.fetchSearchList(with: query)
+            .map { travelList in
+                return HomeSideEffect.showNewList(travelList)
+            }
+            .catch { error in
+                return Just(HomeSideEffect.loadFailed(error))
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func fetchNextPage() -> SideEffectPublisher {
+        let filters = state.homeViewType == .home ? state.homeFilters : state.resultFilters
         let query = makeSearchQuery(from: filters)
         
         return homeUseCase.fetchSearchList(with: query)
             .map { travelList in
-                return HomeSideEffect.showHomeList(travelList)
+                return HomeSideEffect.showNextPage(travelList)
             }
             .catch { error in
                 return Just(HomeSideEffect.loadFailed(error))
