@@ -88,14 +88,7 @@ export class PostingsService {
 
   async findAllBytitle(keyword: string) {
     const titles = await this.postingsRepository.findAllByTitle(keyword);
-
-    return [
-      ...new Set(
-        titles
-          .filter((e) => e.reports.length <= BLOCKING_LIMIT)
-          .map((e) => e.title)
-      ),
-    ];
+    return titles.map((e) => e.title);
   }
 
   async findAllByWriter(userId: string) {

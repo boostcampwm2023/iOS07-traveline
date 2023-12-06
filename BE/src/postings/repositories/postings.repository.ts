@@ -1,7 +1,7 @@
-import { POSTINGS_REPOSITORY } from '../postings.constants';
+import { BLOCKING_LIMIT, POSTINGS_REPOSITORY } from '../postings.constants';
 import { Posting } from '../entities/posting.entity';
 import { Inject, Injectable } from '@nestjs/common';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import {
   Budget,
   Headcount,
@@ -144,10 +144,14 @@ export class PostingsRepository {
   }
 
   async findAllByTitle(keyword: string) {
-    return this.postingsRepository.find({
-      where: { title: Like(`${keyword}%`) },
-      select: ['title'],
-    });
+    return this.postingsRepository
+      .createQueryBuilder('p')
+      .select('DISTINCT p.title', 'title')
+      .where('p.title LIKE :keyword', { keyword: `%${keyword}%` })
+      .leftJoin('p.reports', 'r')
+      .groupBy('p.id')
+      .having('COUNT(r.posting) <= :BLOCKING_LIMIT', { BLOCKING_LIMIT })
+      .getRawMany();
   }
 
   async findAllByWriter(userId: string) {
