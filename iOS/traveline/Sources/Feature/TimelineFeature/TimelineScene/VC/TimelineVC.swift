@@ -22,12 +22,25 @@ final class TimelineVC: UIViewController {
         }
     }
     
+    private enum TimelineSection: Int {
+        case travelInfo
+        case timeline
+    }
+    
+    private enum TimelineItem: Hashable {
+        case travelInfoItem(TimelineTravelInfo)
+        case timelineItem(TimelineCardInfo)
+    }
+    
     // MARK: - UI Components
     
     private lazy var tlNavigationBar: TLNavigationBar = .init(vc: self)
     
     private lazy var timelineCollectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: .init())
+        let collectionView = UICollectionView(
+            frame: .zero,
+            collectionViewLayout: .init()
+        )
         
         collectionView.register(cell: TravelInfoCVC.self)
         collectionView.register(cell: TimelineCardCVC.self)
@@ -35,7 +48,6 @@ final class TimelineVC: UIViewController {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.backgroundColor = TLColor.black
         collectionView.delegate = self
-        collectionView.dataSource = self
         
         return collectionView
     }()
@@ -44,9 +56,10 @@ final class TimelineVC: UIViewController {
     
     // MARK: - Properties
     
-    // TODO: - Diffable DataSource 사용
-    private var travelInfoDataSource: TimelineTravelInfo?
-    private var timelineCardDataSource: TimelineCardList = []
+    private typealias DataSource = UICollectionViewDiffableDataSource<TimelineSection, TimelineItem>
+    private typealias Snapshot = NSDiffableDataSourceSnapshot<TimelineSection, TimelineItem>
+    
+    private var dataSource: DataSource!
     
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: TimelineViewModel
@@ -69,7 +82,9 @@ final class TimelineVC: UIViewController {
         
         setupAttributes()
         setupLayout()
+        setupDataSource()
         setupCompositionalLayout()
+        setupSnapshot()
         bind()
         viewModel.sendAction(.enterToTimeline)
     }
@@ -157,13 +172,96 @@ private extension TimelineVC {
         ])
     }
     
+    func bind() {
+        viewModel.$state
+            .map(\.travelInfo)
+            .filter { $0 != .empty }
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, travelInfo in
+                owner.setupData(info: travelInfo)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .map(\.timelineCardList)
+            .withUnretained(self)
+            .sink { owner, cardlist in
+                owner.setupData(list: cardlist)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .map(\.isOwner)
+            .withUnretained(self)
+            .sink { owner, isOwner in
+                owner.setNavigationRightButton(isOwner: isOwner)
+                owner.createPostingButton.isHidden = !isOwner
+            }
+            .store(in: &cancellables)
+    }
+}
+
+// MARK: - CollectionView Setup Functions
+
+extension TimelineVC {
+    func setupDataSource() {
+        dataSource = DataSource(collectionView: timelineCollectionView) { collectionView, indexPath, itemIdentifier in
+            
+            let section = TimelineSection(rawValue: indexPath.section)
+            
+            var item: Any
+            switch itemIdentifier {
+            case let .travelInfoItem(value):
+                item = value
+                
+            case let .timelineItem(value):
+                item = value
+            }
+            
+            switch section {
+            case .travelInfo:
+                let cell = collectionView.dequeue(cell: TravelInfoCVC.self, for: indexPath)
+                cell.setData(from: item as? TimelineTravelInfo ?? .empty)
+                cell.delegate = self
+                return cell
+                
+            case .timeline:
+                let cell = collectionView.dequeue(cell: TimelineCardCVC.self, for: indexPath)
+                cell.setData(by: item as? TimelineCardInfo ?? .empty)
+                let lastRow = collectionView.numberOfItems(inSection: indexPath.section) - 1
+                if indexPath.row == lastRow { cell.changeToLast() }
+                return cell
+                
+            default:
+                return UICollectionViewCell()
+            }
+        }
+        
+        dataSource.supplementaryViewProvider = { [weak self] collectionView, _, indexPath in
+            let header = collectionView.dequeHeader(view: TimelineDateHeaderView.self, for: indexPath)
+            header.delegate = self
+            
+            if let model = self?.dataSource.itemIdentifier(for: [0, 0]),
+               case let .travelInfoItem(info) = model {
+                header.setData(days: info.days)
+            }
+            
+            return header
+        }
+        
+        timelineCollectionView.dataSource = dataSource
+    }
+    
     func setupCompositionalLayout() {
         let layout = UICollectionViewCompositionalLayout { [weak self] section, _ in
             switch section {
-            case 0:
+            case TimelineSection.travelInfo.rawValue:
                 self?.makeTravelInfoSection()
-            case 1:
+                
+            case TimelineSection.timeline.rawValue:
                 self?.makeTimelineSection()
+                
             default:
                 self?.makeTravelInfoSection()
             }
@@ -223,35 +321,31 @@ private extension TimelineVC {
         return section
     }
     
-    func bind() {
-        viewModel.$state
-            .map(\.travelInfo)
-            .removeDuplicates()
-            .withUnretained(self)
-            .sink { owner, travelInfo in
-                owner.travelInfoDataSource = travelInfo
-                owner.timelineCollectionView.reloadData()
-            }
-            .store(in: &cancellables)
+    func setupSnapshot() {
+        var snapshot = Snapshot()
+        snapshot.appendSections([.travelInfo, .timeline])
         
-        viewModel.$state
-            .map(\.timelineCardList)
-            .withUnretained(self)
-            .sink { owner, cardlist in
-                owner.timelineCardDataSource = cardlist
-                owner.timelineCollectionView.reloadData()
-            }
-            .store(in: &cancellables)
-        
-        viewModel.$state
-            .map(\.isOwner)
-            .withUnretained(self)
-            .sink { owner, isOwner in
-                owner.setNavigationRightButton(isOwner: isOwner)
-                owner.createPostingButton.isHidden = !isOwner
-            }
-            .store(in: &cancellables)
+        dataSource.apply(snapshot)
     }
+    
+    func setupData(info: TimelineTravelInfo) {
+        var snapshot = dataSource.snapshot()
+        snapshot.deleteItems(snapshot.itemIdentifiers(inSection: .travelInfo))
+        snapshot.appendItems([.travelInfoItem(info)], toSection: .travelInfo)
+        
+        dataSource.apply(snapshot)
+        snapshot.reloadSections([.timeline])
+        dataSource.apply(snapshot)
+    }
+    
+    func setupData(list: TimelineCardList) {
+        var snapshot = dataSource.snapshot()
+        snapshot.deleteItems(snapshot.itemIdentifiers(inSection: .timeline))
+        list.forEach { snapshot.appendItems([.timelineItem($0)], toSection: .timeline) }
+        
+        dataSource.apply(snapshot)
+    }
+    
 }
 
 // MARK: - UICollectionView Delegate, DataSource
@@ -261,55 +355,6 @@ extension TimelineVC: UICollectionViewDelegate {
         let timelineDetailVC = VCFactory.makeTimelineDetailVC(with: "id1234")
         
         navigationController?.pushViewController(timelineDetailVC, animated: true)
-    }
-}
-
-extension TimelineVC: UICollectionViewDataSource {
-    // TODO: - 모델 연결
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        2
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        switch section {
-        case 0:
-            return 1
-        case 1:
-            return timelineCardDataSource.count
-        default:
-            return 1
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        switch indexPath.section {
-        case 0:
-            guard let travelInfoDataSource else { return UICollectionViewCell() }
-            let cell = collectionView.dequeue(cell: TravelInfoCVC.self, for: indexPath)
-            cell.setData(from: travelInfoDataSource)
-            cell.delegate = self
-            return cell
-            
-        case 1:
-            let cell = collectionView.dequeue(cell: TimelineCardCVC.self, for: indexPath)
-            cell.setData(by: timelineCardDataSource[indexPath.row])
-            let lastRow = collectionView.numberOfItems(inSection: indexPath.section) - 1
-            if indexPath.row == lastRow { cell.changeToLast() }
-            return cell
-            
-        default:
-            return UICollectionViewCell()
-        }
-    }
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        viewForSupplementaryElementOfKind kind: String,
-        at indexPath: IndexPath
-    ) -> UICollectionReusableView {
-        let header = collectionView.dequeHeader(view: TimelineDateHeaderView.self, for: indexPath)
-        header.delegate = self
-        return header
     }
 }
 
@@ -335,5 +380,5 @@ extension TimelineVC: TimelineDateHeaderDelegate {
 
 @available(iOS 17, *)
 #Preview {
-    UINavigationController(rootViewController: VCFactory.makeTimelineVC())
+    UINavigationController(rootViewController: VCFactory.makeTimelineVC(id: .empty))
 }

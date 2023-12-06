@@ -11,7 +11,7 @@ import Foundation
 
 enum TimelineAction: BaseAction {
     case enterToTimeline
-    case fetchTimelineCard
+    case fetchTimelineCard(Int)
     case changeDay(Int)
     case likeButtonPressed
 }
@@ -19,19 +19,13 @@ enum TimelineAction: BaseAction {
 enum TimelineSideEffect: BaseSideEffect {
     case loadTimeline(TimelineTravelInfo)
     case loadTimelineCardList(TimelineCardList)
-    case removeRegacyCards
+    case removeRegacyCards(Int)
     case toggleLike
     case loadFailed(Error)
 }
 
 struct TimelineState: BaseState {
-    var travelInfo: TimelineTravelInfo = .init(
-        travelTitle: Literal.empty,
-        startDate: Literal.empty,
-        endDate: Literal.empty,
-        isLiked: false,
-        tags: .init()
-    )
+    var travelInfo: TimelineTravelInfo = .empty
     var timelineCardList: TimelineCardList = []
     var period: Int = 0
     var isOwner: Bool = false
@@ -39,10 +33,15 @@ struct TimelineState: BaseState {
 
 final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect, TimelineState> {
     
-    private let fetchTravelInfoUseCase: FetchTravelInfoUseCase
+    private let id: TravelID
+    private let timelineUseCase: TimelineUseCase
     
-    init(fetchTravelInfoUseCase: FetchTravelInfoUseCase) {
-        self.fetchTravelInfoUseCase = fetchTravelInfoUseCase
+    init(
+        id: TravelID,
+        fetchTravelInfoUseCase: TimelineUseCase
+    ) {
+        self.id = id
+        self.timelineUseCase = fetchTravelInfoUseCase
     }
     
     // MARK: - Transform
@@ -50,16 +49,16 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
     override func transform(action: TimelineAction) -> SideEffectPublisher {
         switch action {
         case .enterToTimeline:
-            fetchTimeline()
+            return fetchTimeline()
             
-        case .fetchTimelineCard:
-            fetchTimelineCardInfo()
+        case let .fetchTimelineCard(day):
+            return fetchTimelineCardInfo(day)
             
-        case .changeDay:
-            fetchTimelineCard()
+        case let .changeDay(day):
+            return fetchTimelineCard(day)
             
         case .likeButtonPressed:
-            .just(TimelineSideEffect.toggleLike)
+            return .just(TimelineSideEffect.toggleLike)
         }
     }
     
@@ -69,15 +68,14 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
         switch effect {
         case let .loadTimeline(travelInfo):
             newState.travelInfo = travelInfo
-            // 본인 게시물인지
-            newState.isOwner = false
+            newState.isOwner = travelInfo.isOwner
             
         case let .loadTimelineCardList(timelineCardList):
             newState.timelineCardList = timelineCardList
             
-        case .removeRegacyCards:
+        case let .removeRegacyCards(day):
             newState.timelineCardList.removeAll()
-            sendAction(.fetchTimelineCard)
+            sendAction(.fetchTimelineCard(day))
             
         case .toggleLike:
             newState.travelInfo.isLiked.toggle()
@@ -96,17 +94,17 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
 private extension TimelineViewModel {
     func fetchTimeline() -> SideEffectPublisher {
         Publishers.Merge(
-            fetchTimelineCardInfo(),
+            fetchTimelineCardInfo(1),
             fetchTravelInfo()
         ).eraseToAnyPublisher()
     }
     
-    func fetchTimelineCard() -> SideEffectPublisher {
-        return .just(TimelineSideEffect.removeRegacyCards)
+    func fetchTimelineCard(_ day: Int) -> SideEffectPublisher {
+        return .just(TimelineSideEffect.removeRegacyCards(day))
     }
     
     func fetchTravelInfo() -> SideEffectPublisher {
-        return fetchTravelInfoUseCase.execute(id: "불러올 게시글 ID 값")
+        return timelineUseCase.fetchTimelineInfo(id: id)
             .map { travelInfo in
                 return TimelineSideEffect.loadTimeline(travelInfo)
             }
@@ -116,13 +114,14 @@ private extension TimelineViewModel {
             .eraseToAnyPublisher()
     }
     
-    // TODO: - 서버 연결 후 수정
-    func fetchTimelineCardInfo() -> SideEffectPublisher {
-        return Future { promise in
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.8) {
-                promise(.success(.loadTimelineCardList(TimelineSample.makeCardList())))
+    func fetchTimelineCardInfo(_ day: Int) -> SideEffectPublisher {
+        return timelineUseCase.fetchTimelineList(id: id, day: day)
+            .map { list in
+                return TimelineSideEffect.loadTimelineCardList(list)
             }
-        }
-        .eraseToAnyPublisher()
+            .catch { error in
+                return Just(TimelineSideEffect.loadFailed(error))
+            }
+            .eraseToAnyPublisher()
     }
 }

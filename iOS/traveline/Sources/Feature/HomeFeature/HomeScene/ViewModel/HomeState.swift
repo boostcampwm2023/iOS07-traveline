@@ -19,6 +19,7 @@ struct HomeState: BaseState {
     var filterList: FilterList = .init()
     var travelList: TravelList = .init()
     var searchList: SearchKeywordList = .init()
+    var searchQuery: SearchQuery = .init()
     
     var homeViewType: HomeViewType = .home
     var searchText: String = ""

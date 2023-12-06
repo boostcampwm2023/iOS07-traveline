@@ -149,24 +149,6 @@ private extension HomeVC {
             }
             .store(in: &cancellables)
         
-        homeListView.didSelectHomeList
-            .withUnretained(self)
-            .sink { owner, _  in
-                let timelineVC = VCFactory.makeTimelineVC()
-                owner.navigationController?.pushViewController(
-                    timelineVC,
-                    animated: true
-                )
-            }
-            .store(in: &cancellables)
-        
-        homeListView.didSelectFilterType
-            .withUnretained(self)
-            .sink { owner, type in
-                owner.viewModel.sendAction(.startFilter(type))
-            }
-            .store(in: &cancellables)
-        
         viewModel.$state
             .map(\.travelList)
             .removeDuplicates()
@@ -220,11 +202,31 @@ private extension HomeVC {
             .store(in: &cancellables)
         
         viewModel.$state
+            .filter { $0.homeViewType == .home }
+            .map(\.homeFilters)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, filters in
+                owner.viewModel.sendAction(.filterChanged(filters))
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
             .filter { $0.homeViewType == .result }
             .map(\.resultFilters)
             .withUnretained(self)
             .sink { owner, filters in
                 owner.homeListView.setupData(list: .sortFilters(filters))
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$state
+            .filter { $0.homeViewType == .result }
+            .map(\.resultFilters)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, filters in
+                owner.viewModel.sendAction(.filterChanged(filters))
             }
             .store(in: &cancellables)
         
@@ -243,7 +245,7 @@ private extension HomeVC {
         homeListView.didSelectHomeList
             .withUnretained(self)
             .sink { owner, _  in
-                let timelineVC = VCFactory.makeTimelineVC()
+                let timelineVC = VCFactory.makeTimelineVC(id: .empty)
                 owner.navigationController?.pushViewController(
                     timelineVC,
                     animated: true

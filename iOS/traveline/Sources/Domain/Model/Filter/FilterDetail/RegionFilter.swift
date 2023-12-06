@@ -65,4 +65,43 @@ enum RegionFilter: DetailFilterType {
             return Literal.Filter.RegionDetail.jeju
         }
     }
+    
+    var query: String {
+        switch self {
+        case .seoul:
+            return Literal.Query.RegionDetail.seoul
+        case .busan:
+            return Literal.Query.RegionDetail.busan
+        case .daegu:
+            return Literal.Query.RegionDetail.daegu
+        case .incheon:
+            return Literal.Query.RegionDetail.incheon
+        case .gwangju:
+            return Literal.Query.RegionDetail.gwangju
+        case .daejeon:
+            return Literal.Query.RegionDetail.daejeon
+        case .ulsan:
+            return Literal.Query.RegionDetail.ulsan
+        case .sejong:
+            return Literal.Query.RegionDetail.sejong
+        case .gyeonggi:
+            return Literal.Query.RegionDetail.gyeonggi
+        case .gangwon:
+            return Literal.Query.RegionDetail.gangwon
+        case .chungbuk:
+            return Literal.Query.RegionDetail.chungbuk
+        case .chungnam:
+            return Literal.Query.RegionDetail.chungnam
+        case .jeonbuk:
+            return Literal.Query.RegionDetail.jeonbuk
+        case .jeonnam:
+            return Literal.Query.RegionDetail.jeonnam
+        case .gyeongbuk:
+            return Literal.Query.RegionDetail.gyeongbuk
+        case .gyeongnam:
+            return Literal.Query.RegionDetail.gyeongnam
+        case .jeju:
+            return Literal.Query.RegionDetail.jeju
+        }
+    }
 }

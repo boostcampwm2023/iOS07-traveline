@@ -20,4 +20,13 @@ enum TransportationTag: DetailTagType {
             Literal.Tag.TransportationDetail.drive
         }
     }
+    
+    var query: String {
+        switch self {
+        case .publicTransport:
+            Literal.Tag.TransportationDetail.publicTransport
+        case .drive:
+            Literal.Tag.TransportationDetail.drive
+        }
+    }
 }

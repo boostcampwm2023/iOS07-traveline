@@ -74,7 +74,7 @@ final class TimelineCardCVC: UICollectionViewCell {
     
     func setData(by cardInfo: TimelineCardInfo) {
         cardView.setData(cardInfo: cardInfo)
-        timeLabel.setText(to: "14:05")
+        timeLabel.setText(to: cardInfo.time)
     }
     
     /// 마지막 셀일 때 line 길이 수정

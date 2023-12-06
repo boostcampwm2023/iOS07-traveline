@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum SortFilter: DetailFilterType {
+enum SortFilter: CaseIterable {
     case recent
     case like
     
@@ -18,6 +18,15 @@ enum SortFilter: DetailFilterType {
             Literal.Filter.SortDetail.recent
         case .like:
             Literal.Filter.SortDetail.like
+        }
+    }
+    
+    var query: String {
+        switch self {
+        case .recent:
+            Literal.Query.SortDetail.recent
+        case .like:
+            Literal.Query.SortDetail.like
         }
     }
 }

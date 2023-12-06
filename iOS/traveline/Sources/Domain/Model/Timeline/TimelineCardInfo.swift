@@ -10,13 +10,24 @@ import Foundation
 
 typealias TimelineCardList = [TimelineCardInfo]
 
-struct TimelineCardInfo {
-    let detailId: Int
-    let thumbnailURL: String
+struct TimelineCardInfo: Hashable {
+    let detailId: String
+    let thumbnailURL: String?
     let title: String
-    let subtitle: String
+    let place: String
     let content: String
     let time: String
     let latitude: Double
     let longitude: Double
+    
+    static let empty: Self = .init(
+        detailId: Literal.empty,
+        thumbnailURL: Literal.empty,
+        title: Literal.empty,
+        place: Literal.empty,
+        content: Literal.empty,
+        time: Literal.empty,
+        latitude: 0,
+        longitude: 0
+    )
 }

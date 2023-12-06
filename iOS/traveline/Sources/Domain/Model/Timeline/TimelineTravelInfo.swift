@@ -13,5 +13,17 @@ struct TimelineTravelInfo: Hashable {
     let startDate: String
     let endDate: String
     var isLiked: Bool
+    let isOwner: Bool
     let tags: [Tag]
+    let days: [String]
+    
+    static let empty: Self = .init(
+        travelTitle: Literal.empty,
+        startDate: Literal.empty,
+        endDate: Literal.empty,
+        isLiked: false,
+        isOwner: false,
+        tags: [],
+        days: []
+    )
 }

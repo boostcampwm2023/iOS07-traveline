@@ -24,16 +24,22 @@ final class TimelineDateHeaderView: UICollectionReusableView {
         static let spacing: CGFloat = 8.0
     }
     
+    private enum TimelineHeaderSection {
+        case days
+    }
+    
     // MARK: - UI Components
     
     private lazy var dateCollectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+        let collectionView = UICollectionView(
+            frame: .zero,
+            collectionViewLayout: flowLayout
+        )
         
         collectionView.register(cell: DateIndicatorCVC.self)
         collectionView.backgroundColor = TLColor.black
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.delegate = self
-        collectionView.dataSource = self
         
         return collectionView
     }()
@@ -90,12 +96,11 @@ final class TimelineDateHeaderView: UICollectionReusableView {
     
     // MARK: - Properties
     
-    weak var delegate: TimelineDateHeaderDelegate?
+    private typealias DataSource = UICollectionViewDiffableDataSource<TimelineHeaderSection, String>
+    private typealias Snapshot = NSDiffableDataSourceSnapshot<TimelineHeaderSection, String>
     
-    // TODO: - 더미 제거
-    private let dummyDays: [String] = [
-        "28 금", "29 토", "30 일", "01 월", "02 화", "03 수", "04 목", "05 금", "06 토", "07 일"
-    ]
+    private var dataSource: DataSource!
+    weak var delegate: TimelineDateHeaderDelegate?
     
     // MARK: - Initializer
     
@@ -104,7 +109,8 @@ final class TimelineDateHeaderView: UICollectionReusableView {
         
         setupAttributes()
         setupLayout()
-        setDate(to: 1)
+        setupDataSource()
+        setDate()
     }
     
     required init?(coder: NSCoder) {
@@ -113,7 +119,21 @@ final class TimelineDateHeaderView: UICollectionReusableView {
     
     // MARK: - Functions
     
-    private func setDate(to day: Int) {
+    func setData(days: [String]) {
+        var snapshot = Snapshot()
+        snapshot.appendSections([.days])
+        snapshot.appendItems(days)
+        
+        dataSource.apply(snapshot)
+        
+        dateCollectionView.selectItem(
+            at: .init(item: 0, section: 0),
+            animated: true,
+            scrollPosition: .left
+        )
+    }
+    
+    private func setDate(to day: Int = 1) {
         dayLabel.setText(to: "Day \(day)")
     }
     
@@ -128,11 +148,6 @@ final class TimelineDateHeaderView: UICollectionReusableView {
 private extension TimelineDateHeaderView {
     func setupAttributes() {
         backgroundColor = TLColor.black
-        dateCollectionView.selectItem(
-            at: .init(item: 0, section: 0),
-            animated: true,
-            scrollPosition: .left
-        )
         
         mapViewButton.addTarget(self, action: #selector(mapViewButtonPressed), for: .touchUpInside)
     }
@@ -155,7 +170,7 @@ private extension TimelineDateHeaderView {
             dateCollectionView.trailingAnchor.constraint(equalTo: trailingAnchor),
             dateCollectionView.heightAnchor.constraint(equalToConstant: Metric.indicatorHeight),
             
-            borderView.topAnchor.constraint(equalTo: dateCollectionView.bottomAnchor),
+            borderView.bottomAnchor.constraint(equalTo: dateCollectionView.bottomAnchor),
             borderView.leadingAnchor.constraint(equalTo: leadingAnchor),
             borderView.trailingAnchor.constraint(equalTo: trailingAnchor),
             borderView.heightAnchor.constraint(equalToConstant: Metric.borderWidth),
@@ -167,29 +182,25 @@ private extension TimelineDateHeaderView {
             mapViewButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Metric.verticalInset)
         ])
     }
+    
+    func setupDataSource() {
+        dataSource = DataSource(collectionView: dateCollectionView) { collectionView, indexPath, day in
+            let cell = collectionView.dequeue(cell: DateIndicatorCVC.self, for: indexPath)
+            cell.setDate(day)
+            return cell
+        }
+        
+        dateCollectionView.dataSource = dataSource
+    }
 }
 
 // MARK: - UICollectionView Delegate, DataSource
 
 extension TimelineDateHeaderView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        delegate?.changeDay(to: indexPath.row)
-        
-        // TODO: - 날짜 데이터 연결
-        setDate(to: indexPath.row + 1)
-    }
-}
-
-extension TimelineDateHeaderView: UICollectionViewDataSource {
-    // TODO: - 날짜 데이터 관리
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        dummyDays.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeue(cell: DateIndicatorCVC.self, for: indexPath)
-        cell.setDate(dummyDays[indexPath.row])
-        return cell
+        let day = indexPath.row + 1
+        setDate(to: day)
+        delegate?.changeDay(to: day)
     }
 }
 

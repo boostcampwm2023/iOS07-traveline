@@ -10,7 +10,7 @@ import Combine
 import Foundation
 
 protocol HomeUseCase {
-    func fetchHomeList() -> AnyPublisher<TravelList, Error>
+    func fetchSearchList(with query: SearchQuery) -> AnyPublisher<TravelList, Error>
     func fetchRecentKeyword() -> AnyPublisher<SearchKeywordList, Never>
     func saveRecentKeyword(_ keyword: String)
     func deleteRecentKeyword(_ keyword: String) -> AnyPublisher<SearchKeywordList, Never>
@@ -25,12 +25,12 @@ final class HomeUseCaseImpl: HomeUseCase {
         self.repository = repository
     }
     
-    func fetchHomeList() -> AnyPublisher<TravelList, Error> {
+    func fetchSearchList(with query: SearchQuery) -> AnyPublisher<TravelList, Error> {
         return Future { promise in
             Task { [weak self] in
                 guard let self else { return }
                 do {
-                    let travelList = try await self.repository.fetchPostingList()
+                    let travelList = try await self.repository.fetchPostingList(with: query)
                     promise(.success(travelList))
                 } catch {
                     promise(.failure(error))

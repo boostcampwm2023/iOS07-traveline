@@ -29,4 +29,19 @@ enum PeopleTag: DetailTagType {
             Literal.Tag.PeopleDetail.overFive
         }
     }
+    
+    var query: String {
+        switch self {
+        case .one:
+            Literal.Query.PeopleDetail.one
+        case .two:
+            Literal.Query.PeopleDetail.two
+        case .three:
+            Literal.Query.PeopleDetail.three
+        case .four:
+            Literal.Query.PeopleDetail.four
+        case .overFive:
+            Literal.Query.PeopleDetail.overFive
+        }
+    }
 }

@@ -9,5 +9,5 @@
 import Foundation
 
 protocol TimelineRepository {
-    func fetchTravelInfo(id: String) async throws -> TimelineTravelInfo
+    func fetchTimelineList(id: TravelID, day: Int) async throws -> TimelineCardList
 }

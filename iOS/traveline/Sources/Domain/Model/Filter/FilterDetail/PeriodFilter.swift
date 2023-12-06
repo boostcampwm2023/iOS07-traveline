@@ -32,4 +32,21 @@ enum PeriodFilter: DetailFilterType {
             Literal.Filter.PeriodDetail.month
         }
     }
+    
+    var query: String {
+        switch self {
+        case .one:
+            Literal.Query.PeriodDetail.one
+        case .two:
+            Literal.Query.PeriodDetail.two
+        case .three:
+            Literal.Query.PeriodDetail.three
+        case .overThree:
+            Literal.Query.PeriodDetail.overThree
+        case .week:
+            Literal.Query.PeriodDetail.week
+        case .month:
+            Literal.Query.PeriodDetail.month
+        }
+    }
 }

@@ -16,15 +16,16 @@ final class TimelineRepositoryImpl: TimelineRepository {
         self.network = network
     }
     
-    func fetchTravelInfo(id: String) async throws -> TimelineTravelInfo {
-        // EndPoint 만들어주고
-        let postingDetailResponseDTO = try await network.request(
-            endPoint: PostingEndPoint.specificPosting,
-            type: PostingDetailResponseDTO.self
+    func fetchTimelineList(id: TravelID, day: Int) async throws -> TimelineCardList {
+        let request = FetchTimelineRequestDTO(
+            id: id.value,
+            day: day
+        )
+        let response = try await network.request(
+            endPoint: TimelineEndPoint.fetchTimelines(request),
+            type: TimelineListResponseDTO.self
         )
         
-        // 받아온 데이터 Domain으로 변경 (Data -> Domain 역할)
-        return postingDetailResponseDTO.toDomain()
+        return response.toDomain()
     }
-    
 }

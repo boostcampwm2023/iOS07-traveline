@@ -9,11 +9,15 @@
 import Foundation
 
 protocol PostingRepository {
-    func fetchPostingList() async throws -> TravelList
+    func fetchPostingList(with query: SearchQuery) async throws -> TravelList
     func fetchMyPostingList() async throws -> TravelList
     func fetchRecentKeyword() -> [String]?
     func saveRecentKeyword(_ keyword: String)
     func saveRecentKeywordList(_ keywordList: [String])
     func deleteRecentKeyword(_ keyword: String)
     func fetchPostingTitleList(_ keyword: String) async throws -> SearchKeywordList
+    
+    /// Timeline
+    func fetchTimelineInfo(id: TravelID) async throws -> TimelineTravelInfo
+    func postPostings(data: TravelRequest) async throws -> TravelID
 }

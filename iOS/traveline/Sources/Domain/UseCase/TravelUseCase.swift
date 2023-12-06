@@ -21,9 +21,9 @@ protocol TravelUseCase {
 
 final class TravelUseCaseImpl: TravelUseCase {
     
-    private let repository: TravelRepository
+    private let repository: PostingRepository
     
-    init(repository: TravelRepository) {
+    init(repository: PostingRepository) {
         self.repository = repository
     }
     
@@ -35,7 +35,7 @@ final class TravelUseCaseImpl: TravelUseCase {
         return Future { promise in
             Task {
                 do {
-                    let id = try await self.repository.postTravel(data: data)
+                    let id = try await self.repository.postPostings(data: data)
                     promise(.success(id))
                 } catch {
                     promise(.failure(error))

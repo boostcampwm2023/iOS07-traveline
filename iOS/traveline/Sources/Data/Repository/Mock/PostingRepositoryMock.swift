@@ -16,8 +16,7 @@ final class PostingRepositoryMock: PostingRepository {
         return mockData
     }
     
-    
-    func fetchPostingList() async throws -> TravelList {
+    func fetchPostingList(with query: SearchQuery) async throws -> TravelList {
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
         let mockData = TravelListSample.make()
@@ -60,4 +59,22 @@ final class PostingRepositoryMock: PostingRepository {
         return mockTitleList
     }
     
+}
+
+// MARK: - Timeline Feature
+
+extension PostingRepositoryMock {
+    
+    func postPostings(data: TravelRequest) async throws -> TravelID {
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        return TravelID(value: "id")
+    }
+    
+    func fetchTimelineInfo(id: TravelID) async throws -> TimelineTravelInfo {
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        let mockData = TimelineSample.makeTravelInfo()
+        return mockData
+    }
 }
