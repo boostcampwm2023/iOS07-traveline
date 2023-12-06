@@ -149,7 +149,7 @@ private extension HomeVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .map(\.travelList)
             .removeDuplicates()
             .withUnretained(self)
@@ -158,7 +158,7 @@ private extension HomeVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .map(\.searchList)
             .removeDuplicates()
             .withUnretained(self)
@@ -167,7 +167,7 @@ private extension HomeVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .filter { $0.isSearching }
             .map(\.homeViewType)
             .withUnretained(self)
@@ -179,7 +179,7 @@ private extension HomeVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .filter { !$0.isSearching }
             .compactMap(\.curFilter)
             .filter { $0 != .emtpy }
@@ -191,7 +191,7 @@ private extension HomeVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .filter { $0.homeViewType == .home }
             .map(\.homeFilters)
             .withUnretained(self)
@@ -201,7 +201,7 @@ private extension HomeVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .filter { $0.homeViewType == .home }
             .map(\.homeFilters)
             .removeDuplicates()
@@ -211,7 +211,7 @@ private extension HomeVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .filter { $0.homeViewType == .result }
             .map(\.resultFilters)
             .withUnretained(self)
@@ -220,7 +220,7 @@ private extension HomeVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .filter { $0.homeViewType == .result }
             .map(\.resultFilters)
             .removeDuplicates()
@@ -230,7 +230,7 @@ private extension HomeVC {
             }
             .store(in: &cancellables)
         
-        viewModel.$state
+        viewModel.state
             .map(\.moveToTravelWriting)
             .filter { $0 }
             .withUnretained(self)

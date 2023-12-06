@@ -27,7 +27,15 @@ class BaseViewModel<Action: BaseAction, SideEffect: BaseSideEffect, State: BaseS
     private var actions = PassthroughSubject<Action, Never>()
     private var sideEffects = PassthroughSubject<SideEffect, Never>()
     
-    @Published private(set) var state: State = .init()
+    private let stateSubject: CurrentValueSubject<State, Never> = .init(.init())
+    
+    var state: AnyPublisher<State, Never> {
+        return stateSubject.eraseToAnyPublisher()
+    }
+    
+    var currentState: State {
+        return stateSubject.value
+    }
     
     // MARK: - Initializer
     
@@ -44,9 +52,9 @@ class BaseViewModel<Action: BaseAction, SideEffect: BaseSideEffect, State: BaseS
             .store(in: &cancellables)
         
         self.sideEffects
-            .scan(state, reduceState)
+            .scan(stateSubject.value, reduceState)
             .receive(on: DispatchQueue.main)
-            .assign(to: \.state, on: self)
+            .assign(to: \.stateSubject.value, on: self)
             .store(in: &cancellables)
     }
     

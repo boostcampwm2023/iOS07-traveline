@@ -147,7 +147,7 @@ private extension SideMenuVC {
     }
     
     func bind() {
-        viewModel.$state
+        viewModel.state
             .map(\.profile)
             .removeDuplicates()
             .withUnretained(self)

@@ -152,7 +152,7 @@ private extension MyPostListVC {
     }
     
     private func bind() {
-        viewModel.$state
+        viewModel.state
             .map(\.travelList)
             .removeDuplicates()
             .withUnretained(self)
