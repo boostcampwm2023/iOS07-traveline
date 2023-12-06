@@ -31,8 +31,8 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         case let .searching(searchKeyword):
             return fetchRelatedKeyword(searchKeyword)
             
-        case let .searchDone(text):
-            return .just(HomeSideEffect.showResult(text))
+        case let .searchDone(keyword):
+            return fetchSearchResult(from: keyword)
             
         case let .startFilter(type):
             return .just(HomeSideEffect.showFilter(type))
@@ -77,13 +77,14 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             newState.searchList = relatedSearchKeywordList
             newState.homeViewType = .related
             
-        case let .showResult(keyword):
-            // TODO: - 서버 연동 후 수정
-            newState.travelList = TravelListSample.make()
+        case let .showSearchResult(searchResult):
+            newState.travelList = searchResult.travelList
             newState.homeViewType = .result
-            newState.searchText = keyword
             newState.resultFilters = .make()
-            saveSearchKeyword(keyword)
+            newState.searchQuery = .init(
+                keyword: searchResult.keyword,
+                offset: 2
+            )
             
         case let .showNewList(travelList):
             newState.travelList = travelList
@@ -153,6 +154,25 @@ private extension HomeViewModel {
         return homeUseCase.fetchSearchList(with: query)
             .map { travelList in
                 return HomeSideEffect.showNextPage(travelList)
+            }
+            .catch { error in
+                return Just(HomeSideEffect.loadFailed(error))
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func fetchSearchResult(from keyword: String) -> SideEffectPublisher {
+        saveSearchKeyword(keyword)
+        let query = SearchQuery(keyword: keyword)
+        
+        return homeUseCase.fetchSearchList(with: query)
+            .map { travelList in
+                return HomeSideEffect.showSearchResult(
+                    SearchResult(
+                        keyword: keyword,
+                        travelList: travelList
+                    )
+                )
             }
             .catch { error in
                 return Just(HomeSideEffect.loadFailed(error))

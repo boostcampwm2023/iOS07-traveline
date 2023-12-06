@@ -224,6 +224,7 @@ private extension HomeVC {
         viewModel.state
             .filter { $0.homeViewType == .result }
             .map(\.resultFilters)
+            .dropFirst()
             .removeDuplicates()
             .withUnretained(self)
             .sink { owner, filters in

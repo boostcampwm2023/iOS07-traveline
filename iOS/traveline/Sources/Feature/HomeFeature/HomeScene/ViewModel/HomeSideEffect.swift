@@ -13,7 +13,7 @@ enum HomeSideEffect: BaseSideEffect {
     case showPrevious
     case showRecent(SearchKeywordList)
     case showRelated(SearchKeywordList)
-    case showResult(String)
+    case showSearchResult(SearchResult)
     case showNewList(TravelList)
     case showFilter(FilterType)
     case saveFilter([Filter])
