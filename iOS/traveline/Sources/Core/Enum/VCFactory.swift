@@ -58,4 +58,12 @@ enum VCFactory {
         let viewModel = SideMenuViewModel(useCase: useCase)
         return SideMenuVC(viewModel: viewModel)
     }
+  
+    static func makeSettingVC() -> SettingVC {
+        let repository = AuthRepositoryImpl(network: network)
+        let useCase = SettingUseCaseImpl(repository: repository)
+        let viewModel = SettingViewModel(useCase: useCase)
+        return SettingVC(viewModel: viewModel)
+    }
+  
 }

@@ -81,6 +81,21 @@ final class SettingVC: UIViewController {
         return button
     }()
     
+    // MARK: - Properties
+    
+    private let viewModel: SettingViewModel
+    
+    // MARK: - Initialize
+    
+    init(viewModel: SettingViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - Life Cycle
     
     override func viewDidLoad() {
@@ -113,8 +128,8 @@ final class SettingVC: UIViewController {
             preferredStyle: .alert
         )
         let cancel = UIAlertAction(title: "취소", style: .cancel)
-        let logout = UIAlertAction(title: "로그아웃", style: .destructive) { _ in
-            // logout action
+        let logout = UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] _ in
+            self?.viewModel.sendAction(.logoutButtonTapped)
         }
         
         alert.addActions([cancel, logout])
@@ -129,8 +144,8 @@ final class SettingVC: UIViewController {
             preferredStyle: .alert
         )
         let cancel = UIAlertAction(title: "취소", style: .default)
-        let withdrawal = UIAlertAction(title: "탈퇴하기", style: .destructive) { _ in
-            // withdrawal action
+        let withdrawal = UIAlertAction(title: "탈퇴하기", style: .destructive) { [weak self] _ in
+            self?.viewModel.sendAction(.withdrawalButtonTapped)
         }
         
         alert.addActions([withdrawal, cancel])
@@ -202,8 +217,3 @@ extension SettingVC {
     
 }
 
-@available(iOS 17, *)
-#Preview("ProfileEditingVC") {
-    let vc = SettingVC()
-    return vc
-}
