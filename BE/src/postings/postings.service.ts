@@ -17,6 +17,7 @@ import { Liked } from './entities/liked.entity';
 import { Report } from './entities/report.entity';
 import { Period, Season } from './postings.types';
 import { BLOCKING_LIMIT } from './postings.constants';
+import { StorageService } from 'src/storage/storage.service';
 
 @Injectable()
 export class PostingsService {
@@ -24,7 +25,8 @@ export class PostingsService {
     private readonly userRepository: UserRepository,
     private readonly postingsRepository: PostingsRepository,
     private readonly likedsRepository: LikedsRepository,
-    private readonly reportsRepository: ReportsRepository
+    private readonly reportsRepository: ReportsRepository,
+    private readonly storageService: StorageService
   ) {}
 
   async create(userId: string, createPostingDto: CreatePostingDto) {
@@ -58,26 +60,30 @@ export class PostingsService {
       dto.withWho
     );
 
-    return postings.map((posting) => ({
-      id: posting.p_id,
-      title: posting.p_title,
-      created_at: posting.p_created_at,
-      thumbnail: posting.p_thumbnail,
-      period: posting.p_period,
-      headcount: posting.p_headcount,
-      budget: posting.p_budget,
-      location: posting.p_location,
-      season: posting.p_season,
-      vehicle: posting.p_vehicle,
-      withWho: posting.p_with_who,
-      theme: posting.p_theme,
-      writer: {
-        id: posting.u_id,
-        name: posting.u_name,
-        avatar: posting.u_avatar,
-      },
-      likeds: posting.likeds,
-    }));
+    return Promise.all(
+      postings.map(async (posting) => ({
+        id: posting.p_id,
+        title: posting.p_title,
+        created_at: posting.p_created_at,
+        thumbnail: posting.p_thumbnail
+          ? await this.storageService.getImageUrl(posting.p_thumbnail)
+          : null,
+        period: posting.p_period,
+        headcount: posting.p_headcount,
+        budget: posting.p_budget,
+        location: posting.p_location,
+        season: posting.p_season,
+        vehicle: posting.p_vehicle,
+        withWho: posting.p_with_who,
+        theme: posting.p_theme,
+        writer: {
+          id: posting.u_id,
+          name: posting.u_name,
+          avatar: posting.u_avatar,
+        },
+        likeds: posting.likeds,
+      }))
+    );
   }
 
   async findAllBytitle(keyword: string) {
