@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div>
+      안녕하세요 <%= locals.username %>님! traveline 서비스를 이용해주셔서
+      감사합니다.
+    </div>
+    <div>새로운 IP <%= locals.newIp %>에서 방금 로그인되었습니다.</div>
+    <div>
+      본인일 경우
+      <a
+        href="http://localhost:3000/auth/ip?id=<%= locals.id %>&ip=<%= locals.newIp %>&allow=true"
+        >여기</a
+      >를, 아닐 경우
+      <a
+        href="http://localhost:3000/auth/ip?id=<%= locals.id %>&ip=<%= locals.newIp %>&allow=flase"
+        >여기</a
+      >를 클릭해주세요.
+    </div>
+  </body>
+</html>
