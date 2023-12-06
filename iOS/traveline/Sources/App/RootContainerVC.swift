@@ -17,7 +17,7 @@ final class RootContainerVC: UIViewController {
     
     // MARK: - UI Components
     
-    private let sideMenuVC: SideMenuVC = .init(viewModel: SideMenuViewModel())
+    private let sideMenuVC: SideMenuVC = VCFactory.makeSideMenuVC()
     private let homeVC: HomeVC = VCFactory.makeHomeVC()
     private let shadowView: UIView = .init()
     private var navigationVC: UINavigationController?
@@ -158,13 +158,16 @@ extension RootContainerVC: SideMenuDelegate {
                 imageURL: "leaf",
                 name: "hongki"
             )
-            let viewModel = ProfileEditingViewModel(profile: profile)
+            let repositoryMock = UserRepositoryMock()
+            let useCase = ProfileEditingUseCaseImpl(repository: repositoryMock)
+            let viewModel = ProfileEditingViewModel(useCase: useCase)
             navigationVC?.pushViewController(ProfileEditingVC(viewModel: viewModel), animated: true)
         case .myPostList:
             let myPostListVC = VCFactory.makeMyPostListVC()
             navigationVC?.pushViewController(myPostListVC, animated: true)
         case .setting:
-            navigationVC?.pushViewController(SettingVC(), animated: true)
+            let settingVC = VCFactory.makeSettingVC()
+            navigationVC?.pushViewController(settingVC, animated: true)
         }
     }
     
