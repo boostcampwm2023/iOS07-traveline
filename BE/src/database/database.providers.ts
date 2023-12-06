@@ -1,3 +1,4 @@
+import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
 
 export const databaseProviders = [
@@ -14,7 +15,7 @@ export const databaseProviders = [
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
         synchronize: false,
       });
-      return dataSource.initialize();
+      return addTransactionalDataSource(await dataSource.initialize());
     },
   },
 ];
