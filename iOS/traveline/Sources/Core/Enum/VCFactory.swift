@@ -51,10 +51,19 @@ enum VCFactory {
         return TravelVC(viewModel: viewModel)
     }
     
+    static func makeSideMenuVC() -> SideMenuVC {
+        //let repository = UserRepositoryImpl(network: network)
+        let repository = UserRepositoryMock()
+        let useCase = SideMenuUseCaseImpl(repository: repository)
+        let viewModel = SideMenuViewModel(useCase: useCase)
+        return SideMenuVC(viewModel: viewModel)
+    }
+  
     static func makeSettingVC() -> SettingVC {
         let repository = AuthRepositoryImpl(network: network)
         let useCase = SettingUseCaseImpl(repository: repository)
         let viewModel = SettingViewModel(useCase: useCase)
         return SettingVC(viewModel: viewModel)
     }
+  
 }
