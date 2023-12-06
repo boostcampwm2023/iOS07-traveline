@@ -166,7 +166,8 @@ extension RootContainerVC: SideMenuDelegate {
             let myPostListVC = VCFactory.makeMyPostListVC()
             navigationVC?.pushViewController(myPostListVC, animated: true)
         case .setting:
-            navigationVC?.pushViewController(SettingVC(), animated: true)
+            let settingVC = VCFactory.makeSettingVC()
+            navigationVC?.pushViewController(settingVC, animated: true)
         }
     }
     
