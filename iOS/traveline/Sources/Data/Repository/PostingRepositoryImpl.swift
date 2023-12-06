@@ -67,3 +67,26 @@ final class PostingRepositoryImpl: PostingRepository {
     }
     
 }
+
+// MARK: - Timeline Feature
+
+extension PostingRepositoryImpl {
+    
+    func postPostings(data: TravelRequest) async throws -> TravelID {
+        let postPostingsDTO = try await network.request(
+            endPoint: PostingEndPoint.createPosting(data.toDTO()),
+            type: PostPostingsResponseDTO.self
+        )
+        
+        return TravelID(value: postPostingsDTO.id)
+    }
+    
+    func fetchTimelineInfo(id: TravelID) async throws -> TimelineTravelInfo {
+        let response = try await network.request(
+            endPoint: PostingEndPoint.fetchPostingInfo(id.value),
+            type: PostingDetailResponseDTO.self
+        )
+        
+        return response.toDomain()
+    }
+}

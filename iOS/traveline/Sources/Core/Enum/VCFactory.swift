@@ -12,11 +12,19 @@ enum VCFactory {
     
     static let network: NetworkType = NetworkManager(urlSession: URLSession.shared)
     
-    static func makeTimelineVC() -> TimelineVC {
-        let repository = TimelineRepositoryMock()
-//        let repository = TimelineRepositoryImpl(network: network)
-        let useCase = FetchTravelInfoUseCaseImpl(repository: repository)
-        let viewModel = TimelineViewModel(fetchTravelInfoUseCase: useCase)
+    static func makeTimelineVC(id: TravelID) -> TimelineVC {
+        let postingRepository = PostingRepositoryMock()
+        let timelineRepository = TimelineRepositoryMock()
+//        let postingRepository = PostingRepositoryImpl(network: network)
+//        let timelineRepository = TimelineRepositoryImpl(network: network)
+        let useCase = TimelineUseCaseImpl(
+            postingRepository: postingRepository,
+            timelineRepository: timelineRepository
+        )
+        let viewModel = TimelineViewModel(
+            id: id,
+            fetchTravelInfoUseCase: useCase
+        )
         return TimelineVC(viewModel: viewModel)
     }
     
@@ -45,7 +53,7 @@ enum VCFactory {
     
     static func makeTravelVC() -> TravelVC {
 //        let repository = TravelRepositoryMock()
-        let repository = TravelRepositoryImpl(network: network)
+        let repository = PostingRepositoryImpl(network: network)
         let useCase = TravelUseCaseImpl(repository: repository)
         let viewModel = TravelViewModel(travelUseCase: useCase)
         return TravelVC(viewModel: viewModel)

@@ -8,6 +8,6 @@
 
 import Foundation
 
-struct PostPostingsDTO: Decodable {
+struct PostPostingsResponseDTO: Decodable {
     let id: String
 }

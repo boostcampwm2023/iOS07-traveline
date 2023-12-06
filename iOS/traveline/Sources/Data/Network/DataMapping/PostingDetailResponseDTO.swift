@@ -23,11 +23,10 @@ struct PostingDetailResponseDTO: Decodable {
     let season: String
     let vehicle: String?
     let theme: [String]?
-    let withWho: String?
-    let likeds: [LikedsDTO]
+    let withWho: [String]?
     let writer: WriterDTO
-    let liked: Int
-    let report: Int
+    let likeds: Int
+    let reports: Int
     let isLiked: Bool
     let isOwner: Bool
 }
@@ -36,13 +35,40 @@ struct PostingDetailResponseDTO: Decodable {
 
 extension PostingDetailResponseDTO {
     func toDomain() -> TimelineTravelInfo {
-        return .init(
+        .init(
             travelTitle: title,
             startDate: startDate,
             endDate: endDate,
-            isLiked: isLiked,
-            // TODO: - 태그 합치는 작업
-            tags: []
+            isLiked: isLiked, 
+            isOwner: isOwner,
+            tags: toTags(),
+            days: days
         )
+    }
+    
+    private func toTags() -> [Tag] {
+        var tags: [Tag] = [
+            Tag(title: location, type: .region),
+            Tag(title: period, type: .period),
+            Tag(title: season, type: .season)
+        ]
+        
+        if let people = headcount {
+            tags.append(Tag(title: people, type: .people))
+        }
+        if let cost = budget {
+            tags.append(Tag(title: cost, type: .cost))
+        }
+        if let transportation = vehicle {
+            tags.append(Tag(title: transportation, type: .transportation))
+        }
+        if let theme {
+            theme.forEach { tags.append(Tag(title: $0, type: .theme)) }
+        }
+        if let with = withWho {
+            with.forEach { tags.append(Tag(title: $0, type: .with)) }
+        }
+        
+        return tags
     }
 }

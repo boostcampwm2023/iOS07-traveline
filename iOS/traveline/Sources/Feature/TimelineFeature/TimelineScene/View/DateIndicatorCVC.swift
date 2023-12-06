@@ -83,7 +83,7 @@ private extension DateIndicatorCVC {
             dateLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Metric.horizontalInset),
             dateLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Metric.horizontalInset),
             
-            dateIndicatorView.topAnchor.constraint(equalTo: dateLabel.bottomAnchor, constant: Metric.Indicator.topInset),
+            dateIndicatorView.bottomAnchor.constraint(equalTo: bottomAnchor),
             dateIndicatorView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Metric.Indicator.horizontalInset),
             dateIndicatorView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Metric.Indicator.horizontalInset),
             dateIndicatorView.heightAnchor.constraint(equalToConstant: Metric.Indicator.height)
