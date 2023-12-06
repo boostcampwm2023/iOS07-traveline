@@ -17,7 +17,7 @@ struct PostingResponseDTO: Decodable {
     let thumbnail: String?
     let startDate: String
     let endDate: String
-    let days: [String]
+    let days: Int
     let period: String
     let headcount: String?
     let budget: String?
@@ -25,9 +25,8 @@ struct PostingResponseDTO: Decodable {
     let season: String
     let vehicle: String?
     let theme: [String]?
-    let withWho: String?
+    let withWho: [String]?
     let writer: WriterDTO
-    let likeds: [LikedsDTO]
 }
 
 // MARK: - Mapping
@@ -42,7 +41,8 @@ extension PostingResponseDTO {
                 imageURL: writer.avatar ?? Literal.empty,
                 name: writer.name
             ),
-            like: likeds.count,
+            // TODO: - 서버 반환 값 변경 후 수정
+            like: 100,
             isLiked: true,
             tags: [
                 .init(title: location, type: .region),
