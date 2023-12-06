@@ -6,6 +6,9 @@ import {
   Get,
   Req,
   UseGuards,
+  Query,
+  ParseBoolPipe,
+  Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -28,7 +31,8 @@ export class AuthController {
   })
   @ApiOkResponse({ description: 'OK', schema: { example: refresh } })
   refresh(@Req() request) {
-    return this.authService.refresh(request);
+    const ipAddress = ip.address();
+    return this.authService.refresh(request, ipAddress);
   }
 
   @Post('login')
@@ -69,5 +73,17 @@ export class AuthController {
   })
   withdrawal(@Req() request, @Body() deleteAuthDto: DeleteAuthDto) {
     return this.authService.withdrawal(request, deleteAuthDto);
+  }
+
+  @Get('ip')
+  async manageIp(
+    @Res() response,
+    @Query('id') id: string,
+    @Query('ip') ip: string,
+    @Query('allow', ParseBoolPipe) allow: boolean
+  ) {
+    if (await this.authService.manageIp(id, ip, allow)) {
+      response.redirect('/ip-process-result');
+    }
   }
 }

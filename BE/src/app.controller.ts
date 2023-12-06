@@ -3,6 +3,7 @@ import {
   Get,
   Param,
   Post,
+  Render,
   Res,
   UploadedFile,
   UseInterceptors,
@@ -10,7 +11,6 @@ import {
 import { AppService } from './app.service';
 import { StorageService } from './storage/storage.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { request } from 'http';
 
 @Controller()
 export class AppController {
@@ -34,5 +34,16 @@ export class AppController {
   async ipa(@Res() response, @Param('filename') filename: string) {
     const url = await this.appService.download(filename);
     response.redirect(url);
+  }
+
+  @Get('email')
+  async email() {
+    return this.appService.sendEmail();
+  }
+
+  @Get('ip-process-result')
+  @Render('ip-process-result.ejs')
+  ipProcessResult() {
+    return {};
   }
 }

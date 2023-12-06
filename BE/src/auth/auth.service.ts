@@ -12,16 +12,18 @@ import { CreateAuthRequestDto } from './dto/create-auth-request.dto';
 import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
 import { firstValueFrom } from 'rxjs';
 import { JwksClient } from 'jwks-rsa';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly httpService: HttpService,
-    private readonly usersService: UsersService
+    private readonly usersService: UsersService,
+    private readonly mailerService: MailerService
   ) {}
 
-  async refresh(request) {
+  async refresh(request, ipAddress) {
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     if (type !== 'Bearer') {
       throw new BadRequestException('JWT가 아닙니다.');
@@ -37,10 +39,19 @@ export class AuthService {
       if (!user) {
         throw new UnauthorizedException('회원 정보가 존재하지 않습니다.');
       }
+      if (ipAddress in user.bannedIp) {
+        throw new UnauthorizedException(
+          '비정상적인 접근 시도로 차단된 IP입니다.'
+        );
+      }
       const accessToken = await this.jwtService.signAsync({ id });
       return { accessToken };
-    } catch {
-      throw new UnauthorizedException('다시 로그인해주세요.');
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      } else {
+        throw new UnauthorizedException('다시 로그인해주세요.');
+      }
     }
   }
 
@@ -102,7 +113,16 @@ export class AuthService {
         );
       }
       if (!(ipAddress in allowedIpArray)) {
-        //메일 전송
+        await this.mailerService.sendMail({
+          to: user.email,
+          subject: '[traveline] 새로운 환경 로그인 안내',
+          template: '../views/email',
+          context: {
+            username: user.name,
+            id: user.id,
+            newIp: ipAddress,
+          },
+        });
       }
     }
 
@@ -123,13 +143,28 @@ export class AuthService {
 
     if (user) {
       const payload = { id };
-      return {
-        accessToken: await this.jwtService.signAsync(payload),
-        refreshToken: await this.jwtService.signAsync(payload, {
-          expiresIn: '30d',
-          secret: process.env.JWT_SECRET_REFRESH,
-        }),
-      };
+      try {
+        await this.mailerService.sendMail({
+          to: user.email,
+          subject: '[traveline] 새로운 환경 로그인 안내',
+          template: '../views/email',
+          context: {
+            username: user.name,
+            id,
+            newIp: '아이피',
+          },
+        });
+
+        return {
+          accessToken: await this.jwtService.signAsync(payload),
+          refreshToken: await this.jwtService.signAsync(payload, {
+            expiresIn: '30d',
+            secret: process.env.JWT_SECRET_REFRESH,
+          }),
+        };
+      } catch (e) {
+        console.log(e);
+      }
     }
 
     throw new BadRequestException(
@@ -217,5 +252,28 @@ export class AuthService {
       return { revoke: true };
     }
     return { revoke: false };
+  }
+
+  async manageIp(id, ip, allow) {
+    const user = await this.usersService.findUserById(id);
+
+    const allowedIp = user.allowedIp;
+    const bannedIp = user.bannedIp;
+
+    if (allow) {
+      allowedIp.push(ip);
+    } else {
+      bannedIp.push(ip);
+    }
+    const result = await this.usersService.updateUserIp(id, {
+      allowedIp,
+      bannedIp,
+    });
+
+    if (result.affected !== 1) {
+      throw new InternalServerErrorException();
+    }
+
+    return true;
   }
 }
