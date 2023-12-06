@@ -15,6 +15,7 @@ enum SideMenuAction: BaseAction {
 
 enum SideMenuSideEffect: BaseSideEffect {
     case loadProfile(Profile)
+    case error(String)
 }
 
 struct SideMenuState: BaseState {
@@ -23,6 +24,13 @@ struct SideMenuState: BaseState {
 }
 
 final class SideMenuViewModel: BaseViewModel<SideMenuAction, SideMenuSideEffect, SideMenuState> {
+    
+    private let useCase: SideMenuUseCase
+    
+    init(useCase: SideMenuUseCase) {
+        self.useCase = useCase
+        super.init()
+    }
     
     override func transform(action: Action) -> SideEffectPublisher {
         switch action {
@@ -37,6 +45,8 @@ final class SideMenuViewModel: BaseViewModel<SideMenuAction, SideMenuSideEffect,
         switch effect {
         case .loadProfile(let profile):
             newState.profile = profile
+        case .error:
+            break
         }
         
         return newState
@@ -45,11 +55,13 @@ final class SideMenuViewModel: BaseViewModel<SideMenuAction, SideMenuSideEffect,
 
 private extension SideMenuViewModel {
     func loadProfile() -> SideEffectPublisher {
-        // TODO: - 프로필을 로드하는 로직. 추후 변경
-        let profile = Profile(
-            imageURL: "https://avatars.githubusercontent.com/u/91725382?s=400&u=29b8023a56a09685aaab53d4eb0dd556254cd902&v=4",
-            name: "hongki"
-        )
-        return .just(SideMenuSideEffect.loadProfile(profile))
+        return useCase.fetchProfile()
+            .map { profile in
+                return .loadProfile(profile)
+            }
+            .catch { _ in
+                return Just(.error("failed fetch profile"))
+            }
+            .eraseToAnyPublisher()
     }
 }

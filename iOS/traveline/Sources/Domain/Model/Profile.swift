@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Profile: Codable, Hashable {
+struct Profile: Hashable {
     let imageURL: String
     let name: String
     

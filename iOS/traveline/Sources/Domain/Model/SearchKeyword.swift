@@ -13,4 +13,5 @@ typealias SearchKeywordList = [SearchKeyword]
 struct SearchKeyword: Hashable {
     let type: SearchViewType
     let title: String
+    var searchedKeyword: String?
 }
