@@ -105,12 +105,7 @@ final class TimelineVC: UIViewController {
     }
     
     @objc private func createPostingButtonDidTapped() {
-        let viewModel = TimelineWritingViewModel(
-            postId: "1234",
-            date: "2022년 3월 5일",
-            day: 1
-        )
-        let timelineWritingVC = TimelineWritingVC(viewModel: viewModel)
+        let timelineWritingVC = VCFactory.makeTimelineWritingVC()
         navigationController?.pushViewController(timelineWritingVC, animated: true)
     }
     

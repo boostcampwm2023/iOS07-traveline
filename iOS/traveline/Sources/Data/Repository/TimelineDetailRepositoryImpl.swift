@@ -26,4 +26,14 @@ final class TimelineDetailRepositoryImpl: TimelineDetailRepository {
         return timelineDetailResponseDTO.toDomain()
     }
     
+    func createTimelineDetail(with info: TimelineDetailRequest) async throws -> TimelineDetailInfo {
+        
+        let timelineDetailResponseDTO = try await network.request(
+            endPoint: TimelineDetailEndPoint.createTimeline(info.toDTO()),
+            type: TimelineDetailResponseDTO.self
+        )
+        
+        return timelineDetailResponseDTO.toDomain()
+    }
+    
 }
