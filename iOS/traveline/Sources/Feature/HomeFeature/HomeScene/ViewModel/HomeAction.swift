@@ -20,4 +20,5 @@ enum HomeAction: BaseAction {
     case filterChanged(FilterDictionary)
     case createTravel
     case deleteKeyword(String)
+    case didScrollToEnd
 }

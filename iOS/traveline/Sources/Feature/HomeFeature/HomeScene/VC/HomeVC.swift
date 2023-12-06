@@ -151,6 +151,7 @@ private extension HomeVC {
         
         viewModel.state
             .map(\.travelList)
+            .dropFirst()
             .removeDuplicates()
             .withUnretained(self)
             .sink { owner, list in
@@ -257,6 +258,13 @@ private extension HomeVC {
             .withUnretained(self)
             .sink { owner, type in
                 owner.viewModel.sendAction(.startFilter(type))
+            }
+            .store(in: &cancellables)
+        
+        homeListView.didScrollToBottom
+            .withUnretained(self)
+            .sink { owner, _ in
+                owner.viewModel.sendAction(.didScrollToEnd)
             }
             .store(in: &cancellables)
     }
