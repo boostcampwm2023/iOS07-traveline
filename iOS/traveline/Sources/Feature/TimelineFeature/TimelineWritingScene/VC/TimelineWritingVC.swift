@@ -191,11 +191,17 @@ private extension TimelineWritingVC {
         let timeTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectTimeButtonTapped))
         let locationTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectLocationButtonTapped))
         
-        selectImageButton.cancelButton.addTarget(self, action: #selector(imageButtonCancelTapped), for: .touchUpInside)
-        selectLocation.cancelButton.addTarget(self, action: #selector(locationButtonCancelTapped), for: .touchUpInside)
+        selectImageButton.cancelButton.addTarget(
+            self,
+            action: #selector(imageButtonCancelTapped),
+            for: .touchUpInside
+        )
+        selectLocation.cancelButton.addTarget(
+            self,
+            action: #selector(locationButtonCancelTapped),
+            for: .touchUpInside
+        )
         
-        
-
         selectImageButton.addGestureRecognizer(imageTapGesture)
         selectTime.addGestureRecognizer(timeTapGesture)
         selectLocation.addGestureRecognizer(locationTapGesture)

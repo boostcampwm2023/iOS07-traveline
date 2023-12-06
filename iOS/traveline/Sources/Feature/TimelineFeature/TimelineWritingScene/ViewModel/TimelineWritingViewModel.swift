@@ -111,9 +111,9 @@ private extension TimelineWritingViewModel {
     }
     
     func completeButtonState() -> Bool {
-        return  timelineDetailRequest.title != Literal.empty &&
-                timelineDetailRequest.content != Literal.empty &&
-                timelineDetailRequest.place != Literal.empty
+        return  !timelineDetailRequest.title.isEmpty &&
+                !timelineDetailRequest.content.isEmpty &&
+                !timelineDetailRequest.place.isEmpty
     }
     
     func updateTitleState(_ title: String) -> SideEffectPublisher {
