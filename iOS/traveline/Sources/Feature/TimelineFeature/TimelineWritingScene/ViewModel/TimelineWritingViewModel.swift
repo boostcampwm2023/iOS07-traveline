@@ -10,34 +10,38 @@ import Combine
 import Foundation
 
 enum TimelineWritingAction: BaseAction {
+    case viewDidLoad
     case titleDidChange(String)
     case contentDidChange(String)
     case timeDidChange(String)
     case placeDidChange(String)
     case imageDidChange(Data?)
-    case tapCompleteButton(TimelineDetailInfo)
+    case tapCompleteButton
     
 }
 
 enum TimelineWritingSideEffect: BaseSideEffect {
-    case createTimeline
-    case updateTitleState
-    case updateContentState
-    case updateTimeState
-    case updateImageState
-    case updatePlaceState
+    case createTimeline(TimelineDetailInfo)
+    case updateBasicInfo
+    case updateTitleState(String)
+    case updateContentState(String)
+    case updateTimeState(String)
+    case updateImageState(Data?)
+    case updatePlaceState(String)
+    case error(String)
 }
 
 struct TimelineWritingState: BaseState {
     var isCompletable: Bool = false
+    var timelineDetailRequest: TimelineDetailRequest = .empty
 }
 
 final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, TimelineWritingSideEffect, TimelineWritingState> {
     
-    private var isFilledTitle: Bool = false
-    private var isFilledContent: Bool = false
-    var timelineDetailRequest: TimelineDetailRequest
     private var useCase: TimelineWritingUseCase
+    private let postID: String
+    private let date: String
+    private let day: Int
     
     init(
         useCase: TimelineWritingUseCase,
@@ -46,36 +50,33 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
         day: Int
     ) {
         self.useCase = useCase
-        self.timelineDetailRequest = .init(
-            title: Literal.empty,
-            day: day,
-            time: Literal.empty,
-            date: date,
-            place: Literal.empty,
-            content: Literal.empty,
-            posting: postId
-        )
+        self.postID = postId
+        self.date = date
+        self.day = day
     }
     
     override func transform(action: TimelineWritingAction) -> SideEffectPublisher {
         switch action {
-        case .tapCompleteButton(let info):
-            return createTimeline(with: info)
+        case .viewDidLoad:
+            return .just(.updateBasicInfo)
+            
+        case .tapCompleteButton:
+            return createTimeline(with: state.timelineDetailRequest)
             
         case .titleDidChange(let title):
-            return updateTitleState(title)
+            return .just(.updateTitleState(title))
             
         case .contentDidChange(let content):
-            return updateContentState(content)
+            return .just(.updateContentState(content))
             
         case .timeDidChange(let time):
-            return updateTimeState(time)
+            return .just(.updateTimeState(time))
             
         case .placeDidChange(let place):
-            return updatePlaceState(place)
+            return .just(.updatePlaceState(place))
             
         case .imageDidChange(let imageData):
-            return updateImageState(imageData)
+            return .just(.updateImageState(imageData))
         }
     }
     
@@ -83,61 +84,60 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
         var newState = state
         
         switch effect {
-        case .updateTitleState,
-             .updateContentState,
-             .updatePlaceState:
-            newState.isCompletable = completeButtonState()
             
-        case .updateTimeState:
-            break
+        case .updateTitleState(let title):
+            newState.timelineDetailRequest.title = title
+            newState.isCompletable = completeButtonState(newState)
+
             
-        case .updateImageState:
-            break
+        case .updateContentState(let content):
+            newState.timelineDetailRequest.content = content
+            newState.isCompletable = completeButtonState(newState)
+            
+        case .updatePlaceState(let place):
+            newState.timelineDetailRequest.place = place
+            newState.isCompletable = completeButtonState(newState)
+            
+        case .updateTimeState(let time):
+            newState.timelineDetailRequest.time = time
+            
+        case .updateImageState(let imageData):
+            newState.timelineDetailRequest.image = imageData
             
         case .createTimeline:
             break
+            
+        case .error:
+            break
+            
+        case .updateBasicInfo:
+            newState.timelineDetailRequest.posting = postID
+            newState.timelineDetailRequest.day = day
+            newState.timelineDetailRequest.date = date
+            
         }
         
         return newState
     }
     
 }
-
+    
 private extension TimelineWritingViewModel {
     
-    func createTimeline(with info: TimelineDetailInfo) -> SideEffectPublisher {
-        let _ = useCase.requestCreateTimeline(with: timelineDetailRequest)
-        return .just(SideEffect.createTimeline)
+    func createTimeline(with info: TimelineDetailRequest) -> SideEffectPublisher {
+        return useCase.requestCreateTimeline(with: info)
+            .map { result in
+                return .createTimeline(result)
+            } .catch { _ in
+                return Just(SideEffect.error("failed create timeline"))
+            }
+            .eraseToAnyPublisher()
     }
     
-    func completeButtonState() -> Bool {
-        return  !timelineDetailRequest.title.isEmpty &&
-                !timelineDetailRequest.content.isEmpty &&
-                !timelineDetailRequest.place.isEmpty
+    func completeButtonState(_ state: State) -> Bool {
+        return  !state.timelineDetailRequest.title.isEmpty &&
+                !state.timelineDetailRequest.content.isEmpty &&
+                !state.timelineDetailRequest.place.isEmpty
     }
     
-    func updateTitleState(_ title: String) -> SideEffectPublisher {
-        timelineDetailRequest.title = title
-        return .just(.updateTitleState)
-    }
-    
-    func updateContentState(_ content: String) -> SideEffectPublisher {
-        timelineDetailRequest.content = content
-        return .just(.updateContentState)
-    }
-    
-    func updateImageState(_ data: Data?) -> SideEffectPublisher {
-        timelineDetailRequest.image = data
-        return .just(.updateImageState)
-    }
-    
-    func updateTimeState(_ time: String) -> SideEffectPublisher {
-        timelineDetailRequest.time = time
-        return .just(.updateTimeState)
-    }
-    
-    func updatePlaceState(_ place: String) -> SideEffectPublisher {
-        timelineDetailRequest.place = place
-        return .just(.updatePlaceState)
-    }
 }

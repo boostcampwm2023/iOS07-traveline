@@ -9,11 +9,21 @@
 import Foundation
 struct TimelineDetailRequest {
     var title: String
-    let day: Int
+    var day: Int
     var time: String
-    let date: String
+    var date: String
     var place: String
     var image: Data?
     var content: String
-    let posting: String
+    var posting: String
+    
+    static let empty: TimelineDetailRequest = .init(
+        title: Literal.empty,
+        day: 0,
+        time: Literal.empty,
+        date: Literal.empty,
+        place: Literal.empty,
+        content: Literal.empty,
+        posting: Literal.empty
+    )
 }

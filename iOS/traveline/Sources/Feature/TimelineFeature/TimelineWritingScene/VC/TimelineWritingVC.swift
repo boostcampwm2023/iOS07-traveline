@@ -86,6 +86,14 @@ final class TimelineWritingVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK: - Life Cycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        viewModel.sendAction(.viewDidLoad)
+    }
+    
     // MARK: - Functions
     
     @objc private func selectImageButtonTapped() {
@@ -184,8 +192,6 @@ private extension TimelineWritingVC {
         textView.delegate = self
         
         tlNavigationBar.delegate = self
-        tlNavigationBar.setupTitle(to: "Day \(viewModel.timelineDetailRequest.day)")
-        dateLabel.setText(to: viewModel.timelineDetailRequest.date)
         
         let imageTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectImageButtonTapped))
         let timeTapGesture = UITapGestureRecognizer(target: self, action: #selector(selectTimeButtonTapped))
@@ -287,6 +293,15 @@ private extension TimelineWritingVC {
                 owner.tlNavigationBar.isRightButtonEnabled(isCompletable)
             }
             .store(in: &cancellables)
+        
+        viewModel.$state
+            .map(\.timelineDetailRequest)
+            .withUnretained(self)
+            .sink { owner, detail in
+                owner.tlNavigationBar.setupTitle(to: "Day \(detail.day)")
+                owner.dateLabel.setText(to: detail.date)
+            }
+            .store(in: &cancellables)
     }
     
 }
@@ -353,7 +368,7 @@ extension TimelineWritingVC: LocationSearchDelegate {
 extension TimelineWritingVC: TLNavigationBarDelegate {
     func rightButtonDidTapped() {
         // TODO: 생성할 타임라인 정보 넘겨주기 구현
-        viewModel.sendAction(.tapCompleteButton(TimelineDetailInfo.empty))
+        viewModel.sendAction(.tapCompleteButton)
     }
 }
 
