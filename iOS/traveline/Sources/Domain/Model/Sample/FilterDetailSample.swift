@@ -12,14 +12,14 @@ enum FilterSample {
     static func makeRegion() -> Filter {
         .init(
             type: .tagtype(.region),
-            selected: [Literal.Filter.RegionDetail.busan, Literal.Filter.RegionDetail.daejeon]
+            selected: [DetailFilter.region(RegionFilter.busan), DetailFilter.region(RegionFilter.daejeon)]
         )
     }
     
     static func makePeriod() -> Filter {
         .init(
             type: .tagtype(.period),
-            selected: [Literal.Filter.PeriodDetail.overThree]
+            selected: [DetailFilter.period(PeriodFilter.overThree)]
         )
     }
 }
