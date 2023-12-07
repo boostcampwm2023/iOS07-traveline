@@ -9,23 +9,44 @@
 import Foundation
 
 enum AuthEndPoint {
-    case withdrawal
+    case login(LoginRequestDTO)
+    case withdrawal(WithdrawRequestDTO)
 }
 
 extension AuthEndPoint: EndPoint {
     var path: String? {
-        return "/auth/withdrawal"
+        switch self {
+        case .withdrawal:
+            return "/auth/withdrawal"
+        case .login:
+            return "/auth/login"
+        }
     }
     
     var httpMethod: HTTPMethod {
-        return .DELETE
+        switch self {
+        case .withdrawal:
+            return .DELETE
+        case .login:
+            return .POST
+        }
     }
     
     var body: Encodable? {
-        return nil
+        switch self {
+        case .withdrawal(let requestDTO):
+            return requestDTO
+        case .login(let idToken):
+            return idToken
+        }
     }
     
     var header: [String: String] {
-        return HeaderType.json.value
+        switch self {
+        case .withdrawal:
+            return HeaderType.authorization.value
+        case .login:
+            return HeaderType.json.value
+        }
     }
 }
