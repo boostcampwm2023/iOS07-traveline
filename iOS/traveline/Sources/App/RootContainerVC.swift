@@ -154,10 +154,6 @@ extension RootContainerVC: SideMenuDelegate {
         
         switch menuItem {
         case .profileEdit:
-            let profile = Profile(
-                imageURL: "leaf",
-                name: "hongki"
-            )
             let profileEditingVC = VCFactory.makeProfileEditingVC()
             navigationVC?.pushViewController(profileEditingVC, animated: true)
         case .myPostList:
