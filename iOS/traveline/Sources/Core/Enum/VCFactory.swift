@@ -25,6 +25,11 @@ enum VCFactory {
         let viewModel = LoginViewModel(useCase: useCase)
         return LoginVC(viewModel: viewModel)
     }
+    
+    static func makeRootContainerVC() -> RootContainerVC {
+        return RootContainerVC()
+    }
+    
     static func makeTimelineVC(id: TravelID) -> TimelineVC {
         let postingRepository = PostingRepositoryMock()
         let timelineRepository = TimelineRepositoryMock()
