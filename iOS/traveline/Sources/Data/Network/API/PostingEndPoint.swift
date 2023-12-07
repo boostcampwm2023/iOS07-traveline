@@ -51,7 +51,7 @@ extension PostingEndPoint: EndPoint {
         }
     }
     
-    var header: [String: String] {
-        return HeaderType.authorization.value
+    var header: HeaderType {
+        return .authorization
     }
 }

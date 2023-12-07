@@ -30,8 +30,4 @@ extension LoginEndPoint: EndPoint {
     var body: Encodable? {
         return nil
     }
-    
-    var header: [String: String] {
-        return HeaderType.json.value
-    }
 }
