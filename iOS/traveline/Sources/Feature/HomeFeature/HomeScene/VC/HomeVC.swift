@@ -208,7 +208,7 @@ private extension HomeVC {
             .removeDuplicates()
             .withUnretained(self)
             .sink { owner, filters in
-                owner.viewModel.sendAction(.filterChanged(filters))
+                owner.viewModel.sendAction(.filterChanged)
             }
             .store(in: &cancellables)
         
@@ -228,7 +228,7 @@ private extension HomeVC {
             .removeDuplicates()
             .withUnretained(self)
             .sink { owner, filters in
-                owner.viewModel.sendAction(.filterChanged(filters))
+                owner.viewModel.sendAction(.filterChanged)
             }
             .store(in: &cancellables)
         

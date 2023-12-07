@@ -46,8 +46,8 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         case let .addFilter(filterList):
             return .just(HomeSideEffect.saveFilter(filterList))
             
-        case let .filterChanged(filters):
-            return fetchNewSearchList(from: filters)
+        case .filterChanged:
+            return fetchNewSearchList()
             
         case .createTravel:
             return .just(HomeSideEffect.showTravelWriting)
@@ -153,7 +153,8 @@ private extension HomeViewModel {
             .eraseToAnyPublisher()
     }
     
-    func fetchNewSearchList(from filters: FilterDictionary) -> SideEffectPublisher {
+    func fetchNewSearchList() -> SideEffectPublisher {
+        let filters = currentState.homeViewType == .home ? currentState.homeFilters : currentState.resultFilters
         var query = makeSearchQuery(from: filters)
         query.offset = 1
         
@@ -168,7 +169,7 @@ private extension HomeViewModel {
     }
     
     func fetchNextPage() -> SideEffectPublisher {
-        let filters = state.homeViewType == .home ? state.homeFilters : state.resultFilters
+        let filters = currentState.homeViewType == .home ? currentState.homeFilters : currentState.resultFilters
         let query = makeSearchQuery(from: filters)
         
         return homeUseCase.fetchSearchList(with: query)
