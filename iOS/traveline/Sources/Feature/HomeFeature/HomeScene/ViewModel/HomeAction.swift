@@ -17,7 +17,8 @@ enum HomeAction: BaseAction {
     case cancelSearch
     case startFilter(FilterType)
     case addFilter([Filter])
-    case filterChanged(FilterDictionary)
+    case filterChanged
     case createTravel
     case deleteKeyword(String)
+    case didScrollToEnd
 }

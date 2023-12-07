@@ -18,8 +18,4 @@ struct TravelListInfo: Hashable {
     let like: Int
     let isLiked: Bool
     let tags: [Tag]
-    
-    static func == (lhs: TravelListInfo, rhs: TravelListInfo) -> Bool {
-        lhs.id == rhs.id
-    }
 }
