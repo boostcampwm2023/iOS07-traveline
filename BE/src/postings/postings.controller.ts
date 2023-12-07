@@ -42,7 +42,7 @@ import {
   searchByWord_OK,
   search_OK,
   update_OK,
-} from './posting.swagger';
+} from './postings.swagger';
 
 @ApiBearerAuth('accessToken')
 @UseGuards(AuthGuard)
