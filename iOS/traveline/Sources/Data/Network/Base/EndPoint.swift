@@ -12,7 +12,7 @@ protocol EndPoint {
     var path: String? { get }
     var httpMethod: HTTPMethod { get }
     var body: Encodable? { get }
-    var multipartData: Any? { get }
+    var multipartData: MultipartData? { get }
     var header: HeaderType { get }
 }
 
@@ -26,7 +26,7 @@ extension EndPoint {
         return nil
     }
     
-    var multipartData: Any? {
+    var multipartData: MultipartData? {
         return nil
     }
     

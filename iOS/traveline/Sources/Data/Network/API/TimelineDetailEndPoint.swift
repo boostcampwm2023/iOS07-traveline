@@ -35,7 +35,7 @@ extension TimelineDetailEndPoint: EndPoint {
         }
     }
     
-    var multipartData: Any? {
+    var multipartData: MultipartData? {
         switch self {
         case .createTimeline(let timelineDetail):
             return timelineDetail

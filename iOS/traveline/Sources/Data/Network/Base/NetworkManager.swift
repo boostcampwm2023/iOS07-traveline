@@ -134,7 +134,7 @@ private extension NetworkManager {
         return urlRequest
     }
     
-    func makeBody(multipartData: Any) -> Data {
+    func makeBody(multipartData: MultipartData) -> Data {
         var body = Data()
         let imageLabel = "image"
         let boundaryPrefix = "--\(Literal.boundary)\r\n"

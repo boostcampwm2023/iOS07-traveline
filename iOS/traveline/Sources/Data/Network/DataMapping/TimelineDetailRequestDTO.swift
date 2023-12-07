@@ -8,11 +8,11 @@
 
 import Foundation
 
-struct TimelineDetailRequestDTO {
+struct TimelineDetailRequestDTO: MultipartData {
     let title: String
     let day: Int
     let description: String
-    let image: Data?
+    var image: Data?
     let coordX: Double?
     let coordY: Double?
     let date: String
