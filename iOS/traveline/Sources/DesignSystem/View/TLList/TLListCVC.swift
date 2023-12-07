@@ -28,6 +28,12 @@ final class TLListCVC: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        tlInfoView.reset()
+    }
+    
     // MARK: - Functions
     
     func setupData(item: TravelListInfo) {
