@@ -62,7 +62,9 @@ final class HomeListView: UIView {
     
     let didSelectHomeList: PassthroughSubject<Void, Never> = .init()
     let didSelectFilterType: PassthroughSubject<FilterType, Never> = .init()
+    let didScrollToBottom: PassthroughSubject<Void, Never> = .init()
     
+    private var isPaging: Bool = true
     private var cancellables: Set<AnyCancellable> = .init()
     
     // MARK: - Initializer
@@ -195,6 +197,7 @@ final class HomeListView: UIView {
         list.forEach { snapshot.appendItems([.travelListItem($0)], toSection: .travelList) }
         
         dataSource.apply(snapshot, animatingDifferences: false)
+        isPaging = false
     }
 }
 
@@ -222,6 +225,15 @@ extension HomeListView {
 extension HomeListView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         didSelectHomeList.send(Void())
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y > scrollView.contentSize.height - scrollView.bounds.size.height {
+            if !isPaging {
+                isPaging = true
+                didScrollToBottom.send(Void())
+            }
+        }
     }
 }
 

@@ -22,8 +22,14 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         case .viewWillAppear:
             return .just(HomeSideEffect.showPrevious)
             
-        case .viewDidLoad, .cancelSearch:
+        case .viewDidLoad:
             return .just(HomeSideEffect.showHome)
+            
+        case .cancelSearch:
+            return Publishers.Merge(
+                Just(HomeSideEffect.showHome),
+                fetchHomeList()
+            ).eraseToAnyPublisher()
             
         case .startSearch:
             return fetchRecentKeyword()
@@ -31,8 +37,8 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         case let .searching(searchKeyword):
             return fetchRelatedKeyword(searchKeyword)
             
-        case let .searchDone(text):
-            return .just(HomeSideEffect.showResult(text))
+        case let .searchDone(keyword):
+            return fetchSearchResult(from: keyword)
             
         case let .startFilter(type):
             return .just(HomeSideEffect.showFilter(type))
@@ -40,14 +46,17 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         case let .addFilter(filterList):
             return .just(HomeSideEffect.saveFilter(filterList))
             
-        case let .filterChanged(filters):
-            return fetchSearchList(from: filters)
+        case .filterChanged:
+            return fetchNewSearchList()
             
         case .createTravel:
             return .just(HomeSideEffect.showTravelWriting)
             
         case let .deleteKeyword(keyword):
             return deleteSearchKeyword(keyword)
+            
+        case .didScrollToEnd:
+            return fetchNextPage()
         }
     }
     
@@ -74,17 +83,23 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             newState.searchList = relatedSearchKeywordList
             newState.homeViewType = .related
             
-        case let .showResult(keyword):
-            // TODO: - 서버 연동 후 수정
-            newState.travelList = TravelListSample.make()
+        case let .showSearchResult(searchResult):
+            newState.travelList = searchResult.travelList
             newState.homeViewType = .result
-            newState.searchText = keyword
             newState.resultFilters = .make()
-            saveSearchKeyword(keyword)
+            newState.searchQuery = .init(
+                keyword: searchResult.keyword,
+                offset: 2
+            )
             
-        case let .showHomeList(travelList):
-            // TODO: - 서버 연동 후 수정
+        case let .showNewHomeList(travelList):
             newState.travelList = travelList
+            newState.searchQuery.offset = 2
+            newState.searchQuery.keyword = nil
+            
+        case let .showNewList(travelList):
+            newState.travelList = travelList
+            newState.searchQuery.offset = 2
             
         case let .showFilter(type):
             newState.curFilter = (state.homeViewType == .home) ? state.homeFilters[type] : state.resultFilters[type]
@@ -101,6 +116,10 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         case .showTravelWriting:
             newState.curFilter = nil
             newState.moveToTravelWriting = true
+            
+        case let .showNextPage(travelList):
+            newState.travelList += travelList
+            newState.searchQuery.offset += 1
             
         case let .loadFailed(error):
             // TODO: - 통신 실패 시 State 처리
@@ -125,12 +144,61 @@ private extension HomeViewModel {
         return query
     }
     
-    func fetchSearchList(from filters: FilterDictionary) -> SideEffectPublisher {
+    func fetchHomeList() -> SideEffectPublisher {
+        var query = SearchQuery()
+        query.selectedFilter = makeSearchQuery(from: currentState.homeFilters).selectedFilter
+        
+        return homeUseCase.fetchSearchList(with: query)
+            .map { travelList in
+                return HomeSideEffect.showNewHomeList(travelList)
+            }
+            .catch { error in
+                return Just(HomeSideEffect.loadFailed(error))
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func fetchNewSearchList() -> SideEffectPublisher {
+        let filters = currentState.homeViewType == .home ? currentState.homeFilters : currentState.resultFilters
+        var query = makeSearchQuery(from: filters)
+        query.offset = 1
+        
+        return homeUseCase.fetchSearchList(with: query)
+            .map { travelList in
+                return HomeSideEffect.showNewList(travelList)
+            }
+            .catch { error in
+                return Just(HomeSideEffect.loadFailed(error))
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func fetchNextPage() -> SideEffectPublisher {
+        let filters = currentState.homeViewType == .home ? currentState.homeFilters : currentState.resultFilters
         let query = makeSearchQuery(from: filters)
         
         return homeUseCase.fetchSearchList(with: query)
             .map { travelList in
-                return HomeSideEffect.showHomeList(travelList)
+                return HomeSideEffect.showNextPage(travelList)
+            }
+            .catch { error in
+                return Just(HomeSideEffect.loadFailed(error))
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func fetchSearchResult(from keyword: String) -> SideEffectPublisher {
+        saveSearchKeyword(keyword)
+        let query = SearchQuery(keyword: keyword)
+        
+        return homeUseCase.fetchSearchList(with: query)
+            .map { travelList in
+                return HomeSideEffect.showSearchResult(
+                    SearchResult(
+                        keyword: keyword,
+                        travelList: travelList
+                    )
+                )
             }
             .catch { error in
                 return Just(HomeSideEffect.loadFailed(error))

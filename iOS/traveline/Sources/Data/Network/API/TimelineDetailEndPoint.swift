@@ -17,7 +17,7 @@ extension TimelineDetailEndPoint: EndPoint {
     
     var path: String? {
         switch self {
-        case .specificTimeline(let id): 
+        case .specificTimeline(let id):
             return "/timelines/\(id)"
             
         case .createTimeline:
@@ -35,17 +35,23 @@ extension TimelineDetailEndPoint: EndPoint {
         }
     }
     
-    var body: Encodable? {
+    var multipartData: MultipartData? {
         switch self {
-        case .specificTimeline:
-            return nil
-            
         case .createTimeline(let timelineDetail):
             return timelineDetail
+            
+        default:
+            return nil
         }
     }
     
-    var header: [String: String] {
-        return [:]
+    var header: HeaderType {
+        switch self {
+        case .createTimeline:
+            return .multipart
+            
+        default:
+            return .authorization
+        }
     }
 }

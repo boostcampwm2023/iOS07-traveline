@@ -41,12 +41,13 @@ extension AuthEndPoint: EndPoint {
         }
     }
     
-    var header: [String: String] {
+    var header: HeaderType {
         switch self {
         case .withdrawal:
-            return HeaderType.authorization.value
+            return .authorization
         case .login:
-            return HeaderType.json.value
+            return .json
         }
     }
+
 }

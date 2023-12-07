@@ -108,15 +108,22 @@ final class TLInfoView: UIView {
     // MARK: - Functions
     
     func setupData(item: TravelListInfo) {
-        // TODO: - 이미지 캐싱 구현
-//        thumbnailImageView.image = model.imageURL
-//        profileImageView.image = model.profile.imageURL
+        thumbnailImageView.setImage(from: item.imageURL)
+        profileImageView.setImage(from: item.profile.imageURL)
         nameLabel.setText(to: item.profile.name)
         likeCountLabel.setText(to: "\(item.like)")
         titleLabel.setText(to: item.title)
         zip(tags, item.tags).forEach { tagView, tagModel in
             tagView.updateTag(text: tagModel.title)
         }
+    }
+    
+    /// View 재사용 시 reset
+    func reset() {
+        thumbnailImageView.cancel()
+        thumbnailImageView.image = TravelineAsset.Images.travelImage.image
+        profileImageView.cancel()
+        profileImageView.image = nil
     }
 }
 
