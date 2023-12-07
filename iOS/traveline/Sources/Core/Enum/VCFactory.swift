@@ -18,6 +18,13 @@ enum VCFactory {
         let viewModel = AutoLoginViewModel(useCase: useCase)
         return AutoLoginVC(viewModel: viewModel)
     }
+    
+    static func makeLoginVC() -> LoginVC {
+        let repository = AuthRepositoryImpl(network: network)
+        let useCase = LoginUseCaseImpl(repository: repository)
+        let viewModel = LoginViewModel(useCase: useCase)
+        return LoginVC(viewModel: viewModel)
+    }
     static func makeTimelineVC(id: TravelID) -> TimelineVC {
         let postingRepository = PostingRepositoryMock()
         let timelineRepository = TimelineRepositoryMock()
