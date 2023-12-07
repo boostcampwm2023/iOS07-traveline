@@ -12,6 +12,12 @@ enum VCFactory {
     
     static let network: NetworkType = NetworkManager(urlSession: URLSession.shared)
     
+    static func makeAutoLoginVC() -> AutoLoginVC {
+        let repository = AuthRepositoryImpl(network: network)
+        let useCase = AutoLoginUseCaseImpl(repository: repository)
+        let viewModel = AutoLoginViewModel(useCase: useCase)
+        return AutoLoginVC(viewModel: viewModel)
+    }
     static func makeTimelineVC(id: TravelID) -> TimelineVC {
         let postingRepository = PostingRepositoryMock()
         let timelineRepository = TimelineRepositoryMock()
