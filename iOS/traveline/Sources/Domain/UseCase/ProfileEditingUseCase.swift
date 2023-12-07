@@ -60,6 +60,7 @@ final class ProfileEditingUseCaseImpl: ProfileEditingUseCase {
                 }
                 do {
                     let isDuplicated = try await self.repository.checkDuplication(name: nickname)
+                    print("isDuplicated \(isDuplicated)")
                     promise(isDuplicated ? .success(.duplicated) : .success(.available))
                 } catch {
                     promise(.failure(error))

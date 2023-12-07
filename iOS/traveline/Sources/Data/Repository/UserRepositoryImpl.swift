@@ -37,9 +37,11 @@ final class UserRepositoryImpl: UserRepository {
     }
     
     func checkDuplication(name: String) async throws -> Bool {
-        return try await network.request(
-            endPoint: UserEndPoint.checkDuplicatedName,
-            type: Bool.self
+        let duplicatedNameResponseDTO = try await network.request(
+            endPoint: UserEndPoint.checkDuplicatedName(name),
+            type: DuplicatedNameResponseDTO.self
         )
+        
+        return duplicatedNameResponseDTO.isDuplicated
     }
 }
