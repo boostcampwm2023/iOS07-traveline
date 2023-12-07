@@ -151,6 +151,7 @@ private extension HomeVC {
         
         viewModel.state
             .map(\.travelList)
+            .dropFirst()
             .removeDuplicates()
             .withUnretained(self)
             .sink { owner, list in
@@ -207,7 +208,7 @@ private extension HomeVC {
             .removeDuplicates()
             .withUnretained(self)
             .sink { owner, filters in
-                owner.viewModel.sendAction(.filterChanged(filters))
+                owner.viewModel.sendAction(.filterChanged)
             }
             .store(in: &cancellables)
         
@@ -223,10 +224,11 @@ private extension HomeVC {
         viewModel.state
             .filter { $0.homeViewType == .result }
             .map(\.resultFilters)
+            .dropFirst()
             .removeDuplicates()
             .withUnretained(self)
             .sink { owner, filters in
-                owner.viewModel.sendAction(.filterChanged(filters))
+                owner.viewModel.sendAction(.filterChanged)
             }
             .store(in: &cancellables)
         
@@ -257,6 +259,13 @@ private extension HomeVC {
             .withUnretained(self)
             .sink { owner, type in
                 owner.viewModel.sendAction(.startFilter(type))
+            }
+            .store(in: &cancellables)
+        
+        homeListView.didScrollToBottom
+            .withUnretained(self)
+            .sink { owner, _ in
+                owner.viewModel.sendAction(.didScrollToEnd)
             }
             .store(in: &cancellables)
     }

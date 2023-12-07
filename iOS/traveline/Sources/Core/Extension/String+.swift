@@ -31,25 +31,13 @@ extension String {
         return attributedString
     }
     
-    /// 비교할 문자열과 공통 부분의 범위를 반환합니다.
-    /// - Parameter compareString: 비교할 문자열
+    /// 문자열에서 해당 단어의 범위를 반환합니다.
+    /// - Parameter searchString: 찾을 단어
     /// - Returns: 공통 부분의 범위
-    func findCommonPrefixRange(_ compareString: String) -> NSRange {
-        let minLength = min(self.count, compareString.count)
-        var commonPrefix = ""
+    func findCommonWordRange(_ searchString: String) -> NSRange {
+        guard let range = self.range(of: searchString) else { return .init() }
         
-        for offset in 0..<minLength {
-            let index1 = self.index(self.startIndex, offsetBy: offset)
-            let index2 = compareString.index(compareString.startIndex, offsetBy: offset)
-            
-            if self[index1] == compareString[index2] {
-                commonPrefix.append(self[index1])
-            } else {
-                break
-            }
-        }
-        
-        return (self as NSString).range(of: commonPrefix)
+        return NSRange(range, in: self)
     }
     
 }

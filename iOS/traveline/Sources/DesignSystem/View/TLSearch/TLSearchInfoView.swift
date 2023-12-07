@@ -71,7 +71,7 @@ final class TLSearchInfoView: UIView {
         if let searchedKeyword = item.searchedKeyword {
             titleLabel.setColor(
                 to: TLColor.main,
-                range: item.title.findCommonPrefixRange(searchedKeyword)
+                range: item.title.findCommonWordRange(searchedKeyword)
             )
         }
     }

@@ -15,9 +15,6 @@ struct PostingResponseDTO: Decodable {
     let title: String
     let createdAt: String
     let thumbnail: String?
-    let startDate: String
-    let endDate: String
-    let days: [String]
     let period: String
     let headcount: String?
     let budget: String?
@@ -25,9 +22,14 @@ struct PostingResponseDTO: Decodable {
     let season: String
     let vehicle: String?
     let theme: [String]?
-    let withWho: String?
+    let withWho: [String]?
     let writer: WriterDTO
-    let likeds: [LikedsDTO]
+    let likeds: String
+    
+    enum CodingKeys: String, CodingKey {
+        case createdAt = "created_at"
+        case id, title, thumbnail, period, headcount, budget, location, season, vehicle, theme, withWho, writer, likeds
+    }
 }
 
 // MARK: - Mapping
@@ -42,7 +44,7 @@ extension PostingResponseDTO {
                 imageURL: writer.avatar ?? Literal.empty,
                 name: writer.name
             ),
-            like: likeds.count,
+            like: Int(likeds) ?? 0,
             isLiked: true,
             tags: [
                 .init(title: location, type: .region),
