@@ -69,7 +69,9 @@ export class TimelinesController {
   constructor(private readonly timelinesService: TimelinesService) {}
 
   @Post()
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(
+    FileInterceptor('image', { limits: { fileSize: 1024 * 1024 * 10 } })
+  )
   @ApiOperation({
     summary: '타임라인 생성',
     description: '사용자가 입력한 정보를 토대로 새로운 타임라인을 생성합니다.',
