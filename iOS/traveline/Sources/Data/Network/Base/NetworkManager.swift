@@ -120,10 +120,51 @@ private extension NetworkManager {
             }
         }
         
-        urlRequest.allHTTPHeaderFields = endPoint.header
+        if let multipartData = endPoint.multipartData {
+            urlRequest.httpBody = makeBody(multipartData: multipartData)
+            
+            if let jsonString = String(data: urlRequest.httpBody ?? Data(), encoding: .utf8) {
+                os_log("multipart-httpBody: \(jsonString)")
+            }
+        }
+        
+        urlRequest.allHTTPHeaderFields = endPoint.header.value
         os_log("header: \(urlRequest.allHTTPHeaderFields ?? [:])")
         
         return urlRequest
     }
     
+    func makeBody(multipartData: Any) -> Data {
+        var body = Data()
+        let imageLabel = "image"
+        let boundaryPrefix = "--\(Literal.boundary)\r\n"
+        let boundaryPostfix = "--\(Literal.boundary)--"
+        
+        Mirror(reflecting: multipartData).children
+            .filter {
+                if case Optional<Any>.some = $0.value { return true }
+                return false
+            }
+            .forEach { child in
+                guard let label = child.label else { return }
+                let value = child.value
+                
+                if label == imageLabel {
+                    guard let imageData = value as? Data else { return }
+                    os_log("imageData: \(imageData.megabytes())")
+                    body.append(boundaryPrefix.toUTF8())
+                    body.append("Content-Disposition: form-data; name=\"\(label)\"; filename=\"\(label).jpg\"\r\n".toUTF8())
+                    body.append("Content-Type: image/jpeg\r\n\r\n".toUTF8())
+                    body.append(imageData)
+                    body.append("\r\n".toUTF8())
+                } else {
+                    body.append(boundaryPrefix.toUTF8())
+                    body.append("Content-Disposition: form-data; name=\"\(label)\"\r\n\r\n".toUTF8())
+                    body.append("\(value)\r\n".toUTF8())
+                }
+            }
+        
+        body.append(boundaryPostfix.toUTF8())
+        return body
+    }
 }

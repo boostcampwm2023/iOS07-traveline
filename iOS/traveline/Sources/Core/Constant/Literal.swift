@@ -10,6 +10,7 @@ import Foundation
 
 enum Literal {
     static let empty: String = ""
+    static let boundary: String = "Boundary-\(UUID().uuidString)"
     
     enum InfoPlistKey {
         static let baseURL: String = "BaseURL"

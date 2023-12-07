@@ -52,4 +52,11 @@ extension String {
         return (self as NSString).range(of: commonPrefix)
     }
     
+    /// 문자열을 UTF-8 인코딩으로 변환하여 해당 인코딩된 데이터를 반환합니다.
+    ///
+    /// - Returns: UTF-8로 인코딩된 데이터
+    func toUTF8() -> Data {
+        self.data(using: .utf8) ?? Data()
+    }
+    
 }
