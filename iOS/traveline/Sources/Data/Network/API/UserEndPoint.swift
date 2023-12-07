@@ -11,14 +11,14 @@ import Foundation
 enum UserEndPoint {
     case requestUserInfo
     case updateUserInfo
-    case checkDuplicatedName
+    case checkDuplicatedName(String)
 }
 
 extension UserEndPoint: EndPoint {
     var path: String? {
         switch self {
-        case .checkDuplicatedName:
-            return "/users/duplicate"
+        case .checkDuplicatedName(let name):
+            return "/users/duplicate?name=\(name)"
         case .requestUserInfo:
             return "/users"
         default:

@@ -86,5 +86,12 @@ enum VCFactory {
         let viewModel = SettingViewModel(useCase: useCase)
         return SettingVC(viewModel: viewModel)
     }
+    
+    static func makeProfileEditingVC() -> ProfileEditingVC {
+        let repository = UserRepositoryImpl(network: network)
+        let useCase = ProfileEditingUseCaseImpl(repository: repository)
+        let viewModel = ProfileEditingViewModel(useCase: useCase)
+        return ProfileEditingVC(viewModel: viewModel)
+    }
   
 }
