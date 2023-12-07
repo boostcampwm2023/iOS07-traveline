@@ -21,7 +21,7 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET_ACCESS,
-      signOptions: { expiresIn: '6h' },
+      signOptions: { expiresIn: '30d' },
     }),
     MailerModule.forRootAsync({
       useFactory: () => ({
