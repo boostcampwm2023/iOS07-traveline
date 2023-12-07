@@ -11,6 +11,7 @@ import Foundation
 enum AuthEndPoint {
     case login(LoginRequestDTO)
     case withdrawal(WithdrawRequestDTO)
+    case refresh
 }
 
 extension AuthEndPoint: EndPoint {
@@ -20,6 +21,8 @@ extension AuthEndPoint: EndPoint {
             return "/auth/withdrawal"
         case .login:
             return "/auth/login"
+        case .refresh:
+            return "/auth/refresh"
         }
     }
     
@@ -29,6 +32,8 @@ extension AuthEndPoint: EndPoint {
             return .DELETE
         case .login:
             return .POST
+        case .refresh:
+            return .GET
         }
     }
     
@@ -38,6 +43,8 @@ extension AuthEndPoint: EndPoint {
             return requestDTO
         case .login(let idToken):
             return idToken
+        case .refresh:
+            return nil
         }
     }
     
@@ -47,6 +54,8 @@ extension AuthEndPoint: EndPoint {
             return .authorization
         case .login:
             return .json
+        case .refresh:
+            return .refresh
         }
     }
 
