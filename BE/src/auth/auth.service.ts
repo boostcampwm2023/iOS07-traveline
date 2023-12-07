@@ -39,7 +39,13 @@ export class AuthService {
       if (!user) {
         throw new UnauthorizedException('회원 정보가 존재하지 않습니다.');
       }
-      if (ipAddress in user.bannedIp) {
+      let bannedIpArray;
+      if (user.bannedIp === null) {
+        bannedIpArray = [];
+      } else {
+        bannedIpArray = user.bannedIp;
+      }
+      if (ipAddress in bannedIpArray) {
         throw new UnauthorizedException(
           '비정상적인 접근 시도로 차단된 IP입니다.'
         );
