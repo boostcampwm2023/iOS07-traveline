@@ -34,6 +34,7 @@ enum TimelineWritingSideEffect: BaseSideEffect {
 struct TimelineWritingState: BaseState {
     var isCompletable: Bool = false
     var timelineDetailRequest: TimelineDetailRequest = .empty
+    var popToTimeline: Bool = false
 }
 
 final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, TimelineWritingSideEffect, TimelineWritingState> {
@@ -88,7 +89,6 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
         case .updateTitleState(let title):
             newState.timelineDetailRequest.title = title
             newState.isCompletable = completeButtonState(newState)
-
             
         case .updateContentState(let content):
             newState.timelineDetailRequest.content = content
@@ -105,7 +105,7 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
             newState.timelineDetailRequest.image = imageData
             
         case .createTimeline:
-            break
+            newState.popToTimeline = true
             
         case .error:
             break
@@ -136,8 +136,8 @@ private extension TimelineWritingViewModel {
     
     func completeButtonState(_ state: State) -> Bool {
         return  !state.timelineDetailRequest.title.isEmpty &&
-                !state.timelineDetailRequest.content.isEmpty &&
-                !state.timelineDetailRequest.place.isEmpty
+        !state.timelineDetailRequest.content.isEmpty &&
+        !state.timelineDetailRequest.place.isEmpty
     }
     
 }
