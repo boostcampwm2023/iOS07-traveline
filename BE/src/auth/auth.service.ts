@@ -109,7 +109,12 @@ export class AuthService {
       }
     } else {
       const allowedIpArray = user.allowedIp;
-      const bannedIpArray = user.bannedIp;
+      let bannedIpArray;
+      if (user.bannedIp === null) {
+        bannedIpArray = [];
+      } else {
+        bannedIpArray = user.bannedIp;
+      }
       if (ipAddress in bannedIpArray) {
         throw new UnauthorizedException(
           '접속하신 IP에서의 계정 접근이 차단되어있습니다.'
