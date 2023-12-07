@@ -107,8 +107,10 @@ private extension LoginVC {
             .map(\.isSuccessLogin)
             .filter { $0 }
             .withUnretained(self)
-            .sink { _, _ in
-                // TODO: 로그인 성공 후 로직 구현
+            .sink { owner, _ in
+                let rootContainerVC = VCFactory.makeRootContainerVC()
+                rootContainerVC.modalPresentationStyle = .overFullScreen
+                owner.present(rootContainerVC, animated: false)
             }
             .store(in: &cancellabels)
     }
@@ -129,7 +131,6 @@ extension LoginVC: ASAuthorizationControllerDelegate {
 
 @available(iOS 17, *)
 #Preview("LoginVC") {
-    let vm = LoginViewModel()
-    let view = LoginVC(viewModel: vm)
+    let view = VCFactory.makeLoginVC()
     return view
 }

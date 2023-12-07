@@ -17,25 +17,44 @@ final class AuthRepositoryImpl: AuthRepository {
         self.network = network
     }
     
+    func appleLogin(with info: AppleLoginRequest) async throws -> TLToken {
+        let loginResponseDTO = try await network.request(
+            endPoint: AuthEndPoint.appleLogin(info.toDTO()),
+            type: LoginResponseDTO.self
+        )
+        
+        return loginResponseDTO.toDomain()
+    }
+    
+    func refresh() async throws -> String {
+        let refreshResponseDTO = try await network.request(
+            endPoint: AuthEndPoint.refresh,
+            type: RefreshResponseDTO.self
+        )
+        
+        return refreshResponseDTO.toDomain()
+    }
+    
     func logout() {
         KeychainList.accessToken = nil
         KeychainList.refreshToken = nil
     }
     
     func withdrawal() async throws -> Bool {
-        guard let idToken = KeychainList.identityToken else { return false }
-        guard let authorizationCode = KeychainList.authorizationCode else { return false }
+        guard let idToken = KeychainList.identityToken,
+              let authorizationCode = KeychainList.authorizationCode else { return false }
         
         let withdrawRequestDTO: WithdrawRequestDTO = .init(
             idToken: idToken,
             authorizationCode: authorizationCode
         )
         
-        let result = try await network.request(endPoint: AuthEndPoint.withdrawal(withdrawRequestDTO), type: Bool.self)
+        let result = try await network.request(
+            endPoint: AuthEndPoint.withdrawal(withdrawRequestDTO),
+            type: WithdrawalResponseDTO.self
+        )
         
-        KeychainList.allClear()
-        
-        return result
+        return result.revoke
     }
     
 }

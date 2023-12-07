@@ -6,6 +6,7 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
+import Combine
 import SafariServices
 import UIKit
 
@@ -84,6 +85,7 @@ final class SettingVC: UIViewController {
     // MARK: - Properties
     
     private let viewModel: SettingViewModel
+    private var cancellabels: Set<AnyCancellable> = .init()
     
     // MARK: - Initialize
     
@@ -103,6 +105,7 @@ final class SettingVC: UIViewController {
         
         setupAttributes()
         setupLayout()
+        bind()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -215,5 +218,17 @@ extension SettingVC {
         ])
     }
     
+    func bind() {
+        viewModel.state
+            .map(\.moveToLogin)
+            .filter { $0 }
+            .removeDuplicates()
+            .sink { _ in
+                guard let firstScene = UIApplication.shared.connectedScenes.first,
+                      let sceneDelegate = firstScene.delegate as? SceneDelegate else { return }
+                
+                sceneDelegate.changeRootViewControllerToLogin()
+            }
+            .store(in: &cancellabels)
+    }
 }
-
