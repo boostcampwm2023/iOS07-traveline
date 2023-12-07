@@ -12,25 +12,12 @@ protocol EndPoint {
     var path: String? { get }
     var httpMethod: HTTPMethod { get }
     var body: Encodable? { get }
-    var multipartData: MultipartData? { get }
-    var header: HeaderType { get }
+    var header: [String: String] { get }
 }
 
 extension EndPoint {
     
     var baseURL: String? {
         return Bundle.main.object(forInfoDictionaryKey: Literal.InfoPlistKey.baseURL) as? String
-    }
-    
-    var body: Encodable? {
-        return nil
-    }
-    
-    var multipartData: MultipartData? {
-        return nil
-    }
-    
-    var header: HeaderType {
-        return .json
     }
 }

@@ -41,7 +41,7 @@ extension UserEndPoint: EndPoint {
         return nil
     }
     
-    var header: HeaderType {
-        return .authorization
+    var header: [String: String] {
+        return HeaderType.authorization.value
     }
 }

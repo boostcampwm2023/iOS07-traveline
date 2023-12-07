@@ -16,21 +16,26 @@ enum HeaderType {
     var value: [String: String] {
         switch self {
         case .json:
-            return [
+            let header = [
                 "Content-Type": "application/json"
             ]
             
+            return header
+            
         case .authorization:
-            return [
+            let header = [
                 "Content-Type": "application/json",
                 "Authorization": "Bearer \(KeychainList.accessToken ?? "EMPTY")"
             ]
             
+            return header
+            
         case .multipart:
-            return [
-                "Content-Type": "multipart/form-data; boundary=\(Literal.boundary)",
-                "Authorization": "Bearer \(KeychainList.accessToken ?? "EMPTY")"
+            let header = [
+                "Content-Type": "application/json"
             ]
+            
+            return header
         }
     }
 }

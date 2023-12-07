@@ -86,7 +86,7 @@ final class TimelineWritingVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Life Cycle
+    //MARK: - Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -300,16 +300,6 @@ private extension TimelineWritingVC {
             .sink { owner, detail in
                 owner.tlNavigationBar.setupTitle(to: "Day \(detail.day)")
                 owner.dateLabel.setText(to: detail.date)
-            }
-            .store(in: &cancellables)
-        
-        viewModel.state
-            .map(\.popToTimeline)
-            .filter { $0 }
-            .removeDuplicates()
-            .withUnretained(self)
-            .sink { owner, _ in
-                owner.navigationController?.popViewController(animated: true)
             }
             .store(in: &cancellables)
     }
