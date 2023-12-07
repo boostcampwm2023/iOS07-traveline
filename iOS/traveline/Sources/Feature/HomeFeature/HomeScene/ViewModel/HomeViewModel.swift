@@ -92,6 +92,11 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
                 offset: 2
             )
             
+        case let .showNewHomeList(travelList):
+            newState.travelList = travelList
+            newState.searchQuery.offset = 2
+            newState.searchQuery.keyword = nil
+            
         case let .showNewList(travelList):
             newState.travelList = travelList
             newState.searchQuery.offset = 2
@@ -140,12 +145,12 @@ private extension HomeViewModel {
     }
     
     func fetchHomeList() -> SideEffectPublisher {
-        var query = makeSearchQuery(from: state.homeFilters)
-        query.offset = 1
+        var query = SearchQuery()
+        query.selectedFilter = makeSearchQuery(from: currentState.homeFilters).selectedFilter
         
         return homeUseCase.fetchSearchList(with: query)
             .map { travelList in
-                return HomeSideEffect.showNewList(travelList)
+                return HomeSideEffect.showNewHomeList(travelList)
             }
             .catch { error in
                 return Just(HomeSideEffect.loadFailed(error))
