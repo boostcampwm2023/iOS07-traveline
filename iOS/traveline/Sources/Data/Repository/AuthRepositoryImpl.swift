@@ -17,6 +17,14 @@ final class AuthRepositoryImpl: AuthRepository {
         self.network = network
     }
     
+    func refresh() async throws -> String {
+        let refreshResponseDTO = try await network.request(
+            endPoint: AuthEndPoint.refresh,
+            type: RefreshResponseDTO.self
+        )
+        
+        return refreshResponseDTO.toDomain()
+    }
     func logout() {
         KeychainList.accessToken = nil
         KeychainList.refreshToken = nil
