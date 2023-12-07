@@ -36,9 +36,27 @@ final class SettingViewModel: BaseViewModel<SettingAction, SettingSideEffect, Se
         switch action {
         case .logoutButtonTapped:
             return reqeustLogout()
+            
         case .withdrawalButtonTapped:
             return requestWithdraw()
         }
+    }
+    
+    override func reduceState(state: SettingState, effect: SettingSideEffect) -> SettingState {
+        var newState = state
+        
+        switch effect {
+        case .logout:
+            break
+            
+        case .requestWithdraw:
+            break
+            
+        case .error:
+            break
+        }
+        
+        return newState
     }
     
 }

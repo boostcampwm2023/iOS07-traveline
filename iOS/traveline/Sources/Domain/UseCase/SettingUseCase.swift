@@ -30,8 +30,8 @@ final class SettingUseCaseImpl: SettingUseCase {
         return Future<Bool, Error> { promise in
             Task {
                 do {
-                    try await self.repository.withdrawal()
-                    promise(.success(true))
+                    let result = try await self.repository.withdrawal()
+                    promise(.success(result))
                 } catch {
                     promise(.failure(error))
                 }

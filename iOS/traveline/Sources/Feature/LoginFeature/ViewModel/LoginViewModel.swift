@@ -62,6 +62,7 @@ private extension LoginViewModel {
     func requestAppleLogin() -> SideEffectPublisher {
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.email]
         
         return .just(LoginSideEffect.requestAppleLogin(request))
     }
@@ -75,10 +76,17 @@ private extension LoginViewModel {
            let authorizationCode = appleIDCredential.authorizationCode,
            let identityTokenString = String(data: identityToken, encoding: .utf8),
            let authorizationCodeString = String(data: authorizationCode, encoding: .utf8) {
-            // TODO: 로그인 API에 identityTokenString 담아서 로그인하기
-            print(identityTokenString)
-            print("----")
-            print(authorizationCodeString)
+            
+            let network = NetworkManager(urlSession: URLSession.shared)
+            let loginRequestDTO: LoginRequestDTO = .init(idToken: identityTokenString, email: appleIDCredential.email)
+            
+            Task {
+                let loginResponseDTO = try await network.request(endPoint: AuthEndPoint.login(loginRequestDTO), type: LoginResponseDTO.self)
+                KeychainList.accessToken = loginResponseDTO.accessToken
+                KeychainList.refreshToken = loginResponseDTO.refreshToken
+            }
+            KeychainList.identityToken = identityTokenString
+            KeychainList.authorizationCode = authorizationCodeString
         }
         
         return .just(LoginSideEffect.completeAppleLogin(true))

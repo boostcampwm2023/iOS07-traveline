@@ -9,6 +9,6 @@
 import Foundation
 
 protocol AuthRepository {
-    func withdrawal() async throws
+    func withdrawal() async throws -> Bool
     func logout()
 }
