@@ -10,6 +10,7 @@ import Foundation
 
 protocol AuthRepository {
     func refresh() async throws -> String
+    func appleLogin(with info: AppleLoginRequest) async throws -> TLToken
     func withdrawal() async throws -> Bool
     func logout()
 }

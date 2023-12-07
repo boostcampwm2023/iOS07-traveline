@@ -17,6 +17,15 @@ final class AuthRepositoryImpl: AuthRepository {
         self.network = network
     }
     
+    func appleLogin(with info: AppleLoginRequest) async throws -> TLToken {
+        let loginResponseDTO = try await network.request(
+            endPoint: AuthEndPoint.appleLogin(info.toDTO()),
+            type: LoginResponseDTO.self
+        )
+        
+        return loginResponseDTO.toDomain()
+    }
+    
     func refresh() async throws -> String {
         let refreshResponseDTO = try await network.request(
             endPoint: AuthEndPoint.refresh,
