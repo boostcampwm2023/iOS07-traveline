@@ -37,7 +37,7 @@ export class CreateTimelineDto {
   @ApiProperty({
     required: false,
     type: 'file',
-    description: '업로드하는 사진',
+    description: '업로드하는 사진 (파일 크기 2MB까지 가능)',
   })
   @IsOptional()
   image: Express.Multer.File;
@@ -74,10 +74,12 @@ export class CreateTimelineDto {
   date: string;
 
   @ApiProperty({
+    required: false,
     example: 'GS25 서울역점',
     description: '장소 이름',
     maxLength: 50,
   })
+  @IsOptional()
   @IsString()
   place: string;
 

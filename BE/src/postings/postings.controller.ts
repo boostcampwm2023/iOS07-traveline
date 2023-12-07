@@ -99,9 +99,7 @@ export class PostingsController {
     description: '검색어와 선택 태그의 교집합에 해당하는 게시글을 반환합니다.',
   })
   @ApiOkResponse({ schema: { example: search_OK } })
-  async search(
-    @Query() searchPostingDto: SearchPostingDto
-  ): Promise<Posting[]> {
+  async search(@Query() searchPostingDto: SearchPostingDto) {
     return this.postingsService.findAll(searchPostingDto);
   }
 
@@ -119,7 +117,7 @@ export class PostingsController {
   @ApiOkResponse({ schema: { example: searchByWord_OK } })
   async searchByKeyWord(
     @Query('keyword', new DefaultValuePipe('')) keyword: string
-  ): Promise<string[]> {
+  ) {
     return this.postingsService.findAllBytitle(keyword);
   }
 
@@ -252,7 +250,10 @@ export class PostingsController {
     return Array.from({ length: days }, (_, index) => {
       const date = new Date(startDate);
       date.setDate(standardDate.getDate() + index);
-      return `${date.getDate()}${weekdays[date.getDay()]}`;
+      const stringDate = date.getDate().toString();
+      return `${stringDate.length < 2 ? `0${stringDate}` : stringDate} ${
+        weekdays[date.getDay()]
+      }`;
     });
   }
 }

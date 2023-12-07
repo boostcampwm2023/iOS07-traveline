@@ -39,6 +39,7 @@ import {
   findCoordinates_OK,
   findOne_OK,
   remove_OK,
+  translate_OK,
   update_OK,
 } from './timelines.swagger';
 
@@ -89,9 +90,15 @@ export class TimelinesController {
     @Req() request,
     @UploadedFile() image: Express.Multer.File,
     @Body() createTimelineDto: CreateTimelineDto
-  ): Promise<Timeline> {
+  ) {
     const userId = request['user'].id;
-    return this.timelinesService.create(userId, image, createTimelineDto);
+    const { id } = await this.timelinesService.create(
+      userId,
+      image,
+      createTimelineDto
+    );
+
+    return { id };
   }
 
   @Get()
@@ -150,7 +157,9 @@ export class TimelinesController {
   }
 
   @Put(':id')
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(
+    FileInterceptor('image', { limits: { fileSize: 1024 * 1024 * 2 } })
+  )
   @ApiOperation({
     summary: 'id에 해당하는 타임라인 수정',
     description: 'id에 해당하는 타임라인을 수정합니다.',
@@ -164,7 +173,8 @@ export class TimelinesController {
     @Body() updateTimelineDto: UpdateTimelineDto
   ) {
     const userId = request['user'].id;
-    return this.timelinesService.update(id, userId, image, updateTimelineDto);
+    await this.timelinesService.update(id, userId, image, updateTimelineDto);
+    return { id };
   }
 
   @Delete(':id')
@@ -175,5 +185,16 @@ export class TimelinesController {
   @ApiOkResponse({ schema: { example: remove_OK } })
   async remove(@Param('id', ParseUUIDPipe) id: string): Promise<Timeline> {
     return this.timelinesService.remove(id);
+  }
+
+  @Get(':id/translate')
+  @ApiOperation({
+    summary: 'Papago API 번역',
+    description:
+      'Papago API를 사용하여 타임라인 세부 내용을 영어로 번역하고, 그 결과를 반환합니다.',
+  })
+  @ApiOkResponse({ schema: { example: translate_OK } })
+  async translate(@Param('id', ParseUUIDPipe) id: string) {
+    return this.timelinesService.translate(id);
   }
 }

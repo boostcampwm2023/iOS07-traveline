@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import { HttpService } from '@nestjs/axios';
+import { Transactional } from 'typeorm-transactional';
 import { CreateTimelineDto } from './dto/create-timeline.dto';
 import { UpdateTimelineDto } from './dto/update-timeline.dto';
 import { TimelinesRepository } from './timelines.repository';
@@ -24,6 +25,7 @@ export class TimelinesService {
     private readonly httpService: HttpService
   ) {}
 
+  @Transactional()
   async create(
     userId: string,
     file: Express.Multer.File,
@@ -43,7 +45,7 @@ export class TimelinesService {
     timeline.posting = posting;
 
     if (file) {
-      const filePath = `${userId}/${posting.id}`;
+      const filePath = `${userId}/${posting.id}/`;
       const { path } = await this.storageService.upload(filePath, file);
       timeline.image = path;
 
@@ -82,6 +84,7 @@ export class TimelinesService {
     return timeline;
   }
 
+  @Transactional()
   async update(
     id: string,
     userId: string,
@@ -90,7 +93,6 @@ export class TimelinesService {
   ) {
     const timeline = await this.findOne(id);
     const isThumbnail = timeline.image === timeline.posting.thumbnail;
-
     if (timeline.image) {
       await this.storageService.delete(timeline.image);
     }
@@ -99,7 +101,7 @@ export class TimelinesService {
     updatedTimeline.id = id;
 
     if (image) {
-      const imagePath = `${userId}/${id}`;
+      const imagePath = `${userId}/${timeline.posting.id}/`;
       const { path } = await this.storageService.upload(imagePath, image);
       updatedTimeline.image = path;
     }
@@ -116,6 +118,7 @@ export class TimelinesService {
     return updatedResult;
   }
 
+  @Transactional()
   async remove(id: string) {
     const timeline = await this.findOne(id);
     await this.timelinesRepository.remove(timeline);
@@ -160,6 +163,31 @@ export class TimelinesService {
     );
 
     return documents;
+  }
+
+  async translate(id: string) {
+    const { description } = await this.findOne(id);
+    const url = 'https://naveropenapi.apigw.ntruss.com/nmt/v1/translation';
+    const body = {
+      source: 'ko',
+      target: 'en',
+      text: description,
+    };
+    const {
+      data: {
+        message: { result },
+      },
+    } = await firstValueFrom(
+      this.httpService.post(url, body, {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-NCP-APIGW-API-KEY-ID': process.env.X_NCP_APIGW_API_KEY_ID,
+          'X-NCP-APIGW-API-KEY': process.env.X_NCP_APIGW_API_KEY,
+        },
+      })
+    );
+
+    return { description: result.translatedText };
   }
 
   private async findOneAndUpdateThumbnail(postingId: string) {

@@ -33,7 +33,7 @@ export class Timeline {
   @Column({ type: 'date' })
   date: string;
 
-  @Column({ length: 50 })
+  @Column({ length: 50, nullable: true })
   place: string;
 
   @Column({ type: 'char', length: '5' })
