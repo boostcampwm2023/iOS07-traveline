@@ -302,9 +302,9 @@ extension TravelVC: UITextFieldDelegate {
 
 extension TravelVC: TLBottomSheetDelegate {
     func bottomSheetDidDisappear(data: Any) {
-        guard let region = data as? String else { return }
-        selectRegionButton.setSelectedTitle(region)
-        viewModel.sendAction(.regionSelected(region))
+        guard let region = data as? RegionFilter else { return }
+        selectRegionButton.setSelectedTitle(region.title)
+        viewModel.sendAction(.regionSelected(region.query))
     }
 }
 

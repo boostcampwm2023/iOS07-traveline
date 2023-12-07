@@ -60,7 +60,7 @@ final class HomeListView: UIView {
     
     private var dataSource: DataSource!
     
-    let didSelectHomeList: PassthroughSubject<Void, Never> = .init()
+    let didSelectHomeList: PassthroughSubject<Int, Never> = .init()
     let didSelectFilterType: PassthroughSubject<FilterType, Never> = .init()
     let didScrollToBottom: PassthroughSubject<Void, Never> = .init()
     
@@ -224,7 +224,7 @@ extension HomeListView {
 
 extension HomeListView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        didSelectHomeList.send(Void())
+        didSelectHomeList.send(indexPath.row)
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
