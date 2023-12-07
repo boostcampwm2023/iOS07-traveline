@@ -55,20 +55,4 @@ export class AppService {
   async download(filename: string) {
     return this.storageService.getImageUrl(`app/${filename}`);
   }
-
-  async sendEmail() {
-    try {
-      const result = await this.mailerService.sendMail({
-        to: 'minnie_00@naver.com',
-        subject: '이메일 테스트',
-        template: 'test.ejs',
-        context: {
-          serviceName: 'traveline',
-        },
-      });
-      return result;
-    } catch (e) {
-      console.log(e);
-    }
-  }
 }

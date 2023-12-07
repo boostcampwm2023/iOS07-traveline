@@ -36,11 +36,6 @@ export class AppController {
     response.redirect(url);
   }
 
-  @Get('email')
-  async email() {
-    return this.appService.sendEmail();
-  }
-
   @Get('ip-process-result')
   @Render('ip-process-result.ejs')
   ipProcessResult() {
