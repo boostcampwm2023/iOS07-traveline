@@ -59,30 +59,8 @@ export class PostingsService {
       dto.theme,
       dto.withWho
     );
-
     return Promise.all(
-      postings.map(async (posting) => ({
-        id: posting.p_id,
-        title: posting.p_title,
-        created_at: posting.p_created_at,
-        thumbnail: posting.p_thumbnail
-          ? await this.storageService.getImageUrl(posting.p_thumbnail)
-          : null,
-        period: posting.p_period,
-        headcount: posting.p_headcount,
-        budget: posting.p_budget,
-        location: posting.p_location,
-        season: posting.p_season,
-        vehicle: posting.p_vehicle,
-        withWho: posting.p_with_who,
-        theme: posting.p_theme,
-        writer: {
-          id: posting.u_id,
-          name: posting.u_name,
-          avatar: posting.u_avatar,
-        },
-        likeds: posting.likeds,
-      }))
+      postings.map(async (posting) => await this.serializePosting(posting))
     );
   }
 
@@ -92,7 +70,10 @@ export class PostingsService {
   }
 
   async findAllByWriter(userId: string) {
-    return this.postingsRepository.findAllByWriter(userId);
+    const postings = await this.postingsRepository.findAllByWriter(userId);
+    return Promise.all(
+      postings.map(async (posting) => await this.serializePosting(posting))
+    );
   }
 
   async findOne(id: string) {
@@ -214,5 +195,31 @@ export class PostingsService {
       : month >= 10 && month <= 11
       ? Season.가을
       : Season.겨울;
+  }
+
+  private async serializePosting(posting) {
+    return {
+      id: posting.p_id,
+      title: posting.p_title,
+      created_at: posting.p_created_at,
+      thumbnail: posting.p_thumbnail
+        ? await this.storageService.getImageUrl(posting.p_thumbnail)
+        : null,
+      period: posting.p_period,
+      headcount: posting.p_headcount,
+      budget: posting.p_budget,
+      location: posting.p_location,
+      season: posting.p_season,
+      vehicle: posting.p_vehicle,
+      withWho: posting.p_with_who,
+      theme: posting.p_theme,
+      writer: {
+        id: posting.u_id,
+        name: posting.u_name,
+        avatar: posting.u_avatar,
+      },
+      likeds: posting.likeds,
+      reports: posting.reports,
+    };
   }
 }

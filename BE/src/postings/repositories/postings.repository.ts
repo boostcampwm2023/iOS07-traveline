@@ -159,10 +159,17 @@ export class PostingsRepository {
   async findAllByWriter(userId: string) {
     return this.postingsRepository
       .createQueryBuilder('p')
-      .leftJoinAndSelect('p.writer', 'w')
+      .leftJoinAndSelect('p.writer', 'u')
       .where('p.writer = :userId', { userId })
+      .leftJoin('p.likeds', 'l', 'l.isDeleted = :isDeleted', {
+        isDeleted: false,
+      })
+      .addSelect('COUNT(l.posting)', 'likeds')
+      .leftJoin('p.reports', 'r')
+      .addSelect('COUNT(r.posting)', 'reports')
+      .groupBy('p.id')
       .orderBy('p.createdAt', 'DESC')
-      .getMany();
+      .getRawMany();
   }
 
   async update(id: string, posting: Posting) {
