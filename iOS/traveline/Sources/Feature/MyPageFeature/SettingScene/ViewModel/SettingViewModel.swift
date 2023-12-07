@@ -1,5 +1,5 @@
 //
-//  SettingVeiwModel.swift
+//  SettingViewModel.swift
 //  traveline
 //
 //  Created by KiWoong Hong on 2023/12/05.
@@ -16,12 +16,12 @@ enum SettingAction: BaseAction {
 
 enum SettingSideEffect: BaseSideEffect {
     case logout
-    case requestWithdraw
+    case requestWithdraw(Bool)
     case error(String)
 }
 
 struct SettingState: BaseState {
-    
+    var moveToLogin: Bool = false
 }
 
 final class SettingViewModel: BaseViewModel<SettingAction, SettingSideEffect, SettingState> {
@@ -47,10 +47,10 @@ final class SettingViewModel: BaseViewModel<SettingAction, SettingSideEffect, Se
         
         switch effect {
         case .logout:
-            break
+            newState.moveToLogin = true
             
-        case .requestWithdraw:
-            break
+        case let .requestWithdraw(isSuccess):
+            newState.moveToLogin = isSuccess
             
         case .error:
             break
@@ -68,10 +68,9 @@ extension SettingViewModel {
     }
     
     private func requestWithdraw() -> SideEffectPublisher {
-        // TODO: - 회원탈퇴 요청 로직
         return useCase.requestWithdrawal()
-            .map { _ in
-                return .requestWithdraw
+            .map { isSuccess in
+                return .requestWithdraw(isSuccess)
             }
             .catch { _ in
                 return Just(.error("failed request withdrawal"))

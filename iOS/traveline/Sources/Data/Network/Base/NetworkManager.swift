@@ -34,7 +34,12 @@ final class NetworkManager: NetworkType {
             throw NetworkError.httpResponseError
         }
         
-        try validateStatusCode(httpResponse.statusCode)
+        do {
+            try validateStatusCode(httpResponse.statusCode)
+        } catch {
+            let error = try JSONDecoder().decode(ErrorResponseDTO.self, from: data)
+            os_log("message: \(error.message)\nerror: \(error.error)\nstatusCode: \(error.statusCode)")
+        }
         
         os_log("statusCode: \(httpResponse.statusCode)")
         

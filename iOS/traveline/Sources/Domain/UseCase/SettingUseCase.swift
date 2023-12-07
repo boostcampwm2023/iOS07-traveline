@@ -31,6 +31,7 @@ final class SettingUseCaseImpl: SettingUseCase {
             Task {
                 do {
                     let result = try await self.repository.withdrawal()
+                    KeychainList.allClear()
                     promise(.success(result))
                 } catch {
                     promise(.failure(error))

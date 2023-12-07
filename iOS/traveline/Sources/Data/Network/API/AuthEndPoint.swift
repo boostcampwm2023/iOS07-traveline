@@ -9,8 +9,9 @@
 import Foundation
 
 enum AuthEndPoint {
-    case login(LoginRequestDTO)
+    case appleLogin(AppleLoginRequestDTO)
     case withdrawal(WithdrawRequestDTO)
+    case refresh
 }
 
 extension AuthEndPoint: EndPoint {
@@ -18,8 +19,10 @@ extension AuthEndPoint: EndPoint {
         switch self {
         case .withdrawal:
             return "/auth/withdrawal"
-        case .login:
+        case .appleLogin:
             return "/auth/login"
+        case .refresh:
+            return "/auth/refresh"
         }
     }
     
@@ -27,8 +30,10 @@ extension AuthEndPoint: EndPoint {
         switch self {
         case .withdrawal:
             return .DELETE
-        case .login:
+        case .appleLogin:
             return .POST
+        case .refresh:
+            return .GET
         }
     }
     
@@ -36,8 +41,10 @@ extension AuthEndPoint: EndPoint {
         switch self {
         case .withdrawal(let requestDTO):
             return requestDTO
-        case .login(let idToken):
+        case .appleLogin(let idToken):
             return idToken
+        case .refresh:
+            return nil
         }
     }
     
@@ -45,8 +52,10 @@ extension AuthEndPoint: EndPoint {
         switch self {
         case .withdrawal:
             return .authorization
-        case .login:
+        case .appleLogin:
             return .json
+        case .refresh:
+            return .refresh
         }
     }
 

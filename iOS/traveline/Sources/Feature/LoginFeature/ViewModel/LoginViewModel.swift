@@ -7,6 +7,7 @@
 //
 
 import AuthenticationServices
+import Combine
 import Foundation
 
 typealias AppleIDRequest = ASAuthorizationAppleIDRequest
@@ -21,6 +22,7 @@ enum LoginAction: BaseAction {
 enum LoginSideEffect: BaseSideEffect {
     case requestAppleLogin(AppleIDRequest)
     case completeAppleLogin(Bool)
+    case loginFailed(Error)
 }
 
 struct LoginState: BaseState {
@@ -29,6 +31,12 @@ struct LoginState: BaseState {
 }
 
 final class LoginViewModel: BaseViewModel<LoginAction, LoginSideEffect, LoginState> {
+    
+    private let useCase: LoginUseCase
+    
+    init(useCase: LoginUseCase) {
+        self.useCase = useCase
+    }
     
     override func transform(action: LoginAction) -> SideEffectPublisher {
         switch action {
@@ -52,6 +60,9 @@ final class LoginViewModel: BaseViewModel<LoginAction, LoginSideEffect, LoginSta
             
         case let .completeAppleLogin(isSuccess):
             newState.isSuccessLogin = isSuccess
+            
+        case let .loginFailed(error):
+            print(error)
         }
         
         return newState
@@ -77,18 +88,24 @@ private extension LoginViewModel {
            let identityTokenString = String(data: identityToken, encoding: .utf8),
            let authorizationCodeString = String(data: authorizationCode, encoding: .utf8) {
             
-            let network = NetworkManager(urlSession: URLSession.shared)
-            let loginRequestDTO: LoginRequestDTO = .init(idToken: identityTokenString, email: appleIDCredential.email)
+            let email = appleIDCredential.email
+            let appleLoginRequest = AppleLoginRequest(
+                idToken: identityTokenString,
+                email: email
+            )
             
-            Task {
-                let loginResponseDTO = try await network.request(endPoint: AuthEndPoint.login(loginRequestDTO), type: LoginResponseDTO.self)
-                KeychainList.accessToken = loginResponseDTO.accessToken
-                KeychainList.refreshToken = loginResponseDTO.refreshToken
-            }
-            KeychainList.identityToken = identityTokenString
-            KeychainList.authorizationCode = authorizationCodeString
+            return useCase.requestLogin(with: appleLoginRequest)
+                .map { isSuccess in
+                    KeychainList.identityToken = identityTokenString
+                    KeychainList.authorizationCode = authorizationCodeString
+                    return LoginSideEffect.completeAppleLogin(isSuccess)
+                }
+                .catch { error in
+                    return Just(LoginSideEffect.loginFailed(error))
+                }
+                .eraseToAnyPublisher()
         }
         
-        return .just(LoginSideEffect.completeAppleLogin(true))
+        return .just(LoginSideEffect.completeAppleLogin(false))
     }
 }

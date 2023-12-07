@@ -12,3 +12,12 @@ struct LoginResponseDTO: Decodable {
     let accessToken: String
     let refreshToken: String
 }
+
+extension LoginResponseDTO {
+    func toDomain() -> TLToken {
+        return .init(
+            accessToken: accessToken,
+            refreshToken: refreshToken
+        )
+    }
+}

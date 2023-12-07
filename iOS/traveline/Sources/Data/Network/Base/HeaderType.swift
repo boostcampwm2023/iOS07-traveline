@@ -11,6 +11,7 @@ import Foundation
 enum HeaderType {
     case json
     case authorization
+    case refresh
     case multipart
     
     var value: [String: String] {
@@ -24,6 +25,12 @@ enum HeaderType {
             return [
                 "Content-Type": "application/json",
                 "Authorization": "Bearer \(KeychainList.accessToken ?? "EMPTY")"
+            ]
+            
+        case .refresh:
+            return [
+                "Content-Type": "application/json",
+                "Authorization": "Bearer \(KeychainList.refreshToken ?? "EMPTY")"
             ]
             
         case .multipart:
