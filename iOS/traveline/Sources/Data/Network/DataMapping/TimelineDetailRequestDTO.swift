@@ -7,11 +7,12 @@
 //
 
 import Foundation
-struct TimelineDetailRequestDTO: Encodable {
+
+struct TimelineDetailRequestDTO: MultipartData {
     let title: String
     let day: Int
     let description: String
-    let image: Data?
+    var image: Data?
     let coordX: Double?
     let coordY: Double?
     let date: String
@@ -31,7 +32,7 @@ extension TimelineDetailRequest {
             coordY: nil,
             date: date,
             place: place,
-            time: time,
+            time: time.convertTimeFormat(from: "a hh:mm", to: "HH:mm"),
             posting: posting
         )
     }
