@@ -30,7 +30,14 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
           port: 587,
           auth: {
             user: process.env.EMAIL_ADDRESS,
-            pass: process.env.EMAIL_PASSWORD,
+            pass:
+              process.env.EMAIL_PASSWORD1 +
+              ' ' +
+              process.env.EMAIL_PASSWORD2 +
+              ' ' +
+              process.env.EMAIL_PASSWORD3 +
+              ' ' +
+              process.env.EMAIL_PASSWORD4,
           },
         },
         defaults: {
