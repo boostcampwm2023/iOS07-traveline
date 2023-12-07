@@ -18,6 +18,7 @@ final class UserRepositoryImpl: UserRepository {
     
     func fetchUserInfo() async throws -> Profile {
         if let userResponseDTO = UserDefaultsList.userResponseDTO {
+            print(userResponseDTO)
             return userResponseDTO.toDomain()
         }
         
@@ -32,8 +33,17 @@ final class UserRepositoryImpl: UserRepository {
     }
     
     func updateUserInfo(name: String, imageData: Data?) async throws -> Profile {
-        // TODO: - Request UIser Info 로직 추가
-        return .empty
+        let userRequestDTO: UserRequestDTO = .init(name: name, image: imageData)
+        
+        let userResponseDTO = try await network.request(
+            endPoint: UserEndPoint.updateUserInfo(userRequestDTO),
+            type: UserResponseDTO.self
+        )
+        
+        print(userResponseDTO)
+        UserDefaultsList.userResponseDTO = userResponseDTO
+        
+        return userResponseDTO.toDomain()
     }
     
     func checkDuplication(name: String) async throws -> Bool {

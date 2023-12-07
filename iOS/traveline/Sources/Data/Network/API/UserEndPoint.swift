@@ -10,7 +10,7 @@ import Foundation
 
 enum UserEndPoint {
     case requestUserInfo
-    case updateUserInfo
+    case updateUserInfo(UserRequestDTO)
     case checkDuplicatedName(String)
 }
 
@@ -41,7 +41,21 @@ extension UserEndPoint: EndPoint {
         return nil
     }
     
+    var multipartData: MultipartData? {
+        switch self {
+        case .updateUserInfo(let user):
+            return user
+        default:
+            return nil
+        }
+    }
+    
     var header: HeaderType {
-        return .authorization
+        switch self {
+        case .updateUserInfo:
+            return .multipart
+        default:
+            return .authorization
+        }
     }
 }
