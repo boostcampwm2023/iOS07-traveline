@@ -100,6 +100,9 @@ export class AuthService {
 
     if (!user) {
       const email = createAuthDto.email;
+      if (!email) {
+        throw new BadRequestException('이메일 정보가 누락되어있습니다.');
+      }
       user = await this.usersService.createUser(appleId, email, ipAddress);
       if (!user) {
         throw new InternalServerErrorException();
