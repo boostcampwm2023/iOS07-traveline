@@ -67,7 +67,6 @@ export class TimelinesService {
           : null;
         return {
           ...timeline,
-          description: timeline.description + '...',
           image: imageUrl,
         };
       })
