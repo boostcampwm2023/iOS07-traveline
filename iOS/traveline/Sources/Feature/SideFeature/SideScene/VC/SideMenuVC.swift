@@ -95,9 +95,11 @@ final class SideMenuVC: UIViewController {
         setupAttributes()
         setupLayout()
         bind()
-        viewModel.sendAction(.viewDidLoad)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        viewModel.sendAction(.viewWillAppear)
+    }
     // MARK: - Functions
     
     @objc private func profileEditTapped() {

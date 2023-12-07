@@ -142,8 +142,7 @@ extension ProfileEditingViewModel {
     }
     
     private func updateProfile(with imageData: Data?) -> SideEffectPublisher {
-       // return useCase.update(name: changedNickname, imageData: imageData)
-        return useCase.fetchProfile()
+        return useCase.update(name: changedNickname, imageData: imageData)
             .map { _ in
                 return .updateProfile
             }

@@ -93,8 +93,8 @@ enum VCFactory {
     }
     
     static func makeSideMenuVC() -> SideMenuVC {
-        //let repository = UserRepositoryImpl(network: network)
-        let repository = UserRepositoryMock()
+        let repository = UserRepositoryImpl(network: network)
+        //let repository = UserRepositoryMock()
         let useCase = SideMenuUseCaseImpl(repository: repository)
         let viewModel = SideMenuViewModel(useCase: useCase)
         return SideMenuVC(viewModel: viewModel)
@@ -105,6 +105,13 @@ enum VCFactory {
         let useCase = SettingUseCaseImpl(repository: repository)
         let viewModel = SettingViewModel(useCase: useCase)
         return SettingVC(viewModel: viewModel)
+    }
+    
+    static func makeProfileEditingVC() -> ProfileEditingVC {
+        let repository = UserRepositoryImpl(network: network)
+        let useCase = ProfileEditingUseCaseImpl(repository: repository)
+        let viewModel = ProfileEditingViewModel(useCase: useCase)
+        return ProfileEditingVC(viewModel: viewModel)
     }
   
 }
