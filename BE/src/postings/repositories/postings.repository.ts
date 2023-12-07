@@ -161,7 +161,7 @@ export class PostingsRepository {
       .createQueryBuilder('p')
       .leftJoinAndSelect('p.writer', 'w')
       .where('p.writer = :userId', { userId })
-      .orderBy('post.createdAt', 'DESC')
+      .orderBy('p.createdAt', 'DESC')
       .getMany();
   }
 
