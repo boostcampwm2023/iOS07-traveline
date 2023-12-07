@@ -9,12 +9,13 @@
 import Foundation
 
 struct LoginRequestDTO: Encodable {
-    let idToken: String
     
+    let idToken: String
     let email: String?
     
     init(idToken: String, email: String? = nil) {
         self.idToken = idToken
         self.email = email
     }
+    
 }

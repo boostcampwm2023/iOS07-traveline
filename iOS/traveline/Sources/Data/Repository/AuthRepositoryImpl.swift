@@ -33,10 +33,7 @@ final class AuthRepositoryImpl: AuthRepository {
         
         let result = try await network.request(endPoint: AuthEndPoint.withdrawal(withdrawRequestDTO), type: Bool.self)
         
-        KeychainList.authorizationCode = nil
-        KeychainList.identityToken = nil
-        KeychainList.accessToken = nil
-        KeychainList.refreshToken = nil
+        KeychainList.allClear()
         
         return result
     }

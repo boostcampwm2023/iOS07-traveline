@@ -13,4 +13,12 @@ enum KeychainList {
     @KeychainWrapper<String>(key: "refreshToken") static var refreshToken
     @KeychainWrapper<String>(key: "identityToken") static var identityToken
     @KeychainWrapper<String>(key: "authorizationCode") static var authorizationCode
+    
+    static func allClear() {
+        accessToken = nil
+        refreshToken = nil
+        identityToken = nil
+        authorizationCode = nil
+    }
+    
 }
