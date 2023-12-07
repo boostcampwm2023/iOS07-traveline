@@ -10,7 +10,7 @@ import Combine
 import Foundation
 
 enum SideMenuAction: BaseAction {
-    case viewDidLoad
+    case viewWillAppear
 }
 
 enum SideMenuSideEffect: BaseSideEffect {
@@ -34,7 +34,7 @@ final class SideMenuViewModel: BaseViewModel<SideMenuAction, SideMenuSideEffect,
     
     override func transform(action: Action) -> SideEffectPublisher {
         switch action {
-        case .viewDidLoad:
+        case .viewWillAppear:
             return loadProfile()
         }
     }

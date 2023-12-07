@@ -73,8 +73,8 @@ enum VCFactory {
     }
     
     static func makeSideMenuVC() -> SideMenuVC {
-        //let repository = UserRepositoryImpl(network: network)
-        let repository = UserRepositoryMock()
+        let repository = UserRepositoryImpl(network: network)
+        //let repository = UserRepositoryMock()
         let useCase = SideMenuUseCaseImpl(repository: repository)
         let viewModel = SideMenuViewModel(useCase: useCase)
         return SideMenuVC(viewModel: viewModel)
