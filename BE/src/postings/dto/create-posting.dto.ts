@@ -5,7 +5,6 @@ import {
   MaxLength,
   IsOptional,
   IsIn,
-  ArrayMaxSize,
   IsArray,
   IsISO8601,
 } from 'class-validator';
@@ -68,7 +67,6 @@ export class CreatePostingDto {
   })
   @IsOptional()
   @IsString({ each: true })
-  @ArrayMaxSize(3)
   @IsArray()
   @IsIn(themes, { each: true })
   theme: Theme[];
@@ -82,7 +80,6 @@ export class CreatePostingDto {
   })
   @IsOptional()
   @IsString({ each: true })
-  @ArrayMaxSize(3)
   @IsArray()
   @IsIn(withWhos, { each: true })
   withWho: WithWho[];
