@@ -39,7 +39,8 @@ enum VCFactory {
     
     static func makeTimelineDetailVC(with id: String) -> TimelineDetailVC {
         // TODO: - 서버 연결 후 Rpository 변경
-        let repository = TimelineDetailRepositoryMock()
+//        let repository = TimelineDetailRepositoryMock()
+        let repository = TimelineDetailRepositoryImpl(network: network)
         let useCase = TimelineDetailUseCaseImpl(repository: repository)
         let viewModel = TimelineDetailViewModel(timelineDetailUseCase: useCase, timelineId: id)
         return TimelineDetailVC(viewModel: viewModel)
