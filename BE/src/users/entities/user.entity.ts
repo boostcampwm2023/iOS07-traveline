@@ -28,6 +28,15 @@ export class User {
   @Column({ type: 'int', name: 'social_type' })
   socialType: number;
 
+  @Column({ length: 35, unique: true })
+  email: string;
+
+  @Column({ type: 'json', name: 'allowed_ip' })
+  allowedIp: string[];
+
+  @Column({ type: 'json', name: 'banned_ip', nullable: true })
+  bannedIp: string[];
+
   @OneToMany(() => Liked, (liked) => liked.users)
   likeds: Liked[];
 

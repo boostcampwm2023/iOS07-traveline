@@ -4,6 +4,7 @@ import { StorageService } from 'src/storage/storage.service';
 import { UserRepository } from './users.repository';
 import { CheckDuplicatedNameResponseDto } from './dto/check-duplicated-name-response.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateUserIpDto } from './dto/update-user-ip.dto';
 
 @Injectable()
 export class UsersService {
@@ -23,7 +24,7 @@ export class UsersService {
     return name;
   }
 
-  async createUser(resourceId: string) {
+  async createUser(resourceId: string, email: string, ipAddress: string) {
     let name = this.nameGenerator();
     while (true) {
       const user = await this.userRepository.findByName(name);
@@ -33,7 +34,13 @@ export class UsersService {
       name = this.nameGenerator();
     }
     const socialType = 1;
-    const createUserDto = { name, resourceId, socialType };
+    const createUserDto = {
+      name,
+      resourceId,
+      socialType,
+      email,
+      allowedIp: [ipAddress],
+    };
     return this.userRepository.save(createUserDto);
   }
 
@@ -101,5 +108,9 @@ export class UsersService {
       return { isDuplicated: false };
     }
     return { isDuplicated: true };
+  }
+
+  async updateUserIp(id: string, updateUserIpDto: UpdateUserIpDto) {
+    return this.userRepository.update(id, updateUserIpDto);
   }
 }
