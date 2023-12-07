@@ -14,6 +14,7 @@ enum PostingEndPoint {
     case createPosting(TravelRequestDTO) /// 게시글 생성
     case fetchPostingInfo(String) /// 특정 게시글 반환
     case specificPosting
+    case postingTitleList(String)
 }
 
 extension PostingEndPoint: EndPoint {
@@ -28,6 +29,8 @@ extension PostingEndPoint: EndPoint {
             return curPath + searchQuery.makeQuery()
         case let .fetchPostingInfo(id):
             return "\(curPath)/\(id)"
+        case let .postingTitleList(keyword):
+            return "\(curPath)/titles?keyword=\(keyword)"
         default:
             return curPath
         }

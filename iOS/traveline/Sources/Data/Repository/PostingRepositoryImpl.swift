@@ -58,7 +58,7 @@ final class PostingRepositoryImpl: PostingRepository {
     
     func fetchPostingTitleList(_ keyword: String) async throws -> SearchKeywordList {
         let postingTitleListResponseDTO = try await network.request(
-            endPoint: PostingEndPoint.myPostingList,
+            endPoint: PostingEndPoint.postingTitleList(keyword),
             type: PostingTitleListResponseDTO.self
         )
         
