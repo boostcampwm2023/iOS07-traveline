@@ -6,9 +6,10 @@ import { UsersService } from 'src/users/users.service';
 import { StorageService } from 'src/storage/storage.service';
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from './auth.guard';
+import { EmailModule } from 'src/email/email.module';
 
 @Module({
-  imports: [UsersModule, HttpModule],
+  imports: [UsersModule, HttpModule, EmailModule],
   controllers: [AuthController],
   providers: [AuthService, UsersService, StorageService, AuthGuard],
 })

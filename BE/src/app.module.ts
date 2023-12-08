@@ -9,8 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { StorageModule } from './storage/storage.module';
 import { JwtModule } from '@nestjs/jwt';
-import { MailerModule } from '@nestjs-modules/mailer';
-import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -23,42 +22,13 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
       secret: process.env.JWT_SECRET_ACCESS,
       signOptions: { expiresIn: '30d' },
     }),
-    MailerModule.forRootAsync({
-      useFactory: () => ({
-        transport: {
-          host: 'smtp.gmail.com',
-          port: 587,
-          auth: {
-            user: process.env.EMAIL_ADDRESS,
-            pass:
-              process.env.EMAIL_PASSWORD1 +
-              ' ' +
-              process.env.EMAIL_PASSWORD2 +
-              ' ' +
-              process.env.EMAIL_PASSWORD3 +
-              ' ' +
-              process.env.EMAIL_PASSWORD4,
-          },
-        },
-        defaults: {
-          from: `"no-reply" <${process.env.EMAIL_ADDRESS}>`,
-        },
-        preview: true,
-        template: {
-          dir: __dirname + '/../views/',
-          adapter: new EjsAdapter(),
-          options: {
-            strict: true,
-          },
-        },
-      }),
-    }),
     StorageModule,
     UsersModule,
     PostingsModule,
     TimelinesModule,
     AuthModule,
     DatabaseModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],
