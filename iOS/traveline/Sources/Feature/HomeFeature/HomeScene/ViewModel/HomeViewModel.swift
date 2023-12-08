@@ -57,6 +57,9 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             
         case .didScrollToEnd:
             return fetchNextPage()
+            
+        case .refresh:
+            return fetchNewSearchList()
         }
     }
     
