@@ -276,7 +276,13 @@ export class AuthService {
     const user = await this.usersService.findUserById(id);
 
     const allowedIp = user.allowedIp;
-    const bannedIp = user.bannedIp;
+
+    let bannedIp;
+    if (user.bannedIp === null) {
+      bannedIp = [];
+    } else {
+      bannedIp = user.bannedIp;
+    }
 
     if (allow) {
       allowedIp.push(ip);
