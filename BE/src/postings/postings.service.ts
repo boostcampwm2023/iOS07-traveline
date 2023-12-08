@@ -216,7 +216,9 @@ export class PostingsService {
       writer: {
         id: posting.u_id,
         name: posting.u_name,
-        avatar: posting.u_avatar,
+        avatar: posting.u_avatar
+          ? await this.storageService.getImageUrl(posting.u_avatar)
+          : null,
       },
       likeds: posting.likeds,
       reports: posting.reports,
