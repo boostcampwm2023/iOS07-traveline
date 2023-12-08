@@ -17,7 +17,6 @@ import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dt
 import { DeleteAuthDto } from './dto/delete-auth.dto';
 import { AuthGuard } from './auth.guard';
 import { login, refresh, withdrawal } from './auth.swagger';
-import * as ip from 'ip';
 
 @Controller('auth')
 @ApiTags('Auth API')
@@ -31,8 +30,7 @@ export class AuthController {
   })
   @ApiOkResponse({ description: 'OK', schema: { example: refresh } })
   refresh(@Req() request) {
-    const ipAddress = ip.address();
-    return this.authService.refresh(request, ipAddress);
+    return this.authService.refresh(request);
   }
 
   @Post('login')
@@ -43,8 +41,7 @@ export class AuthController {
   })
   @ApiOkResponse({ description: 'OK', schema: { example: login } })
   login(@Req() request, @Body() createAuthDto: CreateAuthRequestDto) {
-    const ipAddress = ip.address();
-    return this.authService.login(request, createAuthDto, ipAddress);
+    return this.authService.login(request, createAuthDto);
   }
 
   @Post('login/dev')
