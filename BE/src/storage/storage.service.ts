@@ -8,8 +8,8 @@ export class StorageService {
     endpoint: 'https://kr.object.ncloudstorage.com',
     region: process.env.AWS_REGION,
     credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      accessKeyId: process.env.NCP_ACCESS_KEY_ID,
+      secretAccessKey: process.env.NCP_SECRET_ACCESS_KEY,
     },
   });
   private readonly bucketName = 'traveline';
