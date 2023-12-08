@@ -53,6 +53,19 @@ final class HomeListView: UIView {
         return collectionView
     }()
     
+    private lazy var refreshControl: UIRefreshControl = {
+        let refresh = UIRefreshControl()
+        
+        refresh.tintColor = TLColor.main
+        refresh.addTarget(
+            self,
+            action: #selector(refreshList),
+            for: .valueChanged
+        )
+        
+        return refresh
+    }()
+    
     // MARK: - Properties
     
     private typealias DataSource = UICollectionViewDiffableDataSource<HomeSection, HomeItem>
@@ -63,9 +76,16 @@ final class HomeListView: UIView {
     let didSelectHomeList: PassthroughSubject<Void, Never> = .init()
     let didSelectFilterType: PassthroughSubject<FilterType, Never> = .init()
     let didScrollToBottom: PassthroughSubject<Void, Never> = .init()
+    let didRefreshHomeList: PassthroughSubject<Void, Never> = .init()
     
     private var isPaging: Bool = true
     private var cancellables: Set<AnyCancellable> = .init()
+    
+    var isRefreshEnabled: Bool = true {
+        didSet {
+            homeCollectionView.refreshControl = isRefreshEnabled ? refreshControl : nil
+        }
+    }
     
     // MARK: - Initializer
     
@@ -198,6 +218,14 @@ final class HomeListView: UIView {
         
         dataSource.apply(snapshot, animatingDifferences: false)
         isPaging = false
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.refreshControl.endRefreshing()
+        }
+    }
+    
+    @objc private func refreshList() {
+        didRefreshHomeList.send(Void())
     }
 }
 
