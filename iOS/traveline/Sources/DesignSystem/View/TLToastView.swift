@@ -144,8 +144,3 @@ private extension TLToastView {
     
 }
 
-@available(iOS 17, *)
-#Preview("TLSearchInfoView") {
-    let view = TLToastView(type: .success, message: "hahihuheho")
-    return view
-}
