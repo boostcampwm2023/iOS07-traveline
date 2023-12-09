@@ -12,7 +12,7 @@ import { CreateAuthRequestDto } from './dto/create-auth-request.dto';
 import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
 import { firstValueFrom } from 'rxjs';
 import { JwksClient } from 'jwks-rsa';
-import { MailerService } from '@nestjs-modules/mailer';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -20,10 +20,11 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly httpService: HttpService,
     private readonly usersService: UsersService,
-    private readonly mailerService: MailerService
+    private readonly emilService: EmailService
   ) {}
 
-  async refresh(request, ipAddress) {
+  async refresh(request) {
+    const ipAddress = request.headers['x-real-ip'];
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     if (type !== 'Bearer') {
       throw new BadRequestException('JWT가 아닙니다.');
@@ -93,7 +94,8 @@ export class AuthService {
     return decodedIdToken;
   }
 
-  async login(request, createAuthDto: CreateAuthRequestDto, ipAddress: string) {
+  async login(request, createAuthDto: CreateAuthRequestDto) {
+    const ipAddress = request.headers['x-real-ip'];
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     if (type === 'Bearer' && token) {
       throw new BadRequestException('JWT가 이미 존재합니다.');
@@ -127,16 +129,17 @@ export class AuthService {
         );
       }
       if (!(ipAddress in allowedIpArray)) {
-        await this.mailerService.sendMail({
-          to: user.email,
-          subject: '[traveline] 새로운 환경 로그인 안내',
-          template: '../views/email',
-          context: {
-            username: user.name,
-            id: user.id,
-            newIp: ipAddress,
-          },
+        const html = await this.emilService.template('email.ejs', {
+          username: user.name,
+          newIp: ipAddress,
+          id: user.id,
         });
+
+        await this.emilService.sendEmail(
+          user.email,
+          '[traveline] 새로운 환경 로그인 안내',
+          html
+        );
       }
     }
 
@@ -158,16 +161,17 @@ export class AuthService {
     if (user) {
       const payload = { id };
       try {
-        await this.mailerService.sendMail({
-          to: user.email,
-          subject: '[traveline] 새로운 환경 로그인 안내',
-          template: '../views/email',
-          context: {
-            username: user.name,
-            id,
-            newIp: '아이피',
-          },
+        const html = await this.emilService.template('email.ejs', {
+          username: user.name,
+          newIp: '아 이 피',
+          id: user.id,
         });
+
+        await this.emilService.sendEmail(
+          user.email,
+          '[traveline] 새로운 환경 로그인 안내',
+          html
+        );
 
         return {
           accessToken: await this.jwtService.signAsync(payload),
@@ -272,7 +276,13 @@ export class AuthService {
     const user = await this.usersService.findUserById(id);
 
     const allowedIp = user.allowedIp;
-    const bannedIp = user.bannedIp;
+
+    let bannedIp;
+    if (user.bannedIp === null) {
+      bannedIp = [];
+    } else {
+      bannedIp = user.bannedIp;
+    }
 
     if (allow) {
       allowedIp.push(ip);

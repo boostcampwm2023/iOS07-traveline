@@ -1,13 +1,9 @@
-import { MailerService } from '@nestjs-modules/mailer';
 import { StorageService } from './storage/storage.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  constructor(
-    private readonly storageService: StorageService,
-    private readonly mailerService: MailerService
-  ) {}
+  constructor(private readonly storageService: StorageService) {}
 
   getHello(): string {
     return `
