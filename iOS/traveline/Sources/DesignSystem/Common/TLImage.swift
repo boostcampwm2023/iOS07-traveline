@@ -49,7 +49,7 @@ enum TLImage {
     }
     
     enum ToastIcon {
-        static let succes = TravelineAsset.Images.greenFace
+        static let success = TravelineAsset.Images.greenFace
         static let warning = TravelineAsset.Images.yellowFace
         static let failure = TravelineAsset.Images.redFace
     }

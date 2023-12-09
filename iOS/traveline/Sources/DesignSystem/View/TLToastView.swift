@@ -20,7 +20,7 @@ final class TLToastView: UIView {
         var image: UIImage {
             switch self {
             case .success:
-                return TLImage.ToastIcon.succes.image
+                return TLImage.ToastIcon.success.image
             case .failure:
                 return TLImage.ToastIcon.failure.image
             case .warning:
@@ -144,3 +144,8 @@ private extension TLToastView {
     
 }
 
+@available(iOS 17, *)
+#Preview("TLSearchInfoView") {
+    let view = TLToastView(type: .success, message: "hahihuheho")
+    return view
+}
