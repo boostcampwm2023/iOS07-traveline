@@ -1,9 +1,12 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import * as AWS from 'aws-sdk';
 
 @Injectable()
 export class StorageService {
+  constructor(private readonly httpService: HttpService) {}
+
   private readonly s3: AWS.S3 = new AWS.S3({
     endpoint: 'https://kr.object.ncloudstorage.com',
     region: process.env.AWS_REGION,
