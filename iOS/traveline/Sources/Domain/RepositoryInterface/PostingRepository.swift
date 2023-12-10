@@ -21,4 +21,5 @@ protocol PostingRepository {
     func putPosting(id: TravelID, data: TravelRequest) async throws -> TravelID
     func deletePosting(id: TravelID) async throws -> Bool
     func postReport(id: TravelID) async throws -> Bool
+    func postLike(id: TravelID) async throws -> Bool
 }

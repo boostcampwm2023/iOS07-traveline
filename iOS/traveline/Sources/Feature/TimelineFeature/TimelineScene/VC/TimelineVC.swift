@@ -380,7 +380,7 @@ extension TimelineVC {
         
         dataSource.apply(snapshot)
         snapshot.reloadSections([.timeline])
-        dataSource.apply(snapshot)
+        dataSource.apply(snapshot, animatingDifferences: false)
     }
     
     func setupData(list: TimelineCardList) {
@@ -388,7 +388,7 @@ extension TimelineVC {
         snapshot.deleteItems(snapshot.itemIdentifiers(inSection: .timeline))
         list.forEach { snapshot.appendItems([.timelineItem($0)], toSection: .timeline) }
         
-        dataSource.apply(snapshot)
+        dataSource.apply(snapshot, animatingDifferences: false)
     }
     
 }

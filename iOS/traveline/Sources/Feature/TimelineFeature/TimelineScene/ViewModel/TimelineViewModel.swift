@@ -25,11 +25,15 @@ enum TimelineSideEffect: BaseSideEffect {
     enum TimelineError: LocalizedError {
         case loadFailed
         case deleteFailed
+        case reportFailed
+        case likeFailed
         
         var errorDescription: String {
             switch self {
             case .loadFailed: "서버 통신에 실패했습니다."
             case .deleteFailed: "여행 삭제에 실패했습니다."
+            case .reportFailed: "여행 신고에 실패했습니다."
+            case .likeFailed: "여행 좋아요에 실패했습니다."
             }
         }
     }
@@ -45,6 +49,7 @@ enum TimelineSideEffect: BaseSideEffect {
     case popToHome
     case timelineError(TimelineError)
     case resetState
+    case none
 }
 
 struct TimelineState: BaseState {
@@ -83,7 +88,7 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
     override func transform(action: TimelineAction) -> SideEffectPublisher {
         switch action {
         case .viewWillAppear:
-            return .just(TimelineSideEffect.resetState)
+            return .just(.resetState)
             
         case .enterToTimeline:
             return fetchTimeline()
@@ -95,13 +100,17 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
             return fetchTimelineCard(day)
             
         case .likeButtonPressed:
-            return .just(TimelineSideEffect.toggleLike)
+            return Publishers.Merge(
+                Just(.toggleLike),
+                likeTravel()
+            )
+            .eraseToAnyPublisher()
             
         case .createPostingButtonPressed:
-            return .just(TimelineSideEffect.showTimelineWriting)
+            return .just(.showTimelineWriting)
             
         case .editTravel:
-            return .just(TimelineSideEffect.showTimelineEditing)
+            return .just(.showTimelineEditing)
             
         case .deleteTravel:
             return deleteTravel()
@@ -115,6 +124,9 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
         var newState = state
         
         switch effect {
+        case .none:
+            return newState
+            
         case .resetState:
             newState.isEdit = false
             newState.deleteCompleted = false
@@ -170,23 +182,23 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
 private extension TimelineViewModel {
     func fetchTimeline() -> SideEffectPublisher {
         Publishers.MergeMany(
-            .just(TimelineSideEffect.popToTimeline),
+            .just(.popToTimeline),
             fetchTimelineCardInfo(currentState.day),
             fetchTravelInfo()
         ).eraseToAnyPublisher()
     }
     
     func fetchTimelineCard(_ day: Int) -> SideEffectPublisher {
-        return .just(TimelineSideEffect.removeRegacyCards(day))
+        return .just(.removeRegacyCards(day))
     }
     
     func fetchTravelInfo() -> SideEffectPublisher {
         return timelineUseCase.fetchTimelineInfo(id: id)
             .map { travelInfo in
-                return TimelineSideEffect.loadTimeline(travelInfo)
+                return .loadTimeline(travelInfo)
             }
             .catch {_ in
-                return Just(TimelineSideEffect.timelineError(.loadFailed))
+                return Just(.timelineError(.loadFailed))
             }
             .eraseToAnyPublisher()
     }
@@ -194,10 +206,10 @@ private extension TimelineViewModel {
     func fetchTimelineCardInfo(_ day: Int) -> SideEffectPublisher {
         return timelineUseCase.fetchTimelineList(id: id, day: day)
             .map { list in
-                return TimelineSideEffect.loadTimelineCardList(list)
+                return .loadTimelineCardList(list)
             }
             .catch { _ in
-                return Just(TimelineSideEffect.timelineError(.loadFailed))
+                return Just(.timelineError(.loadFailed))
             }
             .eraseToAnyPublisher()
     }
@@ -205,10 +217,10 @@ private extension TimelineViewModel {
     func deleteTravel() -> SideEffectPublisher {
         return timelineUseCase.deleteTravel(id: id)
             .map { _ in
-                return TimelineSideEffect.popToHome
+                return .popToHome
             }
             .catch { _ in
-                return Just(TimelineSideEffect.timelineError(.deleteFailed))
+                return Just(.timelineError(.deleteFailed))
             }
             .eraseToAnyPublisher()
     }
@@ -216,11 +228,23 @@ private extension TimelineViewModel {
     func reportTravel() -> SideEffectPublisher {
         return timelineUseCase.reportTravel(id: id)
             .map { _ in
-                return TimelineSideEffect.popToHome
+                return .popToHome
             }
             .catch { _ in
-                return Just(TimelineSideEffect.timelineError(.deleteFailed))
+                return Just(.timelineError(.reportFailed))
             }
             .eraseToAnyPublisher()
     }
+    
+    func likeTravel() -> SideEffectPublisher {
+        return timelineUseCase.likeTravel(id: id)
+            .map { _ in
+                return .none
+            }
+            .catch { _ in
+                return Just(.timelineError(.likeFailed))
+            }
+            .eraseToAnyPublisher()
+    }
+    
 }

@@ -113,4 +113,10 @@ extension PostingRepositoryImpl {
         
         return postReportDTO
     }
+    
+    func postLike(id: TravelID) async throws -> Bool {
+        let postLikeDTO = try await network.requestWithNoResult(endPoint: PostingEndPoint.postLike(id.value))
+        
+        return postLikeDTO
+    }
 }

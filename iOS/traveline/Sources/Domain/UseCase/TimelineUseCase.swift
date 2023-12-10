@@ -15,6 +15,7 @@ protocol TimelineUseCase {
     func calculateDate(from startDate: String, with day: Int) -> String?
     func deleteTravel(id: TravelID) -> AnyPublisher<Bool, Error>
     func reportTravel(id: TravelID) -> AnyPublisher<Bool, Error>
+    func likeTravel(id: TravelID) -> AnyPublisher<Bool, Error>
 }
 
 final class TimelineUseCaseImpl: TimelineUseCase {
@@ -87,4 +88,18 @@ final class TimelineUseCaseImpl: TimelineUseCase {
             }
         }.eraseToAnyPublisher()
     }
+    
+    func likeTravel(id: TravelID) -> AnyPublisher<Bool, Error> {
+        return Future { promise in
+            Task {
+                do {
+                    let result = try await self.postingRepository.postLike(id: id)
+                    promise(.success(result))
+                } catch {
+                    promise(.failure(error))
+                }
+            }
+        }.eraseToAnyPublisher()
+    }
+    
 }
