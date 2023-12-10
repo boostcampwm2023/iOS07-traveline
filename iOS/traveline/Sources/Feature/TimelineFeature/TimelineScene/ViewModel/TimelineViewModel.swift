@@ -142,6 +142,7 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
             
         case let .removeRegacyCards(day):
             newState.day = day
+            newState.travelInfo.day = day
             newState.timelineCardList.removeAll()
             sendAction(.fetchTimelineCard(day))
             

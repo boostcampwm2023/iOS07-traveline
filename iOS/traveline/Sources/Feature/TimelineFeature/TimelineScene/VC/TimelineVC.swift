@@ -195,6 +195,7 @@ private extension TimelineVC {
         
         viewModel.state
             .map(\.timelineCardList)
+            .removeDuplicates()
             .withUnretained(self)
             .sink { owner, cardlist in
                 owner.setupData(list: cardlist)
@@ -289,7 +290,7 @@ extension TimelineVC {
             
             if let model = self?.dataSource.itemIdentifier(for: [0, 0]),
                case let .travelInfoItem(info) = model {
-                header.setData(days: info.days)
+                header.setData(info: info)
             }
             
             return header
@@ -370,7 +371,7 @@ extension TimelineVC {
         var snapshot = Snapshot()
         snapshot.appendSections([.travelInfo, .timeline])
         
-        dataSource.apply(snapshot)
+        dataSource.apply(snapshot, animatingDifferences: false)
     }
     
     func setupData(info: TimelineTravelInfo) {
@@ -378,7 +379,7 @@ extension TimelineVC {
         snapshot.deleteItems(snapshot.itemIdentifiers(inSection: .travelInfo))
         snapshot.appendItems([.travelInfoItem(info)], toSection: .travelInfo)
         
-        dataSource.apply(snapshot)
+        dataSource.apply(snapshot, animatingDifferences: false)
         snapshot.reloadSections([.timeline])
         dataSource.apply(snapshot, animatingDifferences: false)
     }
@@ -388,7 +389,7 @@ extension TimelineVC {
         snapshot.deleteItems(snapshot.itemIdentifiers(inSection: .timeline))
         list.forEach { snapshot.appendItems([.timelineItem($0)], toSection: .timeline) }
         
-        dataSource.apply(snapshot, animatingDifferences: false)
+        dataSource.apply(snapshot)
     }
     
 }

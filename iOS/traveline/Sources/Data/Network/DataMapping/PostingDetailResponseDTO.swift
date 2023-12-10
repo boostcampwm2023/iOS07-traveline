@@ -42,7 +42,8 @@ extension PostingDetailResponseDTO {
             isLiked: isLiked, 
             isOwner: isOwner,
             tags: toTags(),
-            days: days
+            days: days,
+            day: 1
         )
     }
     

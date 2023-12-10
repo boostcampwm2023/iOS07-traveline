@@ -110,7 +110,6 @@ final class TimelineDateHeaderView: UICollectionReusableView {
         setupAttributes()
         setupLayout()
         setupDataSource()
-        setDate()
     }
     
     required init?(coder: NSCoder) {
@@ -119,22 +118,19 @@ final class TimelineDateHeaderView: UICollectionReusableView {
     
     // MARK: - Functions
     
-    func setData(days: [String]) {
+    func setData(info: TimelineTravelInfo) {
         var snapshot = Snapshot()
         snapshot.appendSections([.days])
-        snapshot.appendItems(days)
+        snapshot.appendItems(info.days)
         
         dataSource.apply(snapshot)
         
         dateCollectionView.selectItem(
-            at: .init(item: 0, section: 0),
+            at: .init(item: info.day - 1, section: 0),
             animated: true,
             scrollPosition: .left
         )
-    }
-    
-    private func setDate(to day: Int = 1) {
-        dayLabel.setText(to: "Day \(day)")
+        dayLabel.setText(to: "Day \(info.day)")
     }
     
     @objc private func mapViewButtonPressed() {
@@ -199,7 +195,6 @@ private extension TimelineDateHeaderView {
 extension TimelineDateHeaderView: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let day = indexPath.row + 1
-        setDate(to: day)
         delegate?.changeDay(to: day)
     }
 }

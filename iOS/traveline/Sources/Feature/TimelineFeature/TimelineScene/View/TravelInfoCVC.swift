@@ -17,7 +17,7 @@ final class TravelInfoCVC: UICollectionViewCell {
     private enum Metric {
         static let verticalInset: CGFloat = 16.0
         static let horizontalInset: CGFloat = 16.0
-        static let likeButtonWidth: CGFloat = 24.0
+        static let likeButtonWidth: CGFloat = 34.0
         static let dateTopInset: CGFloat = 8.0
         static let tagTopInset: CGFloat = 14.0
     }
@@ -43,6 +43,7 @@ final class TravelInfoCVC: UICollectionViewCell {
         
         button.setImage(TLImage.Common.like, for: .normal)
         button.setImage(TLImage.Common.likeSelected, for: .selected)
+        button.imageView?.contentMode = .scaleAspectFit
         
         return button
     }()
