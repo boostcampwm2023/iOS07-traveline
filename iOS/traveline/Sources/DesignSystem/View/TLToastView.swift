@@ -8,57 +8,30 @@
 
 import UIKit
 
-
-
 final class TLToastView: UIView {
     
     enum ToastType: String {
         case success = "Success"
         case failure = "Failure"
-        case warning = "Warning"
         
-        var image: UIImage {
+        var color: UIColor {
             switch self {
             case .success:
-                return TLImage.ToastIcon.success.image
+                return TLColor.Toast.success
             case .failure:
-                return TLImage.ToastIcon.failure.image
-            case .warning:
-                return TLImage.ToastIcon.warning.image
+                return TLColor.Toast.failure
             }
         }
     }
     
     private enum Metric {
         static let margin: CGFloat = 16.0
-        static let toastY: CGFloat = 120.0
-        static let toastHeight: CGFloat = 100.0
+        static let toastHeight: CGFloat = 40.0
     }
     
     // MARK: - UI Components
     
-    private let toastStackView: UIStackView = {
-        let stack  = UIStackView()
-        stack.axis = .horizontal
-        stack.distribution = .fill
-        stack.alignment = .center
-        stack.spacing = 16
-        
-        return stack
-    }()
-    
-    private let labelStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.distribution = .fill
-        stack.alignment = .leading
-        
-        return stack
-    }()
-    
-    private let icon: UIImageView = .init()
-    private let titleLabel: TLLabel = .init(font: TLFont.heading1, color: TLColor.white)
-    private let contentLabel: TLLabel = .init(font: TLFont.body1, color: TLColor.white)
+    private let contentLabel: TLLabel = .init(font: TLFont.body2, color: TLColor.white)
     
     // MARK: - properties
     
@@ -90,15 +63,16 @@ final class TLToastView: UIView {
     func show(in view: UIView) {
         view.addSubview(self)
         translatesAutoresizingMaskIntoConstraints = false
+        alpha = 1.0
         NSLayoutConstraint.activate([
-            topAnchor.constraint(equalTo: view.topAnchor, constant: Metric.toastY),
+            bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -24),
             leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
             trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
             heightAnchor.constraint(equalToConstant: Metric.toastHeight)
         ])
-        
         UIView.animate(
-            withDuration: 2.0,
+            withDuration: 1.0,
+            delay: 1.5,
             animations: {
                 self.alpha = 0.0
             },
@@ -113,39 +87,21 @@ final class TLToastView: UIView {
 private extension TLToastView {
     
     func setupAttributes() {
-        icon.image = toastType.image
-        titleLabel.setText(to: toastType.rawValue)
         contentLabel.setText(to: message)
         
-        backgroundColor = TLColor.darkGray
+        backgroundColor = toastType.color
         layer.cornerRadius = 12
     }
     
     func setupLayout() {
-        addSubview(toastStackView)
-        toastStackView.addArrangedSubviews(icon, labelStackView)
-        labelStackView.addArrangedSubviews(titleLabel, contentLabel)
-        [
-            toastStackView,
-            icon,
-            labelStackView,
-            titleLabel,
-            contentLabel
-        ].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
+        addSubviews(contentLabel)
+        contentLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            toastStackView.topAnchor.constraint(equalTo: topAnchor),
-            toastStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Metric.margin),
-            toastStackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            contentLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            contentLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
     }
     
 }
 
-@available(iOS 17, *)
-#Preview("TLSearchInfoView") {
-    let view = TLToastView(type: .success, message: "hahihuheho")
-    return view
-}
