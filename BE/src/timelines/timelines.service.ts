@@ -12,7 +12,7 @@ import { TimelinesRepository } from './timelines.repository';
 import { Timeline } from './entities/timeline.entity';
 import { StorageService } from '../storage/storage.service';
 import { PostingsService } from '../postings/postings.service';
-import { KAKAO_KEYWORD_SEARCH } from './timelines.constants';
+import { KAKAO_KEYWORD_SEARCH, PAPAGO_URL } from './timelines.constants';
 import { PostingsRepository } from '../postings/repositories/postings.repository';
 
 @Injectable()
@@ -166,7 +166,6 @@ export class TimelinesService {
 
   async translate(id: string) {
     const { description } = await this.findOne(id);
-    const url = 'https://naveropenapi.apigw.ntruss.com/nmt/v1/translation';
     const body = {
       source: 'ko',
       target: 'en',
@@ -177,7 +176,7 @@ export class TimelinesService {
         message: { result },
       },
     } = await firstValueFrom(
-      this.httpService.post(url, body, {
+      this.httpService.post(PAPAGO_URL, body, {
         headers: {
           'Content-Type': 'application/json',
           'X-NCP-APIGW-API-KEY-ID': process.env.X_NCP_APIGW_API_KEY_ID,

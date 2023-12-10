@@ -20,6 +20,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateTimelineDto } from './dto/create-timeline.dto';
 import { UpdateTimelineDto } from './dto/update-timeline.dto';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiConsumes,
   ApiCreatedResponse,
@@ -85,6 +86,15 @@ export class TimelinesController {
           '본인이 작성한 게시글에 대해서만 타임라인을 생성할 수 있습니다.',
         error: 'Forbidden',
         statusCode: 403,
+      },
+    },
+  })
+  @ApiBadRequestResponse({
+    schema: {
+      example: {
+        message: '유해한 이미지가 포함되어 있습니다.',
+        error: 'Bad Request',
+        statusCode: 400,
       },
     },
   })
@@ -168,6 +178,15 @@ export class TimelinesController {
   })
   @ApiConsumes('multipart/form-data')
   @ApiOkResponse({ schema: { example: update_OK } })
+  @ApiBadRequestResponse({
+    schema: {
+      example: {
+        message: '유해한 이미지가 포함되어 있습니다.',
+        error: 'Bad Request',
+        statusCode: 400,
+      },
+    },
+  })
   async update(
     @Req() request,
     @Param('id', ParseUUIDPipe) id: string,
