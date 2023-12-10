@@ -21,4 +21,5 @@ enum HomeAction: BaseAction {
     case createTravel
     case deleteKeyword(String)
     case didScrollToEnd
+    case refresh
 }

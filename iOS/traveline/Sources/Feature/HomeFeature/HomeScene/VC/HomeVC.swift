@@ -199,6 +199,7 @@ private extension HomeVC {
             .sink { owner, filters in
                 owner.homeListView.setupData(list: .sortFilters(filters))
                 owner.createTravelButton.isHidden = false
+                owner.homeListView.isRefreshEnabled = true
             }
             .store(in: &cancellables)
         
@@ -207,7 +208,7 @@ private extension HomeVC {
             .map(\.homeFilters)
             .removeDuplicates()
             .withUnretained(self)
-            .sink { owner, filters in
+            .sink { owner, _ in
                 owner.viewModel.sendAction(.filterChanged)
             }
             .store(in: &cancellables)
@@ -218,6 +219,7 @@ private extension HomeVC {
             .withUnretained(self)
             .sink { owner, filters in
                 owner.homeListView.setupData(list: .sortFilters(filters))
+                owner.homeListView.isRefreshEnabled = false
             }
             .store(in: &cancellables)
         
@@ -227,7 +229,7 @@ private extension HomeVC {
             .dropFirst()
             .removeDuplicates()
             .withUnretained(self)
-            .sink { owner, filters in
+            .sink { owner, _ in
                 owner.viewModel.sendAction(.filterChanged)
             }
             .store(in: &cancellables)
@@ -266,6 +268,13 @@ private extension HomeVC {
             .withUnretained(self)
             .sink { owner, _ in
                 owner.viewModel.sendAction(.didScrollToEnd)
+            }
+            .store(in: &cancellables)
+        
+        homeListView.didRefreshHomeList
+            .withUnretained(self)
+            .sink { owner, _ in
+                owner.viewModel.sendAction(.refresh)
             }
             .store(in: &cancellables)
     }
