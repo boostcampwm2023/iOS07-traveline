@@ -72,7 +72,7 @@ final class PostingRepositoryImpl: PostingRepository {
 
 extension PostingRepositoryImpl {
     
-    func postPostings(data: TravelRequest) async throws -> TravelID {
+    func postPosting(data: TravelRequest) async throws -> TravelID {
         let postPostingsDTO = try await network.request(
             endPoint: PostingEndPoint.createPosting(data.toDTO()),
             type: BaseResponseDTO.self
@@ -90,7 +90,7 @@ extension PostingRepositoryImpl {
         return response.toDomain()
     }
     
-    func putPostings(id: TravelID, data: TravelRequest) async throws -> TravelID {
+    func putPosting(id: TravelID, data: TravelRequest) async throws -> TravelID {
         let postPostingsDTO = try await network.request(
             endPoint: PostingEndPoint.putPosting(
                 id.value,
@@ -102,10 +102,15 @@ extension PostingRepositoryImpl {
         return TravelID(value: postPostingsDTO.id)
     }
     
-    func deletePostings(id: TravelID) async throws -> Bool {
-        let postPostingsDTO = try await network.requestWithNoResult(endPoint: PostingEndPoint.deletePosting(id.value))
+    func deletePosting(id: TravelID) async throws -> Bool {
+        let deletePostingsDTO = try await network.requestWithNoResult(endPoint: PostingEndPoint.deletePosting(id.value))
         
-        return postPostingsDTO
+        return deletePostingsDTO
     }
     
+    func postReport(id: TravelID) async throws -> Bool {
+        let postReportDTO = try await network.requestWithNoResult(endPoint: PostingEndPoint.postReport(id.value))
+        
+        return postReportDTO
+    }
 }

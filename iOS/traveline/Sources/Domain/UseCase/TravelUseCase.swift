@@ -47,7 +47,7 @@ final class TravelUseCaseImpl: TravelUseCase {
         return Future { promise in
             Task {
                 do {
-                    let id = try await self.repository.postPostings(data: data)
+                    let id = try await self.repository.postPosting(data: data)
                     promise(.success(id))
                 } catch {
                     promise(.failure(error))
@@ -60,7 +60,7 @@ final class TravelUseCaseImpl: TravelUseCase {
         return Future { promise in
             Task {
                 do {
-                    let id = try await self.repository.putPostings(
+                    let id = try await self.repository.putPosting(
                         id: id,
                         data: data
                     )

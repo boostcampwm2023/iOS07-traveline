@@ -66,19 +66,25 @@ final class PostingRepositoryMock: PostingRepository {
 
 extension PostingRepositoryMock {
     
-    func postPostings(data: TravelRequest) async throws -> TravelID {
+    func postPosting(data: TravelRequest) async throws -> TravelID {
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
         return TravelID(value: "id")
     }
     
-    func putPostings(id: TravelID, data: TravelRequest) async throws -> TravelID {
+    func putPosting(id: TravelID, data: TravelRequest) async throws -> TravelID {
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
         return TravelID(value: "id")
     }
     
-    func deletePostings(id: TravelID) async throws -> Bool {
+    func deletePosting(id: TravelID) async throws -> Bool {
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        return true
+    }
+    
+    func postReport(id: TravelID) async throws -> Bool {
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
         return true

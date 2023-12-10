@@ -127,8 +127,8 @@ final class TimelineVC: UIViewController {
             ]
         } else {
             menuItems = [
-                .init(title: Literal.Action.report, attributes: .destructive, handler: { _ in
-                    // TODO: - 신고하기 연결
+                .init(title: Literal.Action.report, attributes: .destructive, handler: { [weak self] _ in
+                    self?.viewModel.sendAction(.reportTravel)
                 })
             ]
         }

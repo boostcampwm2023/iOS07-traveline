@@ -14,6 +14,7 @@ protocol TimelineUseCase {
     func fetchTimelineList(id: TravelID, day: Int) -> AnyPublisher<TimelineCardList, Error>
     func calculateDate(from startDate: String, with day: Int) -> String?
     func deleteTravel(id: TravelID) -> AnyPublisher<Bool, Error>
+    func reportTravel(id: TravelID) -> AnyPublisher<Bool, Error>
 }
 
 final class TimelineUseCaseImpl: TimelineUseCase {
@@ -65,8 +66,21 @@ final class TimelineUseCaseImpl: TimelineUseCase {
         return Future { promise in
             Task {
                 do {
-                    let id = try await self.postingRepository.deletePostings(id: id)
-                    promise(.success(true))
+                    let result = try await self.postingRepository.deletePosting(id: id)
+                    promise(.success(result))
+                } catch {
+                    promise(.failure(error))
+                }
+            }
+        }.eraseToAnyPublisher()
+    }
+    
+    func reportTravel(id: TravelID) -> AnyPublisher<Bool, Error> {
+        return Future { promise in
+            Task {
+                do {
+                    let result = try await self.postingRepository.postReport(id: id)
+                    promise(.success(result))
                 } catch {
                     promise(.failure(error))
                 }

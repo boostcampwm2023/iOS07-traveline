@@ -18,6 +18,7 @@ enum TimelineAction: BaseAction {
     case createPostingButtonPressed
     case editTravel
     case deleteTravel
+    case reportTravel
 }
 
 enum TimelineSideEffect: BaseSideEffect {
@@ -104,6 +105,9 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
             
         case .deleteTravel:
             return deleteTravel()
+            
+        case .reportTravel:
+            return reportTravel()
         }
     }
     
@@ -209,4 +213,14 @@ private extension TimelineViewModel {
             .eraseToAnyPublisher()
     }
     
+    func reportTravel() -> SideEffectPublisher {
+        return timelineUseCase.reportTravel(id: id)
+            .map { _ in
+                return TimelineSideEffect.popToHome
+            }
+            .catch { _ in
+                return Just(TimelineSideEffect.timelineError(.deleteFailed))
+            }
+            .eraseToAnyPublisher()
+    }
 }

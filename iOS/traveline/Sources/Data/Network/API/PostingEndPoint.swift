@@ -14,6 +14,7 @@ enum PostingEndPoint {
     case createPosting(TravelRequestDTO) /// 여행 생성
     case putPosting(String, TravelRequestDTO) /// 여행 수정
     case deletePosting(String) /// 여행 삭제
+    case postReport(String) /// 여행 신고
     case fetchPostingInfo(String) /// 특정 여행 반환
     case specificPosting
     case postingTitleList(String)
@@ -33,7 +34,8 @@ extension PostingEndPoint: EndPoint {
             
         case let .putPosting(id, _),
             let .deletePosting(id),
-            let .fetchPostingInfo(id):
+            let .fetchPostingInfo(id),
+            let .postReport(id):
             return "\(curPath)/\(id)"
             
         case let .postingTitleList(keyword):
@@ -46,7 +48,7 @@ extension PostingEndPoint: EndPoint {
     
     var httpMethod: HTTPMethod {
         switch self {
-        case .createPosting:
+        case .createPosting, .postReport:
             return .POST
             
         case .putPosting:
