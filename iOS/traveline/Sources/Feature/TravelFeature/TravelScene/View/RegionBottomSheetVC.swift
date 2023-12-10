@@ -16,6 +16,7 @@ final class RegionBottomSheetVC: TLBottomSheetVC {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
         
         collectionView.backgroundColor = TLColor.black
+        collectionView.showsVerticalScrollIndicator = false
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(cell: RegionCVC.self)
@@ -25,7 +26,7 @@ final class RegionBottomSheetVC: TLBottomSheetVC {
     
     // MARK: - Properties
     
-    private let travelRegions: [String] = RegionFilter.allCases.map { $0.title }
+    private let travelRegions: [RegionFilter] = RegionFilter.allCases
     
     // MARK: - Life Cycle
     
@@ -56,7 +57,7 @@ private extension RegionBottomSheetVC {
     func makeLayout() -> UICollectionViewCompositionalLayout {
         let size = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(47.0)
+            heightDimension: .absolute(54.0)
         )
         let item = NSCollectionLayoutItem(layoutSize: size)
         let group = NSCollectionLayoutGroup.vertical(layoutSize: size, subitems: [item])
@@ -82,7 +83,7 @@ extension RegionBottomSheetVC: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeue(cell: RegionCVC.self, for: indexPath)
-        cell.setRegion(travelRegions[indexPath.row])
+        cell.setRegion(travelRegions[indexPath.row].title)
         return cell
     }
 }

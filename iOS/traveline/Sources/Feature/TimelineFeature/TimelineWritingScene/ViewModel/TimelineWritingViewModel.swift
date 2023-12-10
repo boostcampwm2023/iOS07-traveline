@@ -14,20 +14,23 @@ enum TimelineWritingAction: BaseAction {
     case titleDidChange(String)
     case contentDidChange(String)
     case timeDidChange(String)
-    case placeDidChange(String)
+    case searchPlace(String)
+    case placeDidChange(TimelinePlace)
     case imageDidChange(Data?)
     case tapCompleteButton
     
 }
 
 enum TimelineWritingSideEffect: BaseSideEffect {
-    case createTimeline(TimelineDetailInfo)
+    case createTimeline
     case updateBasicInfo
     case updateTitleState(String)
     case updateContentState(String)
     case updateTimeState(String)
     case updateImageState(Data?)
-    case updatePlaceState(String)
+    case updatePlaceState(TimelinePlace)
+    case updatePlaceKeyword(String)
+    case fetchPlaceList(TimelinePlaceList)
     case error(String)
 }
 
@@ -35,23 +38,26 @@ struct TimelineWritingState: BaseState {
     var isCompletable: Bool = false
     var timelineDetailRequest: TimelineDetailRequest = .empty
     var popToTimeline: Bool = false
+    var timelinePlaceList: TimelinePlaceList?
+    var keyword: String = ""
+    var text: String = ""
 }
 
 final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, TimelineWritingSideEffect, TimelineWritingState> {
     
     private var useCase: TimelineWritingUseCase
-    private let postID: String
+    private let id: TravelID
     private let date: String
     private let day: Int
     
     init(
         useCase: TimelineWritingUseCase,
-        postId: String,
+        id: TravelID,
         date: String,
         day: Int
     ) {
         self.useCase = useCase
-        self.postID = postId
+        self.id = id
         self.date = date
         self.day = day
     }
@@ -62,7 +68,7 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
             return .just(.updateBasicInfo)
             
         case .tapCompleteButton:
-            return createTimeline(with: currentState.timelineDetailRequest)
+            return createTimeline()
             
         case .titleDidChange(let title):
             return .just(.updateTitleState(title))
@@ -78,6 +84,13 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
             
         case .imageDidChange(let imageData):
             return .just(.updateImageState(imageData))
+            
+        case let .searchPlace(keyword):
+            return Publishers.Merge(
+                fetchTimelinePlaceList(keyword: keyword),
+                Just(TimelineWritingSideEffect.updatePlaceKeyword(keyword))
+            )
+            .eraseToAnyPublisher()
         }
     }
     
@@ -91,8 +104,11 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
             newState.isCompletable = completeButtonState(newState)
             
         case .updateContentState(let content):
-            newState.timelineDetailRequest.content = content
-            newState.isCompletable = completeButtonState(newState)
+            if content.count <= 250 {
+                newState.text = content
+                newState.timelineDetailRequest.content = content
+                newState.isCompletable = completeButtonState(newState)
+            }
             
         case .updatePlaceState(let place):
             newState.timelineDetailRequest.place = place
@@ -111,23 +127,38 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
             break
             
         case .updateBasicInfo:
-            newState.timelineDetailRequest.posting = postID
+            newState.timelineDetailRequest.posting = id.value
             newState.timelineDetailRequest.day = day
-            newState.timelineDetailRequest.date = date
+            newState.timelineDetailRequest.date = date.convertTimeFormat(from: "yyyy년 MM월 dd일", to: "yyyy-MM-dd")
             
+        case let .updatePlaceKeyword(keyword):
+            newState.keyword = keyword
+            
+        case let .fetchPlaceList(placeList):
+            newState.timelinePlaceList = placeList
         }
         
         return newState
     }
     
 }
-    
+
 private extension TimelineWritingViewModel {
     
-    func createTimeline(with info: TimelineDetailRequest) -> SideEffectPublisher {
-        return useCase.requestCreateTimeline(with: info)
+    func createTimeline() -> SideEffectPublisher {
+        return useCase.requestCreateTimeline(with: currentState.timelineDetailRequest)
+            .map { _ in
+                return .createTimeline
+            } .catch { _ in
+                return Just(SideEffect.error("failed create timeline"))
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func fetchTimelinePlaceList(keyword: String) -> SideEffectPublisher {
+        return useCase.fetchPlaceList(keyword: keyword)
             .map { result in
-                return .createTimeline(result)
+                return .fetchPlaceList(result)
             } .catch { _ in
                 return Just(SideEffect.error("failed create timeline"))
             }
@@ -137,7 +168,7 @@ private extension TimelineWritingViewModel {
     func completeButtonState(_ state: State) -> Bool {
         return  !state.timelineDetailRequest.title.isEmpty &&
         !state.timelineDetailRequest.content.isEmpty &&
-        !state.timelineDetailRequest.place.isEmpty
+        state.timelineDetailRequest.place != .emtpy
     }
     
 }

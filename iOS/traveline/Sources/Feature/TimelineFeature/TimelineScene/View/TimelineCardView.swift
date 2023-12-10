@@ -56,6 +56,7 @@ final class TimelineCardView: UIView {
         subtitleLabel.setText(to: cardInfo.place)
         contentLabel.setText(to: cardInfo.content)
         thumbnailImageView.setImage(from: cardInfo.thumbnailURL)
+        thumbnailImageView.isHidden = cardInfo.thumbnailURL == nil
     }
     
     /// 셀 재사용 시 이미지 reset

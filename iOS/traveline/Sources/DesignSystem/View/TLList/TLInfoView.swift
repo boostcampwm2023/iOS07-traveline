@@ -48,6 +48,7 @@ final class TLInfoView: UIView {
         let imageView = UIImageView()
         imageView.backgroundColor = TLColor.gray
         imageView.layer.cornerRadius = Metric.profileImageSize / 2
+        imageView.clipsToBounds = true
         return imageView
     }()
     

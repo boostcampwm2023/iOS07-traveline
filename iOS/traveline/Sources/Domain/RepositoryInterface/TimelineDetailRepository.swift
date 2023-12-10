@@ -10,5 +10,6 @@ import Foundation
 
 protocol TimelineDetailRepository {
     func fetchTimelineDetailInfo(id: String) async throws -> TimelineDetailInfo
-    func createTimelineDetail(with timelineRequest: TimelineDetailRequest) async throws -> TimelineDetailInfo
+    func createTimelineDetail(with timelineRequest: TimelineDetailRequest) async throws
+    func fetchTimelinePlaces(keyword: String) async throws -> TimelinePlaceList
 }

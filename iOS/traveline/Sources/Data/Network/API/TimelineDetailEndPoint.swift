@@ -11,23 +11,29 @@ import Foundation
 enum TimelineDetailEndPoint {
     case specificTimeline(String)
     case createTimeline(TimelineDetailRequestDTO)
+    case fetchPlaceList(String)
 }
 
 extension TimelineDetailEndPoint: EndPoint {
     
     var path: String? {
+        let curPath = "/timelines"
+        
         switch self {
         case .specificTimeline(let id):
-            return "/timelines/\(id)"
+            return "\(curPath)/\(id)"
             
-        case .createTimeline:
-            return "/timelines"
+        case let .fetchPlaceList(keyword):
+            return "\(curPath)/map?place=\(keyword)"
+            
+        default:
+            return curPath
         }
     }
     
     var httpMethod: HTTPMethod {
         switch self {
-        case .specificTimeline:
+        case .specificTimeline, .fetchPlaceList:
             return .GET
             
         case .createTimeline:

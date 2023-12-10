@@ -12,6 +12,7 @@ import Combine
 protocol TimelineUseCase {
     func fetchTimelineInfo(id: TravelID) -> AnyPublisher<TimelineTravelInfo, Error>
     func fetchTimelineList(id: TravelID, day: Int) -> AnyPublisher<TimelineCardList, Error>
+    func calculateDate(from startDate: String, with day: Int) -> String?
 }
 
 final class TimelineUseCaseImpl: TimelineUseCase {
@@ -49,6 +50,14 @@ final class TimelineUseCaseImpl: TimelineUseCase {
             }
         }
         .eraseToAnyPublisher()
+    }
+    
+    func calculateDate(from startDate: String, with day: Int) -> String? {
+        guard let date = startDate.toDate(),
+              let curDate = Calendar.current.date(byAdding: .day, value: day, to: date) else { return nil }
+        
+        return curDate.toString(with: "yyyy년 MM월 dd일")
+
     }
     
 }

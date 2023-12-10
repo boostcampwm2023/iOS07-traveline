@@ -127,10 +127,6 @@ private extension NetworkManager {
         
         if let multipartData = endPoint.multipartData {
             urlRequest.httpBody = makeBody(multipartData: multipartData)
-            
-            if let jsonString = String(data: urlRequest.httpBody ?? Data(), encoding: .utf8) {
-                os_log("multipart-httpBody: \(jsonString)")
-            }
         }
         
         urlRequest.allHTTPHeaderFields = endPoint.header.value
@@ -150,9 +146,14 @@ private extension NetworkManager {
                 if case Optional<Any>.some = $0.value { return true }
                 return false
             }
-            .forEach { child in
-                guard let label = child.label else { return }
-                let value = child.value
+            .map { child -> (String?, Any) in
+                if let value = Mirror(reflecting: child.value).descendant("some") {
+                    return (child.label, value)
+                }
+                return child
+            }
+            .forEach { (label, value) in
+                guard let label else { return }
                 
                 if label == imageLabel {
                     guard let imageData = value as? Data else { return }
@@ -170,6 +171,8 @@ private extension NetworkManager {
             }
         
         body.append(boundaryPostfix.toUTF8())
+        
+        os_log("multipartBody: \(body)")
         return body
     }
 }

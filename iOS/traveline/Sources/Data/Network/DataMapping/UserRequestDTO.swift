@@ -11,5 +11,4 @@ import Foundation
 struct UserRequestDTO: MultipartData {
     let name: String
     var image: Data?
-    
 }

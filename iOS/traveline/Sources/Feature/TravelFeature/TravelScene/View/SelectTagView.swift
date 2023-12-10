@@ -56,7 +56,7 @@ final class SelectTagView: UIView {
     private let limitWidth: CGFloat
     
     var selectedTags: [String] {
-        tagListView.selectedTags
+        return tagListView.selectedTags
     }
     
     // MARK: - Initializer

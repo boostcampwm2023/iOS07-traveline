@@ -248,8 +248,9 @@ private extension HomeVC {
     func bindListView() {
         homeListView.didSelectHomeList
             .withUnretained(self)
-            .sink { owner, _  in
-                let timelineVC = VCFactory.makeTimelineVC(id: .empty)
+            .sink { owner, idx  in
+                let id = owner.viewModel.currentState.travelList[idx].id
+                let timelineVC = VCFactory.makeTimelineVC(id: TravelID(value: id))
                 owner.navigationController?.pushViewController(
                     timelineVC,
                     animated: true

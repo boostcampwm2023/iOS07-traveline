@@ -54,6 +54,7 @@ final class TimelineWritingVC: UIViewController {
     private let selectTime: TLImageLabel = .init(image: TLImage.Travel.time, text: "현재시각")
     private let selectLocation: SelectLocationButton = .init()
     private let selectImageButton: SelectImageButton = .init()
+    private var locationSearchVC: LocationSearchVC = .init()
     
     private let textView: UITextView = {
         let view = UITextView()
@@ -107,8 +108,8 @@ final class TimelineWritingVC: UIViewController {
     }
     
     @objc private func selectLocationButtonTapped() {
-        let locationSearchVC = LocationSearchVC()
         locationSearchVC.delegate = self
+        locationSearchVC.viewDidLoad()
         
         present(locationSearchVC, animated: true)
     }
@@ -166,7 +167,7 @@ final class TimelineWritingVC: UIViewController {
     
     @objc private func locationButtonCancelTapped() {
         selectLocation.setText(to: Constants.selectLocation)
-        viewModel.sendAction(.placeDidChange(Literal.empty))
+        viewModel.sendAction(.placeDidChange(.emtpy))
     }
     
     private func actionKeyboardWillShow(_ keyboardFrame: CGRect) {
@@ -286,6 +287,15 @@ private extension TimelineWritingVC {
             .store(in: &cancellables)
         
         viewModel.state
+            .map(\.text)
+            .filter { !$0.isEmpty }
+            .withUnretained(self)
+            .sink { owner, text in
+                owner.textView.text = text
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
             .map(\.isCompletable)
             .removeDuplicates()
             .withUnretained(self)
@@ -300,6 +310,18 @@ private extension TimelineWritingVC {
             .sink { owner, detail in
                 owner.tlNavigationBar.setupTitle(to: "Day \(detail.day)")
                 owner.dateLabel.setText(to: detail.date)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .compactMap(\.timelinePlaceList)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, list in
+                owner.locationSearchVC.setData(
+                    keyword: owner.viewModel.currentState.keyword,
+                    places: list
+                )
             }
             .store(in: &cancellables)
         
@@ -357,7 +379,7 @@ extension TimelineWritingVC: PHPickerViewControllerDelegate {
             DispatchQueue.main.async {
                 guard let selectedImage = image as? UIImage else { return }
                 self.selectImageButton.setImage(selectedImage)
-                self.viewModel.sendAction(.imageDidChange(selectedImage.pngData()))
+                self.viewModel.sendAction(.imageDidChange(selectedImage.jpegData(compressionQuality: 1)))
             }
         }
     }
@@ -367,8 +389,12 @@ extension TimelineWritingVC: PHPickerViewControllerDelegate {
 // MARK: - extension LocationSearchDelegate
 
 extension TimelineWritingVC: LocationSearchDelegate {
-    func selectedLocation(result: String) {
-        selectLocation.setText(to: result)
+    func editingChagnedLocation(text: String) {
+        viewModel.sendAction(.searchPlace(text))
+    }
+    
+    func selectedLocation(result: TimelinePlace) {
+        selectLocation.setText(to: result.title)
         viewModel.sendAction(.placeDidChange(result))
     }
 }
@@ -377,7 +403,6 @@ extension TimelineWritingVC: LocationSearchDelegate {
 
 extension TimelineWritingVC: TLNavigationBarDelegate {
     func rightButtonDidTapped() {
-        // TODO: 생성할 타임라인 정보 넘겨주기 구현
         viewModel.sendAction(.tapCompleteButton)
     }
 }

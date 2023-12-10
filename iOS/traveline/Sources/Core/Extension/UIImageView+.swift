@@ -24,7 +24,7 @@ extension UIImageView {
         Task {
             guard let downloadImageData = await TLImageDownloader.shared.download(key: self, urlString: urlString) else { return }
             TLImageCache.shared.store(downloadImageData, urlString: urlString)
-            image = UIImage(data: downloadImageData) 
+            image = UIImage(data: downloadImageData)
         }
     }
     

@@ -31,10 +31,10 @@ enum VCFactory {
     }
     
     static func makeTimelineVC(id: TravelID) -> TimelineVC {
-        let postingRepository = PostingRepositoryMock()
-        let timelineRepository = TimelineRepositoryMock()
-//        let postingRepository = PostingRepositoryImpl(network: network)
-//        let timelineRepository = TimelineRepositoryImpl(network: network)
+//        let postingRepository = PostingRepositoryMock()
+//        let timelineRepository = TimelineRepositoryMock()
+        let postingRepository = PostingRepositoryImpl(network: network)
+        let timelineRepository = TimelineRepositoryImpl(network: network)
         let useCase = TimelineUseCaseImpl(
             postingRepository: postingRepository,
             timelineRepository: timelineRepository
@@ -47,7 +47,6 @@ enum VCFactory {
     }
     
     static func makeHomeVC() -> HomeVC {
-        // TODO: - 서버 연결 후 Repository 변경
 //        let repository = PostingRepositoryMock()
         let repository = PostingRepositoryImpl(network: network)
         let useCase = HomeUseCaseImpl(repository: repository)
@@ -80,21 +79,26 @@ enum VCFactory {
         return TravelVC(viewModel: viewModel)
     }
     
-    static func makeTimelineWritingVC() -> TimelineWritingVC {
-        let repository = TimelineDetailRepositoryMock()
+    static func makeTimelineWritingVC(
+        id: TravelID,
+        date: String,
+        day: Int
+    ) -> TimelineWritingVC {
+//        let repository = TimelineDetailRepositoryMock()
+        let repository = TimelineDetailRepositoryImpl(network: network)
         let useCase = TimelineWritingUseCaseImpl(repository: repository)
         let viewModel = TimelineWritingViewModel(
             useCase: useCase,
-            postId: "1234",
-            date: "2022년 3월 5일",
-            day: 1
+            id: id,
+            date: date,
+            day: day
         )
         return TimelineWritingVC(viewModel: viewModel)
     }
     
     static func makeSideMenuVC() -> SideMenuVC {
         let repository = UserRepositoryImpl(network: network)
-        //let repository = UserRepositoryMock()
+//        let repository = UserRepositoryMock()
         let useCase = SideMenuUseCaseImpl(repository: repository)
         let viewModel = SideMenuViewModel(useCase: useCase)
         return SideMenuVC(viewModel: viewModel)
