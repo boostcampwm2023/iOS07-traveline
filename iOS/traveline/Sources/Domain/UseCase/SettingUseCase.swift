@@ -10,7 +10,8 @@ import Combine
 import Foundation
 
 protocol SettingUseCase {
-    func requestWithdrawal() -> AnyPublisher<Bool, Error>
+    func requestAppleId() -> AppleIDRequest
+    func requestWithdrawal(_ request: WithdrawRequest) -> AnyPublisher<Bool, Error>
     func logout()
 }
 
@@ -26,11 +27,15 @@ final class SettingUseCaseImpl: SettingUseCase {
         repository.logout()
     }
     
-    func requestWithdrawal() -> AnyPublisher<Bool, Error> {
+    func requestAppleId() -> AppleIDRequest {
+        return repository.requestAppleId()
+    }
+    
+    func requestWithdrawal(_ reqeust: WithdrawRequest) -> AnyPublisher<Bool, Error> {
         return Future<Bool, Error> { promise in
             Task {
                 do {
-                    let result = try await self.repository.withdrawal()
+                    let result = try await self.repository.withdrawal(reqeust)
                     KeychainList.allClear()
                     promise(.success(result))
                 } catch {
