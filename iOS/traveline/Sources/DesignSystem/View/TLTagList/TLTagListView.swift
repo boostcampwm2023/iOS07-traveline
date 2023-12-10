@@ -40,7 +40,7 @@ final class TLTagListView: UIView {
     
     // MARK: - Properties
     
-    private var detailTagList: [TLTag] = .init()
+    private var detailTagList: [TLTag] = []
     private lazy var currentStackView: UIStackView = tagStackView
     private var tagType: TagType?
     private var selectedTag: TLTag?

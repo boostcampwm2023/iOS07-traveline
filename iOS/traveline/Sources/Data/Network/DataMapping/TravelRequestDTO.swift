@@ -18,13 +18,20 @@ extension TravelRequest {
     func toDTO() -> TravelRequestDTO {
         let tagManager = TagManager.init(tags: tags)
         
+        var costTag: String?
+        if var cost: String = tagManager.toDTO(type: .cost) {
+            costTag = cost == Literal.Tag.CostDetail.over100 ?
+            Literal.Query.CostDetail.over100 :
+            cost + Literal.Tag.CostDetail.won
+        }
+        
         return .init(
             title: title,
             location: region,
             startDate: startDate.toString(),
             endDate: endDate.toString(),
             headcount: tagManager.toDTO(type: .people),
-            budget: (tagManager.toDTO(type: .cost) ?? "0") + Literal.Tag.CostDetail.won,
+            budget: costTag,
             vehicle: tagManager.toDTO(type: .transportation),
             theme: tagManager.toDTO(type: .theme),
             withWho: tagManager.toDTO(type: .with)
