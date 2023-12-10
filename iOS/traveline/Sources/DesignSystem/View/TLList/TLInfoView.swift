@@ -124,6 +124,9 @@ final class TLInfoView: UIView {
         thumbnailImageView.image = TravelineAsset.Images.travelImage.image
         profileImageView.cancel()
         profileImageView.image = nil
+        tags.forEach {
+            $0.updateTag(text: Literal.empty)
+        }
     }
 }
 
