@@ -19,4 +19,5 @@ protocol PostingRepository {
     func fetchTimelineInfo(id: TravelID) async throws -> TimelineTravelInfo
     func postPostings(data: TravelRequest) async throws -> TravelID
     func putPostings(id: TravelID, data: TravelRequest) async throws -> TravelID
+    func deletePostings(id: TravelID) async throws -> Bool
 }

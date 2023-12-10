@@ -101,4 +101,11 @@ extension PostingRepositoryImpl {
         
         return TravelID(value: postPostingsDTO.id)
     }
+    
+    func deletePostings(id: TravelID) async throws -> Bool {
+        let postPostingsDTO = try await network.requestWithNoResult(endPoint: PostingEndPoint.deletePosting(id.value))
+        
+        return postPostingsDTO
+    }
+    
 }

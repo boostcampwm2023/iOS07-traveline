@@ -78,10 +78,17 @@ extension PostingRepositoryMock {
         return TravelID(value: "id")
     }
     
+    func deletePostings(id: TravelID) async throws -> Bool {
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        return true
+    }
+    
     func fetchTimelineInfo(id: TravelID) async throws -> TimelineTravelInfo {
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
         let mockData = TimelineSample.makeTravelInfo()
         return mockData
     }
+    
 }

@@ -101,6 +101,7 @@ private extension NetworkManager {
     
     func makeURLRequest(endPoint: EndPoint) throws -> URLRequest {
         os_log("url: \(endPoint.baseURL ?? "empty")\(endPoint.path ?? "empty")")
+        os_log("httpMethod: \(endPoint.httpMethod.rawValue)")
         
         guard let baseURL = endPoint.baseURL,
               let path = endPoint.path,

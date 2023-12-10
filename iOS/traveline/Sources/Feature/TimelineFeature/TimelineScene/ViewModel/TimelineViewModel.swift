@@ -17,15 +17,18 @@ enum TimelineAction: BaseAction {
     case likeButtonPressed
     case createPostingButtonPressed
     case editTravel
+    case deleteTravel
 }
 
 enum TimelineSideEffect: BaseSideEffect {
     enum TimelineError: LocalizedError {
         case loadFailed
+        case deleteFailed
         
         var errorDescription: String {
             switch self {
             case .loadFailed: "서버 통신에 실패했습니다."
+            case .deleteFailed: "여행 삭제에 실패했습니다."
             }
         }
     }
@@ -37,7 +40,8 @@ enum TimelineSideEffect: BaseSideEffect {
     case toggleLike
     case showTimelineWriting
     case showTimelineEditing
-    case popToTimline
+    case popToTimeline
+    case popToHome
     case timelineError(TimelineError)
     case resetState
 }
@@ -56,6 +60,7 @@ struct TimelineState: BaseState {
     var date: String?
     var timelineWritingInfo: TimelineWritingInfo?
     var isEdit: Bool = false
+    var deleteCompleted: Bool = false
     var errorMsg: String?
 }
 
@@ -96,6 +101,9 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
             
         case .editTravel:
             return .just(TimelineSideEffect.showTimelineEditing)
+            
+        case .deleteTravel:
+            return deleteTravel()
         }
     }
     
@@ -105,6 +113,7 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
         switch effect {
         case .resetState:
             newState.isEdit = false
+            newState.deleteCompleted = false
             newState.timelineWritingInfo = nil
             
         case let .loadTimeline(travelInfo):
@@ -135,8 +144,11 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
         case let .timelineError(error):
             break
             
-        case .popToTimline:
+        case .popToTimeline:
             newState.timelineWritingInfo = nil
+            
+        case .popToHome:
+            newState.deleteCompleted = true
             
         case let .updateCurDate(date):
             newState.date = date
@@ -154,7 +166,7 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
 private extension TimelineViewModel {
     func fetchTimeline() -> SideEffectPublisher {
         Publishers.MergeMany(
-            .just(TimelineSideEffect.popToTimline),
+            .just(TimelineSideEffect.popToTimeline),
             fetchTimelineCardInfo(currentState.day),
             fetchTravelInfo()
         ).eraseToAnyPublisher()
@@ -180,9 +192,21 @@ private extension TimelineViewModel {
             .map { list in
                 return TimelineSideEffect.loadTimelineCardList(list)
             }
-            .catch {_ in
+            .catch { _ in
                 return Just(TimelineSideEffect.timelineError(.loadFailed))
             }
             .eraseToAnyPublisher()
     }
+    
+    func deleteTravel() -> SideEffectPublisher {
+        return timelineUseCase.deleteTravel(id: id)
+            .map { _ in
+                return TimelineSideEffect.popToHome
+            }
+            .catch { _ in
+                return Just(TimelineSideEffect.timelineError(.deleteFailed))
+            }
+            .eraseToAnyPublisher()
+    }
+    
 }

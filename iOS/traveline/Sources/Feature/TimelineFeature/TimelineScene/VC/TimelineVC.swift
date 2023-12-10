@@ -121,8 +121,8 @@ final class TimelineVC: UIViewController {
                 .init(title: Literal.Action.modify, handler: { [weak self] _ in
                     self?.viewModel.sendAction(.editTravel)
                 }),
-                .init(title: Literal.Action.delete, attributes: .destructive, handler: { _ in
-                    // TODO: - 삭제하기 연결
+                .init(title: Literal.Action.delete, attributes: .destructive, handler: {  [weak self] _ in
+                    self?.viewModel.sendAction(.deleteTravel)
                 })
             ]
         } else {
@@ -233,6 +233,15 @@ private extension TimelineVC {
                     travelInfo: owner.viewModel.currentState.travelInfo
                 )
                 owner.navigationController?.pushViewController(travelEditVC, animated: true)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.deleteCompleted)
+            .filter { $0 }
+            .withUnretained(self)
+            .sink { owner, _ in
+                owner.navigationController?.popViewController(animated: true)
             }
             .store(in: &cancellables)
     }
