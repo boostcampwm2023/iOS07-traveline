@@ -16,7 +16,7 @@ struct TimelineDetailRequestDTO: MultipartData {
     let coordX: Double?
     let coordY: Double?
     let date: String
-    let place: String
+    let place: String?
     let time: String
     let posting: String
 }
@@ -28,10 +28,10 @@ extension TimelineDetailRequest {
             day: day,
             description: content,
             image: image,
-            coordX: nil,
-            coordY: nil,
+            coordX: place?.latitude,
+            coordY: place?.longitude,
             date: date,
-            place: place,
+            place: place?.title,
             time: time.convertTimeFormat(from: "a hh:mm", to: "HH:mm"),
             posting: posting
         )

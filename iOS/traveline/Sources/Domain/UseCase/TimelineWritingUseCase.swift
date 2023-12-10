@@ -10,7 +10,8 @@ import Combine
 import Foundation
 
 protocol TimelineWritingUseCase {
-    func requestCreateTimeline(with info: TimelineDetailRequest) -> AnyPublisher<TimelineDetailInfo, Error>
+    func requestCreateTimeline(with info: TimelineDetailRequest) -> AnyPublisher<Void, Error>
+    func fetchPlaceList(keyword: String) -> AnyPublisher<TimelinePlaceList, Error>
 }
 
 final class TimelineWritingUseCaseImpl: TimelineWritingUseCase {
@@ -21,18 +22,30 @@ final class TimelineWritingUseCaseImpl: TimelineWritingUseCase {
         self.repository = repository
     }
     
-    func requestCreateTimeline(with info: TimelineDetailRequest) -> AnyPublisher<TimelineDetailInfo, Error> {
+    func requestCreateTimeline(with info: TimelineDetailRequest) -> AnyPublisher<Void, Error> {
         return Future { promise in
-            Task { [weak self] in
-                guard let self else { return }
+            Task {
                 do {
-                    let timelineDetailInfo = try await self.repository.createTimelineDetail(with: info)
-                    promise(.success(timelineDetailInfo))
+                    try await self.repository.createTimelineDetail(with: info)
+                    promise(.success(Void()))
                 } catch {
                     promise(.failure(error))
                 }
             }
         }.eraseToAnyPublisher()
     }
-     
+    
+    func fetchPlaceList(keyword: String) -> AnyPublisher<TimelinePlaceList, Error> {
+        return Future { promise in
+            Task {
+                do {
+                    let placeList = try await self.repository.fetchTimelinePlaces(keyword: keyword)
+                    promise(.success(placeList))
+                } catch {
+                    promise(.failure(error))
+                }
+            }
+        }.eraseToAnyPublisher()
+    }
+    
 }

@@ -35,8 +35,8 @@ extension TimelineListResponseDTO {
                     place: dto.place,
                     content: dto.description,
                     time: dto.time,
-                    latitude: dto.coordX ?? 0,
-                    longitude: dto.coordY ?? 0
+                    latitude: dto.coordY,
+                    longitude: dto.coordX
                 )
         }
     }

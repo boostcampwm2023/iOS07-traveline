@@ -17,8 +17,8 @@ struct TimelineCardInfo: Hashable {
     let place: String
     let content: String
     let time: String
-    let latitude: Double
-    let longitude: Double
+    let latitude: Double?
+    let longitude: Double?
     
     static let empty: Self = .init(
         detailId: Literal.empty,

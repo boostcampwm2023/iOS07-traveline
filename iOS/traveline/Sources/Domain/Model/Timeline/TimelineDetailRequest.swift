@@ -7,12 +7,13 @@
 //
 
 import Foundation
+
 struct TimelineDetailRequest {
     var title: String
     var day: Int
     var time: String
     var date: String
-    var place: String
+    var place: TimelinePlace?
     var image: Data?
     var content: String
     var posting: String
@@ -22,7 +23,7 @@ struct TimelineDetailRequest {
         day: 0,
         time: Literal.empty,
         date: Literal.empty,
-        place: Literal.empty,
+        place: .emtpy,
         content: Literal.empty,
         posting: Literal.empty
     )

@@ -14,21 +14,44 @@ enum TimelineAction: BaseAction {
     case fetchTimelineCard(Int)
     case changeDay(Int)
     case likeButtonPressed
+    case createPostingButtonPressed
 }
 
 enum TimelineSideEffect: BaseSideEffect {
+    enum TimelineError: LocalizedError {
+        case loadFailed
+        
+        var errorDescription: String {
+            switch self {
+            case .loadFailed: "서버 통신에 실패했습니다."
+            }
+        }
+    }
+    
     case loadTimeline(TimelineTravelInfo)
     case loadTimelineCardList(TimelineCardList)
     case removeRegacyCards(Int)
+    case updateCurDate(String)
     case toggleLike
-    case loadFailed(Error)
+    case showTimelineWriting
+    case timelineError(TimelineError)
+    case popToTimline
 }
 
 struct TimelineState: BaseState {
+    struct TimelineWritingInfo: Hashable {
+        let id: TravelID
+        var date: String
+        var day: Int
+    }
+    
     var travelInfo: TimelineTravelInfo = .empty
     var timelineCardList: TimelineCardList = []
-    var period: Int = 0
     var isOwner: Bool = false
+    var day: Int = 1
+    var date: String?
+    var timelineWritingInfo: TimelineWritingInfo?
+    var errorMsg: String?
 }
 
 final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect, TimelineState> {
@@ -59,6 +82,9 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
             
         case .likeButtonPressed:
             return .just(TimelineSideEffect.toggleLike)
+            
+        case .createPostingButtonPressed:
+            return .just(TimelineSideEffect.showTimelineWriting)
         }
     }
     
@@ -69,20 +95,36 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
         case let .loadTimeline(travelInfo):
             newState.travelInfo = travelInfo
             newState.isOwner = travelInfo.isOwner
+            newState.date = timelineUseCase.calculateDate(from: travelInfo.startDate, with: state.day)
             
         case let .loadTimelineCardList(timelineCardList):
             newState.timelineCardList = timelineCardList
             
         case let .removeRegacyCards(day):
+            newState.day = day
             newState.timelineCardList.removeAll()
             sendAction(.fetchTimelineCard(day))
             
         case .toggleLike:
             newState.travelInfo.isLiked.toggle()
             
-        case .loadFailed:
-            // TODO: - 서버 통신 실패 시 state 처리
+        case .showTimelineWriting:
+            guard let date = state.date else { return newState }
+            
+            newState.timelineWritingInfo = .init(
+                id: id,
+                date: date,
+                day: state.day
+            )
+            
+        case let .timelineError(error):
             break
+            
+        case .popToTimline:
+            newState.timelineWritingInfo = nil
+            
+        case let .updateCurDate(date):
+            newState.date = date
         }
         
         return newState
@@ -93,8 +135,9 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
 
 private extension TimelineViewModel {
     func fetchTimeline() -> SideEffectPublisher {
-        Publishers.Merge(
-            fetchTimelineCardInfo(1),
+        Publishers.MergeMany(
+            .just(TimelineSideEffect.popToTimline),
+            fetchTimelineCardInfo(currentState.day),
             fetchTravelInfo()
         ).eraseToAnyPublisher()
     }
@@ -108,8 +151,8 @@ private extension TimelineViewModel {
             .map { travelInfo in
                 return TimelineSideEffect.loadTimeline(travelInfo)
             }
-            .catch { error in
-                return Just(TimelineSideEffect.loadFailed(error))
+            .catch {_ in
+                return Just(TimelineSideEffect.timelineError(.loadFailed))
             }
             .eraseToAnyPublisher()
     }
@@ -119,8 +162,8 @@ private extension TimelineViewModel {
             .map { list in
                 return TimelineSideEffect.loadTimelineCardList(list)
             }
-            .catch { error in
-                return Just(TimelineSideEffect.loadFailed(error))
+            .catch {_ in
+                return Just(TimelineSideEffect.timelineError(.loadFailed))
             }
             .eraseToAnyPublisher()
     }

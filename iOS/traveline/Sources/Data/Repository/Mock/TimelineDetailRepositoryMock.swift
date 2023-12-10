@@ -9,11 +9,9 @@
 import Foundation
 
 final class TimelineDetailRepositoryMock: TimelineDetailRepository {
-    func createTimelineDetail(with timelineRequest: TimelineDetailRequest) async throws -> TimelineDetailInfo {
+    
+    func createTimelineDetail(with timelineRequest: TimelineDetailRequest) async throws {
         try await Task.sleep(nanoseconds: 1_000_000_000)
-        
-        let mockData = TimelineDetailInfo.sample
-        return mockData
     }
     
     func fetchTimelineDetailInfo(id: String) async throws -> TimelineDetailInfo {
@@ -23,4 +21,10 @@ final class TimelineDetailRepositoryMock: TimelineDetailRepository {
         return mockData
     }
     
+    func fetchTimelinePlaces(keyword: String) async throws -> TimelinePlaceList {
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        let mockData = [TimelinePlace.init(title: "", latitude: 0, longitude: 0)]
+        return mockData
+    }
 }
