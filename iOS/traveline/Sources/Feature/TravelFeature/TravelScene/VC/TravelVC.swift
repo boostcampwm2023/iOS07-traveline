@@ -243,6 +243,7 @@ private extension TravelVC {
             .withUnretained(self)
             .sink { owner, startDate in
                 owner.selectPeriodView.endDatePicker.minimumDate = startDate
+                owner.selectPeriodView.endDatePicker.maximumDate = Calendar.current.date(byAdding: .month, value: 1, to: startDate)
             }
             .store(in: &cancellables)
         
