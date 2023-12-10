@@ -209,13 +209,7 @@ extension ProfileEditingVC {
     }
     
     func bind() {
-        nickNameTextField
-            .textPublisher
-            .withUnretained(self)
-            .sink { owner, text in
-                owner.viewModel.sendAction(.nicknameDidChange(text))
-            }
-            .store(in: &cancellables)
+
         
         viewModel.state
             .map(\.isCompletable)
@@ -275,7 +269,7 @@ extension ProfileEditingVC: PHPickerViewControllerDelegate {
 
 extension ProfileEditingVC: TLNavigationBarDelegate {
     func rightButtonDidTapped() {
-        viewModel.sendAction(.tapCompleteButton(imageView.image?.pngData()))
+        viewModel.sendAction(.tapCompleteButton(imageView.image?.jpegData(compressionQuality: 1)))
         self.navigationController?.popViewController(animated: true)
     }
 }

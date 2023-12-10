@@ -85,6 +85,7 @@ final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, Profile
         
         switch effect {
         case let .fetchProfile(profile):
+            changedNickname = profile.name
             newState.profile = profile
             
         case .error:

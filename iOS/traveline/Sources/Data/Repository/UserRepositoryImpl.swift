@@ -18,7 +18,6 @@ final class UserRepositoryImpl: UserRepository {
     
     func fetchUserInfo() async throws -> Profile {
         if let userResponseDTO = UserDefaultsList.userResponseDTO {
-            print(userResponseDTO)
             return userResponseDTO.toDomain()
         }
         
@@ -40,7 +39,6 @@ final class UserRepositoryImpl: UserRepository {
             type: UserResponseDTO.self
         )
         
-        print(userResponseDTO)
         UserDefaultsList.userResponseDTO = userResponseDTO
         
         return userResponseDTO.toDomain()
