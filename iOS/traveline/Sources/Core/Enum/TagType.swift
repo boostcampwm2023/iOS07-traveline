@@ -96,4 +96,11 @@ enum TagType: CaseIterable {
         default: false
         }
     }
+    
+    var isBasic: Bool {
+        switch self {
+        case .region, .period, .season: true
+        default: false
+        }
+    }
 }

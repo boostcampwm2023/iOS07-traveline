@@ -9,6 +9,7 @@
 import Foundation
 
 enum RegionFilter: DetailFilterType {
+    case none
     case seoul
     case busan
     case daegu
@@ -63,6 +64,8 @@ enum RegionFilter: DetailFilterType {
             return Literal.Filter.RegionDetail.gyeongnam
         case .jeju:
             return Literal.Filter.RegionDetail.jeju
+        default:
+            return Literal.empty
         }
     }
     
@@ -102,6 +105,8 @@ enum RegionFilter: DetailFilterType {
             return Literal.Query.RegionDetail.gyeongnam
         case .jeju:
             return Literal.Query.RegionDetail.jeju
+        default:
+            return Literal.empty
         }
     }
 }

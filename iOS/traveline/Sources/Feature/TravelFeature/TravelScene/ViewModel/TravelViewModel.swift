@@ -10,6 +10,7 @@ import Combine
 import Foundation
 
 enum TravelAction: BaseAction {
+    case configTravelInfo(TimelineTravelInfo)
     case titleEdited(String)
     case regionSelected(String)
     case startDateSelected(Date)
@@ -18,6 +19,7 @@ enum TravelAction: BaseAction {
 }
 
 enum TravelSideEffect: BaseSideEffect {
+    case showTravelInfo(TravelEditableInfo)
     case saveTitle(String)
     case saveRegion(String)
     case saveStartDate(Date)
@@ -35,6 +37,7 @@ struct TravelState: BaseState {
     var titleValidation: TitleValidation?
     var travelID: TravelID?
     var errorMsg: String?
+    var travelInfo: TravelEditableInfo?
     
     var isValidTitle: Bool {
         titleValidation == .valid
@@ -47,43 +50,74 @@ struct TravelState: BaseState {
     var canPost: Bool {
         isValidTitle && !region.isEmpty && isValidDate
     }
+    
+    var isEdit: Bool {
+        travelInfo != nil
+    }
 }
 
 final class TravelViewModel: BaseViewModel<TravelAction, TravelSideEffect, TravelState> {
     
+    private let id: TravelID?
     private let travelUseCase: TravelUseCase
     
-    init(travelUseCase: TravelUseCase) {
+    init(
+        id: TravelID?,
+        travelInfo: TimelineTravelInfo?,
+        travelUseCase: TravelUseCase
+    ) {
+        self.id = id
         self.travelUseCase = travelUseCase
+        super.init()
+        
+        guard let travelInfo else { return }
+        self.sendAction(.configTravelInfo(travelInfo))
     }
     
     // MARK: - Transform
     
     override func transform(action: TravelAction) -> SideEffectPublisher {
         switch action {
+        case let .configTravelInfo(travelInfo):
+            return toTravelEditableInfo(travelInfo)
+            
         case let .titleEdited(title):
-            validate(title: title)
+            return validate(title: title)
             
         case let .regionSelected(region):
-            Just(TravelSideEffect.saveRegion(region)).eraseToAnyPublisher()
+            return .just(TravelSideEffect.saveRegion(region))
             
         case let .startDateSelected(startDate):
-            Just(TravelSideEffect.saveStartDate(startDate)).eraseToAnyPublisher()
+            return .just(TravelSideEffect.saveStartDate(startDate))
             
         case let .endDateSelected(endDate):
-            Just(TravelSideEffect.saveEndDate(endDate)).eraseToAnyPublisher()
+            return .just(TravelSideEffect.saveEndDate(endDate))
             
         case let .donePressed(tags):
-            postTravel(tags)
+            return postTravel(tags)
         }
     }
     
     // MARK: - ReduceState
     
     override func reduceState(state: TravelState, effect: TravelSideEffect) -> TravelState {
+        
         var newState = state
         
         switch effect {
+        case let .showTravelInfo(travelInfo):
+            newState.travelInfo = travelInfo
+            
+            guard let region = travelInfo.region,
+                  let startDate = travelInfo.startDate,
+                  let endDate = travelInfo.endDate else { return newState }
+            
+            newState.titleValidation = .valid
+            newState.titleText = travelInfo.travelTitle
+            newState.region = region.title
+            newState.startDate = startDate
+            newState.endDate = endDate
+            
         case let .saveTitle(title):
             newState.titleText = title
             
@@ -127,6 +161,12 @@ private extension TravelViewModel {
 // MARK: - UseCase
 
 private extension TravelViewModel {
+    
+    func toTravelEditableInfo(_ travelInfo: TimelineTravelInfo) -> SideEffectPublisher {
+        let travelEditableInfo = travelUseCase.toEditable(info: travelInfo)
+        return .just(TravelSideEffect.showTravelInfo(travelEditableInfo))
+    }
+    
     func postTravel(_ tags: [Tag]) -> SideEffectPublisher {
         let travelReqeust = TravelRequest(
             title: currentState.titleText,
@@ -136,12 +176,25 @@ private extension TravelViewModel {
             tags: tags
         )
         
+        if currentState.isEdit {
+            guard let id = id else { return Empty().eraseToAnyPublisher() }
+            
+            return travelUseCase.putTravel(id: id, data: travelReqeust)
+                .map { id in
+                    TravelSideEffect.postTravel(id)
+                }
+                .catch { _ in
+                    Just(TravelSideEffect.error("여행 수정에 실패했습니다."))
+                }
+                .eraseToAnyPublisher()
+        }
+        
         return travelUseCase.createTravel(data: travelReqeust)
             .map { id in
                 TravelSideEffect.postTravel(id)
             }
             .catch { _ in
-                Just(TravelSideEffect.error("postTravel에 실패했습니다."))
+                Just(TravelSideEffect.error("여행 생성에 실패했습니다."))
             }
             .eraseToAnyPublisher()
     }

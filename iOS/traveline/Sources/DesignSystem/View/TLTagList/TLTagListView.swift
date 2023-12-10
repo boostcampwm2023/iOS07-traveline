@@ -8,6 +8,13 @@
 
 import UIKit
 
+/*
+ 여행 생성 화면에서 태그 제목 및 태그 버튼들을 가지는 뷰입니다.
+ ----
+ 인원
+ [1인] [2인] [3인] [4인] [5인 이상]
+ */
+
 final class TLTagListView: UIView {
     
     private enum Metric {
@@ -135,6 +142,13 @@ final class TLTagListView: UIView {
             .forEach {
                 $0.removeFromSuperview()
             }
+    }
+    
+    func setSelectedTag(_ name: String) {
+        detailTagList.filter { $0.name == name }.forEach {
+            $0.isSelected.toggle()
+            selectedTag = $0
+        }
     }
 }
 

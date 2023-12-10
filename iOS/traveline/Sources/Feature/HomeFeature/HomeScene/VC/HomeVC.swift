@@ -227,7 +227,7 @@ private extension HomeVC {
             .dropFirst()
             .removeDuplicates()
             .withUnretained(self)
-            .sink { owner, filters in
+            .sink { owner, _ in
                 owner.viewModel.sendAction(.filterChanged)
             }
             .store(in: &cancellables)

@@ -10,11 +10,13 @@ import Combine
 import Foundation
 
 enum TimelineAction: BaseAction {
+    case viewWillAppear
     case enterToTimeline
     case fetchTimelineCard(Int)
     case changeDay(Int)
     case likeButtonPressed
     case createPostingButtonPressed
+    case editTravel
 }
 
 enum TimelineSideEffect: BaseSideEffect {
@@ -34,8 +36,10 @@ enum TimelineSideEffect: BaseSideEffect {
     case updateCurDate(String)
     case toggleLike
     case showTimelineWriting
-    case timelineError(TimelineError)
+    case showTimelineEditing
     case popToTimline
+    case timelineError(TimelineError)
+    case resetState
 }
 
 struct TimelineState: BaseState {
@@ -51,12 +55,13 @@ struct TimelineState: BaseState {
     var day: Int = 1
     var date: String?
     var timelineWritingInfo: TimelineWritingInfo?
+    var isEdit: Bool = false
     var errorMsg: String?
 }
 
 final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect, TimelineState> {
     
-    private let id: TravelID
+    private(set) var id: TravelID
     private let timelineUseCase: TimelineUseCase
     
     init(
@@ -71,6 +76,9 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
     
     override func transform(action: TimelineAction) -> SideEffectPublisher {
         switch action {
+        case .viewWillAppear:
+            return .just(TimelineSideEffect.resetState)
+            
         case .enterToTimeline:
             return fetchTimeline()
             
@@ -85,6 +93,9 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
             
         case .createPostingButtonPressed:
             return .just(TimelineSideEffect.showTimelineWriting)
+            
+        case .editTravel:
+            return .just(TimelineSideEffect.showTimelineEditing)
         }
     }
     
@@ -92,6 +103,10 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
         var newState = state
         
         switch effect {
+        case .resetState:
+            newState.isEdit = false
+            newState.timelineWritingInfo = nil
+            
         case let .loadTimeline(travelInfo):
             newState.travelInfo = travelInfo
             newState.isOwner = travelInfo.isOwner
@@ -125,6 +140,9 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
             
         case let .updateCurDate(date):
             newState.date = date
+            
+        case .showTimelineEditing:
+            newState.isEdit = true
         }
         
         return newState

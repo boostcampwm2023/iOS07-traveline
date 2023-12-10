@@ -89,4 +89,16 @@ extension PostingRepositoryImpl {
         
         return response.toDomain()
     }
+    
+    func putPostings(id: TravelID, data: TravelRequest) async throws -> TravelID {
+        let postPostingsDTO = try await network.request(
+            endPoint: PostingEndPoint.putPosting(
+                id.value,
+                data.toDTO()
+            ),
+            type: BaseResponseDTO.self
+        )
+        
+        return TravelID(value: postPostingsDTO.id)
+    }
 }

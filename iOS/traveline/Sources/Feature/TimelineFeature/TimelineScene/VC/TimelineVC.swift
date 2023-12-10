@@ -92,6 +92,12 @@ final class TimelineVC: UIViewController {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = true
+        viewModel.sendAction(.viewWillAppear)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
         viewModel.sendAction(.enterToTimeline)
     }
     
@@ -112,8 +118,8 @@ final class TimelineVC: UIViewController {
         
         if isOwner {
             menuItems = [
-                .init(title: Literal.Action.modify, handler: { _ in
-                    // TODO: - 수정하기 연결
+                .init(title: Literal.Action.modify, handler: { [weak self] _ in
+                    self?.viewModel.sendAction(.editTravel)
                 }),
                 .init(title: Literal.Action.delete, attributes: .destructive, handler: { _ in
                     // TODO: - 삭제하기 연결
@@ -214,6 +220,19 @@ private extension TimelineVC {
                     day: info.day
                 )
                 owner.navigationController?.pushViewController(vc, animated: true)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.isEdit)
+            .filter { $0 }
+            .withUnretained(self)
+            .sink { owner, _ in
+                let travelEditVC = VCFactory.makeTravelVC(
+                    id: owner.viewModel.id,
+                    travelInfo: owner.viewModel.currentState.travelInfo
+                )
+                owner.navigationController?.pushViewController(travelEditVC, animated: true)
             }
             .store(in: &cancellables)
     }

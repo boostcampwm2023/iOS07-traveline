@@ -31,8 +31,6 @@ enum VCFactory {
     }
     
     static func makeTimelineVC(id: TravelID) -> TimelineVC {
-//        let postingRepository = PostingRepositoryMock()
-//        let timelineRepository = TimelineRepositoryMock()
         let postingRepository = PostingRepositoryImpl(network: network)
         let timelineRepository = TimelineRepositoryImpl(network: network)
         let useCase = TimelineUseCaseImpl(
@@ -47,7 +45,6 @@ enum VCFactory {
     }
     
     static func makeHomeVC() -> HomeVC {
-//        let repository = PostingRepositoryMock()
         let repository = PostingRepositoryImpl(network: network)
         let useCase = HomeUseCaseImpl(repository: repository)
         let viewModel = HomeViewModel(homeUseCase: useCase)
@@ -55,8 +52,6 @@ enum VCFactory {
     }
     
     static func makeTimelineDetailVC(with id: String) -> TimelineDetailVC {
-        // TODO: - 서버 연결 후 Rpository 변경
-//        let repository = TimelineDetailRepositoryMock()
         let repository = TimelineDetailRepositoryImpl(network: network)
         let useCase = TimelineDetailUseCaseImpl(repository: repository)
         let viewModel = TimelineDetailViewModel(timelineDetailUseCase: useCase, timelineId: id)
@@ -64,18 +59,23 @@ enum VCFactory {
     }
     
     static func makeMyPostListVC() -> MyPostListVC {
-//        let repository = PostingRepositoryMock()
         let repository = PostingRepositoryImpl(network: network)
         let useCase = MyPostListUseCaseImpl(repository: repository)
         let viewModel = MyPostListViewModel(myPostListUseCase: useCase)
         return MyPostListVC(viewModel: viewModel)
     }
     
-    static func makeTravelVC() -> TravelVC {
-//        let repository = TravelRepositoryMock()
+    static func makeTravelVC(
+        id: TravelID? = nil,
+        travelInfo: TimelineTravelInfo? = nil
+    ) -> TravelVC {
         let repository = PostingRepositoryImpl(network: network)
         let useCase = TravelUseCaseImpl(repository: repository)
-        let viewModel = TravelViewModel(travelUseCase: useCase)
+        let viewModel = TravelViewModel(
+            id: id, 
+            travelInfo: travelInfo,
+            travelUseCase: useCase
+        )
         return TravelVC(viewModel: viewModel)
     }
     
@@ -84,7 +84,6 @@ enum VCFactory {
         date: String,
         day: Int
     ) -> TimelineWritingVC {
-//        let repository = TimelineDetailRepositoryMock()
         let repository = TimelineDetailRepositoryImpl(network: network)
         let useCase = TimelineWritingUseCaseImpl(repository: repository)
         let viewModel = TimelineWritingViewModel(
@@ -98,12 +97,11 @@ enum VCFactory {
     
     static func makeSideMenuVC() -> SideMenuVC {
         let repository = UserRepositoryImpl(network: network)
-//        let repository = UserRepositoryMock()
         let useCase = SideMenuUseCaseImpl(repository: repository)
         let viewModel = SideMenuViewModel(useCase: useCase)
         return SideMenuVC(viewModel: viewModel)
     }
-  
+    
     static func makeSettingVC() -> SettingVC {
         let repository = AuthRepositoryImpl(network: network)
         let useCase = SettingUseCaseImpl(repository: repository)
@@ -117,5 +115,5 @@ enum VCFactory {
         let viewModel = ProfileEditingViewModel(useCase: useCase)
         return ProfileEditingVC(viewModel: viewModel)
     }
-  
+    
 }

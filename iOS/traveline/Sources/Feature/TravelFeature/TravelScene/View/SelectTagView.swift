@@ -52,7 +52,7 @@ final class SelectTagView: UIView {
     
     // MARK: - Properties
     
-    private let tagType: TagType
+    private(set) var tagType: TagType
     private let limitWidth: CGFloat
     
     var selectedTags: [String] {
@@ -73,6 +73,12 @@ final class SelectTagView: UIView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - Functions
+    
+    func setSelectedTag(tag: Tag) {
+        tagListView.setSelectedTag(tag.title)
     }
 
 }
