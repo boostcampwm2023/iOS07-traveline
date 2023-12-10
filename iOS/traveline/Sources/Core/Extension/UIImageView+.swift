@@ -34,3 +34,36 @@ extension UIImageView {
     }
     
 }
+
+extension UIImage {
+    
+    /// 이미지 다운샘플링을 수행합니다.
+    /// - Parameters:
+    ///    - scale: 이미지 크기를 조절하는 비율. 기본값은 0.1로, 결과 이미지는 원본의 1/10 크기가 됩니다.
+    ///- Returns: 작업이 성공하면 다운샘플링된 UIImage를 반환하고, 그렇지 않으면 nil을 반환합니다.
+    func downSampling(scale: CGFloat = 0.1) -> UIImage? {
+        let size = CGSize(width: self.size.width / 3, height: self.size.height / 3)
+        
+        let imageSourceOption = [kCGImageSourceShouldCache: false] as CFDictionary
+        
+        guard let imageData = self.jpegData(compressionQuality: 1),
+              let data = imageData as CFData?,
+              let imageSource = CGImageSourceCreateWithData(data, imageSourceOption) else {
+            return nil
+        }
+        
+        let maxPixel =  max(size.width, size.height) * scale
+        let downSampleOptions = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceShouldCacheImmediately: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceThumbnailMaxPixelSize: maxPixel
+        ] as CFDictionary
+        
+        guard let downSampledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downSampleOptions) else {
+            return nil
+        }
+        
+        return UIImage(cgImage: downSampledImage)
+    }
+}

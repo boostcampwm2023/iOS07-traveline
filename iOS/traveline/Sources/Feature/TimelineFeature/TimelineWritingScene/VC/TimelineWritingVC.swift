@@ -378,8 +378,9 @@ extension TimelineWritingVC: PHPickerViewControllerDelegate {
             guard let self = self else { return }
             DispatchQueue.main.async {
                 guard let selectedImage = image as? UIImage else { return }
-                self.selectImageButton.setImage(selectedImage)
-                self.viewModel.sendAction(.imageDidChange(selectedImage.jpegData(compressionQuality: 1)))
+                let downSampledImage = selectedImage.downSampling()
+                self.selectImageButton.setImage(downSampledImage)
+                self.viewModel.sendAction(.imageDidChange(downSampledImage?.jpegData(compressionQuality: 1)))
             }
         }
     }
