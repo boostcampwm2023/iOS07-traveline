@@ -26,7 +26,7 @@ final class RegionBottomSheetVC: TLBottomSheetVC {
     
     // MARK: - Properties
     
-    private let travelRegions: [RegionFilter] = RegionFilter.allCases
+    private let travelRegions: [RegionFilter] = RegionFilter.allCases.filter { $0 != .none }
     
     // MARK: - Life Cycle
     
@@ -35,7 +35,6 @@ final class RegionBottomSheetVC: TLBottomSheetVC {
         
         setupLayout()
     }
-    
 }
 
 // MARK: - Setup Functions

@@ -13,6 +13,9 @@ protocol TimelineUseCase {
     func fetchTimelineInfo(id: TravelID) -> AnyPublisher<TimelineTravelInfo, Error>
     func fetchTimelineList(id: TravelID, day: Int) -> AnyPublisher<TimelineCardList, Error>
     func calculateDate(from startDate: String, with day: Int) -> String?
+    func deleteTravel(id: TravelID) -> AnyPublisher<Bool, Error>
+    func reportTravel(id: TravelID) -> AnyPublisher<Bool, Error>
+    func likeTravel(id: TravelID) -> AnyPublisher<Bool, Error>
 }
 
 final class TimelineUseCaseImpl: TimelineUseCase {
@@ -58,6 +61,45 @@ final class TimelineUseCaseImpl: TimelineUseCase {
         
         return curDate.toString(with: "yyyy년 MM월 dd일")
 
+    }
+    
+    func deleteTravel(id: TravelID) -> AnyPublisher<Bool, Error> {
+        return Future { promise in
+            Task {
+                do {
+                    let result = try await self.postingRepository.deletePosting(id: id)
+                    promise(.success(result))
+                } catch {
+                    promise(.failure(error))
+                }
+            }
+        }.eraseToAnyPublisher()
+    }
+    
+    func reportTravel(id: TravelID) -> AnyPublisher<Bool, Error> {
+        return Future { promise in
+            Task {
+                do {
+                    let result = try await self.postingRepository.postReport(id: id)
+                    promise(.success(result))
+                } catch {
+                    promise(.failure(error))
+                }
+            }
+        }.eraseToAnyPublisher()
+    }
+    
+    func likeTravel(id: TravelID) -> AnyPublisher<Bool, Error> {
+        return Future { promise in
+            Task {
+                do {
+                    let result = try await self.postingRepository.postLike(id: id)
+                    promise(.success(result))
+                } catch {
+                    promise(.failure(error))
+                }
+            }
+        }.eraseToAnyPublisher()
     }
     
 }

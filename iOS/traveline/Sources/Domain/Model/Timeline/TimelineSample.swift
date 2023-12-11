@@ -26,7 +26,8 @@ enum TimelineSample {
                 .init(title: "액티비티", type: .theme),
                 .init(title: "효도", type: .theme)
             ],
-            days: ["01 일", "02 월", "03 화"]
+            days: ["01 일", "02 월", "03 화"],
+            day: 1
         )
     }
     

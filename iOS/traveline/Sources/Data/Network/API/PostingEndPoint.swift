@@ -11,8 +11,12 @@ import Foundation
 enum PostingEndPoint {
     case postingList(SearchQuery)
     case myPostingList
-    case createPosting(TravelRequestDTO) /// 게시글 생성
-    case fetchPostingInfo(String) /// 특정 게시글 반환
+    case createPosting(TravelRequestDTO) /// 여행 생성
+    case putPosting(String, TravelRequestDTO) /// 여행 수정
+    case deletePosting(String) /// 여행 삭제
+    case postReport(String) /// 여행 신고
+    case postLike(String) /// 여행 좋아요
+    case fetchPostingInfo(String) /// 특정 여행 반환
     case specificPosting
     case postingTitleList(String)
 }
@@ -23,14 +27,24 @@ extension PostingEndPoint: EndPoint {
         let curPath: String = "/postings"
         
         switch self {
-        case .myPostingList: 
+        case .myPostingList:
             return "/postings/mine"
+            
         case let .postingList(searchQuery):
             return curPath + searchQuery.makeQuery()
-        case let .fetchPostingInfo(id):
+            
+        case let .putPosting(id, _),
+            let .deletePosting(id),
+            let .fetchPostingInfo(id),
+            let .postReport(id):
             return "\(curPath)/\(id)"
+            
+        case let .postLike(id):
+            return "\(curPath)/\(id)/like"
+            
         case let .postingTitleList(keyword):
             return "\(curPath)/titles?keyword=\(keyword)"
+            
         default:
             return curPath
         }
@@ -38,8 +52,15 @@ extension PostingEndPoint: EndPoint {
     
     var httpMethod: HTTPMethod {
         switch self {
-        case .createPosting:
+        case .createPosting, .postReport, .postLike:
             return .POST
+            
+        case .putPosting:
+            return .PUT
+            
+        case .deletePosting:
+            return .DELETE
+            
         default:
             return .GET
         }
@@ -47,8 +68,10 @@ extension PostingEndPoint: EndPoint {
     
     var body: Encodable? {
         switch self {
-        case let .createPosting(travel):
+        case let .createPosting(travel),
+            let .putPosting(_, travel):
             return travel
+            
         default:
             return nil
         }

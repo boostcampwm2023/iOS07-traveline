@@ -67,10 +67,23 @@ final class TravelVC: UIViewController {
     private let withTagView: SelectTagView = .init(tagType: .with, width: Metric.width)
     private let costTagView: SelectTagView = .init(tagType: .cost, width: Metric.width)
     
+    private lazy var tagViews: [SelectTagView] = [
+        peopleTagView,
+        transportationTagView,
+        themeTagView,
+        withTagView,
+        costTagView
+    ]
+    
     // MARK: - Properties
     
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: TravelViewModel
+    private let regionBottomSheetVC = RegionBottomSheetVC(
+        title: Constants.bottomSheetTitle,
+        hasCompleteButton: false,
+        detentHeight: Metric.bottomSheetHeight
+    )
     
     // MARK: - Initializer
     
@@ -99,7 +112,7 @@ final class TravelVC: UIViewController {
         
         navigationController?.navigationBar.isHidden = true
     }
-
+    
     // MARK: - Functions
     
     @objc private func dismissKeyboard() {
@@ -107,11 +120,6 @@ final class TravelVC: UIViewController {
     }
     
     @objc private func selectRegion() {
-        let regionBottomSheetVC = RegionBottomSheetVC(
-            title: Constants.bottomSheetTitle,
-            hasCompleteButton: false,
-            detentHeight: Metric.bottomSheetHeight
-        )
         regionBottomSheetVC.delegate = self
         present(regionBottomSheetVC, animated: true)
     }
@@ -119,7 +127,7 @@ final class TravelVC: UIViewController {
     @objc private func selectStartDate(_ sender: UIDatePicker) {
         let startDate = sender.date
         viewModel.sendAction(.startDateSelected(startDate))
-
+        
         dismiss(animated: false)
     }
     
@@ -220,6 +228,26 @@ private extension TravelVC {
         baseScrollView.addGestureRecognizer(tapGesture)
     }
     
+    func setupEditableView(info: TravelEditableInfo) {
+        titleTextField.text = info.travelTitle
+        
+        info.tags.forEach { tag in
+            tagViews.forEach { view in
+                if view.tagType == tag.type {
+                    view.setSelectedTag(tag: tag)
+                }
+            }
+        }
+        
+        guard let region = info.region,
+              let startDate = info.startDate,
+              let endDate = info.endDate else { return }
+        
+        selectRegionButton.setSelectedTitle(region.title)
+        selectPeriodView.startDatePicker.date = startDate
+        selectPeriodView.endDatePicker.date = endDate
+    }
+    
     func bind() {
         titleTextField
             .textPublisher
@@ -233,6 +261,21 @@ private extension TravelVC {
             .map(\.canPost)
             .removeDuplicates()
             .withUnretained(self)
+            .filter { owner, _ in
+                !owner.viewModel.currentState.isEdit
+            }
+            .sink { owner, canPost in
+                owner.tlNavigationBar.isRightButtonEnabled(canPost)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.canPost)
+            .withUnretained(self)
+            .filter { owner, _ in
+                owner.viewModel.currentState.isEdit
+            }
+            .dropFirst()
             .sink { owner, canPost in
                 owner.tlNavigationBar.isRightButtonEnabled(canPost)
             }
@@ -261,6 +304,11 @@ private extension TravelVC {
             .removeDuplicates()
             .withUnretained(self)
             .sink { owner, id in
+                if owner.viewModel.currentState.isEdit {
+                    owner.navigationController?.popViewController(animated: true)
+                    return
+                }
+                
                 let timelineVC = VCFactory.makeTimelineVC(id: id)
                 guard var vcs = owner.navigationController?.viewControllers else { return }
                 vcs.removeLast()
@@ -277,6 +325,15 @@ private extension TravelVC {
             .sink { _, _ in
                 // TODO: - 토스트로 띄우기
                 print("제목은 1 - 14자 이내만 가능합니다.")
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .compactMap(\.travelInfo)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, travelInfo in
+                owner.setupEditableView(info: travelInfo)
             }
             .store(in: &cancellables)
     }

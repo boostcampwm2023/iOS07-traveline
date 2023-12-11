@@ -9,6 +9,7 @@
 import Foundation
 
 final class PostingRepositoryMock: PostingRepository {
+
     func fetchMyPostingList() async throws -> TravelList {
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
@@ -65,10 +66,34 @@ final class PostingRepositoryMock: PostingRepository {
 
 extension PostingRepositoryMock {
     
-    func postPostings(data: TravelRequest) async throws -> TravelID {
+    func postPosting(data: TravelRequest) async throws -> TravelID {
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
         return TravelID(value: "id")
+    }
+    
+    func putPosting(id: TravelID, data: TravelRequest) async throws -> TravelID {
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        return TravelID(value: "id")
+    }
+    
+    func deletePosting(id: TravelID) async throws -> Bool {
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        return true
+    }
+    
+    func postReport(id: TravelID) async throws -> Bool {
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        return true
+    }
+    
+    func postLike(id: TravelID) async throws -> Bool {
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        return true
     }
     
     func fetchTimelineInfo(id: TravelID) async throws -> TimelineTravelInfo {
@@ -77,4 +102,5 @@ extension PostingRepositoryMock {
         let mockData = TimelineSample.makeTravelInfo()
         return mockData
     }
+    
 }

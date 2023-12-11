@@ -92,6 +92,12 @@ final class TimelineVC: UIViewController {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = true
+        viewModel.sendAction(.viewWillAppear)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
         viewModel.sendAction(.enterToTimeline)
     }
     
@@ -112,17 +118,17 @@ final class TimelineVC: UIViewController {
         
         if isOwner {
             menuItems = [
-                .init(title: Literal.Action.modify, handler: { _ in
-                    // TODO: - 수정하기 연결
+                .init(title: Literal.Action.modify, handler: { [weak self] _ in
+                    self?.viewModel.sendAction(.editTravel)
                 }),
-                .init(title: Literal.Action.delete, attributes: .destructive, handler: { _ in
-                    // TODO: - 삭제하기 연결
+                .init(title: Literal.Action.delete, attributes: .destructive, handler: {  [weak self] _ in
+                    self?.viewModel.sendAction(.deleteTravel)
                 })
             ]
         } else {
             menuItems = [
-                .init(title: Literal.Action.report, attributes: .destructive, handler: { _ in
-                    // TODO: - 신고하기 연결
+                .init(title: Literal.Action.report, attributes: .destructive, handler: { [weak self] _ in
+                    self?.viewModel.sendAction(.reportTravel)
                 })
             ]
         }
@@ -189,6 +195,7 @@ private extension TimelineVC {
         
         viewModel.state
             .map(\.timelineCardList)
+            .removeDuplicates()
             .withUnretained(self)
             .sink { owner, cardlist in
                 owner.setupData(list: cardlist)
@@ -214,6 +221,28 @@ private extension TimelineVC {
                     day: info.day
                 )
                 owner.navigationController?.pushViewController(vc, animated: true)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.isEdit)
+            .filter { $0 }
+            .withUnretained(self)
+            .sink { owner, _ in
+                let travelEditVC = VCFactory.makeTravelVC(
+                    id: owner.viewModel.id,
+                    travelInfo: owner.viewModel.currentState.travelInfo
+                )
+                owner.navigationController?.pushViewController(travelEditVC, animated: true)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.deleteCompleted)
+            .filter { $0 }
+            .withUnretained(self)
+            .sink { owner, _ in
+                owner.navigationController?.popViewController(animated: true)
             }
             .store(in: &cancellables)
     }
@@ -261,7 +290,7 @@ extension TimelineVC {
             
             if let model = self?.dataSource.itemIdentifier(for: [0, 0]),
                case let .travelInfoItem(info) = model {
-                header.setData(days: info.days)
+                header.setData(info: info)
             }
             
             return header
@@ -342,7 +371,7 @@ extension TimelineVC {
         var snapshot = Snapshot()
         snapshot.appendSections([.travelInfo, .timeline])
         
-        dataSource.apply(snapshot)
+        dataSource.apply(snapshot, animatingDifferences: false)
     }
     
     func setupData(info: TimelineTravelInfo) {
@@ -350,9 +379,9 @@ extension TimelineVC {
         snapshot.deleteItems(snapshot.itemIdentifiers(inSection: .travelInfo))
         snapshot.appendItems([.travelInfoItem(info)], toSection: .travelInfo)
         
-        dataSource.apply(snapshot)
+        dataSource.apply(snapshot, animatingDifferences: false)
         snapshot.reloadSections([.timeline])
-        dataSource.apply(snapshot)
+        dataSource.apply(snapshot, animatingDifferences: false)
     }
     
     func setupData(list: TimelineCardList) {

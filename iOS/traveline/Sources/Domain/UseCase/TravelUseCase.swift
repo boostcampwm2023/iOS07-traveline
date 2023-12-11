@@ -15,8 +15,10 @@ enum TitleValidation {
 }
 
 protocol TravelUseCase {
+    func toEditable(info: TimelineTravelInfo) -> TravelEditableInfo
     func validate(title: String) -> TitleValidation
     func createTravel(data: TravelRequest) -> AnyPublisher<TravelID, Error>
+    func putTravel(id: TravelID, data: TravelRequest) -> AnyPublisher<TravelID, Error>
 }
 
 final class TravelUseCaseImpl: TravelUseCase {
@@ -27,6 +29,16 @@ final class TravelUseCaseImpl: TravelUseCase {
         self.repository = repository
     }
     
+    func toEditable(info: TimelineTravelInfo) -> TravelEditableInfo {
+        return .init(
+            travelTitle: info.travelTitle,
+            region: info.tags.filter { $0.type == .region }.first?.toRegionFilter(),
+            startDate: info.startDate.toDate(),
+            endDate: info.endDate.toDate(),
+            tags: info.tags.filter { !$0.type.isBasic }
+        )
+    }
+    
     func validate(title: String) -> TitleValidation {
         return 1...14 ~= title.count ? .valid : .invalidate
     }
@@ -35,7 +47,23 @@ final class TravelUseCaseImpl: TravelUseCase {
         return Future { promise in
             Task {
                 do {
-                    let id = try await self.repository.postPostings(data: data)
+                    let id = try await self.repository.postPosting(data: data)
+                    promise(.success(id))
+                } catch {
+                    promise(.failure(error))
+                }
+            }
+        }.eraseToAnyPublisher()
+    }
+    
+    func putTravel(id: TravelID, data: TravelRequest) -> AnyPublisher<TravelID, Error> {
+        return Future { promise in
+            Task {
+                do {
+                    let id = try await self.repository.putPosting(
+                        id: id,
+                        data: data
+                    )
                     promise(.success(id))
                 } catch {
                     promise(.failure(error))
