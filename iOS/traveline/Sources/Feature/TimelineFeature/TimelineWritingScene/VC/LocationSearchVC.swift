@@ -68,6 +68,9 @@ final class LocationSearchVC: UIViewController {
     private var keyword: String = ""
     weak var delegate: LocationSearchDelegate?
     
+    private var isPaging: Bool = true
+    let didScrollToBottom: PassthroughSubject<Void, Never> = .init()
+    
     // MARK: - Life Cycle
     
     override func viewDidLoad() {
@@ -148,7 +151,7 @@ private extension LocationSearchVC {
             searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             searchBar.heightAnchor.constraint(equalToConstant: Metric.contentHeight),
-           
+            
             tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: Metric.topInset),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -177,7 +180,7 @@ extension LocationSearchVC: UITableViewDelegate {
 }
 
 // MARK: - UITableViewDataSource extension
-                            
+
 extension LocationSearchVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return results.count
@@ -192,6 +195,12 @@ extension LocationSearchVC: UITableViewDataSource {
         cell.setData(place: title, address: address, keyword: keyword)
         
         return cell
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y > scrollView.contentSize.height - scrollView.bounds.size.height {
+            didScrollToBottom.send(Void())
+        }
     }
     
 }

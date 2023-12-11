@@ -18,10 +18,23 @@ enum TimelineWritingAction: BaseAction {
     case placeDidChange(TimelinePlace)
     case imageDidChange(Data?)
     case tapCompleteButton
+    case placeDidScrollToBottom
     
 }
 
 enum TimelineWritingSideEffect: BaseSideEffect {
+    enum TimelineWritingError: LocalizedError {
+        case createError
+        case placeError
+        
+        var errorDescription: String {
+            switch self {
+            case .createError: "타임라인 생성에 실패했습니다."
+            case .placeError: "장소 검색에 실패했습니다."
+            }
+        }
+    }
+    
     case createTimeline
     case updateBasicInfo
     case updateTitleState(String)
@@ -31,16 +44,18 @@ enum TimelineWritingSideEffect: BaseSideEffect {
     case updatePlaceState(TimelinePlace)
     case updatePlaceKeyword(String)
     case fetchPlaceList(TimelinePlaceList)
-    case error(String)
+    case fetchNextPlaceList(TimelinePlaceList)
+    case error(TimelineWritingError)
 }
 
 struct TimelineWritingState: BaseState {
     var isCompletable: Bool = false
     var timelineDetailRequest: TimelineDetailRequest = .empty
     var popToTimeline: Bool = false
-    var timelinePlaceList: TimelinePlaceList?
+    var timelinePlaceList: TimelinePlaceList = []
     var keyword: String = ""
     var text: String = ""
+    var offset: Int = 1
 }
 
 final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, TimelineWritingSideEffect, TimelineWritingState> {
@@ -91,6 +106,9 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
                 Just(TimelineWritingSideEffect.updatePlaceKeyword(keyword))
             )
             .eraseToAnyPublisher()
+            
+        case .placeDidScrollToBottom:
+            return fetchNextPlaceList()
         }
     }
     
@@ -98,7 +116,6 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
         var newState = state
         
         switch effect {
-            
         case .updateTitleState(let title):
             newState.timelineDetailRequest.title = title
             newState.isCompletable = completeButtonState(newState)
@@ -136,6 +153,11 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
             
         case let .fetchPlaceList(placeList):
             newState.timelinePlaceList = placeList
+            newState.offset = 1
+            
+        case  let .fetchNextPlaceList(placeList):
+            newState.timelinePlaceList += placeList
+            newState.offset += 1
         }
         
         return newState
@@ -150,19 +172,32 @@ private extension TimelineWritingViewModel {
             .map { _ in
                 return .createTimeline
             } .catch { _ in
-                return Just(SideEffect.error("failed create timeline"))
+                return Just(.error(.createError))
             }
             .eraseToAnyPublisher()
     }
     
     func fetchTimelinePlaceList(keyword: String) -> SideEffectPublisher {
-        return useCase.fetchPlaceList(keyword: keyword)
+        return useCase.fetchPlaceList(keyword: keyword, offset: 1)
             .map { result in
                 return .fetchPlaceList(result)
             } .catch { _ in
-                return Just(SideEffect.error("failed create timeline"))
+                return Just(.error(.placeError))
             }
             .eraseToAnyPublisher()
+    }
+    
+    func fetchNextPlaceList() -> SideEffectPublisher {
+        return useCase.fetchPlaceList(
+            keyword: currentState.keyword,
+            offset: currentState.offset + 1
+        )
+        .map { result in
+            return .fetchNextPlaceList(result)
+        } .catch { _ in
+            return Just(.error(.placeError))
+        }
+        .eraseToAnyPublisher()
     }
     
     func completeButtonState(_ state: State) -> Bool {

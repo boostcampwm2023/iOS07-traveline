@@ -21,7 +21,7 @@ final class TimelineDetailRepositoryMock: TimelineDetailRepository {
         return mockData
     }
     
-    func fetchTimelinePlaces(keyword: String) async throws -> TimelinePlaceList {
+    func fetchTimelinePlaces(keyword: String, offset: Int) async throws -> TimelinePlaceList {
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
         let mockData = [TimelinePlace.init(title: "", address: "", latitude: 0, longitude: 0)]
