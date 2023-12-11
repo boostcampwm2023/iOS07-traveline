@@ -43,8 +43,6 @@ final class TimelineDetailVC: UIViewController {
     private let imageView: UIImageView = {
         let view = UIImageView()
         view.contentMode = .scaleAspectFill
-        // TODO: - 서버 연동 후 수정
-        view.image = TravelineAsset.Images.travelImage.image
         view.clipsToBounds = true
         
         return view
