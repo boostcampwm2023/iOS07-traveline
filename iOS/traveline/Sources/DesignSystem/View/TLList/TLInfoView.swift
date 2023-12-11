@@ -138,6 +138,7 @@ final class TLInfoView: UIView {
     func reset() {
         thumbnailImageView.cancel()
         profileImageView.cancel()
+        thumbnailImageView.image = nil
         profileImageView.image = nil
         tags.forEach {
             $0.updateTag(text: Literal.empty)

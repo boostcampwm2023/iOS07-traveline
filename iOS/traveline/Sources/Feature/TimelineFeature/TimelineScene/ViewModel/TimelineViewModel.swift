@@ -136,6 +136,8 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
             newState.travelInfo = travelInfo
             newState.isOwner = travelInfo.isOwner
             newState.date = timelineUseCase.calculateDate(from: travelInfo.startDate, with: state.day)
+            newState.day = currentState.day
+            newState.travelInfo.day = currentState.day
             
         case let .loadTimelineCardList(timelineCardList):
             newState.timelineCardList = timelineCardList
