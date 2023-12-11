@@ -112,7 +112,9 @@ final class RootContainerVC: UIViewController {
     }
     
     @objc func edgePanGestureHandler(_ gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
-        openSideMenu()
+        if gestureRecognizer.state == .ended {
+            openSideMenu()
+        }
     }
 }
 
@@ -138,7 +140,6 @@ private extension RootContainerVC {
         let edgePanGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(edgePanGestureHandler(_:)))
         edgePanGesture.edges = .left
         view.addGestureRecognizer(edgePanGesture)
-        
     }
     
     func setupLayout() {

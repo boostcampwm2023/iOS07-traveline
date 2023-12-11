@@ -54,6 +54,7 @@ final class ProfileLabel: UIView {
     init() {
         super.init(frame: .zero)
         
+        setupAttributes()
         setupLayout()
     }
     
