@@ -62,7 +62,6 @@ final class HomeVC: UIViewController {
         setupAttributes()
         setupLayout()
         bind()
-        viewModel.sendAction(.viewDidLoad)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -213,6 +212,7 @@ private extension HomeVC {
             .filter { $0.homeViewType == .home }
             .map(\.homeFilters)
             .removeDuplicates()
+            .dropFirst()
             .withUnretained(self)
             .sink { owner, _ in
                 owner.viewModel.sendAction(.filterChanged)
