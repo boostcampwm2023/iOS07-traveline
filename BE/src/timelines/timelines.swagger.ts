@@ -31,7 +31,14 @@ export const findOne_OK = {
     vehicle: null,
     theme: ['힐링', '맛집'],
     withWho: ['가족'],
+    writer: {
+      id: '123456789012345678901234567890123456',
+      name: 'pong',
+      avatar: null,
+      email: 'pong@naver.com',
+    },
   },
+  isOwner: false,
 };
 
 export const findAll_OK = [
