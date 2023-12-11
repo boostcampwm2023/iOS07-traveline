@@ -72,6 +72,12 @@ final class HomeVC: UIViewController {
         viewModel.sendAction(.viewWillAppear)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        viewModel.sendAction(.viewDidAppear)
+    }
+    
     // MARK: - Functions
     
     @objc private func menuButtonTapped() {

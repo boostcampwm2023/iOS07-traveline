@@ -22,8 +22,8 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
         case .viewWillAppear:
             return .just(HomeSideEffect.showPrevious)
             
-        case .viewDidLoad:
-            return .just(HomeSideEffect.showHome)
+        case .viewDidAppear:
+            return fetchNewSearchList()
             
         case .cancelSearch:
             return Publishers.Merge(
