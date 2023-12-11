@@ -31,8 +31,8 @@ final class TimelineWritingVC: UIViewController {
         static let selectTime: String = "시간선택"
         static let selectLocation: String = "선택한 장소"
         static let alertContentVCKey = "contentViewController"
-        static let metaDataKey = "{TIFF}"
-        static let dateKey = "DateTime"
+        static let metaDataKey = "{Exif}"
+        static let dateKey = "DateTimeOriginal"
     }
     
     // MARK: - UI Components
@@ -140,6 +140,7 @@ final class TimelineWritingVC: UIViewController {
     private func updateTime() {
         selectTime.setText(to: timePickerVC.time)
         viewModel.sendAction(.timeDidChange(timePickerVC.time))
+        print(timePickerVC.time)
     }
     
     @objc private func scrollViewTouched() {
@@ -336,6 +337,15 @@ private extension TimelineWritingVC {
                 owner.navigationController?.popViewController(animated: true)
             }
             .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.timelineDetailRequest.time)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, time in
+                owner.selectTime.setText(to: time)
+            }
+            .store(in: &cancellables)
     }
     
 }
@@ -373,16 +383,16 @@ extension TimelineWritingVC: PHPickerViewControllerDelegate {
         guard let imageResult = results.first else { return }
         
         if imageResult.itemProvider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
-          imageResult.itemProvider.loadDataRepresentation(forTypeIdentifier: UTType.image.identifier) { data, _ in
+          imageResult.itemProvider.loadDataRepresentation(forTypeIdentifier: UTType.image.identifier) { [weak self] data, _ in
               
             guard let data = data,
                   let cgImageSource = CGImageSourceCreateWithData(data as CFData, nil),
                   let metadata = CGImageSourceCopyPropertiesAtIndex(cgImageSource, 0, nil) as? [String: Any],
-                  let tiff = metadata[Constants.metaDataKey] as? [String: Any],
-                  let date = tiff[Constants.dateKey] as? String
+                  let exif = metadata[Constants.metaDataKey] as? [String: Any],
+                  let date = exif[Constants.dateKey] as? String
               else { return }
               
-              print(date)
+              self?.viewModel.sendAction(.metaDataTime(date))
           }
         }
         

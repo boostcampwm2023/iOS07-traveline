@@ -14,6 +14,7 @@ enum TimelineWritingAction: BaseAction {
     case titleDidChange(String)
     case contentDidChange(String)
     case timeDidChange(String)
+    case metaDataTime(String)
     case searchPlace(String)
     case placeDidChange(TimelinePlace)
     case imageDidChange(Data?)
@@ -76,8 +77,8 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
         case .contentDidChange(let content):
             return .just(.updateContentState(content))
             
-        case .timeDidChange(let time):
-            return .just(.updateTimeState(time))
+        case .timeDidChange(let time), .metaDataTime(let time):
+            return convertTimeString(time: time)
             
         case .placeDidChange(let place):
             return .just(.updatePlaceState(place))
@@ -129,7 +130,9 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
         case .updateBasicInfo:
             newState.timelineDetailRequest.posting = id.value
             newState.timelineDetailRequest.day = day
-            newState.timelineDetailRequest.date = date.convertTimeFormat(from: "yyyy년 MM월 dd일", to: "yyyy-MM-dd")
+            if let date = date.convertTimeFormat(from: "yyyy년 MM월 dd일", to: "yyyy-MM-dd") {
+                newState.timelineDetailRequest.date = date
+            }
             
         case let .updatePlaceKeyword(keyword):
             newState.keyword = keyword
@@ -144,6 +147,13 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
 }
 
 private extension TimelineWritingViewModel {
+    
+    func convertTimeString(time: String) -> SideEffectPublisher {
+        if let time = time.convertTimeFormat(from: "yyyy:MM:dd HH:mm:ss", to: "a hh:mm") {
+            return .just(.updateTimeState(time))
+        }
+        return .just(.updateTimeState(time))
+    }
     
     func createTimeline() -> SideEffectPublisher {
         return useCase.requestCreateTimeline(with: currentState.timelineDetailRequest)

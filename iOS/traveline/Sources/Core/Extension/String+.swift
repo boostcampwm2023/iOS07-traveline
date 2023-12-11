@@ -51,13 +51,13 @@ extension String {
     /// - Parameters:
     ///   - type: 변환할 날짜 및 시간 형식 문자열
     /// - Returns: 변환된 날짜 및 시간 문자열. 변환에 실패하면 "00:00"을 반환합니다.
-    func convertTimeFormat(from fromFormat: String, to toFormat: String) -> String {
+    func convertTimeFormat(from fromFormat: String, to toFormat: String) -> String? {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ko_KR")
         dateFormatter.dateFormat = fromFormat
         
         guard let date = dateFormatter.date(from: self) else {
-            return "00:00"
+            return nil
         }
         
         dateFormatter.dateFormat = toFormat
