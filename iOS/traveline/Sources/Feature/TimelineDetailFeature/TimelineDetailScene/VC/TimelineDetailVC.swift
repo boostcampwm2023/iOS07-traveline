@@ -44,6 +44,7 @@ final class TimelineDetailVC: UIViewController {
         let view = UIImageView()
         view.contentMode = .scaleAspectFill
         view.clipsToBounds = true
+        view.image = TLImage.Common.default
         
         return view
     }()

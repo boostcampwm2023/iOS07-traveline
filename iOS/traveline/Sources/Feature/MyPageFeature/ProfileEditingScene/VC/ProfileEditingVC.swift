@@ -264,7 +264,6 @@ extension ProfileEditingVC: PHPickerViewControllerDelegate {
             DispatchQueue.main.async {
                 guard let selectedImage = image as? UIImage else { return }
                 let downSampledImage = selectedImage.downSampling()
-                print(downSampledImage?.jpegData(compressionQuality: 1)?.megabytes())
                 self.imageView.image = downSampledImage
                 self.viewModel.sendAction(.imageDidChange(true))
             }
