@@ -158,6 +158,15 @@ extension ProfileEditingVC {
         tlNavigationBar.delegate = self
         
         imageEditButton.addTarget(self, action: #selector(imageEditButtonTapped), for: .touchUpInside)
+        
+        nickNameTextField
+            .textPublisher
+            .withUnretained(self)
+            .sink { owner, text in
+                owner.viewModel.sendAction(.nicknameDidChange(text))
+            }
+            .store(in: &cancellables)
+        
     }
     
     private func setupLayout() {
@@ -209,8 +218,6 @@ extension ProfileEditingVC {
     }
     
     func bind() {
-
-        
         viewModel.state
             .map(\.isCompletable)
             .removeDuplicates()
@@ -236,7 +243,6 @@ extension ProfileEditingVC {
             .sink { owner, profile in
                 owner.nickNameTextField.text = profile.name
                 owner.imageView.setImage(from: profile.imageURL)
-                
             }
             .store(in: &cancellables)
     }
