@@ -243,6 +243,7 @@ private extension TravelVC {
             .withUnretained(self)
             .sink { owner, startDate in
                 owner.selectPeriodView.endDatePicker.minimumDate = startDate
+                owner.selectPeriodView.endDatePicker.maximumDate = Calendar.current.date(byAdding: .month, value: 1, to: startDate)
             }
             .store(in: &cancellables)
         
@@ -302,9 +303,9 @@ extension TravelVC: UITextFieldDelegate {
 
 extension TravelVC: TLBottomSheetDelegate {
     func bottomSheetDidDisappear(data: Any) {
-        guard let region = data as? String else { return }
-        selectRegionButton.setSelectedTitle(region)
-        viewModel.sendAction(.regionSelected(region))
+        guard let region = data as? RegionFilter else { return }
+        selectRegionButton.setSelectedTitle(region.title)
+        viewModel.sendAction(.regionSelected(region.query))
     }
 }
 

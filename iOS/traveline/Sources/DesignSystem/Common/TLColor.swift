@@ -38,4 +38,9 @@ enum TLColor {
         static let with = TravelineAsset.Colors.with.color
         static let season = TravelineAsset.Colors.season.color
     }
+    
+    enum Toast {
+        static let success = TravelineAsset.Colors.toastSuccess.color
+        static let failure = TravelineAsset.Colors.toastFailure.color
+    }
 }

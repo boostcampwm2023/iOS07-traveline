@@ -86,27 +86,25 @@ final class TimelineVC: UIViewController {
         setupCompositionalLayout()
         setupSnapshot()
         bind()
-        viewModel.sendAction(.enterToTimeline)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = true
+        viewModel.sendAction(.enterToTimeline)
     }
     
     // MARK: - Functions
     
     @objc func showMapView() {
         let mapVC = TimelineMapVC()
-        mapVC.setMarker(by: TimelineSample.makeCardList(), day: 1)
+        mapVC.setMarker(
+            by: viewModel.currentState.timelineCardList,
+            day: viewModel.currentState.day
+        )
         
         navigationController?.pushViewController(mapVC, animated: true)
-    }
-    
-    @objc private func createPostingButtonDidTapped() {
-        let timelineWritingVC = VCFactory.makeTimelineWritingVC()
-        navigationController?.pushViewController(timelineWritingVC, animated: true)
     }
     
     private func setNavigationRightButton(isOwner: Bool) {
@@ -141,8 +139,6 @@ final class TimelineVC: UIViewController {
 private extension TimelineVC {
     func setupAttributes() {
         view.backgroundColor = TLColor.black
-        
-        createPostingButton.addTarget(self, action: #selector(createPostingButtonDidTapped), for: .touchUpInside)
     }
     
     func setupLayout() {
@@ -173,6 +169,14 @@ private extension TimelineVC {
     }
     
     func bind() {
+        createPostingButton
+            .tapPublisher
+            .withUnretained(self)
+            .sink { owner, _ in
+                owner.viewModel.sendAction(.createPostingButtonPressed)
+            }
+            .store(in: &cancellables)
+        
         viewModel.state
             .map(\.travelInfo)
             .filter { $0 != .empty }
@@ -197,6 +201,19 @@ private extension TimelineVC {
             .sink { owner, isOwner in
                 owner.setNavigationRightButton(isOwner: isOwner)
                 owner.createPostingButton.isHidden = !isOwner
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .compactMap(\.timelineWritingInfo)
+            .withUnretained(self)
+            .sink { owner, info in
+                let vc = VCFactory.makeTimelineWritingVC(
+                    id: info.id,
+                    date: info.date,
+                    day: info.day
+                )
+                owner.navigationController?.pushViewController(vc, animated: true)
             }
             .store(in: &cancellables)
     }
@@ -352,7 +369,9 @@ extension TimelineVC {
 
 extension TimelineVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let timelineDetailVC = VCFactory.makeTimelineDetailVC(with: "id1234")
+        if indexPath.section == 0 { return }
+        
+        let timelineDetailVC = VCFactory.makeTimelineDetailVC(with: viewModel.currentState.timelineCardList[indexPath.row].detailId)
         
         navigationController?.pushViewController(timelineDetailVC, animated: true)
     }

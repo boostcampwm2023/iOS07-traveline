@@ -9,7 +9,7 @@
 import Foundation
 
 enum TimelineEndPoint {
-    case fetchTimelines(FetchTimelineRequestDTO) /// 게시글의 Day N에 해당하는 모든 타임라인 반환
+    case fetchTimelines(FetchTimelineRequestDTO)
 }
 
 extension TimelineEndPoint: EndPoint {

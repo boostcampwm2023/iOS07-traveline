@@ -84,19 +84,7 @@ final class TLLabel: UILabel {
         travelineColor = color
         setupAttributes()
     }
-    
-    func setColor(to color: UIColor, range: NSRange) {
-        guard let mutableAttributedText = attributedText?.mutableCopy() as? NSMutableAttributedString else { return }
-        
-        mutableAttributedText.addAttribute(
-            .foregroundColor,
-            value: TLColor.main,
-            range: range
-        )
-        
-        attributedText = mutableAttributedText
-    }
-    
+
     func setFont(to font: TLFont) {
         travelineFont = font
         setupAttributes()

@@ -48,6 +48,7 @@ final class TLInfoView: UIView {
         let imageView = UIImageView()
         imageView.backgroundColor = TLColor.gray
         imageView.layer.cornerRadius = Metric.profileImageSize / 2
+        imageView.clipsToBounds = true
         return imageView
     }()
     
@@ -124,6 +125,9 @@ final class TLInfoView: UIView {
         thumbnailImageView.image = TravelineAsset.Images.travelImage.image
         profileImageView.cancel()
         profileImageView.image = nil
+        tags.forEach {
+            $0.updateTag(text: Literal.empty)
+        }
     }
 }
 

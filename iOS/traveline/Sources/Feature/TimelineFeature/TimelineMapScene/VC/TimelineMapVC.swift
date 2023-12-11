@@ -42,15 +42,19 @@ final class TimelineMapVC: UIViewController {
     // MARK: - Functions
     
     func setMarker(by cardList: TimelineCardList, day: Int) {
-        let markerAnnotations = cardList.map {
-            TLMarkerAnnotation(
-                cardInfo: $0,
-                coordinate: .init(
-                    latitude: $0.latitude,
-                    longitude: $0.longitude
+        let markerAnnotations = cardList
+            .compactMap { card -> TLMarkerAnnotation? in
+                guard let latitude = card.latitude,
+                      let longitude = card.longitude else { return nil }
+                
+                return TLMarkerAnnotation(
+                    cardInfo: card,
+                    coordinate: .init(
+                        latitude: latitude,
+                        longitude: longitude
+                    )
                 )
-            )
-        }
+            }
         
         mapView.showAnnotations(markerAnnotations, animated: true)
         mapView.addAnnotations(markerAnnotations)
@@ -100,7 +104,7 @@ private extension TimelineMapVC {
         view.subviews.forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
-
+        
         NSLayoutConstraint.activate([
             tlNavigationBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tlNavigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -122,6 +126,12 @@ private extension TimelineMapVC {
 // MARK: - MKMapViewDelegate
 
 extension TimelineMapVC: MKMapViewDelegate {
+    func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
+        if let firstAnnotation = mapView.annotations.first {
+            mapView.selectAnnotation(firstAnnotation, animated: true)
+        }
+    }
+    
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
         if annotation is MKUserLocation { return nil }
         
@@ -135,7 +145,7 @@ extension TimelineMapVC: MKMapViewDelegate {
         
         annotationView?.image = TLImage.Travel.marker
         
-        if let imageHeight = annotationView?.bounds.height {
+        if let imageHeight = annotationView?.frame.height {
             annotationView?.centerOffset = .init(x: 0, y: -imageHeight / 2)
         }
         

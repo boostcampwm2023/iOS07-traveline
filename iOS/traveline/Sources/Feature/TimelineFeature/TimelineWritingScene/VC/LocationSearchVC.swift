@@ -6,10 +6,12 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
+import Combine
 import UIKit
 
 protocol LocationSearchDelegate: AnyObject {
-    func selectedLocation(result: String)
+    func selectedLocation(result: TimelinePlace)
+    func editingChagnedLocation(text: String)
 }
 
 final class LocationSearchVC: UIViewController {
@@ -53,14 +55,15 @@ final class LocationSearchVC: UIViewController {
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = TLColor.black
+        tableView.keyboardDismissMode = .onDrag
         
         return tableView
     }()
     
     // MARK: - Properties
     
-    // TODO: - 임시 결과값으로 추후에는 빈 배열
-    private var results: [String] = ["제주도 제주시", "제주도 서귀포시", "제주도 뭐뭐시"]
+    private var results: TimelinePlaceList = []
+    private var keyword: String = ""
     weak var delegate: LocationSearchDelegate?
     
     // MARK: - Life Cycle
@@ -76,6 +79,12 @@ final class LocationSearchVC: UIViewController {
     
     @objc private func closeButtonTapped() {
         dismiss(animated: true)
+    }
+    
+    func setData(keyword: String, places: TimelinePlaceList) {
+        self.keyword = keyword
+        results = places
+        tableView.reloadData()
     }
     
 }
@@ -97,6 +106,10 @@ private extension LocationSearchVC {
             action: #selector(closeButtonTapped),
             for: .touchUpInside
         )
+        
+        searchBar.text = .none
+        results = []
+        tableView.reloadData()
     }
     
     func setupLayout() {
@@ -118,7 +131,7 @@ private extension LocationSearchVC {
         }
         
         NSLayoutConstraint.activate([
-            header.topAnchor.constraint(equalTo: view.topAnchor),
+            header.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             header.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             header.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             header.heightAnchor.constraint(equalToConstant: Metric.contentHeight),
@@ -145,11 +158,8 @@ private extension LocationSearchVC {
 // MARK: - UISearchBarDelegate extension
 
 extension LocationSearchVC: UISearchBarDelegate {
-    
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        guard let text = searchBar.text,
-              !text.trimmingCharacters(in: .whitespaces).isEmpty else { return }
-        // search result logic
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        delegate?.editingChagnedLocation(text: searchText)
     }
 }
 
@@ -157,8 +167,8 @@ extension LocationSearchVC: UISearchBarDelegate {
 
 extension LocationSearchVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let text = tableView.cellForRow(at: indexPath)?.textLabel?.text else { return }
-        delegate?.selectedLocation(result: text)
+        let place = results[indexPath.row]
+        delegate?.selectedLocation(result: place)
         dismiss(animated: true)
     }
 }
@@ -172,9 +182,13 @@ extension LocationSearchVC: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .default, reuseIdentifier: .none)
-        let text = results[indexPath.row]
+        let text = results[indexPath.row].title
         cell.backgroundColor = TLColor.black
-        cell.textLabel?.attributedText = text.attributeFirstLetterToMainColor()
+        cell.textLabel?.text = text
+        cell.textLabel?.setColor(
+            to: TLColor.main,
+            range: text.findCommonWordRange(keyword)
+        )
         
         return cell
     }

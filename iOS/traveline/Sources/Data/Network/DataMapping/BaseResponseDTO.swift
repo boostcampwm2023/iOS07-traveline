@@ -1,5 +1,5 @@
 //
-//  PostPostingsDTO.swift
+//  BaseResponseDTO.swift
 //  traveline
 //
 //  Created by 김영인 on 2023/12/03.
@@ -8,6 +8,6 @@
 
 import Foundation
 
-struct PostPostingsResponseDTO: Decodable {
+struct BaseResponseDTO: Decodable {
     let id: String
 }

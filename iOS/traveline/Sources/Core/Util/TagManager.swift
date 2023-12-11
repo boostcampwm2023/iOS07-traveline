@@ -21,7 +21,7 @@ extension TagManager {
         tags.filter { $0.type == type }.first?.title
     }
     
-    func toDTO(type: TagType) -> [String] {
+    func toDTO(type: TagType) -> [String]? {
         tags.filter { $0.type == type }.map(\.title)
     }
 }

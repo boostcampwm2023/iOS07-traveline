@@ -17,7 +17,6 @@ final class TimelineDetailRepositoryImpl: TimelineDetailRepository {
     }
     
     func fetchTimelineDetailInfo(id: String) async throws -> TimelineDetailInfo {
-        
         let timelineDetailResponseDTO = try await network.request(
             endPoint: TimelineDetailEndPoint.specificTimeline(id),
             type: TimelineDetailResponseDTO.self
@@ -26,14 +25,20 @@ final class TimelineDetailRepositoryImpl: TimelineDetailRepository {
         return timelineDetailResponseDTO.toDomain()
     }
     
-    func createTimelineDetail(with info: TimelineDetailRequest) async throws -> TimelineDetailInfo {
-        
-        let timelineDetailResponseDTO = try await network.request(
+    func createTimelineDetail(with info: TimelineDetailRequest) async throws {
+        try await network.request(
             endPoint: TimelineDetailEndPoint.createTimeline(info.toDTO()),
-            type: TimelineDetailResponseDTO.self
+            type: BaseResponseDTO.self
+        )
+    }
+    
+    func fetchTimelinePlaces(keyword: String) async throws -> TimelinePlaceList {
+        let timelinePlaceResponseDTO = try await network.request(
+            endPoint: TimelineDetailEndPoint.fetchPlaceList(keyword),
+            type: TimelinePlaceListResponseDTO.self
         )
         
-        return timelineDetailResponseDTO.toDomain()
+        return timelinePlaceResponseDTO.toDomain()
     }
     
 }

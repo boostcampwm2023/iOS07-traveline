@@ -63,4 +63,21 @@ extension String {
         dateFormatter.dateFormat = toFormat
         return dateFormatter.string(from: date)
     }
+    
+    /// 문자열을 "yyyy-MM-dd" 형식의 날짜로 변환합니다.
+    ///
+    /// - Returns: 변환된 날짜. 변환에 실패하면 nil을 반환합니다.
+    func toDate() -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        return dateFormatter.date(from: self)
+    }
+    
+    /// 문자열을 Double로 변환합니다.
+    ///
+    /// - Returns: 변환된 Double 값. 변환에 실패하면 0을 반환합니다.
+    func toDouble() -> Double {
+        return Double(self) ?? 0.0
+    }
 }
