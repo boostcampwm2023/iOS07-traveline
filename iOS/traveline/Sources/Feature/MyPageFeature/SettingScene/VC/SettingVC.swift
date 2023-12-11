@@ -6,6 +6,7 @@
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
+import AuthenticationServices
 import Combine
 import SafariServices
 import UIKit
@@ -230,5 +231,30 @@ extension SettingVC {
                 sceneDelegate.changeRootViewControllerToLogin()
             }
             .store(in: &cancellabels)
+        
+        viewModel.state
+            .compactMap(\.appleIDRequests)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, requests in
+                let controller = ASAuthorizationController(authorizationRequests: requests)
+                controller.delegate = owner
+                controller.presentationContextProvider = owner as? ASAuthorizationControllerPresentationContextProviding
+                controller.performRequests()
+            }
+            .store(in: &cancellabels)
+    }
+}
+
+// MARK: - ASAuthorizationControllerDelegate
+
+extension SettingVC: ASAuthorizationControllerDelegate {
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        viewModel.sendAction(.didCompleteWithAppleAuth(authorization))
+    }
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        viewModel.sendAction(.didCompleteWithError)
     }
 }

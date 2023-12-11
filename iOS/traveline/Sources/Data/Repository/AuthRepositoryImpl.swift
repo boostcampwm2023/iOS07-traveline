@@ -40,17 +40,17 @@ final class AuthRepositoryImpl: AuthRepository {
         KeychainList.refreshToken = nil
     }
     
-    func withdrawal() async throws -> Bool {
-        guard let idToken = KeychainList.identityToken,
-              let authorizationCode = KeychainList.authorizationCode else { return false }
+    func requestAppleId() -> AppleIDRequest {
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
         
-        let withdrawRequestDTO: WithdrawRequestDTO = .init(
-            idToken: idToken,
-            authorizationCode: authorizationCode
-        )
+        return request
+    }
+    
+    func withdrawal(_ request: WithdrawRequest) async throws -> Bool {
         
         let result = try await network.request(
-            endPoint: AuthEndPoint.withdrawal(withdrawRequestDTO),
+            endPoint: AuthEndPoint.withdrawal(request.toDTO()),
             type: WithdrawalResponseDTO.self
         )
         
