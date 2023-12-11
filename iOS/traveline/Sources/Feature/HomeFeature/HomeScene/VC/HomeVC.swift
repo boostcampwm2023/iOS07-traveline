@@ -62,7 +62,6 @@ final class HomeVC: UIViewController {
         setupAttributes()
         setupLayout()
         bind()
-        viewModel.sendAction(.viewDidLoad)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -70,6 +69,12 @@ final class HomeVC: UIViewController {
         
         navigationController?.navigationBar.isHidden = false
         viewModel.sendAction(.viewWillAppear)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        viewModel.sendAction(.viewDidAppear)
     }
     
     // MARK: - Functions
@@ -207,6 +212,7 @@ private extension HomeVC {
             .filter { $0.homeViewType == .home }
             .map(\.homeFilters)
             .removeDuplicates()
+            .dropFirst()
             .withUnretained(self)
             .sink { owner, _ in
                 owner.viewModel.sendAction(.filterChanged)
