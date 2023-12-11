@@ -14,7 +14,8 @@ final class TLInfoView: UIView {
         static let infoInset: CGFloat = 7
         static let radius: CGFloat = 12
         static let padding: CGFloat = 12
-        static let likePadding: CGFloat = 16
+        static let baseInset: CGFloat = 12
+        static let bottomInset: CGFloat = 20
         static let imageSize: CGFloat = 116
         static let likeImageSize: CGFloat = 20
         static let profileImageSize: CGFloat = 20
@@ -26,14 +27,26 @@ final class TLInfoView: UIView {
     
     // MARK: - UI Components
     
+    private let baseStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 12
+        return stackView
+    }()
+    
     private let thumbnailImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = TLColor.gray
         imageView.layer.cornerRadius = Metric.radius
-        // TODO: - 서버 연동 후 수정
-        imageView.image = TravelineAsset.Images.travelImage.image
         imageView.clipsToBounds = true
         return imageView
+    }()
+    
+    private let infoStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.distribution = .fillProportionally
+        return stackView
     }()
     
     private let profileStackView: UIStackView = {
@@ -85,6 +98,7 @@ final class TLInfoView: UIView {
     private let tagStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.spacing = 5
+        stackView.alignment = .leading
         return stackView
     }()
     
@@ -110,6 +124,7 @@ final class TLInfoView: UIView {
     
     func setupData(item: TravelListInfo) {
         thumbnailImageView.setImage(from: item.imageURL)
+        thumbnailImageView.isHidden = item.imageURL.isEmpty
         profileImageView.setImage(from: item.profile.imageURL)
         nameLabel.setText(to: item.profile.name)
         likeCountLabel.setText(to: "\(item.like)")
@@ -122,7 +137,6 @@ final class TLInfoView: UIView {
     /// View 재사용 시 reset
     func reset() {
         thumbnailImageView.cancel()
-        thumbnailImageView.image = TravelineAsset.Images.travelImage.image
         profileImageView.cancel()
         profileImageView.image = nil
         tags.forEach {
@@ -143,42 +157,33 @@ private extension TLInfoView {
         profileStackView.addArrangedSubviews(profileImageView, nameLabel)
         likeStackView.addArrangedSubviews(likeImageView, likeCountLabel)
         tagStackView.addArrangedSubviews(regionTag, periodTag, seasonTag)
+        infoStackView.addArrangedSubviews(profileStackView, titleLabel, tagStackView)
+        baseStackView.addArrangedSubviews(thumbnailImageView, infoStackView)
         
-        addSubviews(
-            thumbnailImageView,
-            profileStackView,
-            likeStackView,
-            titleLabel,
-            tagStackView
-        )
+        addSubviews(baseStackView, likeStackView)
         
         subviews.forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
+        infoStackView.setCustomSpacing(22, after: titleLabel)
+        
         NSLayoutConstraint.activate([
-            thumbnailImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Metric.padding),
-            thumbnailImageView.topAnchor.constraint(equalTo: topAnchor, constant: Metric.padding),
-            thumbnailImageView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Metric.padding),
+            baseStackView.topAnchor.constraint(equalTo: topAnchor, constant: Metric.baseInset),
+            baseStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Metric.baseInset),
+            baseStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Metric.bottomInset),
+            
             thumbnailImageView.widthAnchor.constraint(equalToConstant: Metric.imageSize),
             thumbnailImageView.heightAnchor.constraint(equalToConstant: Metric.imageSize),
             
             profileImageView.widthAnchor.constraint(equalToConstant: Metric.profileImageSize),
             profileImageView.heightAnchor.constraint(equalToConstant: Metric.profileImageSize),
             
-            profileStackView.leadingAnchor.constraint(equalTo: thumbnailImageView.trailingAnchor, constant: Metric.padding),
-            profileStackView.topAnchor.constraint(equalTo: thumbnailImageView.topAnchor, constant: Metric.infoInset),
-            
             likeImageView.widthAnchor.constraint(equalToConstant: Metric.likeImageSize),
             likeImageView.heightAnchor.constraint(equalToConstant: Metric.likeImageSize),
-            likeStackView.topAnchor.constraint(equalTo: profileStackView.topAnchor),
-            likeStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Metric.likePadding),
             
-            titleLabel.topAnchor.constraint(equalTo: profileStackView.bottomAnchor, constant: Metric.infoInset),
-            titleLabel.leadingAnchor.constraint(equalTo: profileStackView.leadingAnchor),
-            
-            tagStackView.leadingAnchor.constraint(equalTo: profileStackView.leadingAnchor),
-            tagStackView.bottomAnchor.constraint(equalTo: thumbnailImageView.bottomAnchor, constant: -Metric.infoInset)
+            likeStackView.centerYAnchor.constraint(equalTo: profileStackView.centerYAnchor),
+            likeStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Metric.baseInset)
         ])
     }
 }
