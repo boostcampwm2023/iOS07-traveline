@@ -97,7 +97,7 @@ private extension ProfileLabel {
             
             idLabel.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: Metric.spacing),
             idLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            idLabel.trailingAnchor.constraint(equalTo: editButton.leadingAnchor),
+            idLabel.trailingAnchor.constraint(equalTo: editButton.leadingAnchor, constant: -Metric.spacing),
             
             editButton.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
             editButton.leadingAnchor.constraint(equalTo: idLabel.trailingAnchor, constant: Metric.spacing),
