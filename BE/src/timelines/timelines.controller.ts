@@ -162,8 +162,15 @@ export class TimelinesController {
     description: 'id에 해당하는 타임라인을 반환합니다.',
   })
   @ApiOkResponse({ schema: { example: findOne_OK } })
-  async findOne(@Param('id', ParseUUIDPipe) id: string): Promise<Timeline> {
-    return this.timelinesService.findOneWithURL(id);
+  async findOne(@Req() request, @Param('id', ParseUUIDPipe) id: string) {
+    const timeline = await this.timelinesService.findOneWithURL(id);
+    delete timeline.posting.writer.resourceId;
+    delete timeline.posting.writer.socialType;
+    delete timeline.posting.writer.allowedIp;
+    delete timeline.posting.writer.bannedIp;
+
+    const userId = request['user'].id;
+    return { ...timeline, isOwner: timeline.posting.writer.id === userId };
   }
 
   @Put(':id')

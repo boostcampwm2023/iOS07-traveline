@@ -15,10 +15,12 @@ export class TimelinesRepository {
   }
 
   async findOne(id: string) {
-    return this.timelineRepository.findOne({
-      where: { id },
-      relations: { posting: true },
-    });
+    return this.timelineRepository
+      .createQueryBuilder('t')
+      .leftJoinAndSelect('t.posting', 'p')
+      .leftJoinAndSelect('p.writer', 'u')
+      .where('t.id = :id', { id })
+      .getOne();
   }
 
   async findAll(posting: string, day: number) {
