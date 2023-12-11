@@ -35,13 +35,11 @@ import {
 import { Timeline } from './entities/timeline.entity';
 import { AuthGuard } from 'src/auth/auth.guard';
 import {
-  create_OK,
+  create_update_remove_OK,
   findAll_OK,
   findCoordinates_OK,
   findOne_OK,
-  remove_OK,
   translate_OK,
-  update_OK,
 } from './timelines.swagger';
 
 @ApiBearerAuth('accessToken')
@@ -78,7 +76,7 @@ export class TimelinesController {
     description: '사용자가 입력한 정보를 토대로 새로운 타임라인을 생성합니다.',
   })
   @ApiConsumes('multipart/form-data')
-  @ApiCreatedResponse({ schema: { example: create_OK } })
+  @ApiCreatedResponse({ schema: { example: create_update_remove_OK } })
   @ApiForbiddenResponse({
     schema: {
       example: {
@@ -177,7 +175,7 @@ export class TimelinesController {
     description: 'id에 해당하는 타임라인을 수정합니다.',
   })
   @ApiConsumes('multipart/form-data')
-  @ApiOkResponse({ schema: { example: update_OK } })
+  @ApiOkResponse({ schema: { example: create_update_remove_OK } })
   @ApiBadRequestResponse({
     schema: {
       example: {
@@ -203,7 +201,7 @@ export class TimelinesController {
     summary: 'id에 해당하는 타임라인 삭제',
     description: 'id에 해당하는 상세 타임라인을 삭제합니다.',
   })
-  @ApiOkResponse({ schema: { example: remove_OK } })
+  @ApiOkResponse({ schema: { example: create_update_remove_OK } })
   async remove(
     @Param('id', ParseUUIDPipe) id: string
   ): Promise<{ id: string }> {
