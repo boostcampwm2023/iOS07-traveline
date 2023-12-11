@@ -31,6 +31,8 @@ final class TimelineWritingVC: UIViewController {
         static let selectTime: String = "시간선택"
         static let selectLocation: String = "선택한 장소"
         static let alertContentVCKey = "contentViewController"
+        static let metaDataKey = "{TIFF}"
+        static let dateKey = "DateTime"
     }
     
     // MARK: - UI Components
@@ -363,16 +365,29 @@ extension TimelineWritingVC: UITextViewDelegate {
     
 }
 
-// MARK: - PHPPickerViewControllerDelegate 
+// MARK: - PHPPickerViewControllerDelegate
 
 extension TimelineWritingVC: PHPickerViewControllerDelegate {
+    
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        guard let imageResult = results.first else { return }
         
-        picker.dismiss(animated: true, completion: nil)
+        if imageResult.itemProvider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
+          imageResult.itemProvider.loadDataRepresentation(forTypeIdentifier: UTType.image.identifier) { data, _ in
+              
+            guard let data = data,
+                  let cgImageSource = CGImageSourceCreateWithData(data as CFData, nil),
+                  let metadata = CGImageSourceCopyPropertiesAtIndex(cgImageSource, 0, nil) as? [String: Any],
+                  let tiff = metadata[Constants.metaDataKey] as? [String: Any],
+                  let date = tiff[Constants.dateKey] as? String
+              else { return }
+              
+              print(date)
+          }
+        }
         
-        let itemProvider = results.first?.itemProvider
-        guard let itemProvider = itemProvider,
-              itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
+        let itemProvider = imageResult.itemProvider
+        guard itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
         
         itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, _ in
             guard let self = self else { return }
@@ -383,8 +398,9 @@ extension TimelineWritingVC: PHPickerViewControllerDelegate {
                 self.viewModel.sendAction(.imageDidChange(downSampledImage?.jpegData(compressionQuality: 1)))
             }
         }
+        
+        picker.dismiss(animated: true, completion: nil)
     }
-    
 }
 
 // MARK: - extension LocationSearchDelegate
