@@ -169,9 +169,10 @@ private extension TLInfoView {
         infoStackView.setCustomSpacing(22, after: titleLabel)
         
         NSLayoutConstraint.activate([
-            baseStackView.topAnchor.constraint(equalTo: topAnchor, constant: Metric.baseInset),
+            baseStackView.centerYAnchor.constraint(equalTo: centerYAnchor),
             baseStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: Metric.baseInset),
-            baseStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Metric.bottomInset),
+            
+            infoStackView.bottomAnchor.constraint(equalTo: baseStackView.bottomAnchor, constant: -8),
             
             thumbnailImageView.widthAnchor.constraint(equalToConstant: Metric.imageSize),
             thumbnailImageView.heightAnchor.constraint(equalToConstant: Metric.imageSize),
