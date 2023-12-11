@@ -33,6 +33,7 @@ final class RootContainerVC: UIViewController {
         super.init(nibName: nil, bundle: nil)
         
         setupChildVC()
+        setupAttributes()
         setupLayout()
     }
     
@@ -47,6 +48,8 @@ final class RootContainerVC: UIViewController {
         self.sideMenuVC.view.frame = self.sideMenuHiddenPosition()
         self.view.addSubview(self.sideMenuVC.view)
         self.sideMenuVC.didMove(toParent: self)
+        self.shadowView.isHidden = false
+        self.shadowView.alpha = 0.0
         
         UIView.animate(
             withDuration: 0.4,
@@ -57,7 +60,7 @@ final class RootContainerVC: UIViewController {
             animations: {
                 self.sideMenuVC.view.frame = self.sideMenuDisplayPosition()
                 self.sideMenuVC.didMove(toParent: self)
-                self.shadowView.isHidden = false
+                self.shadowView.alpha = 0.7
             },
             completion: { [weak self] _ in
                 guard let self else { return }
@@ -67,12 +70,14 @@ final class RootContainerVC: UIViewController {
     
     private func closeSideMenu() {
         self.sideMenuVC.view.frame = self.sideMenuDisplayPosition()
+        self.shadowView.alpha = 0.7
         
         UIView.animate(
             withDuration: 0.5,
             animations: { [weak self] in
                 guard let self else { return }
                 self.sideMenuVC.view.frame = self.sideMenuHiddenPosition()
+                self.shadowView.alpha = 0.0
             },
             completion: { [weak self] _ in
                 guard let self else { return }
@@ -105,6 +110,12 @@ final class RootContainerVC: UIViewController {
     @objc func shadowTouched() {
         closeSideMenu()
     }
+    
+    @objc func edgePanGestureHandler(_ gestureRecognizer: UIScreenEdgePanGestureRecognizer) {
+        if gestureRecognizer.state == .ended {
+            openSideMenu()
+        }
+    }
 }
 
 // MARK: - Setup Functions
@@ -118,12 +129,21 @@ private extension RootContainerVC {
         view.addSubview(navigationVC.view)
         navigationVC.didMove(toParent: self)
         self.navigationVC = navigationVC
-        
         sideMenuVC.delegate = self
-        
+    }
+    
+    func setupAttributes() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(shadowTouched))
         tapGesture.delegate = self
         shadowView.addGestureRecognizer(tapGesture)
+        
+        let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(shadowTouched))
+        swipeGesture.direction = .left
+        shadowView.addGestureRecognizer(swipeGesture)
+     
+        let edgePanGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(edgePanGestureHandler(_:)))
+        edgePanGesture.edges = .left
+        view.addGestureRecognizer(edgePanGesture)
     }
     
     func setupLayout() {
