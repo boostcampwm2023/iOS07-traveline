@@ -20,6 +20,7 @@ final class LocationSearchVC: UIViewController {
         static let topInset: CGFloat = 27
         static let margin: CGFloat = 16
         static let contentHeight: CGFloat = 52
+        static let placeHeight: CGFloat = 65
     }
     
     private enum Constants {
@@ -56,6 +57,7 @@ final class LocationSearchVC: UIViewController {
         let tableView = UITableView()
         tableView.backgroundColor = TLColor.black
         tableView.keyboardDismissMode = .onDrag
+        tableView.register(PlaceTVC.self, forCellReuseIdentifier: PlaceTVC.identifier)
         
         return tableView
     }()
@@ -100,6 +102,7 @@ private extension LocationSearchVC {
         searchBar.delegate = self
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.rowHeight = Metric.placeHeight
         
         closeButton.addTarget(
             self,
@@ -181,20 +184,14 @@ extension LocationSearchVC: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: .none)
-        let text = results[indexPath.row].title
-        cell.backgroundColor = TLColor.black
-        cell.textLabel?.text = text
-        cell.textLabel?.setColor(
-            to: TLColor.main,
-            range: text.findCommonWordRange(keyword)
-        )
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: PlaceTVC.identifier) as? PlaceTVC else { return UITableViewCell() }
+        
+        let title = results[indexPath.row].title
+        let address = results[indexPath.row].address
+        
+        cell.setData(place: title, address: address, keyword: keyword)
         
         return cell
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return Metric.contentHeight
     }
     
 }
