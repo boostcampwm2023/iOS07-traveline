@@ -35,7 +35,7 @@ extension String {
     /// - Parameter searchString: 찾을 단어
     /// - Returns: 공통 부분의 범위
     func findCommonWordRange(_ searchString: String) -> NSRange {
-        guard let range = self.range(of: searchString) else { return .init() }
+        guard let range = self.lowercased().range(of: searchString.lowercased()) else { return .init() }
         
         return NSRange(range, in: self)
     }
