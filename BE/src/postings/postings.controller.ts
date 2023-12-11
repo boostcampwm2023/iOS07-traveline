@@ -29,7 +29,6 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Posting } from './entities/posting.entity';
 import { Report } from './entities/report.entity';
 import { AuthGuard } from '../auth/auth.guard';
 import {
@@ -180,7 +179,7 @@ export class PostingsController {
     @Req() request,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePostingDto: UpdatePostingDto
-  ) {
+  ): Promise<{ id: string }> {
     const userId = request['user'].id;
     await this.postingsService.update(id, userId, updatePostingDto);
     return { id };
@@ -204,9 +203,10 @@ export class PostingsController {
   async remove(
     @Req() request,
     @Param('id', ParseUUIDPipe) id: string
-  ): Promise<Posting> {
+  ): Promise<{ id: string }> {
     const userId = request['user'].id;
-    return this.postingsService.remove(id, userId);
+    await this.postingsService.remove(id, userId);
+    return { id };
   }
 
   @Post(':id/like')

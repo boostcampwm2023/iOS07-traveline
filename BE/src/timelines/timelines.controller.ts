@@ -102,7 +102,7 @@ export class TimelinesController {
     @Req() request,
     @UploadedFile() image: Express.Multer.File,
     @Body() createTimelineDto: CreateTimelineDto
-  ) {
+  ): Promise<{ id: string }> {
     const userId = request['user'].id;
     const { id } = await this.timelinesService.create(
       userId,
@@ -192,7 +192,7 @@ export class TimelinesController {
     @Param('id', ParseUUIDPipe) id: string,
     @UploadedFile() image: Express.Multer.File,
     @Body() updateTimelineDto: UpdateTimelineDto
-  ) {
+  ): Promise<{ id: string }> {
     const userId = request['user'].id;
     await this.timelinesService.update(id, userId, image, updateTimelineDto);
     return { id };
@@ -204,8 +204,11 @@ export class TimelinesController {
     description: 'id에 해당하는 상세 타임라인을 삭제합니다.',
   })
   @ApiOkResponse({ schema: { example: remove_OK } })
-  async remove(@Param('id', ParseUUIDPipe) id: string): Promise<Timeline> {
-    return this.timelinesService.remove(id);
+  async remove(
+    @Param('id', ParseUUIDPipe) id: string
+  ): Promise<{ id: string }> {
+    await this.timelinesService.remove(id);
+    return { id };
   }
 
   @Get(':id/translate')
