@@ -137,6 +137,10 @@ private extension RootContainerVC {
         tapGesture.delegate = self
         shadowView.addGestureRecognizer(tapGesture)
         
+        let swipeGesture = UISwipeGestureRecognizer(target: self, action: #selector(shadowTouched))
+        swipeGesture.direction = .left
+        shadowView.addGestureRecognizer(swipeGesture)
+     
         let edgePanGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(edgePanGestureHandler(_:)))
         edgePanGesture.edges = .left
         view.addGestureRecognizer(edgePanGesture)
