@@ -29,19 +29,16 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Posting } from './entities/posting.entity';
 import { Report } from './entities/report.entity';
 import { AuthGuard } from '../auth/auth.guard';
 import {
-  create_OK,
+  create_update_remove_OK,
   findMyPosting_OK,
   findOne_OK,
   like_OK,
-  remove_OK,
   report_OK,
   searchByWord_OK,
   search_OK,
-  update_OK,
 } from './postings.swagger';
 
 @ApiBearerAuth('accessToken')
@@ -74,7 +71,7 @@ export class PostingsController {
     summary: '게시글 생성',
     description: '사용자가 입력한 정보를 토대로 새로운 게시글을 생성합니다.',
   })
-  @ApiCreatedResponse({ schema: { example: create_OK } })
+  @ApiCreatedResponse({ schema: { example: create_update_remove_OK } })
   @ApiBadRequestResponse({
     schema: {
       example: {
@@ -166,7 +163,7 @@ export class PostingsController {
     summary: '게시글 수정',
     description: 'id 값에 해당되는 게시글을 수정합니다.',
   })
-  @ApiOkResponse({ schema: { example: update_OK } })
+  @ApiOkResponse({ schema: { example: create_update_remove_OK } })
   @ApiForbiddenResponse({
     schema: {
       example: {
@@ -180,7 +177,7 @@ export class PostingsController {
     @Req() request,
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updatePostingDto: UpdatePostingDto
-  ) {
+  ): Promise<{ id: string }> {
     const userId = request['user'].id;
     await this.postingsService.update(id, userId, updatePostingDto);
     return { id };
@@ -191,7 +188,7 @@ export class PostingsController {
     summary: '게시글 삭제',
     description: 'id 값에 해당되는 게시글을 삭제합니다.',
   })
-  @ApiOkResponse({ schema: { example: remove_OK } })
+  @ApiOkResponse({ schema: { example: create_update_remove_OK } })
   @ApiForbiddenResponse({
     schema: {
       example: {
@@ -204,9 +201,10 @@ export class PostingsController {
   async remove(
     @Req() request,
     @Param('id', ParseUUIDPipe) id: string
-  ): Promise<Posting> {
+  ): Promise<{ id: string }> {
     const userId = request['user'].id;
-    return this.postingsService.remove(id, userId);
+    await this.postingsService.remove(id, userId);
+    return { id };
   }
 
   @Post(':id/like')

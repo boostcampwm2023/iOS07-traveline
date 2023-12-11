@@ -100,37 +100,8 @@ export const search_OK = [
   },
 ];
 
-export const create_OK = { id: 'c89f207a-f528-4d53-8ac2-1356fa22eb21' };
-
-export const update_OK = { id: '4d365e7c-3e82-472d-bf87-7faf65d9377d' };
-
-export const remove_OK = {
-  title: 'bread lover',
-  createdAt: '2023-11-28T09:14:32.247Z',
-  thumbnail: null,
-  startDate: '2023-08-16',
-  endDate: '2023-08-18',
-  days: 3,
-  period: '2박 3일',
-  headcount: '5인 이상',
-  budget: '10 - 50만 원',
-  location: '대전',
-  season: '여름',
-  vehicle: null,
-  theme: ['힐링', '맛집'],
-  withWho: ['가족'],
-  writer: {
-    id: '123456789012345678901234567890123456',
-    name: 'lemon',
-    avatar: null,
-    resourceId: 'temp',
-    socialType: 1,
-    email: 'lemon@naver.com',
-    allowedIp: ['아이피', '아이피'],
-    bannedIp: ['아이피', '아이피'],
-  },
-  likeds: [],
-  reports: [],
+export const create_update_remove_OK = {
+  id: 'c89f207a-f528-4d53-8ac2-1356fa22eb21',
 };
 
 export const like_OK = { isLiked: false };
