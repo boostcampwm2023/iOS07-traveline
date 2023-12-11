@@ -14,6 +14,8 @@ final class ProfileLabel: UIView {
         static let margin: CGFloat = 16.0
         static let imageWidth: CGFloat = 30.0
         static let spacing: CGFloat = 8.0
+        static let buttonWidth: CGFloat = 54.0
+        static let buttonHeight: CGFloat = 28.0
     }
     
     // MARK: - UI Components
@@ -71,6 +73,10 @@ final class ProfileLabel: UIView {
 
 private extension ProfileLabel {
     
+    func setupAttributes() {
+        idLabel.numberOfLines = 2
+    }
+    
     func setupLayout() {
         addSubviews(
             imageView,
@@ -90,11 +96,13 @@ private extension ProfileLabel {
             
             idLabel.leadingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: Metric.spacing),
             idLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            idLabel.trailingAnchor.constraint(equalTo: editButton.leadingAnchor),
             
             editButton.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
             editButton.leadingAnchor.constraint(equalTo: idLabel.trailingAnchor, constant: Metric.spacing),
-            editButton.trailingAnchor.constraint(equalTo: trailingAnchor)
-            
+            editButton.trailingAnchor.constraint(equalTo: trailingAnchor),
+            editButton.widthAnchor.constraint(equalToConstant: Metric.buttonWidth),
+            editButton.heightAnchor.constraint(equalToConstant: Metric.buttonHeight)
         ])
     }
     
