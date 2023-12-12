@@ -27,11 +27,13 @@ enum TimelineWritingSideEffect: BaseSideEffect {
     enum TimelineWritingError: LocalizedError {
         case createError
         case placeError
+        case putError
         
         var errorDescription: String {
             switch self {
             case .createError: "타임라인 생성에 실패했습니다."
             case .placeError: "장소 검색에 실패했습니다."
+            case .putError: "타임라인 수정에 실패했습니다."
             }
         }
     }
@@ -230,7 +232,7 @@ private extension TimelineWritingViewModel {
             .map { isSuccess in
                 return .popToTimelineDetail(isSuccess)
             } .catch { _ in
-                return Just(SideEffect.error("failed put timeline"))
+                return Just(.error(.putError))
             }
             .eraseToAnyPublisher()
     }

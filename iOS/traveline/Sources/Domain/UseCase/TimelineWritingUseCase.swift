@@ -75,6 +75,7 @@ final class TimelineWritingUseCaseImpl: TimelineWritingUseCase {
             date: info.date,
             place: .init(
                 title: info.location,
+                address: Literal.empty,
                 latitude: info.coordY ?? 0.0,
                 longitude: info.coordX ?? 0.0
             ),
