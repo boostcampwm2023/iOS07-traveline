@@ -68,7 +68,6 @@ final class LocationSearchVC: UIViewController {
     private var keyword: String = ""
     weak var delegate: LocationSearchDelegate?
     
-    private var isPaging: Bool = true
     let didScrollToBottom: PassthroughSubject<Void, Never> = .init()
     
     // MARK: - Life Cycle
