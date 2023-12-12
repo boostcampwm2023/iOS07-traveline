@@ -12,5 +12,6 @@ protocol TimelineDetailRepository {
     func fetchTimelineDetailInfo(id: String) async throws -> TimelineDetailInfo
     func createTimelineDetail(with timelineRequest: TimelineDetailRequest) async throws
     func fetchTimelinePlaces(keyword: String, offset: Int) async throws -> TimelinePlaceList
+    func putTimeline(id: String, info: TimelineDetailRequest) async throws -> Bool
     func deleteTimeline(id: String) async throws -> Bool
 }

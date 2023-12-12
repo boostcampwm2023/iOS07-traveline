@@ -23,7 +23,6 @@ struct TimelineDetailRequest {
         day: 0,
         time: Literal.empty,
         date: Literal.empty,
-        place: .emtpy,
         content: Literal.empty,
         posting: Literal.empty
     )
