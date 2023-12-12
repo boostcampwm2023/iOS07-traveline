@@ -103,6 +103,26 @@ final class TimelineDetailVC: UIViewController {
         imageView.setImage(from: url)
     }
     
+    private func setNavigationRightButton(isOwner: Bool) {
+        var menuItems: [UIAction] = []
+        
+        if isOwner {
+            menuItems = [
+                .init(title: Literal.Action.modify, handler: { [weak self] _ in
+                    self?.viewModel.sendAction(.editTimeline)
+                }),
+                .init(title: Literal.Action.delete, attributes: .destructive, handler: {  [weak self] _ in
+                    self?.viewModel.sendAction(.deleteTimeline)
+                })
+            ]
+        }
+        
+        tlNavigationBar.addRightButton(
+            image: TLImage.Travel.more,
+            menu: .init(children: menuItems)
+        )
+    }
+    
 }
 
 // MARK: - Setup Functions
@@ -172,7 +192,6 @@ private extension TimelineDetailVC {
     }
     
     private func bind() {
-        
         viewModel.state
             .map(\.timelineDetailInfo)
             .removeDuplicates()
@@ -181,5 +200,23 @@ private extension TimelineDetailVC {
                 owner.updateUI(with: info)
             }
             .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.isOwner)
+            .withUnretained(self)
+            .sink { owner, isOwner in
+                owner.setNavigationRightButton(isOwner: isOwner)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.isDeleteCompleted)
+            .filter { $0 }
+            .withUnretained(self)
+            .sink { owner, _ in
+                owner.navigationController?.popViewController(animated: true)
+            }
+            .store(in: &cancellables)
+        
     }
 }
