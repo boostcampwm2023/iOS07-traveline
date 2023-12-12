@@ -14,7 +14,7 @@ enum LoginEndPoint {
 }
 
 extension LoginEndPoint: EndPoint {
-    var path: String {
+    var path: String? {
         switch self {
         case .logout:
             return "/logout"
@@ -30,9 +30,4 @@ extension LoginEndPoint: EndPoint {
     var body: Encodable? {
         return nil
     }
-    
-    var header: [String : String] {
-        return [:]
-    }
-    
 }

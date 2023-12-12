@@ -2,6 +2,8 @@ disabled_rules:
 - shorthand_operator
 - todo
 - trailing_whitespace
+- line_length
+- function_body_length
 
 opt_in_rules:
 - force_unwrapping
@@ -9,4 +11,13 @@ opt_in_rules:
 excluded:
 - traveline/Sources/App/AppDelegate.swift
 - traveline/Sources/App/SceneDelegate.swift
-- Tuist
+- "Tuist"
+- "Plugins"
+
+nesting:
+  type_level:
+    warning: 2
+
+identifier_name:
+    min_length:
+        warning: 1
