@@ -75,11 +75,16 @@ final class TimelineDetailVC: UIViewController {
         setupAttributes()
         setupLayout()
         bind()
-        viewModel.sendAction(.viewDidLoad)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        viewModel.sendAction(.viewWillAppear)
     }
     
     // MARK: - Functions
@@ -218,5 +223,21 @@ private extension TimelineDetailVC {
             }
             .store(in: &cancellables)
         
+        viewModel.state
+            .map(\.isEdit)
+            .filter { $0 }
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, _ in
+                let timelineDetailInfo = owner.viewModel.currentState.timelineDetailInfo
+                let timelineEditVC = VCFactory.makeTimelineWritingVC(
+                    id: .init(value: timelineDetailInfo.postingID),
+                    date: timelineDetailInfo.date,
+                    day: timelineDetailInfo.day,
+                    timelineDetailInfo: timelineDetailInfo
+                )
+                owner.navigationController?.pushViewController(timelineEditVC, animated: true)
+            }
+            .store(in: &cancellables)
     }
 }

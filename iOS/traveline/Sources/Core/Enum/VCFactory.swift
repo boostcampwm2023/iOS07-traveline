@@ -82,7 +82,8 @@ enum VCFactory {
     static func makeTimelineWritingVC(
         id: TravelID,
         date: String,
-        day: Int
+        day: Int,
+        timelineDetailInfo: TimelineDetailInfo? = nil
     ) -> TimelineWritingVC {
         let repository = TimelineDetailRepositoryImpl(network: network)
         let useCase = TimelineWritingUseCaseImpl(repository: repository)
@@ -90,7 +91,8 @@ enum VCFactory {
             useCase: useCase,
             id: id,
             date: date,
-            day: day
+            day: day,
+            timelineDetailInfo: timelineDetailInfo
         )
         return TimelineWritingVC(viewModel: viewModel)
     }

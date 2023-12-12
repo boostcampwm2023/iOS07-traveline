@@ -70,12 +70,18 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
         useCase: TimelineWritingUseCase,
         id: TravelID,
         date: String,
-        day: Int
+        day: Int,
+        timelineDetailInfo: TimelineDetailInfo?
     ) {
         self.useCase = useCase
         self.id = id
         self.date = date
         self.day = day
+        self.timelineID = timelineDetailInfo?.id
+        super.init()
+        
+        guard let timelineDetailInfo else { return }
+        sendAction(.configTimelineDetailInfo(timelineDetailInfo))
     }
     
     override func transform(action: TimelineWritingAction) -> SideEffectPublisher {
