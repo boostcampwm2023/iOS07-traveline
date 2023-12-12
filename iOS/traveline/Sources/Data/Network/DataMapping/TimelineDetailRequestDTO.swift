@@ -32,7 +32,7 @@ extension TimelineDetailRequest {
             coordY: place?.longitude,
             date: date,
             place: place?.title,
-            time: time.convertTimeFormat(from: "a hh:mm", to: "HH:mm"),
+            time: time.convertTimeFormat(from: "a hh:mm", to: "HH:mm") ?? "00:00",
             posting: posting
         )
     }

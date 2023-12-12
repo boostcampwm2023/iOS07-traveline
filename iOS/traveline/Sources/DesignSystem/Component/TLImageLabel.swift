@@ -11,7 +11,7 @@ import UIKit
 final class TLImageLabel: UIView {
     
     private enum Constants {
-        static let spacing: CGFloat = 4.0
+        static let spacing: CGFloat = 6.0
     }
     
     // MARK: - UI Components

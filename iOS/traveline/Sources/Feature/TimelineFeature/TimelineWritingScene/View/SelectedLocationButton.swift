@@ -13,6 +13,7 @@ final class SelectLocationButton: UIView {
     private enum Constants {
         static let defaultText: String = "선택한 장소"
         static let labelHeight: CGFloat = 24
+        static let spacing: CGFloat = 6
         static let buttonSpacing: CGFloat = 2
     }
     // MARK: - UI Components
@@ -64,8 +65,6 @@ final class SelectLocationButton: UIView {
         updateLayout()
     }
     
-    
-    
 }
 
 // MARK: - Setup Functions
@@ -93,7 +92,7 @@ private extension SelectLocationButton {
             icon.topAnchor.constraint(equalTo: topAnchor),
             icon.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            label.leadingAnchor.constraint(equalTo: icon.trailingAnchor),
+            label.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: Constants.spacing),
             label.topAnchor.constraint(equalTo: topAnchor),
             label.bottomAnchor.constraint(equalTo: bottomAnchor),
             
@@ -103,4 +102,3 @@ private extension SelectLocationButton {
         ])
     }
 }
-

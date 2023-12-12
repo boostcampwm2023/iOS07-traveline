@@ -31,6 +31,8 @@ final class TimelineWritingVC: UIViewController {
         static let selectTime: String = "시간선택"
         static let selectLocation: String = "선택한 장소"
         static let alertContentVCKey = "contentViewController"
+        static let metaDataKey = "{Exif}"
+        static let dateKey = "DateTimeOriginal"
     }
     
     // MARK: - UI Components
@@ -138,6 +140,7 @@ final class TimelineWritingVC: UIViewController {
     private func updateTime() {
         selectTime.setText(to: timePickerVC.time)
         viewModel.sendAction(.timeDidChange(timePickerVC.time))
+        print(timePickerVC.time)
     }
     
     @objc private func scrollViewTouched() {
@@ -342,6 +345,15 @@ private extension TimelineWritingVC {
                 owner.navigationController?.popViewController(animated: true)
             }
             .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.timelineDetailRequest.time)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, time in
+                owner.selectTime.setText(to: time)
+            }
+            .store(in: &cancellables)
     }
     
 }
@@ -371,16 +383,29 @@ extension TimelineWritingVC: UITextViewDelegate {
     
 }
 
-// MARK: - PHPPickerViewControllerDelegate 
+// MARK: - PHPPickerViewControllerDelegate
 
 extension TimelineWritingVC: PHPickerViewControllerDelegate {
+    
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        guard let imageResult = results.first else { return }
         
-        picker.dismiss(animated: true, completion: nil)
+        if imageResult.itemProvider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
+          imageResult.itemProvider.loadDataRepresentation(forTypeIdentifier: UTType.image.identifier) { [weak self] data, _ in
+              
+            guard let data = data,
+                  let cgImageSource = CGImageSourceCreateWithData(data as CFData, nil),
+                  let metadata = CGImageSourceCopyPropertiesAtIndex(cgImageSource, 0, nil) as? [String: Any],
+                  let exif = metadata[Constants.metaDataKey] as? [String: Any],
+                  let date = exif[Constants.dateKey] as? String
+              else { return }
+              
+              self?.viewModel.sendAction(.metaDataTime(date))
+          }
+        }
         
-        let itemProvider = results.first?.itemProvider
-        guard let itemProvider = itemProvider,
-              itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
+        let itemProvider = imageResult.itemProvider
+        guard itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
         
         itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, _ in
             guard let self = self else { return }
@@ -391,8 +416,9 @@ extension TimelineWritingVC: PHPickerViewControllerDelegate {
                 self.viewModel.sendAction(.imageDidChange(downSampledImage?.jpegData(compressionQuality: 1)))
             }
         }
+        
+        picker.dismiss(animated: true, completion: nil)
     }
-    
 }
 
 // MARK: - extension LocationSearchDelegate
