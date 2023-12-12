@@ -11,6 +11,7 @@ import Foundation
 
 protocol TimelineDetailUseCase {
     func fetchTimelineDetail(with id: String) -> AnyPublisher<TimelineDetailInfo, Error>
+    func deleteTimeline(id: String) -> AnyPublisher<Bool, Error>
 }
 
 final class TimelineDetailUseCaseImpl: TimelineDetailUseCase {
@@ -35,4 +36,16 @@ final class TimelineDetailUseCaseImpl: TimelineDetailUseCase {
         }.eraseToAnyPublisher()
     }
     
+    func deleteTimeline(id: String) -> AnyPublisher<Bool, Error> {
+        return Future { promise in
+            Task {
+                do {
+                    let result = try await self.repository.deleteTimeline(id: id)
+                    promise(.success(result))
+                } catch {
+                    promise(.failure(error))
+                }
+            }
+        }.eraseToAnyPublisher()
+    }
 }
