@@ -27,6 +27,8 @@
 
 ### 💽 BE
 
+![image](https://github.com/boostcampwm2023/iOS07-traveline/assets/62174395/79d2c0a6-4e8c-4547-acd6-a2b4ea95ce68)
+
 <br>
 
 ## 🍎 iOS 기술 스택
@@ -42,6 +44,37 @@
 ### Keychain
 
 ## 💽 BE 기술 스택
+
+### NestJS
+
+### TypeORM
+
+### MySQL
+
+### Swagger
+
+### NCP
+
+#### Server
+
+#### VPC
+
+#### AI APIs
+
+- Papago Translation
+- GreenEye
+
+### Docker
+
+### Docker Hub
+
+### Domain
+
+### Nginx
+
+### GitHub Actions
+
+### AWS - SES (Simple Email Service)
 
 <br>
 
@@ -68,6 +101,16 @@
 #### - [작업을 서로 바꿔서 해보자!](https://github.com/boostcampwm2023/iOS07-traveline/wiki/%5BiOS%5D-%EC%9E%91%EC%97%85%EC%9D%84-%EC%84%9C%EB%A1%9C-%EB%B0%94%EA%BF%94%EC%84%9C-%ED%95%B4%EB%B3%B4%EC%9E%90!)
 
 ### 💽 BE
+
+#### - [생애 첫 CI CD 도전기](https://github.com/boostcampwm2023/iOS07-traveline/wiki/%5BBE%5D-%EC%83%9D%EC%95%A0-%EC%B2%AB-CI-CD-%EB%8F%84%EC%A0%84%EA%B8%B0)
+
+#### - [@nestjs/swagger로 이미지 업로드 form을 어떻게 만들지?](https://github.com/boostcampwm2023/iOS07-traveline/wiki/%5BBE%5D-@nestjs-swagger%EB%A1%9C-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%97%85%EB%A1%9C%EB%93%9C-form%EC%9D%84-%EC%96%B4%EB%96%BB%EA%B2%8C-%EB%A7%8C%EB%93%A4%EC%A7%80%3F)
+
+#### - [andWhere(), 왜 조건이 제대로 적용되지 않는가?](<https://github.com/boostcampwm2023/iOS07-traveline/wiki/%5BBE%5D-andWhere(),-%EC%99%9C-%EC%A1%B0%EA%B1%B4%EC%9D%B4-%EC%A0%9C%EB%8C%80%EB%A1%9C-%EC%A0%81%EC%9A%A9%EB%90%98%EC%A7%80-%EC%95%8A%EB%8A%94%EA%B0%80%3F>)
+
+#### - [클라이언트에서만 발생하는 413 Content Too Large 에러?](https://github.com/boostcampwm2023/iOS07-traveline/wiki/%5BBE%5D-%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8%EC%97%90%EC%84%9C%EB%A7%8C-%EB%B0%9C%EC%83%9D%ED%95%98%EB%8A%94-413-Content-Too-Large-%EC%97%90%EB%9F%AC%3F)
+
+#### - [트랜잭션은 쿼리문만 다루지, 스토리지는 신경 쓰지 않아요](https://github.com/boostcampwm2023/iOS07-traveline/wiki/%5BBE%5D-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%EC%9D%80-%EC%BF%BC%EB%A6%AC%EB%AC%B8%EB%A7%8C-%EB%8B%A4%EB%A3%A8%EC%A7%80,-%EC%8A%A4%ED%86%A0%EB%A6%AC%EC%A7%80%EB%8A%94-%EC%8B%A0%EA%B2%BD-%EC%93%B0%EC%A7%80-%EC%95%8A%EC%95%84%EC%9A%94)
 
 <br>
 
