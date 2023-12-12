@@ -9,6 +9,7 @@
 import Foundation
 
 struct TimelineDetailInfo: Hashable {
+    let postingID: String
     let id: String
     let title: String
     let day: Int
@@ -19,8 +20,10 @@ struct TimelineDetailInfo: Hashable {
     let date: String
     let location: String
     let time: String
+    let isOwner: Bool
     
     static let empty: TimelineDetailInfo = .init(
+        postingID: Literal.empty,
         id: Literal.empty,
         title: Literal.empty,
         day: 0,
@@ -30,10 +33,12 @@ struct TimelineDetailInfo: Hashable {
         coordY: nil,
         date: Literal.empty,
         location: Literal.empty,
-        time: Literal.empty
+        time: Literal.empty,
+        isOwner: false
     )
     
     static let sample: TimelineDetailInfo = .init(
+        postingID: "9a0396ba-4892-436a-a97c-58be59b59327",
         id: "ae12a997-159c-40d1-b3c6-62af7fd981d1",
         title: "두근두근 출발 날 😍",
         day: 1,
@@ -43,10 +48,7 @@ struct TimelineDetailInfo: Hashable {
         coordY: 100.3,
         date: "2023-08-16",
         location: "서울역",
-        time: "07:30"
+        time: "07:30",
+        isOwner: false
     )
-    
-    static func == (lhs: TimelineDetailInfo, rhs: TimelineDetailInfo) -> Bool {
-        lhs.id == rhs.id
-    }
 }

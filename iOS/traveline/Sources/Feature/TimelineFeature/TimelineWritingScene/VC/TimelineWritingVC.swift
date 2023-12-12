@@ -317,10 +317,28 @@ private extension TimelineWritingVC {
         
         viewModel.state
             .map(\.timelineDetailRequest)
+            .dropFirst()
             .withUnretained(self)
             .sink { owner, detail in
                 owner.tlNavigationBar.setupTitle(to: "Day \(detail.day)")
+                owner.titleTextField.text = detail.title
                 owner.dateLabel.setText(to: detail.date)
+                owner.selectTime.setText(to: detail.time)
+                if !detail.content.isEmpty {
+                    owner.textView.textColor = TLColor.white
+                    owner.textView.text = detail.content
+                }
+                if let place = detail.place {
+                    owner.selectLocation.setText(to: place.title)
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.imageURLString)
+            .withUnretained(self)
+            .sink { owner, imageURLString in
+                owner.selectImageButton.setImage(urlString: imageURLString)
             }
             .store(in: &cancellables)
         
@@ -352,6 +370,16 @@ private extension TimelineWritingVC {
             .withUnretained(self)
             .sink { owner, time in
                 owner.selectTime.setText(to: time)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.isEditCompleted)
+            .filter { $0 }
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, _ in
+                owner.navigationController?.popViewController(animated: true)
             }
             .store(in: &cancellables)
     }
@@ -411,9 +439,7 @@ extension TimelineWritingVC: PHPickerViewControllerDelegate {
             guard let self = self else { return }
             DispatchQueue.main.async {
                 guard let selectedImage = image as? UIImage else { return }
-                let downSampledImage = selectedImage.downSampling()
-                self.selectImageButton.setImage(downSampledImage)
-                self.viewModel.sendAction(.imageDidChange(downSampledImage?.jpegData(compressionQuality: 1)))
+                self.selectImageButton.setImage(selectedImage)
             }
         }
         
@@ -438,7 +464,13 @@ extension TimelineWritingVC: LocationSearchDelegate {
 
 extension TimelineWritingVC: TLNavigationBarDelegate {
     func rightButtonDidTapped() {
-        viewModel.sendAction(.tapCompleteButton)
+        if let selectedImage = selectImageButton.imageView.image {
+            let image = selectedImage.downSampling()
+            let imageData = image?.jpegData(compressionQuality: 1)
+            viewModel.sendAction(.tapCompleteButton(imageData))
+        } else {
+            viewModel.sendAction(.tapCompleteButton(nil))
+        }
     }
 }
 

@@ -41,4 +41,18 @@ final class TimelineDetailRepositoryImpl: TimelineDetailRepository {
         return timelinePlaceResponseDTO.toDomain()
     }
     
+    func putTimeline(id: String, info: TimelineDetailRequest) async throws -> Bool {
+        let putTimelineDTO = try await network.requestWithNoResult(
+            endPoint: TimelineDetailEndPoint.putTimeline(id, info.toDTO())
+        )
+        
+        return putTimelineDTO
+    }
+    
+    func deleteTimeline(id: String) async throws -> Bool {
+        let deleteTimelineDTO = try await network.requestWithNoResult(endPoint: TimelineDetailEndPoint.deleteTimeline(id))
+        
+        return deleteTimelineDTO
+    }
+    
 }

@@ -97,6 +97,11 @@ final class SelectImageButton: UIView {
         updateView()
     }
     
+    func setImage(urlString: String?) {
+        imageView.setImage(from: urlString)
+        updateView()
+    }
+    
 }
 
 // MARK: - Setup Functions

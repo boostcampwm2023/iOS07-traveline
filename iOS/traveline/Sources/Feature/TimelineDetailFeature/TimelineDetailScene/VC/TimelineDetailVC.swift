@@ -75,11 +75,16 @@ final class TimelineDetailVC: UIViewController {
         setupAttributes()
         setupLayout()
         bind()
-        viewModel.sendAction(.viewDidLoad)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        viewModel.sendAction(.viewWillAppear)
     }
     
     // MARK: - Functions
@@ -101,6 +106,26 @@ final class TimelineDetailVC: UIViewController {
         }
         imageView.isHidden = false
         imageView.setImage(from: url)
+    }
+    
+    private func setNavigationRightButton(isOwner: Bool) {
+        var menuItems: [UIAction] = []
+        
+        if isOwner {
+            menuItems = [
+                .init(title: Literal.Action.modify, handler: { [weak self] _ in
+                    self?.viewModel.sendAction(.editTimeline)
+                }),
+                .init(title: Literal.Action.delete, attributes: .destructive, handler: {  [weak self] _ in
+                    self?.viewModel.sendAction(.deleteTimeline)
+                })
+            ]
+        }
+        
+        tlNavigationBar.addRightButton(
+            image: TLImage.Travel.more,
+            menu: .init(children: menuItems)
+        )
     }
     
 }
@@ -172,13 +197,46 @@ private extension TimelineDetailVC {
     }
     
     private func bind() {
-        
         viewModel.state
             .map(\.timelineDetailInfo)
             .removeDuplicates()
             .withUnretained(self)
             .sink { owner, info in
                 owner.updateUI(with: info)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.isOwner)
+            .withUnretained(self)
+            .sink { owner, isOwner in
+                owner.setNavigationRightButton(isOwner: isOwner)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.isDeleteCompleted)
+            .filter { $0 }
+            .withUnretained(self)
+            .sink { owner, _ in
+                owner.navigationController?.popViewController(animated: true)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.isEdit)
+            .filter { $0 }
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, _ in
+                let timelineDetailInfo = owner.viewModel.currentState.timelineDetailInfo
+                let timelineEditVC = VCFactory.makeTimelineWritingVC(
+                    id: .init(value: timelineDetailInfo.postingID),
+                    date: timelineDetailInfo.date,
+                    day: timelineDetailInfo.day,
+                    timelineDetailInfo: timelineDetailInfo
+                )
+                owner.navigationController?.pushViewController(timelineEditVC, animated: true)
             }
             .store(in: &cancellables)
     }

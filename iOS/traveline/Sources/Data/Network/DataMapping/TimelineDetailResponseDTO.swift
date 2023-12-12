@@ -19,6 +19,12 @@ struct TimelineDetailResponseDTO: Decodable {
     let date: String
     let place: String
     let time: String
+    let isOwner: Bool
+    let posting: PostingID
+}
+
+struct PostingID: Decodable {
+    let id: String
 }
 
 // MARK: - Mapping
@@ -26,6 +32,7 @@ struct TimelineDetailResponseDTO: Decodable {
 extension TimelineDetailResponseDTO {
     func toDomain() -> TimelineDetailInfo {
         return .init(
+            postingID: posting.id,
             id: id,
             title: title,
             day: day,
@@ -35,7 +42,8 @@ extension TimelineDetailResponseDTO {
             coordY: coordY,
             date: date,
             location: place,
-            time: time
+            time: time,
+            isOwner: isOwner
         )
     }
     

@@ -12,6 +12,8 @@ import Foundation
 protocol TimelineWritingUseCase {
     func requestCreateTimeline(with info: TimelineDetailRequest) -> AnyPublisher<Void, Error>
     func fetchPlaceList(keyword: String, offset: Int) -> AnyPublisher<TimelinePlaceList, Error>
+    func putTimeline(id: String, info: TimelineDetailRequest) -> AnyPublisher<Bool, Error>
+    func toTimelineDetailRequest(from info: TimelineDetailInfo) -> TimelineDetailRequest
 }
 
 final class TimelineWritingUseCaseImpl: TimelineWritingUseCase {
@@ -52,4 +54,33 @@ final class TimelineWritingUseCaseImpl: TimelineWritingUseCase {
         }.eraseToAnyPublisher()
     }
     
+    func putTimeline(id: String, info: TimelineDetailRequest) -> AnyPublisher<Bool, Error> {
+        return Future { promise in
+            Task {
+                do {
+                    let result = try await self.repository.putTimeline(id: id, info: info)
+                    promise(.success(result))
+                } catch {
+                    promise(.failure(error))
+                }
+            }
+        }.eraseToAnyPublisher()
+    }
+    
+    func toTimelineDetailRequest(from info: TimelineDetailInfo) -> TimelineDetailRequest {
+        return .init(
+            title: info.title,
+            day: info.day,
+            time: info.time,
+            date: info.date,
+            place: .init(
+                title: info.location,
+                address: Literal.empty,
+                latitude: info.coordY ?? 0.0,
+                longitude: info.coordX ?? 0.0
+            ),
+            content: info.description,
+            posting: info.postingID
+        )
+    }
 }

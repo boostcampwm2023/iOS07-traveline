@@ -27,4 +27,16 @@ final class TimelineDetailRepositoryMock: TimelineDetailRepository {
         let mockData = [TimelinePlace.init(title: "", address: "", latitude: 0, longitude: 0)]
         return mockData
     }
+    
+    func putTimeline(id: String, info: TimelineDetailRequest) async throws -> Bool {
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        return true
+    }
+    
+    func deleteTimeline(id: String) async throws -> Bool {
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        return true
+    }
 }
