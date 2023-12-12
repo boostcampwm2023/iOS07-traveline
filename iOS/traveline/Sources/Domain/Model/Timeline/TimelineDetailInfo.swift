@@ -51,8 +51,4 @@ struct TimelineDetailInfo: Hashable {
         time: "07:30",
         isOwner: false
     )
-    
-    static func == (lhs: TimelineDetailInfo, rhs: TimelineDetailInfo) -> Bool {
-        lhs.id == rhs.id
-    }
 }
