@@ -18,9 +18,9 @@ enum TimelineWritingAction: BaseAction {
     case searchPlace(String)
     case placeDidChange(TimelinePlace)
     case imageDidChange(Data?)
-    case tapCompleteButton
     case placeDidScrollToBottom
-    
+    case tapCompleteButton(Data?)
+    case configTimelineDetailInfo(TimelineDetailInfo)
 }
 
 enum TimelineWritingSideEffect: BaseSideEffect {
@@ -46,6 +46,9 @@ enum TimelineWritingSideEffect: BaseSideEffect {
     case updatePlaceKeyword(String)
     case fetchPlaceList(TimelinePlaceList)
     case fetchNextPlaceList(TimelinePlaceList)
+    case showTimelineInfo(TimelineDetailRequest)
+    case setOriginImage(String?)
+    case popToTimelineDetail(Bool)
     case error(TimelineWritingError)
 }
 
@@ -57,6 +60,9 @@ struct TimelineWritingState: BaseState {
     var keyword: String = ""
     var text: String = ""
     var offset: Int = 1
+    var imageURLString: String?
+    var isEdit: Bool = false
+    var isEditCompleted: Bool = false
 }
 
 final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, TimelineWritingSideEffect, TimelineWritingState> {
@@ -65,6 +71,7 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
     private let id: TravelID
     private let date: String
     private let day: Int
+    private let timelineID: String?
     
     init(
         useCase: TimelineWritingUseCase,
@@ -89,8 +96,8 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
         case .viewDidLoad:
             return .just(.updateBasicInfo)
             
-        case .tapCompleteButton:
-            return createTimeline()
+        case .tapCompleteButton(let imageData):
+            return createTimeline(with: imageData)
             
         case .titleDidChange(let title):
             return .just(.updateTitleState(title))
@@ -116,6 +123,13 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
             
         case .placeDidScrollToBottom:
             return fetchNextPlaceList()
+            
+        case let .configTimelineDetailInfo(detailInfo):
+            return Publishers.Merge(
+                Just(TimelineWritingSideEffect.setOriginImage(detailInfo.imageURL)),
+                toTimelineDetailRequest(from: detailInfo)
+            )
+            .eraseToAnyPublisher()
         }
     }
     
@@ -167,6 +181,16 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
         case  let .fetchNextPlaceList(placeList):
             newState.timelinePlaceList += placeList
             newState.offset += 1
+            
+        case let .showTimelineInfo(detailRequest):
+            newState.timelineDetailRequest = detailRequest
+            newState.isEdit = true
+            
+        case let .setOriginImage(imageURL):
+            newState.imageURLString = imageURL
+            
+        case let .popToTimelineDetail(isSuccess):
+            newState.isEditCompleted = isSuccess
         }
         
         return newState
@@ -183,12 +207,30 @@ private extension TimelineWritingViewModel {
         return .just(.updateTimeState(time))
     }
     
-    func createTimeline() -> SideEffectPublisher {
-        return useCase.requestCreateTimeline(with: currentState.timelineDetailRequest)
+    func createTimeline(with imageData: Data?) -> SideEffectPublisher {
+        var request = currentState.timelineDetailRequest
+        request.image = imageData
+        
+        if currentState.isEdit {
+            return putTimeline(with: request)
+        }
+        
+        return useCase.requestCreateTimeline(with: request)
             .map { _ in
                 return .createTimeline
             } .catch { _ in
                 return Just(.error(.createError))
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func putTimeline(with timelineDetailRequest: TimelineDetailRequest) -> SideEffectPublisher {
+        guard let timelineID else { return Empty().eraseToAnyPublisher() }
+        return useCase.putTimeline(id: timelineID, info: timelineDetailRequest)
+            .map { isSuccess in
+                return .popToTimelineDetail(isSuccess)
+            } .catch { _ in
+                return Just(SideEffect.error("failed put timeline"))
             }
             .eraseToAnyPublisher()
     }
@@ -220,6 +262,11 @@ private extension TimelineWritingViewModel {
         return  !state.timelineDetailRequest.title.isEmpty &&
         !state.timelineDetailRequest.content.isEmpty &&
         state.timelineDetailRequest.place != .emtpy
+    }
+    
+    func toTimelineDetailRequest(from info: TimelineDetailInfo) -> SideEffectPublisher {
+        let timelineDetailRequest = useCase.toTimelineDetailRequest(from: info)
+        return .just(.showTimelineInfo(timelineDetailRequest))
     }
     
 }
