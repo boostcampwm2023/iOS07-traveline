@@ -12,6 +12,7 @@ enum TimelineDetailEndPoint {
     case specificTimeline(String)
     case createTimeline(TimelineDetailRequestDTO)
     case fetchPlaceList(String, Int)
+    case deleteTimeline(String)
 }
 
 extension TimelineDetailEndPoint: EndPoint {
@@ -26,6 +27,9 @@ extension TimelineDetailEndPoint: EndPoint {
         case let .fetchPlaceList(keyword, offset):
             return "\(curPath)/map?place=\(keyword)&offset=\(offset)"
             
+        case .deleteTimeline(let id):
+            return "\(curPath)/\(id)"
+            
         default:
             return curPath
         }
@@ -38,6 +42,8 @@ extension TimelineDetailEndPoint: EndPoint {
             
         case .createTimeline:
             return .POST
+        case .deleteTimeline:
+            return .DELETE
         }
     }
     
