@@ -286,6 +286,14 @@ private extension TimelineWritingVC {
             }
             .store(in: &cancellables)
         
+        locationSearchVC.didScrollToBottom
+            .throttle(for: 1.0, scheduler: RunLoop.main, latest: true)
+            .withUnretained(self)
+            .sink { owner, _ in
+                owner.viewModel.sendAction(.placeDidScrollToBottom)
+            }
+            .store(in: &cancellables)
+        
         viewModel.state
             .map(\.text)
             .filter { !$0.isEmpty }
@@ -314,7 +322,7 @@ private extension TimelineWritingVC {
             .store(in: &cancellables)
         
         viewModel.state
-            .compactMap(\.timelinePlaceList)
+            .map(\.timelinePlaceList)
             .removeDuplicates()
             .withUnretained(self)
             .sink { owner, list in

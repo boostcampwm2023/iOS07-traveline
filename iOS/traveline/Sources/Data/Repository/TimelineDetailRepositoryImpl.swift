@@ -32,9 +32,9 @@ final class TimelineDetailRepositoryImpl: TimelineDetailRepository {
         )
     }
     
-    func fetchTimelinePlaces(keyword: String) async throws -> TimelinePlaceList {
+    func fetchTimelinePlaces(keyword: String, offset: Int) async throws -> TimelinePlaceList {
         let timelinePlaceResponseDTO = try await network.request(
-            endPoint: TimelineDetailEndPoint.fetchPlaceList(keyword),
+            endPoint: TimelineDetailEndPoint.fetchPlaceList(keyword, offset),
             type: TimelinePlaceListResponseDTO.self
         )
         

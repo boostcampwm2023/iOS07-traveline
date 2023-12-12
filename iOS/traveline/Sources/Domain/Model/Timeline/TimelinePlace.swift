@@ -12,11 +12,13 @@ typealias TimelinePlaceList = [TimelinePlace]
 
 struct TimelinePlace: Hashable {
     let title: String
+    let address: String
     let latitude: Double
     let longitude: Double
     
     static let emtpy: Self = .init(
         title: Literal.empty, 
+        address: Literal.empty,
         latitude: 0.0,
         longitude: 0.0
     )

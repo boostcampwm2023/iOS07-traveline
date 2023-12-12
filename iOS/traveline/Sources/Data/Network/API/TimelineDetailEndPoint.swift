@@ -11,7 +11,7 @@ import Foundation
 enum TimelineDetailEndPoint {
     case specificTimeline(String)
     case createTimeline(TimelineDetailRequestDTO)
-    case fetchPlaceList(String)
+    case fetchPlaceList(String, Int)
 }
 
 extension TimelineDetailEndPoint: EndPoint {
@@ -23,8 +23,8 @@ extension TimelineDetailEndPoint: EndPoint {
         case .specificTimeline(let id):
             return "\(curPath)/\(id)"
             
-        case let .fetchPlaceList(keyword):
-            return "\(curPath)/map?place=\(keyword)"
+        case let .fetchPlaceList(keyword, offset):
+            return "\(curPath)/map?place=\(keyword)&offset=\(offset)"
             
         default:
             return curPath

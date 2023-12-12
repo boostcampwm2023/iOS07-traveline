@@ -20,6 +20,7 @@ final class LocationSearchVC: UIViewController {
         static let topInset: CGFloat = 27
         static let margin: CGFloat = 16
         static let contentHeight: CGFloat = 52
+        static let placeHeight: CGFloat = 65
     }
     
     private enum Constants {
@@ -56,6 +57,7 @@ final class LocationSearchVC: UIViewController {
         let tableView = UITableView()
         tableView.backgroundColor = TLColor.black
         tableView.keyboardDismissMode = .onDrag
+        tableView.register(PlaceTVC.self, forCellReuseIdentifier: PlaceTVC.identifier)
         
         return tableView
     }()
@@ -65,6 +67,8 @@ final class LocationSearchVC: UIViewController {
     private var results: TimelinePlaceList = []
     private var keyword: String = ""
     weak var delegate: LocationSearchDelegate?
+    
+    let didScrollToBottom: PassthroughSubject<Void, Never> = .init()
     
     // MARK: - Life Cycle
     
@@ -100,6 +104,7 @@ private extension LocationSearchVC {
         searchBar.delegate = self
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.rowHeight = Metric.placeHeight
         
         closeButton.addTarget(
             self,
@@ -145,7 +150,7 @@ private extension LocationSearchVC {
             searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             searchBar.heightAnchor.constraint(equalToConstant: Metric.contentHeight),
-           
+            
             tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: Metric.topInset),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -174,27 +179,27 @@ extension LocationSearchVC: UITableViewDelegate {
 }
 
 // MARK: - UITableViewDataSource extension
-                            
+
 extension LocationSearchVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return results.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .default, reuseIdentifier: .none)
-        let text = results[indexPath.row].title
-        cell.backgroundColor = TLColor.black
-        cell.textLabel?.text = text
-        cell.textLabel?.setColor(
-            to: TLColor.main,
-            range: text.findCommonWordRange(keyword)
-        )
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: PlaceTVC.identifier) as? PlaceTVC else { return UITableViewCell() }
+        
+        let title = results[indexPath.row].title
+        let address = results[indexPath.row].address
+        
+        cell.setData(place: title, address: address, keyword: keyword)
         
         return cell
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return Metric.contentHeight
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y > scrollView.contentSize.height - scrollView.bounds.size.height {
+            didScrollToBottom.send(Void())
+        }
     }
     
 }
