@@ -1,5 +1,5 @@
-# <img align="left" src="https://github.com/boostcampwm2023/iOS07-traveline/assets/74968390/4e4c84da-d6da-445c-8328-21828a4c162a" width="120px"> 🌎 traveline
-> 여행 일정을 타임라인을 **기록**하고 **공유**하는 서비스 Traveline 입니다.  
+# 🌎 traveline
+> 여행 일정을 타임라인으로 **기록**하고 **공유**하는 서비스 traveline 입니다.  
 나만의 여행을 공유하고 다양한 여행을 만나보아요 :)
 
 ![기능 소개 페이지](https://github.com/boostcampwm2023/iOS07-traveline/assets/51712973/f39271ee-26a8-41d2-b18d-32d44f79fd43)
@@ -27,10 +27,20 @@
 ## 🍎 iOS 기술 스택
 
 ### MVVM + CleanArchitecture
+- 현재 서비스 기획 간 복잡한 아키텍처의 필요성을 느끼지 못했고, 작업 간 로직 분리의 용이함을 위해 선택했습니다.
+- 또한 여러 명이 동시에 개발해야하기 때문에 CleanArchitecture를 활용해 역할 분리를 확실히 해두어 코드의 통일성을 유지했습니다.
+- Repository 패턴을 통해 Data Source를 캡슐화할 수 있었고, RepositoryMock을 이용해 서버 개발 상황에 관계없이 개발을 진행할 수 있었습니다.
 ### Combine
+- Third-party인 RxSwift에 비해 시간, 공간적 성능이 우수하기 때문에 First-party인 Combine을 선택했습니다.
+- 데이터 스트리밍을 조작하고 구독하는 것에 최적화된 Combine을 UI Binding에 활용했습니다.
 ### Swift Concurrency
+- Concurrency를 활용해 단발성 비동기 응답인 네트워크 로직을 보다 직관적으로 처리해주기 위해 선택했습니다.
+- Repository - Network의 흐름을 간결하게 작성할 수 있었습니다.
 ### MapKit
+- 지도 위에 마커를 표시하고 정보를 보여주기 위해 사용했습니다.
+- 위치 좌표 정보만 서버에서 받아오면 되기 때문에 다른 Third-party 지도를 사용할 필요가 없다고 생각해 애플 프레임워크인 MapKit을 선택했습니다.
 ### Keychain
+- 로그인 이후 토큰 등 민감한 사용자 정보를 안전하게 저장하고 관리하기 위해 사용했습니다.
 
 ## 💽 BE 기술 스택
 
