@@ -1,5 +1,5 @@
-# <img align="left" src="https://github.com/boostcampwm2023/iOS07-traveline/assets/74968390/4e4c84da-d6da-445c-8328-21828a4c162a" width="120px"> 🌎 traveline
-> 여행 일정을 타임라인을 **기록**하고 **공유**하는 서비스 Traveline 입니다.  
+# 🌎 traveline
+> 여행 일정을 타임라인으로 **기록**하고 **공유**하는 서비스 traveline 입니다.  
 나만의 여행을 공유하고 다양한 여행을 만나보아요 :)
 
 ![기능 소개 페이지](https://github.com/boostcampwm2023/iOS07-traveline/assets/51712973/f39271ee-26a8-41d2-b18d-32d44f79fd43)
