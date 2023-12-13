@@ -15,6 +15,7 @@ struct TimelineDetailInfo: Hashable {
     let day: Int
     let description: String
     let imageURL: String?
+    let imagePath: String?
     let coordX: Double?
     let coordY: Double?
     let date: String
@@ -29,6 +30,7 @@ struct TimelineDetailInfo: Hashable {
         day: 0,
         description: Literal.empty,
         imageURL: nil,
+        imagePath: nil,
         coordX: nil,
         coordY: nil,
         date: Literal.empty,
@@ -44,6 +46,7 @@ struct TimelineDetailInfo: Hashable {
         day: 1,
         description: "서울역의 상징성은 정치적으로도 연관이 깊다. 이는 신의 한 수가 된다. 영서 지방은 ITX-청춘 용산발 춘천행, DMZ-train 서울발 백마고지행 둘뿐이었다.",
         imageURL: "https://user-images.githubusercontent.com/51712973/280571628-e1126b86-4941-49fc-852b-9ce16f3e0c4e.jpg",
+        imagePath: "https://user-images.githubusercontent.com/51712973/280571628-e1126b86-4941-49fc-852b-9ce16f3e0c4e.jpg",
         coordX: 100.1,
         coordY: 100.3,
         date: "2023-08-16",

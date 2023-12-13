@@ -22,6 +22,7 @@ final class UserRepositoryMock: UserRepository {
         
         let mockData: Profile = .init(
             imageURL: "https://avatars.githubusercontent.com/u/91725382?s=400&u=29b8023a56a09685aaab53d4eb0dd556254cd902&v=4",
+            imagePath: "https://avatars.githubusercontent.com/u/91725382?s=400&u=29b8023a56a09685aaab53d4eb0dd556254cd902&v=4",
             name: "hongki"
         )
         return mockData
@@ -32,6 +33,7 @@ final class UserRepositoryMock: UserRepository {
         
         return .init(
             imageURL: "https://avatars.githubusercontent.com/u/91725382?s=400&u=29b8023a56a09685aaab53d4eb0dd556254cd902&v=4",
+            imagePath: "https://avatars.githubusercontent.com/u/91725382?s=400&u=29b8023a56a09685aaab53d4eb0dd556254cd902&v=4",
             name: "hongki"
         )
     }

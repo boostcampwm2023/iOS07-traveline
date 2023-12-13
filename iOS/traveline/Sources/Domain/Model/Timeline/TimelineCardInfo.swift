@@ -13,6 +13,7 @@ typealias TimelineCardList = [TimelineCardInfo]
 struct TimelineCardInfo: Hashable {
     let detailId: String
     let thumbnailURL: String?
+    let imagePath: String?
     let title: String
     let place: String
     let content: String
@@ -23,6 +24,7 @@ struct TimelineCardInfo: Hashable {
     static let empty: Self = .init(
         detailId: Literal.empty,
         thumbnailURL: Literal.empty,
+        imagePath: Literal.empty,
         title: Literal.empty,
         place: Literal.empty,
         content: Literal.empty,

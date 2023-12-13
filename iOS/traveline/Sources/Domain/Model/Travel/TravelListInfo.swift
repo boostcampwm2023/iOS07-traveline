@@ -13,6 +13,7 @@ typealias TravelList = [TravelListInfo]
 struct TravelListInfo: Hashable {
     let id: String
     let imageURL: String
+    let imagePath: String
     let title: String
     let profile: Profile
     let like: Int
