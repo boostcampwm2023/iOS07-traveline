@@ -112,6 +112,12 @@
 
 #### - [트랜잭션은 쿼리문만 다루지, 스토리지는 신경 쓰지 않아요](https://github.com/boostcampwm2023/iOS07-traveline/wiki/%5BBE%5D-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%EC%9D%80-%EC%BF%BC%EB%A6%AC%EB%AC%B8%EB%A7%8C-%EB%8B%A4%EB%A3%A8%EC%A7%80,-%EC%8A%A4%ED%86%A0%EB%A6%AC%EC%A7%80%EB%8A%94-%EC%8B%A0%EA%B2%BD-%EC%93%B0%EC%A7%80-%EC%95%8A%EC%95%84%EC%9A%94)
 
+#### - [애플 로그인 구현 과정](https://github.com/boostcampwm2023/iOS07-traveline/wiki/%5BBE%5D-애플-로그인-구현-과정)
+
+#### - [이메일 서비스 적용 과정](https://github.com/boostcampwm2023/iOS07-traveline/wiki/%5BBE%5D-이메일-서비스-적용-과정)
+
+#### - [로그인 로그아웃 처리](https://github.com/boostcampwm2023/iOS07-traveline/wiki/%5BBE%5D-로그인-로그아웃-처리)
+
 <br>
 
 | 📚 문서 | [Wiki](https://github.com/boostcampwm2023/iOS07-traveline/wiki) | [팀 노션](https://spiky-rat-16e.notion.site/6b9791faac7e4b9d9a31d225ce8cd157?pvs=4) | [그라운드 룰](https://github.com/boostcampwm2023/iOS07-Trapture/wiki/%E2%9C%A8-%ED%8C%80-%EA%B7%B8%EB%9D%BC%EC%9A%B4%EB%93%9C-%EB%A3%B0) | [컨벤션](https://github.com/boostcampwm2023/iOS07-Trapture/wiki/%F0%9F%93%81-%EC%BB%A8%EB%B2%A4%EC%85%98) | [회의록](https://www.notion.so/bd676cad762c4cffa7b081c65939b0c5?v=76fe42efa9f1497b98764bf47ff47598&pvs=4) | [기획/디자인](https://www.figma.com/file/RrmfjBTxuLMAYRiXrbKQSW/traveline?type=design&node-id=2%3A2&mode=design&t=AD0PpylqwYoldl8g-1) |
