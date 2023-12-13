@@ -24,9 +24,6 @@ final class ImageCacheRepositoryImpl: ImageCacheRepository {
     
     init(fileManager: FileManager) {
         self.fileManager = fileManager
-        
-        // TODO: - 캐시 정책
-        memoryCache.countLimit = 50
     }
     
     // MARK: - Functions
