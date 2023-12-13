@@ -205,6 +205,7 @@ export class PostingsService {
       thumbnail: posting.p_thumbnail
         ? await this.storageService.getImageUrl(posting.p_thumbnail)
         : null,
+      thumbnailPath: posting.p_thumbnail,
       period: posting.p_period,
       headcount: posting.p_headcount,
       budget: posting.p_budget,
@@ -219,6 +220,7 @@ export class PostingsService {
         avatar: posting.u_avatar
           ? await this.storageService.getImageUrl(posting.u_avatar)
           : null,
+        avatarPath: posting.u_avatar,
       },
       likeds: posting.likeds,
       reports: posting.reports,

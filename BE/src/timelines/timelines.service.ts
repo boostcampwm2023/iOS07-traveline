@@ -68,6 +68,7 @@ export class TimelinesService {
         return {
           ...timeline,
           image: imageUrl,
+          imagePath: timeline.image,
         };
       })
     );
@@ -75,12 +76,13 @@ export class TimelinesService {
 
   async findOneWithURL(id: string) {
     const timeline = await this.findOne(id);
+    const imagePath = timeline.image;
 
-    if (timeline.image) {
-      timeline.image = await this.storageService.getImageUrl(timeline.image);
+    if (imagePath) {
+      timeline.image = await this.storageService.getImageUrl(imagePath);
     }
 
-    return timeline;
+    return { ...timeline, imagePath };
   }
 
   @Transactional()
