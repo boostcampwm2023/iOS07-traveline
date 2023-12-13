@@ -96,5 +96,5 @@
 
 <br>
 
-|📚 문서|[Wiki](https://github.com/boostcampwm2023/iOS07-traveline/wiki)|[팀 노션](https://spiky-rat-16e.notion.site/6b9791faac7e4b9d9a31d225ce8cd157?pvs=4)|[그라운드 룰](https://github.com/boostcampwm2023/iOS07-Trapture/wiki/%E2%9C%A8-%ED%8C%80-%EA%B7%B8%EB%9D%BC%EC%9A%B4%EB%93%9C-%EB%A3%B0)|[컨벤션](https://github.com/boostcampwm2023/iOS07-Trapture/wiki/%F0%9F%93%81-%EC%BB%A8%EB%B2%A4%EC%85%98)|[회의록](https://www.notion.so/bd676cad762c4cffa7b081c65939b0c5?v=76fe42efa9f1497b98764bf47ff47598&pvs=4)|[기획/디자인](https://www.figma.com/file/RrmfjBTxuLMAYRiXrbKQSW/traveline?type=design&node-id=2%3A2&mode=design&t=AD0PpylqwYoldl8g-1)|
+|📚 문서|[Wiki](https://github.com/boostcampwm2023/iOS07-traveline/wiki)|[팀 노션](https://spiky-rat-16e.notion.site/6b9791faac7e4b9d9a31d225ce8cd157?pvs=4)|[그라운드 룰](https://github.com/boostcampwm2023/iOS07-traveline/wiki/%ED%8C%80-%EA%B7%B8%EB%9D%BC%EC%9A%B4%EB%93%9C-%EB%A3%B0)|[컨벤션](https://github.com/boostcampwm2023/iOS07-traveline/wiki/GitHub-%EC%BB%A8%EB%B2%A4%EC%85%98)|[회의록](https://www.notion.so/bd676cad762c4cffa7b081c65939b0c5?v=76fe42efa9f1497b98764bf47ff47598&pvs=4)|[기획/디자인](https://www.figma.com/file/RrmfjBTxuLMAYRiXrbKQSW/traveline?type=design&node-id=2%3A2&mode=design&t=AD0PpylqwYoldl8g-1)|
 |:-:|:-:|:-:|:-:|:-:|:-:|:--:|
