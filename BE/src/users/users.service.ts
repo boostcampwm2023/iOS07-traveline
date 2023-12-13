@@ -56,13 +56,13 @@ export class UsersService {
     return this.userRepository.findById(id);
   }
 
-  async getUserInfoById(id: string): Promise<UserInfoDto> {
+  async getUserInfoById(id: string) {
     const user = await this.userRepository.findById(id);
     const avatarPath = user.avatar;
     if (user.avatar !== null) {
       user.avatar = await this.storageService.getImageUrl(avatarPath);
     }
-    return { name: user.name, avatar: user.avatar };
+    return { name: user.name, avatar: user.avatar, avatarPath };
   }
 
   async getUserInfoByResourceId(resourceId: string) {
