@@ -11,4 +11,8 @@ export class UserInfoDto {
   @IsString()
   @ApiProperty({ nullable: true })
   avatar: string;
+
+  @IsString()
+  @ApiProperty({ nullable: true })
+  avatarPath: string;
 }
