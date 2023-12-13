@@ -8,6 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { StorageModule } from './storage/storage.module';
+import { JwtModule } from '@nestjs/jwt';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -15,12 +17,18 @@ import { StorageModule } from './storage/storage.module';
       envFilePath: `.env`,
       isGlobal: true,
     }),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET_ACCESS,
+      signOptions: { expiresIn: '30d' },
+    }),
     StorageModule,
     UsersModule,
     PostingsModule,
     TimelinesModule,
     AuthModule,
     DatabaseModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService],

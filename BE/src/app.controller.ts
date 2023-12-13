@@ -1,29 +1,24 @@
-import {
-  Controller,
-  Get,
-  Post,
-  UploadedFile,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Controller, Get, Param, Render, Res } from '@nestjs/common';
 import { AppService } from './app.service';
-import { StorageService } from './storage/storage.service';
-import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller()
 export class AppController {
-  constructor(
-    private readonly appService: AppService,
-    private readonly storageService: StorageService
-  ) {}
+  constructor(private readonly appService: AppService) {}
 
   @Get()
   getHello(): string {
     return this.appService.getHello();
   }
 
-  @Post('/upload')
-  @UseInterceptors(FileInterceptor('file'))
-  async upload(@UploadedFile() file: Express.Multer.File) {
-    return this.storageService.upload(file);
+  @Get('apps/:filename')
+  async ipa(@Res() response, @Param('filename') filename: string) {
+    const url = await this.appService.download(filename);
+    response.redirect(url);
+  }
+
+  @Get('ip-process-result')
+  @Render('ip-process-result.ejs')
+  ipProcessResult() {
+    return {};
   }
 }

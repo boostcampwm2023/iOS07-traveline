@@ -5,74 +5,77 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Liked } from './liked.entity';
 import { Report } from './report.entity';
-import { User } from 'src/users/entities/user.entity';
-import { Timeline } from 'src/timelines/entities/timeline.entity';
+import { User } from '../../users/entities/user.entity';
+import { Timeline } from '../../timelines/entities/timeline.entity';
+import {
+  Budget,
+  Headcount,
+  Location,
+  Period,
+  Season,
+  Theme,
+  Vehicle,
+  WithWho,
+} from '../postings.types';
 
 @Entity()
 export class Posting {
-  @PrimaryColumn({ type: 'char', length: 36 })
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'char', length: 36, nullable: true })
-  writer: string;
+  @ManyToOne(() => User, (user) => user.postings, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'writer' })
+  writer: User;
 
   @Column({ length: 14 })
   title: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  createdAt: Date;
 
-  @Column({ length: 255, nullable: true })
-  thumnail: string;
+  @Column({ length: 255, nullable: true, default: null })
+  thumbnail: string;
 
-  @Column({ type: 'int', default: 0 })
-  liked: number;
+  @Column({ name: 'start_date', type: 'date' })
+  startDate: Date;
 
-  @Column({ type: 'date' })
-  start_date: Date;
-
-  @Column({ type: 'date' })
-  end_date: Date;
+  @Column({ name: 'end_date', type: 'date' })
+  endDate: Date;
 
   @Column({ type: 'int' })
-  period: number;
+  days: number;
 
-  @Column({ type: 'int', nullable: true })
-  headcount: number;
+  @Column({ length: 14 })
+  period: Period;
 
-  @Column({ type: 'int', nullable: true })
-  budget: number;
+  @Column({ length: 14, nullable: true })
+  headcount: Headcount;
 
-  @Column({ type: 'int' })
-  location: number;
+  @Column({ length: 14, nullable: true })
+  budget: Budget;
+
+  @Column({ length: 14 })
+  location: Location;
+
+  @Column({ length: 14 })
+  season: Season;
+
+  @Column({ length: 14, nullable: true })
+  vehicle: Vehicle;
 
   @Column({ type: 'json', nullable: true })
-  theme: { [key: number]: boolean };
+  theme: Theme[];
 
-  @Column({ type: 'json', nullable: true })
-  with_who: { [key: number]: boolean };
+  @Column({ name: 'with_who', type: 'json', nullable: true })
+  withWho: WithWho[];
 
-  @Column({ type: 'int' })
-  season: number;
-
-  @Column({ type: 'int', nullable: true })
-  vehicle: number;
-
-  @Column({ type: 'int', default: 0 })
-  report: number;
-
-  @ManyToOne(() => User, (user) => user.postings, {
-    onDelete: 'SET NULL',
-    onUpdate: 'CASCADE',
-  })
-  @JoinColumn({ name: 'writer', referencedColumnName: 'id' })
-  writers: User;
-
-  @OneToMany(() => Timeline, (timeline) => timeline.postings)
+  @OneToMany(() => Timeline, (timeline) => timeline.posting)
   timelines: Timeline[];
 
   @OneToMany(() => Liked, (liked) => liked.postings)
