@@ -55,7 +55,7 @@ final class TimelineCardView: UIView {
         titleLabel.setText(to: cardInfo.title)
         subtitleLabel.setText(to: cardInfo.place)
         contentLabel.setText(to: cardInfo.content)
-        thumbnailImageView.setImage(from: cardInfo.thumbnailURL)
+        thumbnailImageView.setImage(from: cardInfo.thumbnailURL, imagePath: cardInfo.imagePath)
         thumbnailImageView.isHidden = cardInfo.thumbnailURL == nil
     }
     

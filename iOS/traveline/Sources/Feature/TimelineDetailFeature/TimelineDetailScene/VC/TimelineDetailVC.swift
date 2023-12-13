@@ -105,7 +105,7 @@ final class TimelineDetailVC: UIViewController {
             return
         }
         imageView.isHidden = false
-        imageView.setImage(from: url)
+        imageView.setImage(from: url, imagePath: info.imagePath)
     }
     
     private func setNavigationRightButton(isOwner: Bool) {

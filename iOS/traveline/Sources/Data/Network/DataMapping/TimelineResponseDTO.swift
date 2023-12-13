@@ -19,6 +19,7 @@ struct TimelineResponseDTO: Decodable {
     let title: String
     let description: String
     let image: String?
+    let imagePath: String?
     let coordX: Double?
     let coordY: Double?
     let place: String
@@ -31,6 +32,7 @@ extension TimelineListResponseDTO {
                 .init(
                     detailId: dto.id,
                     thumbnailURL: dto.image,
+                    imagePath: dto.imagePath,
                     title: dto.title,
                     place: dto.place,
                     content: dto.description,

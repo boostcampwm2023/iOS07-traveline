@@ -123,9 +123,9 @@ final class TLInfoView: UIView {
     // MARK: - Functions
     
     func setupData(item: TravelListInfo) {
-        thumbnailImageView.setImage(from: item.imageURL)
+        thumbnailImageView.setImage(from: item.imageURL, imagePath: item.imagePath)
         thumbnailImageView.isHidden = item.imageURL.isEmpty
-        profileImageView.setImage(from: item.profile.imageURL)
+        profileImageView.setImage(from: item.profile.imageURL, imagePath: item.profile.imagePath)
         nameLabel.setText(to: item.profile.name)
         likeCountLabel.setText(to: "\(item.like)")
         titleLabel.setText(to: item.title)

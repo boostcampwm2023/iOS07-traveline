@@ -15,6 +15,7 @@ struct PostingResponseDTO: Decodable {
     let title: String
     let createdAt: String
     let thumbnail: String?
+    let thumbnailPath: String?
     let period: String
     let headcount: String?
     let budget: String?
@@ -28,7 +29,7 @@ struct PostingResponseDTO: Decodable {
     
     enum CodingKeys: String, CodingKey {
         case createdAt = "created_at"
-        case id, title, thumbnail, period, headcount, budget, location, season, vehicle, theme, withWho, writer, likeds
+        case id, title, thumbnail, thumbnailPath, period, headcount, budget, location, season, vehicle, theme, withWho, writer, likeds
     }
 }
 
@@ -39,9 +40,11 @@ extension PostingResponseDTO {
         return .init(
             id: id,
             imageURL: thumbnail ?? Literal.empty,
+            imagePath: thumbnailPath ?? Literal.empty,
             title: title,
             profile: .init(
                 imageURL: writer.avatar ?? Literal.empty,
+                imagePath: writer.avatarPath ?? Literal.empty,
                 name: writer.name
             ),
             like: Int(likeds) ?? 0,

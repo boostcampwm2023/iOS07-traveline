@@ -36,6 +36,7 @@ enum TimelineSample {
             .init(
                 detailId: "1",
                 thumbnailURL: "https://picsum.photos/600/400",
+                imagePath: "https://picsum.photos/600/400",
                 title: "광안리 최고~",
                 place: "광안리 해수욕장",
                 content: "어쩌고 저쩌고 이러쿵 저러쿵",
@@ -46,6 +47,7 @@ enum TimelineSample {
             .init(
                 detailId: "",
                 thumbnailURL: "https://picsum.photos/600/300",
+                imagePath: "https://picsum.photos/600/300",
                 title: "호텔 오션뷰 최고",
                 place: "호텔 센트럴베이",
                 content: "너무 깔끔하고 좋네요",
@@ -56,6 +58,7 @@ enum TimelineSample {
             .init(
                 detailId: "",
                 thumbnailURL: "https://picsum.photos/500/400",
+                imagePath: "https://picsum.photos/500/400",
                 title: "맛있는게 많네요",
                 place: "민락더마켓",
                 content: "주차장도 넓고 바로 앞에 바다가 있어요",
@@ -66,6 +69,7 @@ enum TimelineSample {
             .init(
                 detailId: "",
                 thumbnailURL: "https://picsum.photos/500/300",
+                imagePath: "https://picsum.photos/500/300",
                 title: "산책하기 좋아요",
                 place: "해운대 해수욕장",
                 content: "어쩌고 저쩌고 이러쿵 저러쿵",
@@ -76,6 +80,7 @@ enum TimelineSample {
             .init(
                 detailId: "",
                 thumbnailURL: "https://picsum.photos/600/400",
+                imagePath: "https://picsum.photos/600/400",
                 title: "곱창전골이 맛있어요",
                 place: "해성막창집 본점",
                 content: "웨이팅이 길고 주차가 어렵고 어쩌고",
@@ -86,6 +91,7 @@ enum TimelineSample {
             .init(
                 detailId: "",
                 thumbnailURL: "https://picsum.photos/700/400",
+                imagePath: "https://picsum.photos/700/400",
                 title: "곱창전골이 맛있어요",
                 place: "해성막창집 본점",
                 content: "웨이팅이 길고 주차가 어렵고 어쩌고",
@@ -96,6 +102,7 @@ enum TimelineSample {
             .init(
                 detailId: "",
                 thumbnailURL: "https://picsum.photos/700/500",
+                imagePath: "https://picsum.photos/700/500",
                 title: "곱창전골이 맛있어요",
                 place: "해성막창집 본점",
                 content: "웨이팅이 길고 주차가 어렵고 어쩌고",
@@ -106,6 +113,7 @@ enum TimelineSample {
             .init(
                 detailId: "",
                 thumbnailURL: "https://picsum.photos/700/600",
+                imagePath: "https://picsum.photos/700/600",
                 title: "곱창전골이 맛있어요",
                 place: "해성막창집 본점",
                 content: "웨이팅이 길고 주차가 어렵고 어쩌고",
@@ -116,6 +124,7 @@ enum TimelineSample {
             .init(
                 detailId: "",
                 thumbnailURL: "https://picsum.photos/700/700",
+                imagePath: "https://picsum.photos/700/700",
                 title: "곱창전골이 맛있어요",
                 place: "해성막창집 본점",
                 content: "웨이팅이 길고 주차가 어렵고 어쩌고",
@@ -130,6 +139,7 @@ enum TimelineSample {
         .init(
             detailId: "",
             thumbnailURL: "",
+            imagePath: "",
             title: "광안리 최고~",
             place: "광안리 해수욕장",
             content: "어쩌고 저쩌고 이러쿵 저러쿵",

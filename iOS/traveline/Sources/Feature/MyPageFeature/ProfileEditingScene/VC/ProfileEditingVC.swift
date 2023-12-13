@@ -242,7 +242,7 @@ extension ProfileEditingVC {
             .withUnretained(self)
             .sink { owner, profile in
                 owner.nickNameTextField.text = profile.name
-                owner.imageView.setImage(from: profile.imageURL)
+                owner.imageView.setImage(from: profile.imageURL, imagePath: profile.imagePath)
             }
             .store(in: &cancellables)
     }

@@ -10,10 +10,12 @@ import Foundation
 
 struct Profile: Hashable {
     let imageURL: String
+    let imagePath: String
     let name: String
     
     static let empty: Profile = .init(
         imageURL: Literal.empty,
+        imagePath: Literal.empty,
         name: Literal.empty
     )
 }
