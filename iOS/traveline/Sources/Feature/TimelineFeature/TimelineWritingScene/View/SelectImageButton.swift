@@ -97,8 +97,8 @@ final class SelectImageButton: UIView {
         updateView()
     }
     
-    func setImage(urlString: String?) {
-        imageView.setImage(from: urlString)
+    func setImage(urlString: String?, imagePath: String? = nil) {
+        imageView.setImage(from: urlString, imagePath: imagePath)
         updateView()
     }
     
