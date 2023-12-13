@@ -106,8 +106,6 @@
 
 #### - [@nestjs/swagger로 이미지 업로드 form을 어떻게 만들지?](https://github.com/boostcampwm2023/iOS07-traveline/wiki/%5BBE%5D-@nestjs-swagger%EB%A1%9C-%EC%9D%B4%EB%AF%B8%EC%A7%80-%EC%97%85%EB%A1%9C%EB%93%9C-form%EC%9D%84-%EC%96%B4%EB%96%BB%EA%B2%8C-%EB%A7%8C%EB%93%A4%EC%A7%80%3F)
 
-#### - [andWhere(), 왜 조건이 제대로 적용되지 않는가?](<https://github.com/boostcampwm2023/iOS07-traveline/wiki/%5BBE%5D-andWhere(),-%EC%99%9C-%EC%A1%B0%EA%B1%B4%EC%9D%B4-%EC%A0%9C%EB%8C%80%EB%A1%9C-%EC%A0%81%EC%9A%A9%EB%90%98%EC%A7%80-%EC%95%8A%EB%8A%94%EA%B0%80%3F>)
-
 #### - [클라이언트에서만 발생하는 413 Content Too Large 에러?](https://github.com/boostcampwm2023/iOS07-traveline/wiki/%5BBE%5D-%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8%EC%97%90%EC%84%9C%EB%A7%8C-%EB%B0%9C%EC%83%9D%ED%95%98%EB%8A%94-413-Content-Too-Large-%EC%97%90%EB%9F%AC%3F)
 
 #### - [트랜잭션은 쿼리문만 다루지, 스토리지는 신경 쓰지 않아요](https://github.com/boostcampwm2023/iOS07-traveline/wiki/%5BBE%5D-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%EC%9D%80-%EC%BF%BC%EB%A6%AC%EB%AC%B8%EB%A7%8C-%EB%8B%A4%EB%A3%A8%EC%A7%80,-%EC%8A%A4%ED%86%A0%EB%A6%AC%EC%A7%80%EB%8A%94-%EC%8B%A0%EA%B2%BD-%EC%93%B0%EC%A7%80-%EC%95%8A%EC%95%84%EC%9A%94)
