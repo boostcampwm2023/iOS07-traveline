@@ -39,4 +39,10 @@ final class TimelineDetailRepositoryMock: TimelineDetailRepository {
         
         return true
     }
+    
+    func fetchTimelineTranslatedInfo(id: String) async throws -> TimelineTranslatedInfo {
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+        
+        return TimelineTranslatedInfo.empty
+    }
 }
