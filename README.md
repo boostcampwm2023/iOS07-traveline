@@ -54,22 +54,21 @@
 
 ## BE 기술 스택
 
-#### NestJS
-#### TypeORM
-#### MySQL
-#### Swagger
-#### NCP
-#### Server
-#### VPC
-#### AI APIs
-- Papago Translation
-- GreenEye
-#### Docker
-#### Docker Hub
-#### Domain
-#### Nginx
-#### GitHub Actions
-#### AWS - SES (Simple Email Service)
+#### NestJS + TypeORM
+- 원활한 협업과 코드 리뷰를 위해 자율성이 높은 Express는 적절하지 않다고 생각했습니다. 따라서 아키텍처가 갖춰지고, TypeScript가 기반인 NestJS를 선택했습니다.
+- 일인자 TypeORM과 요즘 핫한 Prisma. TypeORM 사용자에게 Prisma가 인기 있는 이유를 이해하려면 TypeORM을 알아야 합니다. 따라서 저희는 먼저 TypeORM을 경험하고자 했습니다.
+#### RDB
+- traveline 앱은 하나의 게시글에 여러 타임라인 글이 연결됩니다. 또한 각 게시글에는 좋아요와 신고 정보가 존재합니다.
+- 테이블 간 join 연산이 많이 발생할 것이므로 NoSQL보단 RDB가 적절하다고 판단했습니다.
+#### GitHub Actions + Docker
+- 원래 수동 배포를 시도했지만, node 버전 이슈와 systemd service 등록 과정에 어려움을 겪었습니다. 따라서 로컬 작업 환경을 그대로 컨테이너를 구성할 수 있고, 이식성이 뛰어나며 지속적인 배포에도 유용한 Docker를 사용했습니다.
+- Swagger API를 서둘러 iOS 측에 공유하기 위해 러닝 커브가 낮고, 신속한 세팅이 가능한 GitHub Actions로 배포를 진행했습니다.
+#### Let’s Encrypt + Nginx
+- 애플 정책상 ipa는 https에서만 배포할 수 있습니다. 이에, 90일마다 SSL 인증서를 갱신해야 하지만 무료로 발급받을 수 있는 Let’s Encrypt를 사용했습니다.
+- Nest 서버에서 직접 SSL 인증서를 관리하려면 코드 수정이 불가피합니다. 반면 웹 서버를 Reverse Proxy로 사용하면 간단하게 SSL 구성을 완료할 수 있습니다. 또한 애플리케이션 코드에 SSL 관련 횡단 관심사 코드가 존재하지 않아, 더욱 핵심에 집중할 수 있습니다.
+#### AWS SES (Simple Email Service)
+- traveline은 새로운 IP로 로그인 시 본인 확인 메일을 전송하는 서비스를 제공합니다.
+- Nest 내장 모듈인 nodemailer는 보안상 취약점이 발견되어 실서비스에서는 사용되지 않습니다. NCP의 Cloud Outbound Mailer는 어뷰징 문제로 인해 현재 (2023.12) 서비스 신청이 막혀 있습니다. 이에, AWS SES를 사용했습니다.
 
 <br>
 
