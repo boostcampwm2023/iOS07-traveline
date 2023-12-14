@@ -33,38 +33,20 @@ final class ProfileEditingUseCaseImpl: ProfileEditingUseCase {
     }
     
     func fetchProfile() -> AnyPublisher<Profile, Error> {
-        return Future { promise in
-            Task { [weak self] in
-                guard let self else { return }
-                do {
-                    profile = try await self.repository.fetchUserInfo()
-                    promise(.success(profile))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            self.profile = try await self.repository.fetchUserInfo()
+            return self.profile
         }.eraseToAnyPublisher()
     }
     
     func validate(nickname: String) -> AnyPublisher<NicknameValidationState, Error> {
-        return Future { promise in
-            Task {
-                guard self.isTooShort(nickname) == false else {
-                    return promise(.success(.tooShort))
-                }
-                guard self.isValidStringLength(nickname) else {
-                    return promise(.success(.exceededStringLength))
-                }
-                guard self.isChanged(nickname) else {
-                    return promise(.success(.unchanged))
-                }
-                do {
-                    let isDuplicated = try await self.repository.checkDuplication(name: nickname)
-                    promise(isDuplicated ? .success(.duplicated) : .success(.available))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            guard self.isTooShort(nickname) == false else { return .tooShort }
+            guard self.isValidStringLength(nickname) else { return .exceededStringLength }
+            guard self.isChanged(nickname) else { return .unchanged }
+            
+            let isDuplicated = try await self.repository.checkDuplication(name: nickname)
+            return isDuplicated ? .duplicated : .available
         }.eraseToAnyPublisher()
     }
     
@@ -80,16 +62,10 @@ final class ProfileEditingUseCaseImpl: ProfileEditingUseCase {
     }
     
     func update(name: String, imageData: Data?) -> AnyPublisher<Profile, Error> {
-        return Future { promise in
-            Task { [weak self] in
-                guard let self else { return }
-                do {
-                    let profile = try await self.repository.updateUserInfo(name: name, imageData: imageData)
-                    promise(.success(profile))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            let profile = try await self.repository.updateUserInfo(name: name, imageData: imageData)
+            return profile
         }.eraseToAnyPublisher()
     }
+    
 }

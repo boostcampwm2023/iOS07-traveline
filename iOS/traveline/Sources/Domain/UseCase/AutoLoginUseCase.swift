@@ -22,16 +22,11 @@ final class AutoLoginUseCaseImpl: AutoLoginUseCase {
     }
     
     func requestLogin() -> AnyPublisher<Bool, Error> {
-        return Future { promise in
-            Task {
-                do {
-                    let accessToken = try await self.repository.refresh()
-                    KeychainList.accessToken = accessToken
-                    promise(.success(true))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            let accessToken = try await self.repository.refresh()
+            KeychainList.accessToken = accessToken
+            return true
         }.eraseToAnyPublisher()
     }
+    
 }

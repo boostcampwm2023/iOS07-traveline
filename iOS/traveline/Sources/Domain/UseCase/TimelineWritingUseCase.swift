@@ -25,15 +25,8 @@ final class TimelineWritingUseCaseImpl: TimelineWritingUseCase {
     }
     
     func requestCreateTimeline(with info: TimelineDetailRequest) -> AnyPublisher<Void, Error> {
-        return Future { promise in
-            Task {
-                do {
-                    try await self.repository.createTimelineDetail(with: info)
-                    promise(.success(Void()))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            try await self.repository.createTimelineDetail(with: info)
         }.eraseToAnyPublisher()
     }
     
@@ -42,28 +35,16 @@ final class TimelineWritingUseCaseImpl: TimelineWritingUseCase {
             return .just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
         }
         
-        return Future { promise in
-            Task {
-                do {
-                    let placeList = try await self.repository.fetchTimelinePlaces(keyword: keyword, offset: offset)
-                    promise(.success(placeList))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            let placeList = try await self.repository.fetchTimelinePlaces(keyword: keyword, offset: offset)
+            return placeList
         }.eraseToAnyPublisher()
     }
     
     func putTimeline(id: String, info: TimelineDetailRequest) -> AnyPublisher<Bool, Error> {
-        return Future { promise in
-            Task {
-                do {
-                    let result = try await self.repository.putTimeline(id: id, info: info)
-                    promise(.success(result))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            let result = try await self.repository.putTimeline(id: id, info: info)
+            return result
         }.eraseToAnyPublisher()
     }
     

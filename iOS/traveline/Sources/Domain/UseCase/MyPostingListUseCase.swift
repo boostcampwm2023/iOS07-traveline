@@ -22,16 +22,9 @@ final class MyPostListUseCaseImpl: MyPostListUseCase {
     }
     
     func fetchMyPostList() -> AnyPublisher<TravelList, Error> {
-        return Future { promise in
-            Task { [weak self] in
-                guard let self else { return }
-                do {
-                    let travelList = try await self.repository.fetchMyPostingList()
-                    promise(.success(travelList))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            let travelList = try await self.repository.fetchMyPostingList()
+            return travelList
         }.eraseToAnyPublisher()
     }
     

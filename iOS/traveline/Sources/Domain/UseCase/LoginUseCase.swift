@@ -22,17 +22,12 @@ final class LoginUseCaseImpl: LoginUseCase {
     }
     
     func requestLogin(with info: AppleLoginRequest) -> AnyPublisher<Bool, Error> {
-        return Future { promise in
-            Task {
-                do {
-                    let tlToken = try await self.repository.appleLogin(with: info)
-                    KeychainList.accessToken = tlToken.accessToken
-                    KeychainList.refreshToken = tlToken.refreshToken
-                    promise(.success(true))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            let tlToken = try await self.repository.appleLogin(with: info)
+            KeychainList.accessToken = tlToken.accessToken
+            KeychainList.refreshToken = tlToken.refreshToken
+            return true
         }.eraseToAnyPublisher()
     }
+    
 }

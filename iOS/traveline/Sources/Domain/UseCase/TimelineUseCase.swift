@@ -29,30 +29,17 @@ final class TimelineUseCaseImpl: TimelineUseCase {
     }
 
     func fetchTimelineInfo(id: TravelID) -> AnyPublisher<TimelineTravelInfo, Error> {
-        return Future { promise in
-            Task {
-                do {
-                    let travelInfo = try await self.postingRepository.fetchTimelineInfo(id: id)
-                    promise(.success(travelInfo))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            let travelInfo = try await self.postingRepository.fetchTimelineInfo(id: id)
+            return travelInfo
         }.eraseToAnyPublisher()
     }
     
     func fetchTimelineList(id: TravelID, day: Int) -> AnyPublisher<TimelineCardList, Error> {
-        return Future { promise in
-            Task {
-                do {
-                    let timelineList = try await self.timelineRepository.fetchTimelineList(id: id, day: day)
-                    promise(.success(timelineList))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
-        }
-        .eraseToAnyPublisher()
+        return Future {
+            let timelineList = try await self.timelineRepository.fetchTimelineList(id: id, day: day)
+            return timelineList
+        }.eraseToAnyPublisher()
     }
     
     func calculateDate(from startDate: String, with day: Int) -> String? {
@@ -64,41 +51,23 @@ final class TimelineUseCaseImpl: TimelineUseCase {
     }
     
     func deleteTravel(id: TravelID) -> AnyPublisher<Bool, Error> {
-        return Future { promise in
-            Task {
-                do {
-                    let result = try await self.postingRepository.deletePosting(id: id)
-                    promise(.success(result))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            let result = try await self.postingRepository.deletePosting(id: id)
+            return result
         }.eraseToAnyPublisher()
     }
     
     func reportTravel(id: TravelID) -> AnyPublisher<Bool, Error> {
-        return Future { promise in
-            Task {
-                do {
-                    let result = try await self.postingRepository.postReport(id: id)
-                    promise(.success(result))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            let result = try await self.postingRepository.postReport(id: id)
+            return result
         }.eraseToAnyPublisher()
     }
     
     func likeTravel(id: TravelID) -> AnyPublisher<Bool, Error> {
-        return Future { promise in
-            Task {
-                do {
-                    let result = try await self.postingRepository.postLike(id: id)
-                    promise(.success(result))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            let result = try await self.postingRepository.postLike(id: id)
+            return result
         }.eraseToAnyPublisher()
     }
     

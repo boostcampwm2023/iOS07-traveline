@@ -44,31 +44,16 @@ final class TravelUseCaseImpl: TravelUseCase {
     }
     
     func createTravel(data: TravelRequest) -> AnyPublisher<TravelID, Error> {
-        return Future { promise in
-            Task {
-                do {
-                    let id = try await self.repository.postPosting(data: data)
-                    promise(.success(id))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            let id = try await self.repository.postPosting(data: data)
+            return id
         }.eraseToAnyPublisher()
     }
     
     func putTravel(id: TravelID, data: TravelRequest) -> AnyPublisher<TravelID, Error> {
-        return Future { promise in
-            Task {
-                do {
-                    let id = try await self.repository.putPosting(
-                        id: id,
-                        data: data
-                    )
-                    promise(.success(id))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            let id = try await self.repository.putPosting(id: id, data: data)
+            return id
         }.eraseToAnyPublisher()
     }
     
