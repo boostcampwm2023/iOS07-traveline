@@ -22,15 +22,9 @@ final class SideMenuUseCaseImpl: SideMenuUseCase {
     }
     
     func fetchProfile() -> AnyPublisher<Profile, Error> {
-        return Future { promise in
-            Task {
-                do {
-                    let profile = try await self.repository.fetchUserInfo()
-                    promise(.success(profile))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            let profile = try await self.repository.fetchUserInfo()
+            return profile
         }.eraseToAnyPublisher()
     }
     

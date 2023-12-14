@@ -23,29 +23,17 @@ final class TimelineDetailUseCaseImpl: TimelineDetailUseCase {
     }
     
     func fetchTimelineDetail(with id: String) -> AnyPublisher<TimelineDetailInfo, Error> {
-        return Future { promise in
-            Task { [weak self] in
-                guard let self else { return }
-                do {
-                    let detailInfo = try await self.repository.fetchTimelineDetailInfo(id: id)
-                    promise(.success(detailInfo))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            let detailInfo = try await self.repository.fetchTimelineDetailInfo(id: id)
+            return detailInfo
         }.eraseToAnyPublisher()
     }
     
     func deleteTimeline(id: String) -> AnyPublisher<Bool, Error> {
-        return Future { promise in
-            Task {
-                do {
-                    let result = try await self.repository.deleteTimeline(id: id)
-                    promise(.success(result))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            let result = try await self.repository.deleteTimeline(id: id)
+            return result
         }.eraseToAnyPublisher()
     }
+    
 }
