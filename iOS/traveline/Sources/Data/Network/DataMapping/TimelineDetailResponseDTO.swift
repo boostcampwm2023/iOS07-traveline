@@ -14,6 +14,7 @@ struct TimelineDetailResponseDTO: Decodable {
     let day: Int
     let description: String
     let image: String?
+    let imagePath: String?
     let coordX: Double?
     let coordY: Double?
     let date: String
@@ -38,6 +39,7 @@ extension TimelineDetailResponseDTO {
             day: day,
             description: description,
             imageURL: image,
+            imagePath: imagePath,
             coordX: coordX,
             coordY: coordY,
             date: date,

@@ -11,12 +11,14 @@ import Foundation
 struct UserResponseDTO: Codable {
     let name: String
     let avatar: String?
+    let avatarPath: String?
 }
 
 extension UserResponseDTO {
     func toDomain() -> Profile {
         return .init(
             imageURL: avatar ?? "",
+            imagePath: avatarPath ?? "",
             name: name
         )
     }

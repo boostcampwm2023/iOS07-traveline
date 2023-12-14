@@ -22,8 +22,8 @@ final class TLImageCache {
         imageCacheRepository.fetch(urlString)
     }
     
-    func store(_ data: Data, urlString: String) {
-        imageCacheRepository.store(data, cacheKey: urlString)
+    func store(_ data: Data, imagePath: String) {
+        imageCacheRepository.store(data, cacheKey: imagePath)
     }
     
 }

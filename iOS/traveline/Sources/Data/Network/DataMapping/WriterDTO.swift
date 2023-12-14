@@ -12,4 +12,5 @@ struct WriterDTO: Decodable {
     let id: String
     let name: String
     let avatar: String?
+    let avatarPath: String?
 }
