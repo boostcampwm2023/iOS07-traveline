@@ -12,6 +12,7 @@ import Foundation
 protocol TimelineDetailUseCase {
     func fetchTimelineDetail(with id: String) -> AnyPublisher<TimelineDetailInfo, Error>
     func deleteTimeline(id: String) -> AnyPublisher<Bool, Error>
+    func fetchTranslateTimelineDetail(with id: String) -> AnyPublisher<TimelineTranslatedInfo, Error>
 }
 
 final class TimelineDetailUseCaseImpl: TimelineDetailUseCase {
@@ -36,4 +37,10 @@ final class TimelineDetailUseCaseImpl: TimelineDetailUseCase {
         }.eraseToAnyPublisher()
     }
     
+    func fetchTranslateTimelineDetail(with id: String) -> AnyPublisher<TimelineTranslatedInfo, Error> {
+        return Future {
+            let translatedInfo = try await self.repository.fetchTimelineTranslatedInfo(id: id)
+            return translatedInfo
+        }.eraseToAnyPublisher()
+    }
 }
