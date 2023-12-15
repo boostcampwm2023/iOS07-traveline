@@ -113,11 +113,20 @@ final class TimelineDetailVC: UIViewController {
         
         if isOwner {
             menuItems = [
+                .init(title: Literal.Action.translate, handler: { [weak self] _ in
+                    self?.viewModel.sendAction(.translateTimeline)
+                }),
                 .init(title: Literal.Action.modify, handler: { [weak self] _ in
                     self?.viewModel.sendAction(.editTimeline)
                 }),
                 .init(title: Literal.Action.delete, attributes: .destructive, handler: {  [weak self] _ in
                     self?.viewModel.sendAction(.deleteTimeline)
+                })
+            ]
+        } else {
+            menuItems = [
+                .init(title: Literal.Action.translate, handler: { [weak self] _ in
+                    self?.viewModel.sendAction(.translateTimeline)
                 })
             ]
         }
@@ -237,6 +246,18 @@ private extension TimelineDetailVC {
                     timelineDetailInfo: timelineDetailInfo
                 )
                 owner.navigationController?.pushViewController(timelineEditVC, animated: true)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.isTranslated)
+            .dropFirst()
+            .withUnretained(self)
+            .sink { owner, isTranslated in
+                let description = isTranslated
+                ? owner.viewModel.currentState.timelineTranslatedInfo.description
+                : owner.viewModel.currentState.timelineDetailInfo.description
+                owner.contentView.setText(to: description)
             }
             .store(in: &cancellables)
     }

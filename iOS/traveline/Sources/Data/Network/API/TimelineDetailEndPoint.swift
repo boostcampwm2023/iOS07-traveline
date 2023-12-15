@@ -14,6 +14,7 @@ enum TimelineDetailEndPoint {
     case fetchPlaceList(String, Int)
     case putTimeline(String, TimelineDetailRequestDTO)
     case deleteTimeline(String)
+    case translateTimeline(String)
 }
 
 extension TimelineDetailEndPoint: EndPoint {
@@ -34,6 +35,9 @@ extension TimelineDetailEndPoint: EndPoint {
         case .deleteTimeline(let id):
             return "\(curPath)/\(id)"
             
+        case .translateTimeline(let id):
+            return "\(curPath)/\(id)/translate"
+            
         default:
             return curPath
         }
@@ -41,7 +45,7 @@ extension TimelineDetailEndPoint: EndPoint {
     
     var httpMethod: HTTPMethod {
         switch self {
-        case .specificTimeline, .fetchPlaceList:
+        case .specificTimeline, .fetchPlaceList, .translateTimeline:
             return .GET
             
         case .createTimeline:
