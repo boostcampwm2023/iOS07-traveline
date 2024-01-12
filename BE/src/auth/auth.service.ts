@@ -115,33 +115,35 @@ export class AuthService {
       if (!user) {
         throw new InternalServerErrorException();
       }
-    } else {
-      const allowedIpArray = user.allowedIp;
-      let bannedIpArray;
-      if (user.bannedIp === null) {
-        bannedIpArray = [];
-      } else {
-        bannedIpArray = user.bannedIp;
-      }
-      if (ipAddress in bannedIpArray) {
-        throw new UnauthorizedException(
-          '접속하신 IP에서의 계정 접근이 차단되어있습니다.'
-        );
-      }
-      if (!(ipAddress in allowedIpArray)) {
-        const html = await this.emilService.template('email.ejs', {
-          username: user.name,
-          newIp: ipAddress,
-          id: user.id,
-        });
-
-        await this.emilService.sendEmail(
-          user.email,
-          '[traveline] 새로운 환경 로그인 안내',
-          html
-        );
-      }
     }
+    // 추후 수정 예정
+    // else {
+    //   const allowedIpArray = user.allowedIp;
+    //   let bannedIpArray;
+    //   if (user.bannedIp === null) {
+    //     bannedIpArray = [];
+    //   } else {
+    //     bannedIpArray = user.bannedIp;
+    //   }
+    //   if (ipAddress in bannedIpArray) {
+    //     throw new UnauthorizedException(
+    //       '접속하신 IP에서의 계정 접근이 차단되어있습니다.'
+    //     );
+    //   }
+    //   if (!(ipAddress in allowedIpArray)) {
+    //     const html = await this.emilService.template('email.ejs', {
+    //       username: user.name,
+    //       newIp: ipAddress,
+    //       id: user.id,
+    //     });
+
+    //     await this.emilService.sendEmail(
+    //       user.email,
+    //       '[traveline] 새로운 환경 로그인 안내',
+    //       html
+    //     );
+    //   }
+    // }
 
     const payload = { id: user.id };
 
@@ -160,29 +162,39 @@ export class AuthService {
 
     if (user) {
       const payload = { id };
-      try {
-        const html = await this.emilService.template('email.ejs', {
-          username: user.name,
-          newIp: '아 이 피',
-          id: user.id,
-        });
 
-        await this.emilService.sendEmail(
-          user.email,
-          '[traveline] 새로운 환경 로그인 안내',
-          html
-        );
+      // 추후 수정 예정
+      // try {
+      //   const html = await this.emilService.template('email.ejs', {
+      //     username: user.name,
+      //     newIp: '아 이 피',
+      //     id: user.id,
+      //   });
 
-        return {
-          accessToken: await this.jwtService.signAsync(payload),
-          refreshToken: await this.jwtService.signAsync(payload, {
-            expiresIn: '30d',
-            secret: process.env.JWT_SECRET_REFRESH,
-          }),
-        };
-      } catch (e) {
-        console.log(e);
-      }
+      //   await this.emilService.sendEmail(
+      //     user.email,
+      //     '[traveline] 새로운 환경 로그인 안내',
+      //     html
+      //   );
+
+      //   return {
+      //     accessToken: await this.jwtService.signAsync(payload),
+      //     refreshToken: await this.jwtService.signAsync(payload, {
+      //       expiresIn: '30d',
+      //       secret: process.env.JWT_SECRET_REFRESH,
+      //     }),
+      //   };
+      // } catch (e) {
+      //   console.log(e);
+      // }
+
+      return {
+        accessToken: await this.jwtService.signAsync(payload),
+        refreshToken: await this.jwtService.signAsync(payload, {
+          expiresIn: '30d',
+          secret: process.env.JWT_SECRET_REFRESH,
+        }),
+      };
     }
 
     throw new BadRequestException(

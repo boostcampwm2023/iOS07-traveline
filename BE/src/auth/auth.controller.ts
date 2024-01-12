@@ -6,9 +6,6 @@ import {
   Get,
   Req,
   UseGuards,
-  Query,
-  ParseBoolPipe,
-  Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -72,15 +69,16 @@ export class AuthController {
     return this.authService.withdrawal(request, deleteAuthDto);
   }
 
-  @Get('ip')
-  async manageIp(
-    @Res() response,
-    @Query('id') id: string,
-    @Query('ip') ip: string,
-    @Query('allow', ParseBoolPipe) allow: boolean
-  ) {
-    if (await this.authService.manageIp(id, ip, allow)) {
-      response.redirect('/ip-process-result');
-    }
-  }
+  // 추후 수정 예정
+  // @Get('ip')
+  // async manageIp(
+  //   @Res() response,
+  //   @Query('id') id: string,
+  //   @Query('ip') ip: string,
+  //   @Query('allow', ParseBoolPipe) allow: boolean
+  // ) {
+  //   if (await this.authService.manageIp(id, ip, allow)) {
+  //     response.redirect('/ip-process-result');
+  //   }
+  // }
 }
