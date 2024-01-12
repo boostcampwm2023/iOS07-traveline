@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Render, Res } from '@nestjs/common';
+import { Controller, Get, Param, Res } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -16,9 +16,10 @@ export class AppController {
     response.redirect(url);
   }
 
-  @Get('ip-process-result')
-  @Render('ip-process-result.ejs')
-  ipProcessResult() {
-    return {};
-  }
+  // 추후 수정 예정
+  // @Get('ip-process-result')
+  // @Render('ip-process-result.ejs')
+  // ipProcessResult() {
+  //   return {};
+  // }
 }
