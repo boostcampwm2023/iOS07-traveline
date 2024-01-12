@@ -103,31 +103,45 @@ export class TimelinesService {
     image: Express.Multer.File,
     updateTimelineDto: UpdateTimelineDto
   ) {
-    const timeline = await this.findOne(id);
-    const isThumbnail = timeline.image === timeline.posting.thumbnail;
-    if (timeline.image) {
-      await this.storageService.delete(timeline.image);
+    let imagePath: string;
+
+    try {
+      const timeline = await this.findOne(id);
+      const isThumbnail = timeline.image === timeline.posting.thumbnail;
+      const updatedTimeline = await this.initialize(updateTimelineDto);
+      updatedTimeline.id = id;
+
+      if (image) {
+        const imagePlainPath = `${userId}/${timeline.posting.id}/`;
+        const { path } = await this.storageService.upload(
+          imagePlainPath,
+          image
+        );
+        imagePath = path;
+        updatedTimeline.image = imagePath;
+      }
+
+      const updatedResult = await this.timelinesRepository.update(
+        id,
+        updatedTimeline
+      );
+
+      if (isThumbnail) {
+        await this.findOneAndUpdateThumbnail(timeline.posting.id);
+      }
+
+      if (timeline.image) {
+        await this.storageService.delete(timeline.image);
+      }
+
+      return updatedResult;
+    } catch (error) {
+      if (imagePath) {
+        this.storageService.delete(imagePath);
+      }
+
+      throw error;
     }
-
-    const updatedTimeline = await this.initialize(updateTimelineDto);
-    updatedTimeline.id = id;
-
-    if (image) {
-      const imagePath = `${userId}/${timeline.posting.id}/`;
-      const { path } = await this.storageService.upload(imagePath, image);
-      updatedTimeline.image = path;
-    }
-
-    const updatedResult = await this.timelinesRepository.update(
-      id,
-      updatedTimeline
-    );
-
-    if (isThumbnail) {
-      await this.findOneAndUpdateThumbnail(timeline.posting.id);
-    }
-
-    return updatedResult;
   }
 
   @Transactional()
