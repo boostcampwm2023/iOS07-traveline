@@ -20,6 +20,8 @@ final class TravelVC: UIViewController {
     }
     
     private enum Constants {
+        static let titleLimit: Int = 14
+        static let titleLimitToastMessage = "제목은 1 - 14자 이내만 가능합니다."
         static let title: String = "여행 생성"
         static let textFieldPlaceholder: String = "제목 *"
         static let done: String = "완료"
@@ -144,6 +146,7 @@ final class TravelVC: UIViewController {
 
 private extension TravelVC {
     func setupAttributes() {
+        view.keyboardLayoutGuide.followsUndockedKeyboard = true
         view.backgroundColor = TLColor.black
         titleTextField.placeholder = Constants.textFieldPlaceholder
         baseScrollView.delegate = self
@@ -352,6 +355,14 @@ extension TravelVC: UIScrollViewDelegate {
 extension TravelVC: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         dismissKeyboard()
+        return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let text = textField.text ?? ""
+        if text.count + string.count > Constants.titleLimit {
+            return false
+        }
         return true
     }
 }
