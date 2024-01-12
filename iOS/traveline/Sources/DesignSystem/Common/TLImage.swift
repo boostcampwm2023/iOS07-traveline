@@ -33,6 +33,7 @@ enum TLImage {
         static let close = TravelineAsset.Images.closeMedium.image
         static let logo = TravelineAsset.Images.travelineLogo.image
         static let`default` = TravelineAsset.Images.default.image
+        static let empty = TravelineAsset.Images.empty.image
     }
     
     enum Travel {
