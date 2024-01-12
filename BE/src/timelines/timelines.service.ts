@@ -31,30 +31,41 @@ export class TimelinesService {
     file: Express.Multer.File,
     createTimelineDto: CreateTimelineDto
   ) {
-    const posting = await this.postingsService.findOne(
-      createTimelineDto.posting
-    );
+    let imagePath: string;
 
-    if (posting.writer.id !== userId) {
-      throw new ForbiddenException(
-        '본인이 작성한 게시글에 대해서만 타임라인을 생성할 수 있습니다.'
+    try {
+      const posting = await this.postingsService.findOne(
+        createTimelineDto.posting
       );
-    }
 
-    const timeline = await this.initialize(createTimelineDto);
-    timeline.posting = posting;
-
-    if (file) {
-      const filePath = `${userId}/${posting.id}/`;
-      const { path } = await this.storageService.upload(filePath, file);
-      timeline.image = path;
-
-      if (!posting.thumbnail) {
-        await this.postingsRepository.updateThumbnail(posting.id, path);
+      if (posting.writer.id !== userId) {
+        throw new ForbiddenException(
+          '본인이 작성한 게시글에 대해서만 타임라인을 생성할 수 있습니다.'
+        );
       }
-    }
 
-    return this.timelinesRepository.save(timeline);
+      const timeline = await this.initialize(createTimelineDto);
+      timeline.posting = posting;
+
+      if (file) {
+        const filePath = `${userId}/${posting.id}/`;
+        const { path } = await this.storageService.upload(filePath, file);
+        imagePath = path;
+        timeline.image = imagePath;
+
+        if (!posting.thumbnail) {
+          await this.postingsRepository.updateThumbnail(posting.id, imagePath);
+        }
+      }
+
+      return this.timelinesRepository.save(timeline);
+    } catch (error) {
+      if (imagePath) {
+        this.storageService.delete(imagePath);
+      }
+
+      throw error;
+    }
   }
 
   async findAll(postingId: string, day: number) {
