@@ -361,6 +361,8 @@ extension TravelVC: UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let text = textField.text ?? ""
         if text.count + string.count > Constants.titleLimit {
+            let textLimitToast = TLToastView(type: .failure, message: Constants.titleLimitToastMessage)
+            textLimitToast.show(in: self.view)
             return false
         }
         return true
