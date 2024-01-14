@@ -163,13 +163,17 @@ final class TimelineWritingVC: UIViewController {
     }
     
     @objc private func imageButtonCancelTapped() {
-        selectImageButton.setImage(nil)
-        viewModel.sendAction(.imageDidChange(nil))
+        changeImage(to: nil)
     }
     
     @objc private func locationButtonCancelTapped() {
         selectLocation.setText(to: Constants.selectLocation)
         viewModel.sendAction(.placeDidChange(.emtpy))
+    }
+    
+    private func changeImage(to image: UIImage?) {
+        selectImageButton.setImage(image)
+        viewModel.sendAction(.imageDidChange)
     }
     
     private func actionKeyboardWillShow(_ keyboardFrame: CGRect) {
@@ -439,7 +443,7 @@ extension TimelineWritingVC: PHPickerViewControllerDelegate {
             guard let self = self else { return }
             DispatchQueue.main.async {
                 guard let selectedImage = image as? UIImage else { return }
-                self.selectImageButton.setImage(selectedImage)
+                self.changeImage(to: selectedImage)
             }
         }
         

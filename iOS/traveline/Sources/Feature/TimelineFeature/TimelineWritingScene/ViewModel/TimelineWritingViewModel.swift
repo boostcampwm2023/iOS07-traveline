@@ -17,7 +17,7 @@ enum TimelineWritingAction: BaseAction {
     case metaDataTime(String)
     case searchPlace(String)
     case placeDidChange(TimelinePlace)
-    case imageDidChange(Data?)
+    case imageDidChange
     case placeDidScrollToBottom
     case tapCompleteButton(Data?)
     case configTimelineDetailInfo(TimelineDetailInfo)
@@ -43,7 +43,7 @@ enum TimelineWritingSideEffect: BaseSideEffect {
     case updateTitleState(String)
     case updateContentState(String)
     case updateTimeState(String)
-    case updateImageState(Data?)
+    case updateImageState
     case updatePlaceState(TimelinePlace)
     case updatePlaceKeyword(String)
     case fetchPlaceList(TimelinePlaceList)
@@ -114,8 +114,8 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
         case .placeDidChange(let place):
             return .just(.updatePlaceState(place))
             
-        case .imageDidChange(let imageData):
-            return .just(.updateImageState(imageData))
+        case .imageDidChange:
+            return .just(.updateImageState)
             
         case let .searchPlace(keyword):
             return Publishers.Merge(
@@ -158,8 +158,8 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
         case .updateTimeState(let time):
             newState.timelineDetailRequest.time = time
             
-        case .updateImageState(let imageData):
-            newState.timelineDetailRequest.image = imageData
+        case .updateImageState:
+            newState.isOriginImage = false
             
         case .createTimeline:
             newState.popToTimeline = true
