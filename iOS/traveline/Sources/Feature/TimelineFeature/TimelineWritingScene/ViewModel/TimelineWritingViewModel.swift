@@ -188,6 +188,7 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
         case let .showTimelineInfo(detailRequest):
             newState.timelineDetailRequest = detailRequest
             newState.isEdit = true
+            newState.isCompletable = completeButtonState(newState)
             
         case let .setOriginImage(imageURL):
             newState.imageURLString = imageURL
