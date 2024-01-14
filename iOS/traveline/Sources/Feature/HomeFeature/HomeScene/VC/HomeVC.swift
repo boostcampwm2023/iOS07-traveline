@@ -161,6 +161,11 @@ private extension HomeVC {
             .withUnretained(self)
             .sink { owner, list in
                 owner.homeListView.setupData(list: list)
+                if list.isEmpty {
+                    owner.homeListView.showEmptyView()
+                } else {
+                    owner.homeListView.hideEmptyView()
+                }
             }
             .store(in: &cancellables)
         
