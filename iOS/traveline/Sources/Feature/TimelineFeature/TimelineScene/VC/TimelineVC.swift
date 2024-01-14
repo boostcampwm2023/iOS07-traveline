@@ -52,7 +52,7 @@ final class TimelineVC: UIViewController {
         return collectionView
     }()
     
-    private let emptyView: TLEmptyView = .init()
+    private let emptyView: TLEmptyView = .init(type: .timeline)
     
     private let createPostingButton: TLFloatingButton = .init(style: .create)
     
