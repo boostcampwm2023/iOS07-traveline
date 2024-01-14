@@ -165,7 +165,6 @@ final class TimelineWritingVC: UIViewController {
     @objc private func imageButtonCancelTapped() {
         selectImageButton.setImage(nil)
         viewModel.sendAction(.imageDidChange(nil))
-        selectImageButton.updateView()
     }
     
     @objc private func locationButtonCancelTapped() {
@@ -336,6 +335,7 @@ private extension TimelineWritingVC {
         
         viewModel.state
             .map(\.imageURLString)
+            .removeDuplicates()
             .withUnretained(self)
             .sink { owner, imageURLString in
                 owner.selectImageButton.setImage(urlString: imageURLString)
