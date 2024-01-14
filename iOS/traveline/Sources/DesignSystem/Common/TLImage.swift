@@ -34,6 +34,7 @@ enum TLImage {
         static let logo = TravelineAsset.Images.travelineLogo.image
         static let`default` = TravelineAsset.Images.default.image
         static let empty = TravelineAsset.Images.empty.image
+        static let errorCircle = TravelineAsset.Images.errorCircle.image
     }
     
     enum Travel {
