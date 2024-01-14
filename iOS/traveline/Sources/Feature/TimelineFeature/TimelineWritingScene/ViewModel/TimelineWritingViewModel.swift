@@ -55,6 +55,7 @@ enum TimelineWritingSideEffect: BaseSideEffect {
 }
 
 struct TimelineWritingState: BaseState {
+    var isOriginImage: Bool = false
     var isCompletable: Bool = false
     var timelineDetailRequest: TimelineDetailRequest = .empty
     var popToTimeline: Bool = false
@@ -190,6 +191,7 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
             
         case let .setOriginImage(imageURL):
             newState.imageURLString = imageURL
+            newState.isOriginImage = true
             
         case let .popToTimelineDetail(isSuccess):
             newState.isEditCompleted = isSuccess
