@@ -469,10 +469,7 @@ extension TimelineWritingVC: LocationSearchDelegate {
 extension TimelineWritingVC: TLNavigationBarDelegate {
     func rightButtonDidTapped() {
         if let selectedImage = selectImageButton.imageView.image {
-            var image: UIImage? = selectedImage
-            if !viewModel.currentState.isOriginImage {
-                image = image?.downSampling()
-            }
+            let image = viewModel.currentState.isOriginImage ? selectedImage : selectedImage.downSampling()
             let imageData = image?.jpegData(compressionQuality: 1)
             viewModel.sendAction(.tapCompleteButton(imageData))
         } else {
