@@ -148,6 +148,7 @@ private extension TimelineVC {
     func setupAttributes() {
         view.backgroundColor = TLColor.black
         timelineCollectionView.backgroundView = emptyView
+        timelineCollectionView.backgroundView?.isHidden = true
     }
     
     func setupLayout() {
@@ -202,7 +203,6 @@ private extension TimelineVC {
             .withUnretained(self)
             .sink { owner, cardlist in
                 owner.setupData(list: cardlist)
-                owner.timelineCollectionView.backgroundView?.isHidden = !cardlist.isEmpty
             }
             .store(in: &cancellables)
         
@@ -247,6 +247,14 @@ private extension TimelineVC {
             .withUnretained(self)
             .sink { owner, _ in
                 owner.navigationController?.popViewController(animated: true)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.isEmptyList)
+            .withUnretained(self)
+            .sink { owner, isEmptyList in
+                owner.timelineCollectionView.backgroundView?.isHidden = !isEmptyList
             }
             .store(in: &cancellables)
     }
