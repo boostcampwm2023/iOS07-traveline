@@ -61,7 +61,7 @@ export class TimelinesService {
       return this.timelinesRepository.save(timeline);
     } catch (error) {
       if (imagePath) {
-        this.storageService.delete(imagePath);
+        await this.storageService.delete(imagePath);
       }
 
       throw error;
@@ -119,6 +119,8 @@ export class TimelinesService {
         );
         imagePath = path;
         updatedTimeline.image = imagePath;
+      } else {
+        updatedTimeline.image = null;
       }
 
       const updatedResult = await this.timelinesRepository.update(
@@ -137,7 +139,7 @@ export class TimelinesService {
       return updatedResult;
     } catch (error) {
       if (imagePath) {
-        this.storageService.delete(imagePath);
+        await this.storageService.delete(imagePath);
       }
 
       throw error;
