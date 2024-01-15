@@ -113,6 +113,7 @@ private extension HomeVC {
         self.navigationItem.backBarButtonItem = backBarButtonItem
         
         homeSearchView.isHidden = true
+        homeListView.hideEmptyView()
     }
     
     func setupLayout() {
@@ -156,16 +157,10 @@ private extension HomeVC {
         
         viewModel.state
             .map(\.travelList)
-            .dropFirst()
             .removeDuplicates()
             .withUnretained(self)
             .sink { owner, list in
                 owner.homeListView.setupData(list: list)
-                if list.isEmpty {
-                    owner.homeListView.showEmptyView()
-                } else {
-                    owner.homeListView.hideEmptyView()
-                }
             }
             .store(in: &cancellables)
         
@@ -252,6 +247,18 @@ private extension HomeVC {
             .sink { owner, _ in
                 let travelVC = VCFactory.makeTravelVC()
                 owner.navigationController?.pushViewController(travelVC, animated: true)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.isEmptyResult)
+            .withUnretained(self)
+            .sink { owner, isEmpty in
+                if isEmpty {
+                    owner.homeListView.showEmptyView()
+                } else {
+                    owner.homeListView.hideEmptyView()
+                }
             }
             .store(in: &cancellables)
     }
