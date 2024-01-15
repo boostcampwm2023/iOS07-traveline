@@ -40,12 +40,20 @@ class TLEmptyView: UIView {
                 return "나만의 여행 경험을 공유해보세요 :)"
             }
         }
+        
+        var bottomConstants: CGFloat {
+            switch self {
+            case .search:
+                return UIScreen.main.bounds.width
+            case .timeline:
+                return UIScreen.main.bounds.width / 3 * 2
+            }
+        }
     }
     
     private enum Metric {
         static let imageToLabelSpacing: CGFloat = 16
         static let labelToLabelSpacing: CGFloat = 12
-        static let bottomConstants: CGFloat = UIScreen.main.bounds.width / 3 * 2
     }
     
     // MARK: - UI Components
@@ -124,7 +132,7 @@ private extension TLEmptyView {
             stackView.topAnchor.constraint(equalTo: imageView.topAnchor),
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -Metric.bottomConstants)
+            stackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -emptyViewType.bottomConstants)
         ])
         
         stackView.setCustomSpacing(Metric.imageToLabelSpacing, after: imageView)
