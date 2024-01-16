@@ -66,6 +66,8 @@ final class HomeListView: UIView {
         return refresh
     }()
     
+    private let emptyView: TLEmptyView = .init(type: .search)
+    
     // MARK: - Properties
     
     private typealias DataSource = UICollectionViewDiffableDataSource<HomeSection, HomeItem>
@@ -94,6 +96,7 @@ final class HomeListView: UIView {
         
         setupLayout()
         setupDataSource()
+        setupAttributes()
         setupSnapshot()
     }
     
@@ -224,6 +227,14 @@ final class HomeListView: UIView {
         }
     }
     
+    func hideEmptyView() {
+        homeCollectionView.backgroundView?.isHidden = true
+    }
+    
+    func showEmptyView() {
+        homeCollectionView.backgroundView?.isHidden = false
+    }
+    
     @objc private func refreshList() {
         didRefreshHomeList.send(Void())
     }
@@ -232,6 +243,11 @@ final class HomeListView: UIView {
 // MARK: - Setup Functions
 
 extension HomeListView {
+    private func setupAttributes() {
+        homeCollectionView.backgroundView = emptyView
+        homeCollectionView.backgroundView?.isHidden = true
+    }
+    
     private func setupLayout() {
         addSubviews(homeCollectionView)
         

@@ -90,6 +90,7 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             newState.travelList = searchResult.travelList
             newState.homeViewType = .result
             newState.resultFilters = .make()
+            newState.isEmptyResult = searchResult.travelList.isEmpty
             newState.searchQuery = .init(
                 keyword: searchResult.keyword,
                 offset: 2
@@ -99,10 +100,12 @@ final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> 
             newState.travelList = travelList
             newState.searchQuery.offset = 2
             newState.searchQuery.keyword = nil
+            newState.isEmptyResult = travelList.isEmpty
             
         case let .showNewList(travelList):
             newState.travelList = travelList
             newState.searchQuery.offset = 2
+            newState.isEmptyResult = travelList.isEmpty
             
         case let .showFilter(type):
             newState.curFilter = (state.homeViewType == .home) ? state.homeFilters[type] : state.resultFilters[type]
