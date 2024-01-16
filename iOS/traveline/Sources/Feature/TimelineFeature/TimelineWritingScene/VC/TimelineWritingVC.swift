@@ -29,7 +29,7 @@ final class TimelineWritingVC: UIViewController {
         static let contentPlaceholder: String = "내용을 입력해주세요. *"
         static let complete: String = "완료"
         static let selectTime: String = "시간선택"
-        static let selectLocation: String = "선택한 장소"
+        static let selectLocation: String = "장소 선택"
         static let alertContentVCKey = "contentViewController"
         static let metaDataKey = "{Exif}"
         static let dateKey = "DateTimeOriginal"
@@ -331,7 +331,7 @@ private extension TimelineWritingVC {
                     owner.textView.textColor = TLColor.white
                     owner.textView.text = detail.content
                 }
-                if let place = detail.place {
+                if let place = detail.place, !place.title.isEmpty {
                     owner.selectLocation.setText(to: place.title)
                 }
             }
