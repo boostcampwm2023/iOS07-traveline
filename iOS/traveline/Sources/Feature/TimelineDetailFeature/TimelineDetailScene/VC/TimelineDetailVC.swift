@@ -98,7 +98,12 @@ final class TimelineDetailVC: UIViewController {
         titleLabel.setText(to: info.title)
         dateLabel.setText(to: info.date)
         timeLabel.setText(to: info.time)
-        locationLabel.setText(to: info.location)
+        if let location = info.location {
+            locationLabel.setText(to: location)
+            locationLabel.isHidden = false
+        } else {
+            locationLabel.isHidden = true
+        }
         contentView.setText(to: info.description)
         guard let url = info.imageURL else {
             imageView.isHidden = true
