@@ -235,7 +235,6 @@ private extension TimelineDetailVC {
         viewModel.state
             .map(\.isEdit)
             .filter { $0 }
-            .removeDuplicates()
             .withUnretained(self)
             .sink { owner, _ in
                 let timelineDetailInfo = owner.viewModel.currentState.timelineDetailInfo
@@ -246,6 +245,7 @@ private extension TimelineDetailVC {
                     timelineDetailInfo: timelineDetailInfo
                 )
                 owner.navigationController?.pushViewController(timelineEditVC, animated: true)
+                owner.viewModel.sendAction(.movedToEdit)
             }
             .store(in: &cancellables)
         

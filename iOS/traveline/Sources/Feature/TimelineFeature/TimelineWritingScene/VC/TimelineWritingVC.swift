@@ -163,14 +163,17 @@ final class TimelineWritingVC: UIViewController {
     }
     
     @objc private func imageButtonCancelTapped() {
-        selectImageButton.setImage(nil)
-        viewModel.sendAction(.imageDidChange(nil))
-        selectImageButton.updateView()
+        changeImage(to: nil)
     }
     
     @objc private func locationButtonCancelTapped() {
         selectLocation.setText(to: Constants.selectLocation)
         viewModel.sendAction(.placeDidChange(.emtpy))
+    }
+    
+    private func changeImage(to image: UIImage?) {
+        selectImageButton.setImage(image)
+        viewModel.sendAction(.imageDidChange)
     }
     
     private func actionKeyboardWillShow(_ keyboardFrame: CGRect) {
@@ -336,6 +339,7 @@ private extension TimelineWritingVC {
         
         viewModel.state
             .map(\.imageURLString)
+            .removeDuplicates()
             .withUnretained(self)
             .sink { owner, imageURLString in
                 owner.selectImageButton.setImage(urlString: imageURLString)
@@ -439,7 +443,7 @@ extension TimelineWritingVC: PHPickerViewControllerDelegate {
             guard let self = self else { return }
             DispatchQueue.main.async {
                 guard let selectedImage = image as? UIImage else { return }
-                self.selectImageButton.setImage(selectedImage)
+                self.changeImage(to: selectedImage)
             }
         }
         
@@ -465,7 +469,7 @@ extension TimelineWritingVC: LocationSearchDelegate {
 extension TimelineWritingVC: TLNavigationBarDelegate {
     func rightButtonDidTapped() {
         if let selectedImage = selectImageButton.imageView.image {
-            let image = selectedImage.downSampling()
+            let image = viewModel.currentState.isOriginImage ? selectedImage : selectedImage.downSampling()
             let imageData = image?.jpegData(compressionQuality: 1)
             viewModel.sendAction(.tapCompleteButton(imageData))
         } else {

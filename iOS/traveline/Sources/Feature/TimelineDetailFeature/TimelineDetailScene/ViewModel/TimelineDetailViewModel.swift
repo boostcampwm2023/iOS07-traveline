@@ -14,6 +14,7 @@ enum TimelineDetailAction: BaseAction {
     case editTimeline
     case deleteTimeline
     case translateTimeline
+    case movedToEdit
 }
 
 enum TimelineDetailSideEffect: BaseSideEffect {
@@ -34,6 +35,7 @@ enum TimelineDetailSideEffect: BaseSideEffect {
     case popToTimeline(Bool)
     case showTimelineDetailEditing
     case loadTimelineTranslatedInfo(TimelineTranslatedInfo)
+    case resetIsEditStatus
 }
 
 struct TimelineDetailState: BaseState {
@@ -68,6 +70,9 @@ final class TimelineDetailViewModel: BaseViewModel<TimelineDetailAction, Timelin
             
         case .translateTimeline:
             return translateTimeline()
+        
+        case .movedToEdit:
+            return .just(.resetIsEditStatus)
         }
     }
 
@@ -91,6 +96,9 @@ final class TimelineDetailViewModel: BaseViewModel<TimelineDetailAction, Timelin
             
         case let .timelineDetailError(error):
             print(error)
+            
+        case .resetIsEditStatus:
+            newState.isEdit = false
         }
         
         return newState
