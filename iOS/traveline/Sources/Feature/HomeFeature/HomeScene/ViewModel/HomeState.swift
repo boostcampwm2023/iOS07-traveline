@@ -27,6 +27,7 @@ struct HomeState: BaseState {
     var resultFilters: FilterDictionary = .make()
     var curFilter: Filter? = .emtpy
     var moveToTravelWriting: Bool = false
+    var isEmptyResult: Bool = false
     
     var isSearching: Bool {
         homeViewType == .recent || homeViewType == .related

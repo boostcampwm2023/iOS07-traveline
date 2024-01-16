@@ -52,6 +52,8 @@ final class TimelineVC: UIViewController {
         return collectionView
     }()
     
+    private let emptyView: TLEmptyView = .init(type: .timeline)
+    
     private let createPostingButton: TLFloatingButton = .init(style: .create)
     
     // MARK: - Properties
@@ -145,6 +147,8 @@ final class TimelineVC: UIViewController {
 private extension TimelineVC {
     func setupAttributes() {
         view.backgroundColor = TLColor.black
+        timelineCollectionView.backgroundView = emptyView
+        timelineCollectionView.backgroundView?.isHidden = true
     }
     
     func setupLayout() {
@@ -243,6 +247,14 @@ private extension TimelineVC {
             .withUnretained(self)
             .sink { owner, _ in
                 owner.navigationController?.popViewController(animated: true)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.isEmptyList)
+            .withUnretained(self)
+            .sink { owner, isEmptyList in
+                owner.timelineCollectionView.backgroundView?.isHidden = !isEmptyList
             }
             .store(in: &cancellables)
     }

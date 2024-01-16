@@ -68,6 +68,7 @@ struct TimelineState: BaseState {
     var isEdit: Bool = false
     var deleteCompleted: Bool = false
     var errorMsg: String?
+    var isEmptyList: Bool = false
 }
 
 final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect, TimelineState> {
@@ -141,6 +142,7 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
             
         case let .loadTimelineCardList(timelineCardList):
             newState.timelineCardList = timelineCardList
+            newState.isEmptyList = timelineCardList.isEmpty
             
         case let .removeRegacyCards(day):
             newState.day = day
