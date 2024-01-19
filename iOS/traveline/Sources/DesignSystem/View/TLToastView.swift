@@ -65,7 +65,7 @@ final class TLToastView: UIView {
         translatesAutoresizingMaskIntoConstraints = false
         alpha = 1.0
         NSLayoutConstraint.activate([
-            bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -24),
+            bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -24),
             leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
             trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
             heightAnchor.constraint(equalToConstant: Metric.toastHeight)
