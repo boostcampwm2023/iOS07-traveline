@@ -11,7 +11,7 @@ import UIKit
 final class SelectLocationButton: UIView {
     
     private enum Constants {
-        static let defaultText: String = "선택한 장소"
+        static let defaultText: String = "장소 선택"
         static let labelHeight: CGFloat = 24
         static let spacing: CGFloat = 6
         static let buttonSpacing: CGFloat = 2
