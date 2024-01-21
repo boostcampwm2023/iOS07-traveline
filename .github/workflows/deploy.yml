@@ -2,7 +2,7 @@ name: CD
 
 on:
   push:
-    branches: [main]
+    branches: [be-develop, main]
 
 jobs:
   deploy:
