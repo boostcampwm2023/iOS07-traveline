@@ -9,6 +9,10 @@
 import Combine
 import UIKit
 
+protocol TimelineDelegate: AnyObject {
+    func showToast(isSuccess: Bool, message: String)
+}
+
 final class TimelineVC: UIViewController {
     
     private enum Metric {
@@ -20,6 +24,11 @@ final class TimelineVC: UIViewController {
             static let horizontalInset: CGFloat = 24.0
             static let verticalInset: CGFloat = 14.0
         }
+    }
+    
+    private enum Constants {
+        static let didFinishDeleteWithSuccess: String = "여행 삭제를 완료했어요 !"
+        static let didFinishDeleteWithFailure: String = "여행 삭제에 실패했어요."
     }
     
     private enum TimelineSection: Int {
@@ -65,6 +74,7 @@ final class TimelineVC: UIViewController {
     
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: TimelineViewModel
+    weak var delegate: TimelineDelegate?
     
     // MARK: - Initializer
     
@@ -245,11 +255,16 @@ private extension TimelineVC {
             .store(in: &cancellables)
         
         viewModel.state
-            .map(\.deleteCompleted)
-            .filter { $0 }
+            .map(\.isDeleteCompleted)
+            .removeDuplicates()
+            .dropFirst()
             .withUnretained(self)
-            .sink { owner, _ in
+            .sink { owner, isSuccess in
                 owner.navigationController?.popViewController(animated: true)
+                owner.delegate?.showToast(
+                    isSuccess: isSuccess,
+                    message: isSuccess ? Constants.didFinishDeleteWithSuccess : Constants.didFinishDeleteWithFailure
+                )
             }
             .store(in: &cancellables)
         
