@@ -267,3 +267,11 @@ private extension TimelineDetailVC {
             .store(in: &cancellables)
     }
 }
+
+// MARK: - TimelineWriting Delegate
+
+extension TimelineDetailVC: TimelineWritingDelegate {
+    func showToast(isSuccess: Bool, message: String) {
+        showToast(message: message, type: isSuccess ? .success : .failure)
+    }
+}
