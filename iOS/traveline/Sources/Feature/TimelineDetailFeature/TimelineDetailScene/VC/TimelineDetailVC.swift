@@ -9,6 +9,10 @@
 import Combine
 import UIKit
 
+protocol TimelineDetailDelegate: AnyObject {
+    func showToast(isSuccess: Bool, message: String)
+}
+
 final class TimelineDetailVC: UIViewController {
     
     private enum Metric {
@@ -17,6 +21,11 @@ final class TimelineDetailVC: UIViewController {
         static let spacing: CGFloat = 20
         static let aboveLine: CGFloat = 12
         static let belowLine: CGFloat = 4
+    }
+    
+    private enum Constants {
+        static let didFinishDeleteWithSuccess: String = "타임라인 삭제를 완료했어요 !"
+        static let didFinishDeleteWithFailure: String = "타임라인 삭제에 실패했어요."
     }
     
     // MARK: - UI Components
@@ -65,6 +74,7 @@ final class TimelineDetailVC: UIViewController {
     
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: TimelineDetailViewModel
+    weak var delegate: TimelineDetailDelegate?
     
     // MARK: - Initialize
     
@@ -230,10 +240,15 @@ private extension TimelineDetailVC {
         
         viewModel.state
             .map(\.isDeleteCompleted)
-            .filter { $0 }
+            .removeDuplicates()
+            .dropFirst()
             .withUnretained(self)
-            .sink { owner, _ in
+            .sink { owner, isSuccess in
                 owner.navigationController?.popViewController(animated: true)
+                owner.delegate?.showToast(
+                    isSuccess: isSuccess,
+                    message: isSuccess ? Constants.didFinishDeleteWithSuccess : Constants.didFinishDeleteWithFailure
+                )
             }
             .store(in: &cancellables)
         
@@ -249,6 +264,7 @@ private extension TimelineDetailVC {
                     day: timelineDetailInfo.day,
                     timelineDetailInfo: timelineDetailInfo
                 )
+                timelineEditVC.delegate = owner
                 owner.navigationController?.pushViewController(timelineEditVC, animated: true)
                 owner.viewModel.sendAction(.movedToEdit)
             }

@@ -219,12 +219,15 @@ private extension TimelineVC {
             .compactMap(\.timelineWritingInfo)
             .withUnretained(self)
             .sink { owner, info in
-                let vc = VCFactory.makeTimelineWritingVC(
+                let timelineWritingVC = VCFactory.makeTimelineWritingVC(
                     id: info.id,
                     date: info.date,
                     day: info.day
                 )
-                owner.navigationController?.pushViewController(vc, animated: true)
+                
+                timelineWritingVC.delegate = owner
+                
+                owner.navigationController?.pushViewController(timelineWritingVC, animated: true)
             }
             .store(in: &cancellables)
         
@@ -413,6 +416,7 @@ extension TimelineVC: UICollectionViewDelegate {
         if indexPath.section == 0 { return }
         
         let timelineDetailVC = VCFactory.makeTimelineDetailVC(with: viewModel.currentState.timelineCardList[indexPath.row].detailId)
+        timelineDetailVC.delegate = self
         
         navigationController?.pushViewController(timelineDetailVC, animated: true)
     }
@@ -435,6 +439,14 @@ extension TimelineVC: TimelineDateHeaderDelegate {
     
     func changeDay(to day: Int) {
         viewModel.sendAction(.changeDay(day))
+    }
+}
+
+// MARK: - TimelineWriting, TimelineDetail Delegate
+
+extension TimelineVC: TimelineWritingDelegate, TimelineDetailDelegate {
+    func showToast(isSuccess: Bool, message: String) {
+        showToast(message: message, type: isSuccess ? .success : .failure)
     }
 }
 
