@@ -26,6 +26,7 @@ final class LoginUseCaseImpl: LoginUseCase {
             let tlToken = try await self.repository.appleLogin(with: info)
             KeychainList.accessToken = tlToken.accessToken
             KeychainList.refreshToken = tlToken.refreshToken
+            UserDefaultsList.isFirstEntry = false
             return true
         }.eraseToAnyPublisher()
     }

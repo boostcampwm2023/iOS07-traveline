@@ -22,6 +22,13 @@ final class AutoLoginUseCaseImpl: AutoLoginUseCase {
     }
     
     func requestLogin() -> AnyPublisher<Bool, Error> {
+        guard let isFirstEntry = UserDefaultsList.isFirstEntry,
+              isFirstEntry else {
+            return Just(false)
+                .setFailureType(to: Error.self)
+                .eraseToAnyPublisher()
+        }
+        
         return Future {
             let accessToken = try await self.repository.refresh()
             KeychainList.accessToken = accessToken
