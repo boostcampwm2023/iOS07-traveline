@@ -193,29 +193,29 @@ export class TimelinesService {
     return documents;
   }
 
-  async translate(id: string) {
-    const { description } = await this.findOne(id);
-    const body = {
-      source: 'ko',
-      target: 'en',
-      text: description,
-    };
-    const {
-      data: {
-        message: { result },
-      },
-    } = await firstValueFrom(
-      this.httpService.post(PAPAGO_URL, body, {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-NCP-APIGW-API-KEY-ID': process.env.X_NCP_APIGW_API_KEY_ID,
-          'X-NCP-APIGW-API-KEY': process.env.X_NCP_APIGW_API_KEY,
-        },
-      })
-    );
+  // async translate(id: string) {
+  //   const { description } = await this.findOne(id);
+  //   const body = {
+  //     source: 'ko',
+  //     target: 'en',
+  //     text: description,
+  //   };
+  //   const {
+  //     data: {
+  //       message: { result },
+  //     },
+  //   } = await firstValueFrom(
+  //     this.httpService.post(PAPAGO_URL, body, {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'X-NCP-APIGW-API-KEY-ID': process.env.X_NCP_APIGW_API_KEY_ID,
+  //         'X-NCP-APIGW-API-KEY': process.env.X_NCP_APIGW_API_KEY,
+  //       },
+  //     })
+  //   );
 
-    return { description: result.translatedText };
-  }
+  //   return { description: result.translatedText };
+  // }
 
   private async findOneAndUpdateThumbnail(postingId: string) {
     const result =
