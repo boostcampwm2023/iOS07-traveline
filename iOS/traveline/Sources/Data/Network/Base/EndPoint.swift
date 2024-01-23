@@ -19,7 +19,11 @@ protocol EndPoint {
 extension EndPoint {
     
     var baseURL: String? {
-        return Bundle.main.object(forInfoDictionaryKey: Literal.InfoPlistKey.baseURL) as? String
+        #if DEBUG
+        return Bundle.main.object(forInfoDictionaryKey: Literal.InfoPlistKey.devURL) as? String
+        #else
+        return Bundle.main.object(forInfoDictionaryKey: Literal.InfoPlistKey.prodURL) as? String
+        #endif
     }
     
     var body: Encodable? {
