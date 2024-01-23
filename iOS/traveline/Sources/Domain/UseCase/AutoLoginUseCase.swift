@@ -23,7 +23,7 @@ final class AutoLoginUseCaseImpl: AutoLoginUseCase {
     
     func requestLogin() -> AnyPublisher<Bool, Error> {
         guard let isFirstEntry = UserDefaultsList.isFirstEntry,
-              isFirstEntry else {
+              !isFirstEntry else {
             return Just(false)
                 .setFailureType(to: Error.self)
                 .eraseToAnyPublisher()
