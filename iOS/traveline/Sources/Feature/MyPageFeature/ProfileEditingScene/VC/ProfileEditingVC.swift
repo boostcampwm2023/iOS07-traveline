@@ -45,6 +45,7 @@ final class ProfileEditingVC: UIViewController {
         view.layer.cornerRadius = Metric.imageWidth / 2
         view.backgroundColor = TLColor.backgroundGray
         view.clipsToBounds = true
+        view.contentMode = .scaleAspectFill
         return view
     }()
     
