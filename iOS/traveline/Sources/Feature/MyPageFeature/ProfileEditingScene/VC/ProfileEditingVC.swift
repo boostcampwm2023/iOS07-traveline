@@ -10,10 +10,6 @@ import Combine
 import PhotosUI
 import UIKit
 
-protocol ProfileEditingDelegate: AnyObject {
-    func showToast(isSuccess: Bool, message: String)
-}
-
 final class ProfileEditingVC: UIViewController {
     
     private enum Metric {
@@ -98,7 +94,7 @@ final class ProfileEditingVC: UIViewController {
     
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: ProfileEditingViewModel
-    weak var delegate: ProfileEditingDelegate?
+    weak var delegate: UIViewControllerToastDelegate?
     
     // MARK: - Initialize
     
@@ -260,7 +256,7 @@ extension ProfileEditingVC {
             .withUnretained(self)
             .sink { owner, isSuccess in
                 owner.navigationController?.popViewController(animated: true)
-                owner.delegate?.showToast(
+                owner.delegate?.viewControllerDidFinishAction(
                     isSuccess: isSuccess,
                     message: isSuccess ? Constants.didFinishEditProfileWithSuccess : Constants.didFinishEditProfileWithFailure
                 )

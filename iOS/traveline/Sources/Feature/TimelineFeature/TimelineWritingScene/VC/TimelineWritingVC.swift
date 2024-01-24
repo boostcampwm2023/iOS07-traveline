@@ -10,10 +10,6 @@ import Combine
 import PhotosUI
 import UIKit
 
-protocol TimelineWritingDelegate: AnyObject {
-    func showToast(isSuccess: Bool, message: String)
-}
-
 final class TimelineWritingVC: UIViewController {
     
     private enum Metric {
@@ -80,7 +76,7 @@ final class TimelineWritingVC: UIViewController {
     private var cancellables: Set<AnyCancellable> = .init()
     private var viewModel: TimelineWritingViewModel
     
-    weak var delegate: TimelineWritingDelegate?
+    weak var delegate: UIViewControllerToastDelegate?
     
     // MARK: - Initialize
     
@@ -382,7 +378,7 @@ private extension TimelineWritingVC {
             .withUnretained(self)
             .sink { owner, isSuccess in
                 owner.navigationController?.popViewController(animated: true)
-                owner.delegate?.showToast(
+                owner.delegate?.viewControllerDidFinishAction(
                     isSuccess: isSuccess,
                     message: isSuccess ? Constants.didFinishWritingWithSuccess : Constants.didFinishWritingWithFailure
                 )

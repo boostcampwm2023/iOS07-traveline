@@ -9,10 +9,6 @@
 import Combine
 import UIKit
 
-protocol TimelineDetailDelegate: AnyObject {
-    func showToast(isSuccess: Bool, message: String)
-}
-
 final class TimelineDetailVC: UIViewController {
     
     private enum Metric {
@@ -74,7 +70,7 @@ final class TimelineDetailVC: UIViewController {
     
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: TimelineDetailViewModel
-    weak var delegate: TimelineDetailDelegate?
+    weak var delegate: UIViewControllerToastDelegate?
     
     // MARK: - Initialize
     
@@ -245,7 +241,7 @@ private extension TimelineDetailVC {
             .withUnretained(self)
             .sink { owner, isSuccess in
                 owner.navigationController?.popViewController(animated: true)
-                owner.delegate?.showToast(
+                owner.delegate?.viewControllerDidFinishAction(
                     isSuccess: isSuccess,
                     message: isSuccess ? Constants.didFinishDeleteWithSuccess : Constants.didFinishDeleteWithFailure
                 )
@@ -286,8 +282,8 @@ private extension TimelineDetailVC {
 
 // MARK: - TimelineWriting Delegate
 
-extension TimelineDetailVC: TimelineWritingDelegate {
-    func showToast(isSuccess: Bool, message: String) {
+extension TimelineDetailVC: UIViewControllerToastDelegate {
+    func viewControllerDidFinishAction(isSuccess: Bool, message: String) {
         showToast(message: message, type: isSuccess ? .success : .failure)
     }
 }

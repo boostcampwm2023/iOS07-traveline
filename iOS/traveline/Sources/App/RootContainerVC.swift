@@ -214,8 +214,8 @@ extension RootContainerVC: UIGestureRecognizerDelegate {
 
 // MARK: - TimelineWriting Delegate
 
-extension RootContainerVC: ProfileEditingDelegate {
-    func showToast(isSuccess: Bool, message: String) {
+extension RootContainerVC: UIViewControllerToastDelegate {
+    func viewControllerDidFinishAction(isSuccess: Bool, message: String) {
         showToast(message: message, type: isSuccess ? .success : .failure)
     }
 }

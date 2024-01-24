@@ -357,8 +357,8 @@ extension HomeVC: TLBottomSheetDelegate {
 
 // MARK: - Timeline Delegate
 
-extension HomeVC: TimelineDelegate {
-    func showToast(isSuccess: Bool, message: String) {
+extension HomeVC: UIViewControllerToastDelegate {
+    func viewControllerDidFinishAction(isSuccess: Bool, message: String) {
         showToast(message: message, type: isSuccess ? .success : .failure)
     }
 }
