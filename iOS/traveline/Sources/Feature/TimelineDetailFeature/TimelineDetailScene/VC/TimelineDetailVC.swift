@@ -70,7 +70,7 @@ final class TimelineDetailVC: UIViewController {
     
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: TimelineDetailViewModel
-    weak var delegate: UIViewControllerToastDelegate?
+    weak var delegate: ToastDelegate?
     
     // MARK: - Initialize
     
@@ -282,7 +282,7 @@ private extension TimelineDetailVC {
 
 // MARK: - TimelineWriting Delegate
 
-extension TimelineDetailVC: UIViewControllerToastDelegate {
+extension TimelineDetailVC: ToastDelegate {
     func viewControllerDidFinishAction(isSuccess: Bool, message: String) {
         showToast(message: message, type: isSuccess ? .success : .failure)
     }

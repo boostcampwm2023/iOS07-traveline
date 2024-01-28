@@ -1,5 +1,5 @@
 //
-//  UIViewControllerToastDelegate.swift
+//  ToastDelegate.swift
 //  traveline
 //
 //  Created by 김태현 on 1/24/24.
@@ -8,6 +8,6 @@
 
 import Foundation
 
-protocol UIViewControllerToastDelegate: AnyObject {
+protocol ToastDelegate: AnyObject {
     func viewControllerDidFinishAction(isSuccess: Bool, message: String)
 }

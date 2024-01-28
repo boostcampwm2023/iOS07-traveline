@@ -76,7 +76,7 @@ final class TimelineWritingVC: UIViewController {
     private var cancellables: Set<AnyCancellable> = .init()
     private var viewModel: TimelineWritingViewModel
     
-    weak var delegate: UIViewControllerToastDelegate?
+    weak var delegate: ToastDelegate?
     
     // MARK: - Initialize
     

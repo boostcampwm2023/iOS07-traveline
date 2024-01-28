@@ -94,7 +94,7 @@ final class ProfileEditingVC: UIViewController {
     
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: ProfileEditingViewModel
-    weak var delegate: UIViewControllerToastDelegate?
+    weak var delegate: ToastDelegate?
     
     // MARK: - Initialize
     
