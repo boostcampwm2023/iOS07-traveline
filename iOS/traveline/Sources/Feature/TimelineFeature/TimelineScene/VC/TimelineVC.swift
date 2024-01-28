@@ -22,6 +22,11 @@ final class TimelineVC: UIViewController {
         }
     }
     
+    private enum Constants {
+        static let didFinishDeleteWithSuccess: String = "여행 삭제를 완료했어요 !"
+        static let didFinishDeleteWithFailure: String = "여행 삭제에 실패했어요."
+    }
+    
     private enum TimelineSection: Int {
         case travelInfo
         case timeline
@@ -65,6 +70,7 @@ final class TimelineVC: UIViewController {
     
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: TimelineViewModel
+    weak var delegate: ToastDelegate?
     
     // MARK: - Initializer
     
@@ -219,12 +225,15 @@ private extension TimelineVC {
             .compactMap(\.timelineWritingInfo)
             .withUnretained(self)
             .sink { owner, info in
-                let vc = VCFactory.makeTimelineWritingVC(
+                let timelineWritingVC = VCFactory.makeTimelineWritingVC(
                     id: info.id,
                     date: info.date,
                     day: info.day
                 )
-                owner.navigationController?.pushViewController(vc, animated: true)
+                
+                timelineWritingVC.delegate = owner
+                
+                owner.navigationController?.pushViewController(timelineWritingVC, animated: true)
             }
             .store(in: &cancellables)
         
@@ -242,11 +251,16 @@ private extension TimelineVC {
             .store(in: &cancellables)
         
         viewModel.state
-            .map(\.deleteCompleted)
-            .filter { $0 }
+            .map(\.isDeleteCompleted)
+            .removeDuplicates()
+            .dropFirst()
             .withUnretained(self)
-            .sink { owner, _ in
+            .sink { owner, isSuccess in
                 owner.navigationController?.popViewController(animated: true)
+                owner.delegate?.viewControllerDidFinishAction(
+                    isSuccess: isSuccess,
+                    message: isSuccess ? Constants.didFinishDeleteWithSuccess : Constants.didFinishDeleteWithFailure
+                )
             }
             .store(in: &cancellables)
         
@@ -413,6 +427,7 @@ extension TimelineVC: UICollectionViewDelegate {
         if indexPath.section == 0 { return }
         
         let timelineDetailVC = VCFactory.makeTimelineDetailVC(with: viewModel.currentState.timelineCardList[indexPath.row].detailId)
+        timelineDetailVC.delegate = self
         
         navigationController?.pushViewController(timelineDetailVC, animated: true)
     }
@@ -435,6 +450,14 @@ extension TimelineVC: TimelineDateHeaderDelegate {
     
     func changeDay(to day: Int) {
         viewModel.sendAction(.changeDay(day))
+    }
+}
+
+// MARK: - TimelineWriting, TimelineDetail Delegate
+
+extension TimelineVC: ToastDelegate {
+    func viewControllerDidFinishAction(isSuccess: Bool, message: String) {
+        showToast(message: message, type: isSuccess ? .success : .failure)
     }
 }
 

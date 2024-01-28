@@ -26,10 +26,10 @@ enum ProfileEditingSideEffect: BaseSideEffect {
 }
 
 struct ProfileEditingState: BaseState {
-    
     var isCompletable: Bool = false
     var profile: Profile = .empty
     var caption: CaptionOptions = .init(validateType: .unchanged)
+    var isSuccessEditProfile: Bool = false
 }
 
 struct CaptionOptions {
@@ -89,15 +89,15 @@ final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, Profile
             newState.profile = profile
             
         case .error:
-            break
+            newState.isSuccessEditProfile = false
             
         case let .validateNickname(caption):
             newState.caption = caption
             newState.isCompletable = completeButtonState(isChangedImage: isChangedImage, nicknameState: newState.caption.validateType)
             
         case .updateProfile:
-            os_log("update profile")
-            
+            newState.isSuccessEditProfile = true
+
         case let .updateImageState(isChangedImage):
             self.isChangedImage = isChangedImage
             newState.isCompletable = completeButtonState(isChangedImage: isChangedImage, nicknameState: newState.caption.validateType)

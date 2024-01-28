@@ -175,6 +175,7 @@ extension RootContainerVC: SideMenuDelegate {
         switch menuItem {
         case .profileEdit:
             let profileEditingVC = VCFactory.makeProfileEditingVC()
+            profileEditingVC.delegate = self
             navigationVC?.pushViewController(profileEditingVC, animated: true)
         case .myPostList:
             let myPostListVC = VCFactory.makeMyPostListVC()
@@ -208,5 +209,13 @@ extension RootContainerVC: UIGestureRecognizerDelegate {
             return true
         }
         return false
+    }
+}
+
+// MARK: - TimelineWriting Delegate
+
+extension RootContainerVC: ToastDelegate {
+    func viewControllerDidFinishAction(isSuccess: Bool, message: String) {
+        showToast(message: message, type: isSuccess ? .success : .failure)
     }
 }

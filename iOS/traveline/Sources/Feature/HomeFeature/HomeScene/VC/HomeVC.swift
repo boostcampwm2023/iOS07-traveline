@@ -269,6 +269,7 @@ private extension HomeVC {
             .sink { owner, idx  in
                 let id = owner.viewModel.currentState.travelList[idx].id
                 let timelineVC = VCFactory.makeTimelineVC(id: TravelID(value: id))
+                timelineVC.delegate = owner
                 owner.navigationController?.pushViewController(
                     timelineVC,
                     animated: true
@@ -351,6 +352,14 @@ extension HomeVC: TLBottomSheetDelegate {
     func bottomSheetDidDisappear(data: Any) {
         guard let filters = data as? [Filter] else { return }
         viewModel.sendAction(.addFilter(filters))
+    }
+}
+
+// MARK: - Timeline Delegate
+
+extension HomeVC: ToastDelegate {
+    func viewControllerDidFinishAction(isSuccess: Bool, message: String) {
+        showToast(message: message, type: isSuccess ? .success : .failure)
     }
 }
 

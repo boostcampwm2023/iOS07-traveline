@@ -33,6 +33,8 @@ final class TimelineWritingVC: UIViewController {
         static let alertContentVCKey = "contentViewController"
         static let metaDataKey = "{Exif}"
         static let dateKey = "DateTimeOriginal"
+        static let didFinishWritingWithSuccess: String = "타임라인 작성을 완료했어요 !"
+        static let didFinishWritingWithFailure: String = "타임라인 작성에 실패했어요."
     }
     
     // MARK: - UI Components
@@ -73,6 +75,8 @@ final class TimelineWritingVC: UIViewController {
     
     private var cancellables: Set<AnyCancellable> = .init()
     private var viewModel: TimelineWritingViewModel
+    
+    weak var delegate: ToastDelegate?
     
     // MARK: - Initialize
     
@@ -359,16 +363,6 @@ private extension TimelineWritingVC {
             .store(in: &cancellables)
         
         viewModel.state
-            .map(\.popToTimeline)
-            .filter { $0 }
-            .removeDuplicates()
-            .withUnretained(self)
-            .sink { owner, _ in
-                owner.navigationController?.popViewController(animated: true)
-            }
-            .store(in: &cancellables)
-        
-        viewModel.state
             .map(\.timelineDetailRequest.time)
             .removeDuplicates()
             .withUnretained(self)
@@ -379,11 +373,15 @@ private extension TimelineWritingVC {
         
         viewModel.state
             .map(\.isEditCompleted)
-            .filter { $0 }
             .removeDuplicates()
+            .dropFirst()
             .withUnretained(self)
-            .sink { owner, _ in
+            .sink { owner, isSuccess in
                 owner.navigationController?.popViewController(animated: true)
+                owner.delegate?.viewControllerDidFinishAction(
+                    isSuccess: isSuccess,
+                    message: isSuccess ? Constants.didFinishWritingWithSuccess : Constants.didFinishWritingWithFailure
+                )
             }
             .store(in: &cancellables)
     }

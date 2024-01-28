@@ -19,6 +19,11 @@ final class TimelineDetailVC: UIViewController {
         static let belowLine: CGFloat = 4
     }
     
+    private enum Constants {
+        static let didFinishDeleteWithSuccess: String = "타임라인 삭제를 완료했어요 !"
+        static let didFinishDeleteWithFailure: String = "타임라인 삭제에 실패했어요."
+    }
+    
     // MARK: - UI Components
     
     private lazy var tlNavigationBar: TLNavigationBar = .init(vc: self)
@@ -65,6 +70,7 @@ final class TimelineDetailVC: UIViewController {
     
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: TimelineDetailViewModel
+    weak var delegate: ToastDelegate?
     
     // MARK: - Initialize
     
@@ -230,10 +236,15 @@ private extension TimelineDetailVC {
         
         viewModel.state
             .map(\.isDeleteCompleted)
-            .filter { $0 }
+            .removeDuplicates()
+            .dropFirst()
             .withUnretained(self)
-            .sink { owner, _ in
+            .sink { owner, isSuccess in
                 owner.navigationController?.popViewController(animated: true)
+                owner.delegate?.viewControllerDidFinishAction(
+                    isSuccess: isSuccess,
+                    message: isSuccess ? Constants.didFinishDeleteWithSuccess : Constants.didFinishDeleteWithFailure
+                )
             }
             .store(in: &cancellables)
         
@@ -249,6 +260,7 @@ private extension TimelineDetailVC {
                     day: timelineDetailInfo.day,
                     timelineDetailInfo: timelineDetailInfo
                 )
+                timelineEditVC.delegate = owner
                 owner.navigationController?.pushViewController(timelineEditVC, animated: true)
                 owner.viewModel.sendAction(.movedToEdit)
             }
@@ -265,5 +277,13 @@ private extension TimelineDetailVC {
                 owner.contentView.setText(to: description)
             }
             .store(in: &cancellables)
+    }
+}
+
+// MARK: - TimelineWriting Delegate
+
+extension TimelineDetailVC: ToastDelegate {
+    func viewControllerDidFinishAction(isSuccess: Bool, message: String) {
+        showToast(message: message, type: isSuccess ? .success : .failure)
     }
 }

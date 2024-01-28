@@ -66,7 +66,7 @@ struct TimelineState: BaseState {
     var date: String?
     var timelineWritingInfo: TimelineWritingInfo?
     var isEdit: Bool = false
-    var deleteCompleted: Bool = false
+    var isDeleteCompleted: Bool = false
     var errorMsg: String?
     var isEmptyList: Bool = false
 }
@@ -130,7 +130,7 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
             
         case .resetState:
             newState.isEdit = false
-            newState.deleteCompleted = false
+            newState.isDeleteCompleted = false
             newState.timelineWritingInfo = nil
             
         case let .loadTimeline(travelInfo):
@@ -169,7 +169,7 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
             newState.timelineWritingInfo = nil
             
         case .popToHome:
-            newState.deleteCompleted = true
+            newState.isDeleteCompleted = true
             
         case let .updateCurDate(date):
             newState.date = date

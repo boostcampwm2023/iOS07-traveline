@@ -162,10 +162,10 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
             newState.isOriginImage = false
             
         case .createTimeline:
-            newState.popToTimeline = true
+            newState.isEditCompleted = true
             
         case .error:
-            break
+            newState.isEditCompleted = false
             
         case .updateBasicInfo:
             newState.timelineDetailRequest.posting = id.value

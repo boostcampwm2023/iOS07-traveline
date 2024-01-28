@@ -37,12 +37,14 @@ final class TLToastView: UIView {
     
     private let toastType: ToastType
     private var message: String
+    var followsUndockedKeyboard: Bool
     
     // MARK: - initialize
     
-    init(type: ToastType = .success, message: String = "") {
+    init(type: ToastType = .success, message: String = "", followsUndockedKeyboard: Bool = false) {
         self.toastType = type
         self.message = message
+        self.followsUndockedKeyboard = followsUndockedKeyboard
         super.init(frame: .zero)
         
         setupAttributes()
@@ -65,7 +67,10 @@ final class TLToastView: UIView {
         translatesAutoresizingMaskIntoConstraints = false
         alpha = 1.0
         NSLayoutConstraint.activate([
-            bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -24),
+            bottomAnchor.constraint(
+                equalTo: followsUndockedKeyboard ? view.keyboardLayoutGuide.topAnchor : view.safeAreaLayoutGuide.bottomAnchor,
+                constant: -8
+            ),
             leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Metric.margin),
             trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Metric.margin),
             heightAnchor.constraint(equalToConstant: Metric.toastHeight)
@@ -99,9 +104,8 @@ private extension TLToastView {
         
         NSLayoutConstraint.activate([
             contentLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-            contentLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            contentLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
         ])
     }
     
 }
-
