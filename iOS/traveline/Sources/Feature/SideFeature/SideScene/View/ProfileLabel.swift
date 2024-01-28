@@ -66,6 +66,10 @@ final class ProfileLabel: UIView {
     
     func updateProfile(_ profile: Profile) {
         idLabel.setText(to: profile.name)
+        guard profile.imageURL != Literal.empty else {
+            imageView.image = nil
+            return
+        }
         imageView.setImage(from: profile.imageURL, imagePath: profile.imagePath)
     }
 }
