@@ -13,7 +13,8 @@ enum Literal {
     static let boundary: String = "Boundary-\(UUID().uuidString)"
     
     enum InfoPlistKey {
-        static let baseURL: String = "BaseURL"
+        static let devURL: String = "DevURL"
+        static let prodURL: String = "ProdURL"
     }
     
     enum Tag {

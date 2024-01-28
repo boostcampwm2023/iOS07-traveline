@@ -25,6 +25,7 @@ public extension Project {
                 ]
             ]
         ],
-        "BaseURL": "$(BASE_URL)"
+        "ProdURL": "$(PROD_URL)",
+        "DevURL": "$(DEV_URL)"
     ]
 }
