@@ -23,6 +23,7 @@ final class LoginUseCaseImpl: LoginUseCase {
     
     func requestLogin(with info: AppleLoginRequest) -> AnyPublisher<Bool, Error> {
         return Future {
+            UserDefaultsList.userResponseDTO = nil
             let tlToken = try await self.repository.appleLogin(with: info)
             KeychainList.accessToken = tlToken.accessToken
             KeychainList.refreshToken = tlToken.refreshToken

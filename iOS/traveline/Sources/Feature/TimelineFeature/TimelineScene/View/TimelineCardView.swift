@@ -78,6 +78,7 @@ private extension TimelineCardView {
         thumbnailImageView.backgroundColor = TLColor.disabledGray
         thumbnailImageView.layer.cornerRadius = 12.0
         thumbnailImageView.clipsToBounds = true
+        thumbnailImageView.contentMode = .scaleAspectFill
     }
     
     func setupLayout() {
