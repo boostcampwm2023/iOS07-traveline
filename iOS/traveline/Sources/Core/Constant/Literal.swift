@@ -206,5 +206,6 @@ enum Literal {
     enum Setting {
         static let termsOfServiceURL = "https://spiky-rat-16e.notion.site/b222abdf800e4a428a25582f2dc36290?pvs=4"
         static let privacyPolicyURL = "https://spiky-rat-16e.notion.site/886a133ee0f9473a83d5f3ed8b877498?pvs=4"
+        static let openSourceLicenseURL = "https://spiky-rat-16e.notion.site/e8725bd989ea410390b6ef568324a439?pvs=4"
     }
 }

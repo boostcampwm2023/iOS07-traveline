@@ -14,11 +14,13 @@ import UIKit
 enum ServiceGuideType: String, CaseIterable {
     case termsOfService = "이용약관"
     case privacyPolicy = "개인정보 처리방침"
+    case openSourceLicense = "오픈소스 라이선스"
     
     var link: String {
         switch self {
         case .termsOfService: return Literal.Setting.termsOfServiceURL
         case .privacyPolicy: return Literal.Setting.privacyPolicyURL
+        case .openSourceLicense: return Literal.Setting.openSourceLicenseURL
         }
     }
     
@@ -188,6 +190,7 @@ extension SettingVC {
         [
             serviceGuides[.termsOfService] ?? UIButton(),
             serviceGuides[.privacyPolicy] ?? UIButton(),
+            serviceGuides[.openSourceLicense] ?? UIButton(),
             line,
             logoutButton,
             withdrawalButton
