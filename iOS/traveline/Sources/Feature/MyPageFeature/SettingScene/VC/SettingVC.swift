@@ -72,6 +72,7 @@ final class SettingVC: UIViewController {
         button.setTitle("로그아웃", for: .normal)
         button.setTitleColor(TLColor.white, for: .normal)
         button.titleLabel?.font = TLFont.body1.font
+        button.contentHorizontalAlignment = .leading
         return button
     }()
     
@@ -80,6 +81,7 @@ final class SettingVC: UIViewController {
         button.setTitle("탈퇴하기", for: .normal)
         button.setTitleColor(TLColor.white, for: .normal)
         button.titleLabel?.font = TLFont.body1.font
+        button.contentHorizontalAlignment = .leading
         return button
     }()
     
@@ -181,6 +183,7 @@ extension SettingVC {
                 let safariVC = SFSafariViewController(url: url)
                 self.present(safariVC, animated: true)
             })
+            button.contentHorizontalAlignment = .leading
             button.addAction(action, for: .touchUpInside)
         }
     }
@@ -197,6 +200,7 @@ extension SettingVC {
         ].forEach {
             stackView.addArrangedSubview($0)
             $0.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 16).isActive = true
+            $0.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: 16).isActive = true
         }
         
         view.subviews.forEach {
