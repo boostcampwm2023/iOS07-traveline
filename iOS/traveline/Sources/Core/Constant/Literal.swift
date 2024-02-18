@@ -202,4 +202,9 @@ enum Literal {
             static let drive: String = "자차"
         }
     }
+    
+    enum Setting {
+        static let termsOfServiceURL = "https://spiky-rat-16e.notion.site/b222abdf800e4a428a25582f2dc36290?pvs=4"
+        static let privacyPolicyURL = "https://spiky-rat-16e.notion.site/886a133ee0f9473a83d5f3ed8b877498?pvs=4"
+    }
 }

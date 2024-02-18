@@ -12,15 +12,13 @@ import SafariServices
 import UIKit
 
 enum ServiceGuideType: String, CaseIterable {
-    case license = "라이센스"
-    case termsOfUse = "이용약관"
+    case termsOfService = "이용약관"
     case privacyPolicy = "개인정보 처리방침"
     
     var link: String {
         switch self {
-        case .license: return "https://www.apple.com"
-        case .termsOfUse: return "https://www.naver.com"
-        case .privacyPolicy: return "https://www.daum.net"
+        case .termsOfService: return Literal.Setting.termsOfServiceURL
+        case .privacyPolicy: return Literal.Setting.privacyPolicyURL
         }
     }
     
@@ -188,8 +186,7 @@ extension SettingVC {
     private func setupLayout() {
         view.addSubviews(tlNavigationBar, stackView)
         [
-            serviceGuides[.license] ?? UIButton(),
-            serviceGuides[.termsOfUse] ?? UIButton(),
+            serviceGuides[.termsOfService] ?? UIButton(),
             serviceGuides[.privacyPolicy] ?? UIButton(),
             line,
             logoutButton,
