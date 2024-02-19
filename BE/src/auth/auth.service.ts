@@ -124,7 +124,8 @@ export class AuthService {
   ) {
     const socialLoginStrategy: SocialLoginStrategy =
       this.getLoginStrategy(social);
-    const resourceId: string = await socialLoginStrategy.login(loginRequestDto);
+    const { resourceId, email } =
+      await socialLoginStrategy.login(loginRequestDto);
     const findUser =
       await this.usersService.getUserInfoByResourceId(resourceId);
 
@@ -132,11 +133,7 @@ export class AuthService {
     if (findUser) {
       user = findUser;
     } else {
-      user = await this.usersService.createUser(
-        resourceId,
-        'temp@temp.com',
-        ipAddress
-      );
+      user = await this.usersService.createUser(resourceId, email, ipAddress);
     }
     const payload = { id: user.id };
 

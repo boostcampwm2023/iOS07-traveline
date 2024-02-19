@@ -9,11 +9,16 @@ import { firstValueFrom } from 'rxjs';
 export class KakaoLoginStrategy implements SocialLoginStrategy {
   constructor(private readonly httpService: HttpService) {}
 
-  async login(loginRequestDto: LoginRequestDto): Promise<string> {
+  async login(
+    loginRequestDto: LoginRequestDto
+  ): Promise<{ resourceId: string; email: string }> {
     try {
       const { idToken } = loginRequestDto;
-      const decodedIdToken = jwt.decode(idToken);
-      return String(decodedIdToken.sub);
+      const { sub, email } = jwt.decode(idToken) as {
+        sub: string;
+        email: string;
+      };
+      return { resourceId: sub, email };
     } catch (error) {
       throw new UnauthorizedException('유효하지 않은 형식의 토큰입니다.');
     }
