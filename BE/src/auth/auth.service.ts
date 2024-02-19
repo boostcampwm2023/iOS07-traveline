@@ -127,6 +127,7 @@ export class AuthService {
     const resourceId: string = await socialLoginStrategy.login(loginRequestDto);
     const findUser =
       await this.usersService.getUserInfoByResourceId(resourceId);
+
     let user: User;
     if (findUser) {
       user = findUser;

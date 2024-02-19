@@ -23,7 +23,7 @@ export class KakaoLoginStrategy implements SocialLoginStrategy {
     return;
   }
 
-  withdrawal(): void {
+  withdraw(): void {
     // TO DO
     return;
   }
