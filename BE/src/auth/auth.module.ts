@@ -7,10 +7,17 @@ import { StorageService } from 'src/storage/storage.service';
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from './auth.guard';
 import { EmailModule } from 'src/email/email.module';
+import { KakaoLoginStrategy } from 'src/socialLogin/kakao-login-strategy';
 
 @Module({
   imports: [UsersModule, HttpModule, EmailModule],
   controllers: [AuthController],
-  providers: [AuthService, UsersService, StorageService, AuthGuard],
+  providers: [
+    AuthService,
+    UsersService,
+    StorageService,
+    AuthGuard,
+    KakaoLoginStrategy,
+  ],
 })
 export class AuthModule {}

@@ -6,6 +6,7 @@ import {
   Get,
   Req,
   UseGuards,
+  Param,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -14,6 +15,7 @@ import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dt
 import { DeleteAuthDto } from './dto/delete-auth.dto';
 import { AuthGuard } from './auth.guard';
 import { login, refresh, withdrawal } from './auth.swagger';
+import { LoginRequestDto } from './dto/login-request.dto.interface';
 
 @Controller('auth')
 @ApiTags('Auth API')
@@ -27,7 +29,7 @@ export class AuthController {
   })
   @ApiOkResponse({ description: 'OK', schema: { example: refresh } })
   refresh(@Req() request) {
-    return this.authService.refresh(request);
+    return this.authService.refreshApple(request);
   }
 
   @Post('login')
@@ -38,7 +40,17 @@ export class AuthController {
   })
   @ApiOkResponse({ description: 'OK', schema: { example: login } })
   login(@Req() request, @Body() createAuthDto: CreateAuthRequestDto) {
-    return this.authService.login(request, createAuthDto);
+    return this.authService.loginApple(request, createAuthDto);
+  }
+
+  @Post('login/:social')
+  socialLogin(
+    @Req() request,
+    @Param('social') social: string,
+    @Body() loginRequestDto: LoginRequestDto
+  ) {
+    const ipAddress: string = request.headers['x-real-ip'];
+    return this.authService.login(social, ipAddress, loginRequestDto);
   }
 
   @Post('login/dev')
@@ -66,7 +78,7 @@ export class AuthController {
     schema: { example: withdrawal },
   })
   withdrawal(@Req() request, @Body() deleteAuthDto: DeleteAuthDto) {
-    return this.authService.withdrawal(request, deleteAuthDto);
+    return this.authService.withdrawalApple(request, deleteAuthDto);
   }
 
   // 추후 수정 예정
