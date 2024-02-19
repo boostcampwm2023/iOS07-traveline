@@ -262,7 +262,7 @@ export class AuthService {
     const { id, resourceId } = await this.usersService.findUserById(userId);
 
     try {
-      socialLoginStrategy.withdraw(resourceId);
+      await socialLoginStrategy.withdraw(resourceId);
       await this.usersService.deleteUser(id);
       return { revoke: true };
     } catch {
