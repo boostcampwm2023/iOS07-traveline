@@ -259,6 +259,20 @@ export class AuthService {
     );
   }
 
+  async withdraw(social: string, userId: string) {
+    const socialLoginStrategy: SocialLoginStrategy =
+      this.getLoginStrategy(social);
+    const { id, resourceId } = await this.usersService.findUserById(userId);
+
+    try {
+      socialLoginStrategy.withdraw(resourceId);
+      await this.usersService.deleteUser(id);
+      return { revoke: true };
+    } catch {
+      return { revoke: false };
+    }
+  }
+
   clientSecretGenerator(clientId) {
     const header = { alg: 'ES256', kid: process.env.KEY_ID };
     const iat = Math.floor(Date.now() / 1000);

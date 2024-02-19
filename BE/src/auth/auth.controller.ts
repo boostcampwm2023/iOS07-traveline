@@ -67,6 +67,13 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard)
+  @Post('withdraw/:social')
+  socialWithdraw(@Req() request, @Param('social') social: string) {
+    const userId = request['user'].id;
+    return this.authService.withdraw(social, userId);
+  }
+
+  @UseGuards(AuthGuard)
   @Delete('withdrawal')
   @ApiOperation({
     summary: '탈퇴 API',
