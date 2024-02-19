@@ -35,6 +35,17 @@ export class AuthService {
     this.socialLoginStrategyMap.set('kakao', kakaoLoginStrategy);
   }
 
+  private getLoginStrategy(social: string) {
+    const socialLoginStrategy: SocialLoginStrategy =
+      this.socialLoginStrategyMap.get(social);
+
+    if (!socialLoginStrategy) {
+      throw new BadRequestException('지원하지 않는 소셜 로그인 플랫폼입니다');
+    }
+
+    return socialLoginStrategy;
+  }
+
   async refreshApple(request) {
     const ipAddress = request.headers['x-real-ip'];
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
@@ -112,12 +123,7 @@ export class AuthService {
     loginRequestDto: LoginRequestDto
   ) {
     const socialLoginStrategy: SocialLoginStrategy =
-      this.socialLoginStrategyMap.get(social);
-
-    if (!socialLoginStrategy) {
-      throw new BadRequestException('지원하지 않는 소셜 로그인 플랫폼입니다');
-    }
-
+      this.getLoginStrategy(social);
     const resourceId: string = await socialLoginStrategy.login(loginRequestDto);
     const findUser =
       await this.usersService.getUserInfoByResourceId(resourceId);
