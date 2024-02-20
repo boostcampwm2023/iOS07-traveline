@@ -24,11 +24,6 @@ export class KakaoLoginStrategy implements SocialLoginStrategy {
     }
   }
 
-  refresh(): void {
-    // TO DO
-    return;
-  }
-
   async withdraw(resourceId: string): Promise<void> {
     const payload = {
       target_id_type: 'user_id',
