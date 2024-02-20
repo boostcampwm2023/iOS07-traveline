@@ -12,15 +12,15 @@ import SafariServices
 import UIKit
 
 enum ServiceGuideType: String, CaseIterable {
-    case license = "라이센스"
-    case termsOfUse = "이용약관"
+    case termsOfService = "이용약관"
     case privacyPolicy = "개인정보 처리방침"
+    case openSourceLicense = "오픈소스 라이선스"
     
     var link: String {
         switch self {
-        case .license: return "https://www.apple.com"
-        case .termsOfUse: return "https://www.naver.com"
-        case .privacyPolicy: return "https://www.daum.net"
+        case .termsOfService: return Literal.Setting.termsOfServiceURL
+        case .privacyPolicy: return Literal.Setting.privacyPolicyURL
+        case .openSourceLicense: return Literal.Setting.openSourceLicenseURL
         }
     }
     
@@ -72,6 +72,7 @@ final class SettingVC: UIViewController {
         button.setTitle("로그아웃", for: .normal)
         button.setTitleColor(TLColor.white, for: .normal)
         button.titleLabel?.font = TLFont.body1.font
+        button.contentHorizontalAlignment = .leading
         return button
     }()
     
@@ -80,6 +81,7 @@ final class SettingVC: UIViewController {
         button.setTitle("탈퇴하기", for: .normal)
         button.setTitleColor(TLColor.white, for: .normal)
         button.titleLabel?.font = TLFont.body1.font
+        button.contentHorizontalAlignment = .leading
         return button
     }()
     
@@ -181,6 +183,7 @@ extension SettingVC {
                 let safariVC = SFSafariViewController(url: url)
                 self.present(safariVC, animated: true)
             })
+            button.contentHorizontalAlignment = .leading
             button.addAction(action, for: .touchUpInside)
         }
     }
@@ -188,15 +191,16 @@ extension SettingVC {
     private func setupLayout() {
         view.addSubviews(tlNavigationBar, stackView)
         [
-            serviceGuides[.license] ?? UIButton(),
-            serviceGuides[.termsOfUse] ?? UIButton(),
+            serviceGuides[.termsOfService] ?? UIButton(),
             serviceGuides[.privacyPolicy] ?? UIButton(),
+            serviceGuides[.openSourceLicense] ?? UIButton(),
             line,
             logoutButton,
             withdrawalButton
         ].forEach {
             stackView.addArrangedSubview($0)
             $0.leadingAnchor.constraint(equalTo: stackView.leadingAnchor, constant: 16).isActive = true
+            $0.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: 16).isActive = true
         }
         
         view.subviews.forEach {
