@@ -4,10 +4,17 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import * as jwt from 'jsonwebtoken';
 import { firstValueFrom } from 'rxjs';
+import { SocialWithdrawRequestDto } from './dto/social-withdraw-request.dto';
 
 @Injectable()
 export class KakaoLoginStrategy implements SocialLoginStrategy {
   constructor(private readonly httpService: HttpService) {}
+  withdraw2(
+    resourceId: string,
+    socialWithdrawRequestDto: SocialWithdrawRequestDto
+  ): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
 
   async login(
     socialLoginRequestDto: SocialLoginRequestDto
