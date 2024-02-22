@@ -9,13 +9,13 @@ import { HttpService } from '@nestjs/axios';
 import * as jwt from 'jsonwebtoken';
 import { UsersService } from 'src/users/users.service';
 import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
-import { firstValueFrom } from 'rxjs';
 import { EmailService } from 'src/email/email.service';
 import { SocialLoginStrategy } from 'src/socialLogin/social-login-strategy.interface';
 import { KakaoLoginStrategy } from 'src/socialLogin/kakao-login-strategy';
 import { User } from 'src/users/entities/user.entity';
 import { SocialLoginRequestDto } from 'src/socialLogin/dto/social-login-request.interface';
 import { AppleLoginStrategy } from 'src/socialLogin/apple-login-strategy';
+import { SocialWithdrawRequestDto } from 'src/socialLogin/dto/social-withdraw-request.dto';
 
 @Injectable()
 export class AuthService {
@@ -214,84 +214,22 @@ export class AuthService {
     }
   }
 
-  clientSecretGenerator(clientId) {
-    const header = { alg: 'ES256', kid: process.env.KEY_ID };
-    const iat = Math.floor(Date.now() / 1000);
-    const exp = iat + 60 * 60;
-    const payload = {
-      iss: process.env.TEAM_ID,
-      iat,
-      exp,
-      aud: 'https://appleid.apple.com',
-      sub: clientId,
-    };
+  async withdrawalApple(
+    social: string,
+    userId: string,
+    socialWithdrawRequestDto: SocialWithdrawRequestDto
+  ) {
+    const socialLoginStrategy: SocialLoginStrategy =
+      this.getLoginStrategy(social);
+    const { id, resourceId } = await this.usersService.findUserById(userId);
 
-    const key =
-      '-----BEGIN PRIVATE KEY-----\n' +
-      process.env.AUTH_KEY_LINE1 +
-      '\n' +
-      process.env.AUTH_KEY_LINE2 +
-      '\n' +
-      process.env.AUTH_KEY_LINE3 +
-      '\n' +
-      process.env.AUTH_KEY_LINE4 +
-      '\n' +
-      '-----END PRIVATE KEY-----';
-
-    return jwt.sign(payload, key, {
-      algorithm: 'ES256',
-      header,
-    });
-  }
-
-  async withdrawalApple(request, deleteAuthDto) {
-    const revokeUser = await this.usersService.findUserById(request['user'].id);
-
-    const idToken = deleteAuthDto.idToken;
-    const authorizationCode = deleteAuthDto.authorizationCode;
-
-    // const decodedIdToken = await this.decodeIdToken(idToken);
-    const decodedIdToken = { sub: 'temp', aud: 'temp' };
-    if (decodedIdToken.sub !== revokeUser.resourceId) {
-      throw new BadRequestException(
-        'identify 토큰과 access 토큰 내의 회원정보가 충돌합니다.'
-      );
-    }
-
-    const clientId = decodedIdToken.aud;
-    const clientSecret = this.clientSecretGenerator(clientId);
-    const payload = {
-      code: authorizationCode,
-      client_id: clientId,
-      grant_type: 'authorization_code',
-      client_secret: clientSecret,
-    };
-
-    const tokenRequestResult = await firstValueFrom(
-      this.httpService.post('https://appleid.apple.com/auth/token', payload, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      })
-    );
-
-    const info = tokenRequestResult.data;
-    const token = info.refresh_token;
-    const revoke = {
-      client_id: clientId,
-      client_secret: clientSecret,
-      token,
-    };
-
-    const revokeRequetResult = await firstValueFrom(
-      this.httpService.post('https://appleid.apple.com/auth/revoke', revoke, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      })
-    );
-
-    if (revokeRequetResult.status === 200) {
-      await this.usersService.deleteUser(revokeUser.id);
+    try {
+      await socialLoginStrategy.withdraw2(resourceId, socialWithdrawRequestDto);
+      await this.usersService.deleteUser(id);
       return { revoke: true };
+    } catch {
+      return { revoke: false };
     }
-    return { revoke: false };
   }
 
   async manageIp(id, ip, allow) {

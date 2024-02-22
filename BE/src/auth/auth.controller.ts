@@ -11,10 +11,10 @@ import {
 import { AuthService } from './auth.service';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
-import { DeleteAuthDto } from './dto/delete-auth.dto';
 import { AuthGuard } from './auth.guard';
 import { login, refresh, withdrawal } from './auth.swagger';
 import { SocialLoginRequestDto } from 'src/socialLogin/dto/social-login-request.interface';
+import { SocialWithdrawRequestDto } from 'src/socialLogin/dto/social-withdraw-request.dto';
 
 @Controller('auth')
 @ApiTags('Auth API')
@@ -84,8 +84,16 @@ export class AuthController {
     description: 'OK',
     schema: { example: withdrawal },
   })
-  withdrawal(@Req() request, @Body() deleteAuthDto: DeleteAuthDto) {
-    return this.authService.withdrawalApple(request, deleteAuthDto);
+  withdrawal(
+    @Req() request,
+    @Body() socialWithdrawRequestDto: SocialWithdrawRequestDto
+  ) {
+    const userId = request['user'].id;
+    return this.authService.withdrawalApple(
+      'apple',
+      userId,
+      socialWithdrawRequestDto
+    );
   }
 
   // 추후 수정 예정
