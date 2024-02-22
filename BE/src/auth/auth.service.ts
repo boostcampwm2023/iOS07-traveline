@@ -16,7 +16,7 @@ import { EmailService } from 'src/email/email.service';
 import { SocialLoginStrategy } from 'src/socialLogin/social-login-strategy.interface';
 import { KakaoLoginStrategy } from 'src/socialLogin/kakao-login-strategy';
 import { User } from 'src/users/entities/user.entity';
-import { LoginRequestDto } from 'src/socialLogin/dto/social-login-request.interface';
+import { SocialLoginRequestDto } from 'src/socialLogin/dto/social-login-request.interface';
 
 @Injectable()
 export class AuthService {
@@ -120,12 +120,13 @@ export class AuthService {
   async login(
     social: string,
     ipAddress: string,
-    loginRequestDto: LoginRequestDto
+    socialLoginRequestDto: SocialLoginRequestDto
   ) {
     const socialLoginStrategy: SocialLoginStrategy =
       this.getLoginStrategy(social);
-    const { resourceId, email } =
-      await socialLoginStrategy.login(loginRequestDto);
+    const { resourceId, email } = await socialLoginStrategy.login(
+      socialLoginRequestDto
+    );
     const findUser =
       await this.usersService.getUserInfoByResourceId(resourceId);
 

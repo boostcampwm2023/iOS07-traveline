@@ -1,7 +1,7 @@
-import { LoginRequestDto } from './social-login-request.interface';
+import { SocialLoginRequestDto } from './social-login-request.interface';
 import { IsString } from 'class-validator';
 
-export class KakaoLoginRequestDto implements LoginRequestDto {
+export class KakaoLoginRequestDto implements SocialLoginRequestDto {
   @IsString()
   idToken: string;
 }

@@ -1,4 +1,4 @@
-import { LoginRequestDto } from './dto/social-login-request.interface';
+import { SocialLoginRequestDto } from './dto/social-login-request.interface';
 import { SocialLoginStrategy } from './social-login-strategy.interface';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
@@ -10,10 +10,10 @@ export class KakaoLoginStrategy implements SocialLoginStrategy {
   constructor(private readonly httpService: HttpService) {}
 
   async login(
-    loginRequestDto: LoginRequestDto
+    socialLoginRequestDto: SocialLoginRequestDto
   ): Promise<{ resourceId: string; email: string }> {
     try {
-      const { idToken } = loginRequestDto;
+      const { idToken } = socialLoginRequestDto;
       const { sub, email } = jwt.decode(idToken) as {
         sub: string;
         email: string;

@@ -1,3 +1,3 @@
-export interface LoginRequestDto {
+export interface SocialLoginRequestDto {
   idToken: string;
 }

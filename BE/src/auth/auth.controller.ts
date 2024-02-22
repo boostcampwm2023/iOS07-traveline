@@ -15,7 +15,7 @@ import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dt
 import { DeleteAuthDto } from './dto/delete-auth.dto';
 import { AuthGuard } from './auth.guard';
 import { login, refresh, withdrawal } from './auth.swagger';
-import { LoginRequestDto } from 'src/socialLogin/dto/social-login-request.interface';
+import { SocialLoginRequestDto } from 'src/socialLogin/dto/social-login-request.interface';
 
 @Controller('auth')
 @ApiTags('Auth API')
@@ -47,10 +47,10 @@ export class AuthController {
   socialLogin(
     @Req() request,
     @Param('social') social: string,
-    @Body() loginRequestDto: LoginRequestDto
+    @Body() socialLoginRequestDto: SocialLoginRequestDto
   ) {
     const ipAddress: string = request.headers['x-real-ip'];
-    return this.authService.login(social, ipAddress, loginRequestDto);
+    return this.authService.login(social, ipAddress, socialLoginRequestDto);
   }
 
   @Post('login/dev')
