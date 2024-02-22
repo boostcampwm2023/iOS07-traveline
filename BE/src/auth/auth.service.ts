@@ -13,17 +13,40 @@ import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dt
 import { firstValueFrom } from 'rxjs';
 import { JwksClient } from 'jwks-rsa';
 import { EmailService } from 'src/email/email.service';
+import { SocialLoginStrategy } from 'src/socialLogin/social-login-strategy.interface';
+import { KakaoLoginStrategy } from 'src/socialLogin/kakao-login-strategy';
+import { User } from 'src/users/entities/user.entity';
+import { LoginRequestDto } from './dto/login-request.dto.interface';
 
 @Injectable()
 export class AuthService {
+  private socialLoginStrategyMap: Map<string, SocialLoginStrategy> = new Map<
+    string,
+    SocialLoginStrategy
+  >();
+
   constructor(
     private readonly jwtService: JwtService,
     private readonly httpService: HttpService,
     private readonly usersService: UsersService,
-    private readonly emilService: EmailService
-  ) {}
+    private readonly emilService: EmailService,
+    private readonly kakaoLoginStrategy: KakaoLoginStrategy
+  ) {
+    this.socialLoginStrategyMap.set('kakao', kakaoLoginStrategy);
+  }
 
-  async refresh(request) {
+  private getLoginStrategy(social: string) {
+    const socialLoginStrategy: SocialLoginStrategy =
+      this.socialLoginStrategyMap.get(social);
+
+    if (!socialLoginStrategy) {
+      throw new BadRequestException('지원하지 않는 소셜 로그인 플랫폼입니다');
+    }
+
+    return socialLoginStrategy;
+  }
+
+  async refreshApple(request) {
     const ipAddress = request.headers['x-real-ip'];
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     if (type !== 'Bearer') {
@@ -94,7 +117,36 @@ export class AuthService {
     return decodedIdToken;
   }
 
-  async login(request, createAuthDto: CreateAuthRequestDto) {
+  async login(
+    social: string,
+    ipAddress: string,
+    loginRequestDto: LoginRequestDto
+  ) {
+    const socialLoginStrategy: SocialLoginStrategy =
+      this.getLoginStrategy(social);
+    const { resourceId, email } =
+      await socialLoginStrategy.login(loginRequestDto);
+    const findUser =
+      await this.usersService.getUserInfoByResourceId(resourceId);
+
+    let user: User;
+    if (findUser) {
+      user = findUser;
+    } else {
+      user = await this.usersService.createUser(resourceId, email, ipAddress);
+    }
+    const payload = { id: user.id };
+
+    return {
+      accessToken: await this.jwtService.signAsync(payload),
+      refreshToken: await this.jwtService.signAsync(payload, {
+        expiresIn: '30d',
+        secret: process.env.JWT_SECRET_REFRESH,
+      }),
+    };
+  }
+
+  async loginApple(request, createAuthDto: CreateAuthRequestDto) {
     const ipAddress = request.headers['x-real-ip'];
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     if (type === 'Bearer' && token) {
@@ -204,6 +256,20 @@ export class AuthService {
     );
   }
 
+  async withdraw(social: string, userId: string) {
+    const socialLoginStrategy: SocialLoginStrategy =
+      this.getLoginStrategy(social);
+    const { id, resourceId } = await this.usersService.findUserById(userId);
+
+    try {
+      await socialLoginStrategy.withdraw(resourceId);
+      await this.usersService.deleteUser(id);
+      return { revoke: true };
+    } catch {
+      return { revoke: false };
+    }
+  }
+
   clientSecretGenerator(clientId) {
     const header = { alg: 'ES256', kid: process.env.KEY_ID };
     const iat = Math.floor(Date.now() / 1000);
@@ -234,7 +300,7 @@ export class AuthService {
     });
   }
 
-  async withdrawal(request, deleteAuthDto) {
+  async withdrawalApple(request, deleteAuthDto) {
     const revokeUser = await this.usersService.findUserById(request['user'].id);
 
     const idToken = deleteAuthDto.idToken;
