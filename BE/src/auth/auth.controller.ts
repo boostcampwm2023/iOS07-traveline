@@ -67,14 +67,7 @@ export class AuthController {
   }
 
   @UseGuards(AuthGuard)
-  @Post('withdraw/:social')
-  socialWithdraw(@Req() request, @Param('social') social: string) {
-    const userId = request['user'].id;
-    return this.authService.withdraw(social, userId);
-  }
-
-  @UseGuards(AuthGuard)
-  @Delete('withdrawal')
+  @Delete('withdraw/:social')
   @ApiOperation({
     summary: '탈퇴 API',
     description:
@@ -84,17 +77,37 @@ export class AuthController {
     description: 'OK',
     schema: { example: withdrawal },
   })
-  withdrawal(
+  socialWithdraw(
     @Req() request,
+    @Param('social') social: string,
     @Body() socialWithdrawRequestDto: SocialWithdrawRequestDto
   ) {
     const userId = request['user'].id;
-    return this.authService.withdrawalApple(
-      'apple',
-      userId,
-      socialWithdrawRequestDto
-    );
+    return this.authService.withdraw(social, userId, socialWithdrawRequestDto);
   }
+
+  // @UseGuards(AuthGuard)
+  // @Delete('withdrawal')
+  // @ApiOperation({
+  //   summary: '탈퇴 API',
+  //   description:
+  //     '전달받은 idToken과 authorizationCode를 이용해 탈퇴를 진행합니다.',
+  // })
+  // @ApiOkResponse({
+  //   description: 'OK',
+  //   schema: { example: withdrawal },
+  // })
+  // withdrawal(
+  //   @Req() request,
+  //   @Body() socialWithdrawRequestDto: SocialWithdrawRequestDto
+  // ) {
+  //   const userId = request['user'].id;
+  //   return this.authService.withdrawalApple(
+  //     'apple',
+  //     userId,
+  //     socialWithdrawRequestDto
+  //   );
+  // }
 
   // 추후 수정 예정
   // @Get('ip')

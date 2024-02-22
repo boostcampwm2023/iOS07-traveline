@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { HttpService } from '@nestjs/axios';
-import * as jwt from 'jsonwebtoken';
 import { UsersService } from 'src/users/users.service';
 import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
 import { EmailService } from 'src/email/email.service';
@@ -200,21 +199,7 @@ export class AuthService {
     );
   }
 
-  async withdraw(social: string, userId: string) {
-    const socialLoginStrategy: SocialLoginStrategy =
-      this.getLoginStrategy(social);
-    const { id, resourceId } = await this.usersService.findUserById(userId);
-
-    try {
-      await socialLoginStrategy.withdraw(resourceId);
-      await this.usersService.deleteUser(id);
-      return { revoke: true };
-    } catch {
-      return { revoke: false };
-    }
-  }
-
-  async withdrawalApple(
+  async withdraw(
     social: string,
     userId: string,
     socialWithdrawRequestDto: SocialWithdrawRequestDto
@@ -224,7 +209,7 @@ export class AuthService {
     const { id, resourceId } = await this.usersService.findUserById(userId);
 
     try {
-      await socialLoginStrategy.withdraw2(resourceId, socialWithdrawRequestDto);
+      await socialLoginStrategy.withdraw(resourceId, socialWithdrawRequestDto);
       await this.usersService.deleteUser(id);
       return { revoke: true };
     } catch {

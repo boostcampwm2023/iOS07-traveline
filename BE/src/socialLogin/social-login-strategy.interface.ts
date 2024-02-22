@@ -5,8 +5,7 @@ export interface SocialLoginStrategy {
   login(
     socialLoginRequestDto: SocialLoginRequestDto
   ): Promise<{ resourceId: string; email: string }>;
-  withdraw(resourceId: string): Promise<void>;
-  withdraw2( // temp
+  withdraw(
     resourceId: string,
     socialWithdrawRequestDto: SocialWithdrawRequestDto
   ): Promise<void>;

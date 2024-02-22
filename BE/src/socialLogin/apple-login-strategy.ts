@@ -1,18 +1,15 @@
+import { SocialWithdrawRequestDto } from './dto/social-withdraw-request.dto';
 import { SocialLoginRequestDto } from './dto/social-login-request.interface';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { SocialLoginStrategy } from './social-login-strategy.interface';
 import { AppleLoginRequestDto } from './dto/apple-login-request.dto';
-import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
 import { JwksClient } from 'jwks-rsa';
 import * as jwt from 'jsonwebtoken';
-import { firstValueFrom } from 'rxjs';
-import { HttpService } from '@nestjs/axios';
-import { SocialWithdrawRequestDto } from './dto/social-withdraw-request.dto';
 
 export class AppleLoginStrategy implements SocialLoginStrategy {
   constructor(private readonly httpService: HttpService) {}
-  withdraw(resourceId: string): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
 
   async login(
     socialLoginRequestDto: SocialLoginRequestDto
@@ -26,7 +23,7 @@ export class AppleLoginStrategy implements SocialLoginStrategy {
     }
   }
 
-  async withdraw2(
+  async withdraw(
     resourceId: string,
     socialWithdrawRequestDto: SocialWithdrawRequestDto
   ): Promise<void> {

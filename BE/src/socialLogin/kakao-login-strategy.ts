@@ -1,20 +1,14 @@
+import { SocialWithdrawRequestDto } from './dto/social-withdraw-request.dto';
 import { SocialLoginRequestDto } from './dto/social-login-request.interface';
 import { SocialLoginStrategy } from './social-login-strategy.interface';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import * as jwt from 'jsonwebtoken';
 import { firstValueFrom } from 'rxjs';
-import { SocialWithdrawRequestDto } from './dto/social-withdraw-request.dto';
 
 @Injectable()
 export class KakaoLoginStrategy implements SocialLoginStrategy {
   constructor(private readonly httpService: HttpService) {}
-  withdraw2(
-    resourceId: string,
-    socialWithdrawRequestDto: SocialWithdrawRequestDto
-  ): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
 
   async login(
     socialLoginRequestDto: SocialLoginRequestDto
@@ -31,7 +25,10 @@ export class KakaoLoginStrategy implements SocialLoginStrategy {
     }
   }
 
-  async withdraw(resourceId: string): Promise<void> {
+  async withdraw(
+    resourceId: string,
+    socialWithdrawRequestDto: SocialWithdrawRequestDto
+  ): Promise<void> {
     const payload = {
       target_id_type: 'user_id',
       target_id: resourceId,
