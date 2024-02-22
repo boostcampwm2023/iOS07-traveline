@@ -1,11 +1,9 @@
 import {
   BadRequestException,
   Injectable,
-  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { HttpService } from '@nestjs/axios';
 import { UsersService } from 'src/users/users.service';
 import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
 import { EmailService } from 'src/email/email.service';
@@ -25,7 +23,6 @@ export class AuthService {
 
   constructor(
     private readonly jwtService: JwtService,
-    private readonly httpService: HttpService,
     private readonly usersService: UsersService,
     private readonly emilService: EmailService,
     private readonly kakaoLoginStrategy: KakaoLoginStrategy,
@@ -46,7 +43,7 @@ export class AuthService {
     return socialLoginStrategy;
   }
 
-  async refreshApple(request) {
+  async refresh(request) {
     const ipAddress = request.headers['x-real-ip'];
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     if (type !== 'Bearer') {
@@ -98,6 +95,7 @@ export class AuthService {
 
     const socialLoginStrategy: SocialLoginStrategy =
       this.getLoginStrategy(social);
+    console.log(social);
     const { resourceId, email } = await socialLoginStrategy.login(
       socialLoginRequestDto
     );
@@ -217,32 +215,32 @@ export class AuthService {
     }
   }
 
-  async manageIp(id, ip, allow) {
-    const user = await this.usersService.findUserById(id);
+  // async manageIp(id, ip, allow) {
+  //   const user = await this.usersService.findUserById(id);
 
-    const allowedIp = user.allowedIp;
+  //   const allowedIp = user.allowedIp;
 
-    let bannedIp;
-    if (user.bannedIp === null) {
-      bannedIp = [];
-    } else {
-      bannedIp = user.bannedIp;
-    }
+  //   let bannedIp;
+  //   if (user.bannedIp === null) {
+  //     bannedIp = [];
+  //   } else {
+  //     bannedIp = user.bannedIp;
+  //   }
 
-    if (allow) {
-      allowedIp.push(ip);
-    } else {
-      bannedIp.push(ip);
-    }
-    const result = await this.usersService.updateUserIp(id, {
-      allowedIp,
-      bannedIp,
-    });
+  //   if (allow) {
+  //     allowedIp.push(ip);
+  //   } else {
+  //     bannedIp.push(ip);
+  //   }
+  //   const result = await this.usersService.updateUserIp(id, {
+  //     allowedIp,
+  //     bannedIp,
+  //   });
 
-    if (result.affected !== 1) {
-      throw new InternalServerErrorException();
-    }
+  //   if (result.affected !== 1) {
+  //     throw new InternalServerErrorException();
+  //   }
 
-    return true;
-  }
+  //   return true;
+  // }
 }

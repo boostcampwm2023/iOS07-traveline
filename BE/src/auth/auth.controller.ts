@@ -28,7 +28,7 @@ export class AuthController {
   })
   @ApiOkResponse({ description: 'OK', schema: { example: refresh } })
   refresh(@Req() request) {
-    return this.authService.refreshApple(request);
+    return this.authService.refresh(request);
   }
 
   @Post('login/:social')

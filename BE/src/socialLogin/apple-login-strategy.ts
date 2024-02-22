@@ -1,5 +1,9 @@
 import { SocialWithdrawRequestDto } from './dto/social-withdraw-request.dto';
-import { BadRequestException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { SocialLoginStrategy } from './social-login-strategy.interface';
 import { SocialLoginRequestDto } from './dto/social-login-request.dto';
 import { HttpService } from '@nestjs/axios';
@@ -7,6 +11,7 @@ import { firstValueFrom } from 'rxjs';
 import { JwksClient } from 'jwks-rsa';
 import * as jwt from 'jsonwebtoken';
 
+@Injectable()
 export class AppleLoginStrategy implements SocialLoginStrategy {
   constructor(private readonly httpService: HttpService) {}
 
