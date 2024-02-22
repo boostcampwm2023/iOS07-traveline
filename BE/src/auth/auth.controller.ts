@@ -10,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CreateAuthRequestDto } from './dto/create-auth-request.dto';
 import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
 import { DeleteAuthDto } from './dto/delete-auth.dto';
 import { AuthGuard } from './auth.guard';
@@ -32,25 +31,26 @@ export class AuthController {
     return this.authService.refreshApple(request);
   }
 
-  @Post('login')
+  @Post('login/:social')
   @ApiOperation({
     summary: '로그인 또는 회원가입 API',
     description:
       '전달받은 idToken 내의 회원 정보를 확인하고 존재하는 회원이면 로그인을, 존재하지 않는 회원이면 회원가입을 진행합니다.',
   })
   @ApiOkResponse({ description: 'OK', schema: { example: login } })
-  login(@Req() request, @Body() createAuthDto: CreateAuthRequestDto) {
-    return this.authService.loginApple(request, createAuthDto);
-  }
-
-  @Post('login/:social')
   socialLogin(
     @Req() request,
     @Param('social') social: string,
     @Body() socialLoginRequestDto: SocialLoginRequestDto
   ) {
-    const ipAddress: string = request.headers['x-real-ip'];
-    return this.authService.login(social, ipAddress, socialLoginRequestDto);
+    const headerMap: Map<string, string> = Object.keys(request.headers).reduce(
+      (m, key) => {
+        m.set(key, request.headers[key]);
+        return m;
+      },
+      new Map<string, string>()
+    );
+    return this.authService.login(social, headerMap, socialLoginRequestDto);
   }
 
   @Post('login/dev')
