@@ -43,34 +43,34 @@ export class AuthService {
     return socialLoginStrategy;
   }
 
-  async refresh(request) {
-    const ipAddress = request.headers['x-real-ip'];
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+  async refresh(headerMap: Map<string, string>) {
+    const [type, token] = headerMap.get('authorization')?.split(' ') ?? [];
+
     if (type !== 'Bearer') {
       throw new BadRequestException('JWT가 아닙니다.');
     } else if (!token) {
       throw new BadRequestException('토큰이 존재하지 않습니다.');
     }
+
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
+      const { id } = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET_REFRESH,
       });
-      const id = payload.id;
       const user = await this.usersService.findUserById(id);
+
       if (!user) {
         throw new UnauthorizedException('회원 정보가 존재하지 않습니다.');
       }
-      let bannedIpArray;
-      if (user.bannedIp === null) {
-        bannedIpArray = [];
-      } else {
-        bannedIpArray = user.bannedIp;
-      }
-      if (ipAddress in bannedIpArray) {
+
+      const ipAddress = headerMap.get('x-real-ip');
+      const bannedIps = user.bannedIp === null ? [] : user.bannedIp;
+
+      if (ipAddress in bannedIps) {
         throw new UnauthorizedException(
           '비정상적인 접근 시도로 차단된 IP입니다.'
         );
       }
+
       const accessToken = await this.jwtService.signAsync({ id });
       return { accessToken };
     } catch (error) {

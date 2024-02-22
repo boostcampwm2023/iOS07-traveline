@@ -28,7 +28,8 @@ export class AuthController {
   })
   @ApiOkResponse({ description: 'OK', schema: { example: refresh } })
   refresh(@Req() request) {
-    return this.authService.refresh(request);
+    const headerMap: Map<string, string> = this.makeHeaderMap(request);
+    return this.authService.refresh(headerMap);
   }
 
   @Post('login/:social')
@@ -43,13 +44,7 @@ export class AuthController {
     @Param('social') social: string,
     @Body() socialLoginRequestDto: SocialLoginRequestDto
   ) {
-    const headerMap: Map<string, string> = Object.keys(request.headers).reduce(
-      (m, key) => {
-        m.set(key, request.headers[key]);
-        return m;
-      },
-      new Map<string, string>()
-    );
+    const headerMap: Map<string, string> = this.makeHeaderMap(request);
     return this.authService.login(social, headerMap, socialLoginRequestDto);
   }
 
@@ -84,6 +79,13 @@ export class AuthController {
   ) {
     const userId = request['user'].id;
     return this.authService.withdraw(social, userId, socialWithdrawRequestDto);
+  }
+
+  private makeHeaderMap(request): Map<string, string> {
+    return Object.keys(request.headers).reduce((m, key) => {
+      m.set(key, request.headers[key]);
+      return m;
+    }, new Map<string, string>());
   }
 
   // @UseGuards(AuthGuard)
