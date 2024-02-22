@@ -1,6 +1,6 @@
 import { SocialWithdrawRequestDto } from './dto/social-withdraw-request.dto';
-import { SocialLoginRequestDto } from './dto/social-login-request.interface';
 import { SocialLoginStrategy } from './social-login-strategy.interface';
+import { SocialLoginRequestDto } from './dto/social-login-request.dto';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import * as jwt from 'jsonwebtoken';

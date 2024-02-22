@@ -13,7 +13,7 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
 import { AuthGuard } from './auth.guard';
 import { login, refresh, withdrawal } from './auth.swagger';
-import { SocialLoginRequestDto } from 'src/socialLogin/dto/social-login-request.interface';
+import { SocialLoginRequestDto } from 'src/socialLogin/dto/social-login-request.dto';
 import { SocialWithdrawRequestDto } from 'src/socialLogin/dto/social-withdraw-request.dto';
 
 @Controller('auth')

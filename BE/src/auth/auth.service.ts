@@ -12,7 +12,7 @@ import { EmailService } from 'src/email/email.service';
 import { SocialLoginStrategy } from 'src/socialLogin/social-login-strategy.interface';
 import { KakaoLoginStrategy } from 'src/socialLogin/kakao-login-strategy';
 import { User } from 'src/users/entities/user.entity';
-import { SocialLoginRequestDto } from 'src/socialLogin/dto/social-login-request.interface';
+import { SocialLoginRequestDto } from 'src/socialLogin/dto/social-login-request.dto';
 import { AppleLoginStrategy } from 'src/socialLogin/apple-login-strategy';
 import { SocialWithdrawRequestDto } from 'src/socialLogin/dto/social-withdraw-request.dto';
 

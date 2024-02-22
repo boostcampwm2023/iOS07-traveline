@@ -1,8 +1,7 @@
 import { SocialWithdrawRequestDto } from './dto/social-withdraw-request.dto';
-import { SocialLoginRequestDto } from './dto/social-login-request.interface';
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { SocialLoginStrategy } from './social-login-strategy.interface';
-import { AppleLoginRequestDto } from './dto/apple-login-request.dto';
+import { SocialLoginRequestDto } from './dto/social-login-request.dto';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { JwksClient } from 'jwks-rsa';
@@ -15,7 +14,7 @@ export class AppleLoginStrategy implements SocialLoginStrategy {
     socialLoginRequestDto: SocialLoginRequestDto
   ): Promise<{ resourceId: string; email: string }> {
     try {
-      const { idToken, email } = socialLoginRequestDto as AppleLoginRequestDto;
+      const { idToken, email } = socialLoginRequestDto;
       const resourceId = (await this.decodeIdToken(idToken)).sub;
       return { resourceId, email };
     } catch (error) {
