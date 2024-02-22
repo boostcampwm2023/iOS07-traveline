@@ -1,4 +1,4 @@
-import { LoginRequestDto } from 'src/auth/dto/login-request.dto.interface';
+import { LoginRequestDto } from './dto/social-login-request.interface';
 
 export interface SocialLoginStrategy {
   login(

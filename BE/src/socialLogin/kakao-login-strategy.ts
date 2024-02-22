@@ -1,8 +1,8 @@
+import { LoginRequestDto } from './dto/social-login-request.interface';
 import { SocialLoginStrategy } from './social-login-strategy.interface';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import * as jwt from 'jsonwebtoken';
-import { LoginRequestDto } from 'src/auth/dto/login-request.dto.interface';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()

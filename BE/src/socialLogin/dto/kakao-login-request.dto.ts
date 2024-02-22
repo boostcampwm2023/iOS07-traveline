@@ -1,4 +1,4 @@
-import { LoginRequestDto } from './login-request.dto.interface';
+import { LoginRequestDto } from './social-login-request.interface';
 import { IsString } from 'class-validator';
 
 export class KakaoLoginRequestDto implements LoginRequestDto {

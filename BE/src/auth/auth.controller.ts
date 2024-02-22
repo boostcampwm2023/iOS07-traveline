@@ -15,7 +15,7 @@ import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dt
 import { DeleteAuthDto } from './dto/delete-auth.dto';
 import { AuthGuard } from './auth.guard';
 import { login, refresh, withdrawal } from './auth.swagger';
-import { LoginRequestDto } from './dto/login-request.dto.interface';
+import { LoginRequestDto } from 'src/socialLogin/dto/social-login-request.interface';
 
 @Controller('auth')
 @ApiTags('Auth API')

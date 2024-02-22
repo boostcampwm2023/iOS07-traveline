@@ -16,7 +16,7 @@ import { EmailService } from 'src/email/email.service';
 import { SocialLoginStrategy } from 'src/socialLogin/social-login-strategy.interface';
 import { KakaoLoginStrategy } from 'src/socialLogin/kakao-login-strategy';
 import { User } from 'src/users/entities/user.entity';
-import { LoginRequestDto } from './dto/login-request.dto.interface';
+import { LoginRequestDto } from 'src/socialLogin/dto/social-login-request.interface';
 
 @Injectable()
 export class AuthService {
