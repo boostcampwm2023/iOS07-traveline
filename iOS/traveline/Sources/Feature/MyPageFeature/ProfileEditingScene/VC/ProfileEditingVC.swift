@@ -33,6 +33,8 @@ final class ProfileEditingVC: UIViewController {
         static let selectBaseImage: String = "기본 이미지"
         static let selectInAlbum: String = "앨범에서 선택"
         static let close: String = "닫기"
+        static let didFinishEditProfileWithSuccess: String = "프로필 수정을 완료했어요 !"
+        static let didFinishEditProfileWithFailure: String = "프로필 수정에 실패했어요."
     }
     
     // MARK: - UI Components
@@ -45,6 +47,7 @@ final class ProfileEditingVC: UIViewController {
         view.layer.cornerRadius = Metric.imageWidth / 2
         view.backgroundColor = TLColor.backgroundGray
         view.clipsToBounds = true
+        view.contentMode = .scaleAspectFill
         return view
     }()
     
@@ -92,6 +95,7 @@ final class ProfileEditingVC: UIViewController {
     
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: ProfileEditingViewModel
+    weak var delegate: ToastDelegate?
     
     // MARK: - Initialize
     
@@ -245,6 +249,20 @@ extension ProfileEditingVC {
                 owner.imageView.setImage(from: profile.imageURL, imagePath: profile.imagePath)
             }
             .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.isSuccessEditProfile)
+            .removeDuplicates()
+            .dropFirst()
+            .withUnretained(self)
+            .sink { owner, isSuccess in
+                owner.navigationController?.popViewController(animated: true)
+                owner.delegate?.viewControllerDidFinishAction(
+                    isSuccess: isSuccess,
+                    message: isSuccess ? Constants.didFinishEditProfileWithSuccess : Constants.didFinishEditProfileWithFailure
+                )
+            }
+            .store(in: &cancellables)
     }
 }
 
@@ -277,6 +295,5 @@ extension ProfileEditingVC: PHPickerViewControllerDelegate {
 extension ProfileEditingVC: TLNavigationBarDelegate {
     func rightButtonDidTapped() {
         viewModel.sendAction(.tapCompleteButton(imageView.image?.jpegData(compressionQuality: 1)))
-        self.navigationController?.popViewController(animated: true)
     }
 }

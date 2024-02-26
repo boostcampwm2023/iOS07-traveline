@@ -26,16 +26,9 @@ final class HomeUseCaseImpl: HomeUseCase {
     }
     
     func fetchSearchList(with query: SearchQuery) -> AnyPublisher<TravelList, Error> {
-        return Future { promise in
-            Task { [weak self] in
-                guard let self else { return }
-                do {
-                    let travelList = try await self.repository.fetchPostingList(with: query)
-                    promise(.success(travelList))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            let travelList = try await self.repository.fetchPostingList(with: query)
+            return travelList
         }.eraseToAnyPublisher()
     }
     
@@ -68,16 +61,9 @@ final class HomeUseCaseImpl: HomeUseCase {
     }
     
     func fetchRelatedKeyword(_ keyword: String) -> AnyPublisher<SearchKeywordList, Error> {
-        return Future { promise in
-            Task { [weak self] in
-                guard let self else { return }
-                do {
-                    let relatedKeyword = try await self.repository.fetchPostingTitleList(keyword)
-                    promise(.success(relatedKeyword))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+        return Future {
+            let relatedKeyword = try await self.repository.fetchPostingTitleList(keyword)
+            return relatedKeyword
         }.eraseToAnyPublisher()
     }
     

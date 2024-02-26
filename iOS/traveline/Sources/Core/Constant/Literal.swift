@@ -13,7 +13,8 @@ enum Literal {
     static let boundary: String = "Boundary-\(UUID().uuidString)"
     
     enum InfoPlistKey {
-        static let baseURL: String = "BaseURL"
+        static let devURL: String = "DevURL"
+        static let prodURL: String = "ProdURL"
     }
     
     enum Tag {
@@ -117,6 +118,7 @@ enum Literal {
         static let modify: String = "수정하기"
         static let delete: String = "삭제하기"
         static let report: String = "신고하기"
+        static let translate: String = "번역하기"
     }
     
     enum Query {
@@ -199,5 +201,11 @@ enum Literal {
             static let publicTransport: String = "대중교통"
             static let drive: String = "자차"
         }
+    }
+    
+    enum Setting {
+        static let termsOfServiceURL = "https://spiky-rat-16e.notion.site/b222abdf800e4a428a25582f2dc36290?pvs=4"
+        static let privacyPolicyURL = "https://spiky-rat-16e.notion.site/886a133ee0f9473a83d5f3ed8b877498?pvs=4"
+        static let openSourceLicenseURL = "https://spiky-rat-16e.notion.site/e8725bd989ea410390b6ef568324a439?pvs=4"
     }
 }

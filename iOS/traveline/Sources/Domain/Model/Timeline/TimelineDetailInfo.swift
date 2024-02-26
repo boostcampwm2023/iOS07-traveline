@@ -19,7 +19,7 @@ struct TimelineDetailInfo: Hashable {
     let coordX: Double?
     let coordY: Double?
     let date: String
-    let location: String
+    let location: String?
     let time: String
     let isOwner: Bool
     

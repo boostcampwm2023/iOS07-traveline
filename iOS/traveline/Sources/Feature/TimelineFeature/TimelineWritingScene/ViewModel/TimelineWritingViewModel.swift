@@ -17,7 +17,7 @@ enum TimelineWritingAction: BaseAction {
     case metaDataTime(String)
     case searchPlace(String)
     case placeDidChange(TimelinePlace)
-    case imageDidChange(Data?)
+    case imageDidChange
     case placeDidScrollToBottom
     case tapCompleteButton(Data?)
     case configTimelineDetailInfo(TimelineDetailInfo)
@@ -43,7 +43,7 @@ enum TimelineWritingSideEffect: BaseSideEffect {
     case updateTitleState(String)
     case updateContentState(String)
     case updateTimeState(String)
-    case updateImageState(Data?)
+    case updateImageState
     case updatePlaceState(TimelinePlace)
     case updatePlaceKeyword(String)
     case fetchPlaceList(TimelinePlaceList)
@@ -55,6 +55,7 @@ enum TimelineWritingSideEffect: BaseSideEffect {
 }
 
 struct TimelineWritingState: BaseState {
+    var isOriginImage: Bool = false
     var isCompletable: Bool = false
     var timelineDetailRequest: TimelineDetailRequest = .empty
     var popToTimeline: Bool = false
@@ -113,8 +114,8 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
         case .placeDidChange(let place):
             return .just(.updatePlaceState(place))
             
-        case .imageDidChange(let imageData):
-            return .just(.updateImageState(imageData))
+        case .imageDidChange:
+            return .just(.updateImageState)
             
         case let .searchPlace(keyword):
             return Publishers.Merge(
@@ -157,14 +158,14 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
         case .updateTimeState(let time):
             newState.timelineDetailRequest.time = time
             
-        case .updateImageState(let imageData):
-            newState.timelineDetailRequest.image = imageData
+        case .updateImageState:
+            newState.isOriginImage = false
             
         case .createTimeline:
-            newState.popToTimeline = true
+            newState.isEditCompleted = true
             
         case .error:
-            break
+            newState.isEditCompleted = false
             
         case .updateBasicInfo:
             newState.timelineDetailRequest.posting = id.value
@@ -187,9 +188,11 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
         case let .showTimelineInfo(detailRequest):
             newState.timelineDetailRequest = detailRequest
             newState.isEdit = true
+            newState.isCompletable = completeButtonState(newState)
             
         case let .setOriginImage(imageURL):
             newState.imageURLString = imageURL
+            newState.isOriginImage = true
             
         case let .popToTimelineDetail(isSuccess):
             newState.isEditCompleted = isSuccess

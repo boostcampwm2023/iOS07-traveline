@@ -55,4 +55,13 @@ final class TimelineDetailRepositoryImpl: TimelineDetailRepository {
         return deleteTimelineDTO
     }
     
+    func fetchTimelineTranslatedInfo(id: String) async throws -> TimelineTranslatedInfo {
+        let translateTimelineDTO = try await network.request(
+            endPoint: TimelineDetailEndPoint.translateTimeline(id),
+            type: TimelineTranslatedResponseDTO.self
+        )
+        
+        return translateTimelineDTO.toDomain()
+    }
+    
 }

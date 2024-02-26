@@ -21,7 +21,7 @@ final class SelectImageButton: UIView {
     
     // MARK: - UI Components
     
-    let view: UIView = {
+    private let view: UIView = {
         let view = UIView()
         view.layer.cornerRadius = Metric.cornerRadius
         view.clipsToBounds = true
@@ -41,7 +41,7 @@ final class SelectImageButton: UIView {
     
     let imageView: UIImageView = .init()
     
-    let selectView: UIStackView = {
+    private let selectView: UIStackView = {
         let view = UIStackView()
         view.axis = .vertical
         view.alignment = .center
@@ -51,25 +51,18 @@ final class SelectImageButton: UIView {
         return view
     }()
     
-    let selectViewIcon: UIImageView = {
+    private let selectViewIcon: UIImageView = {
         let view = UIImageView(image: TLImage.Common.album)
         view.contentMode = .scaleAspectFit
         
         return view
     }()
     
-    let selectViewLabel: TLLabel = {
+    private let selectViewLabel: TLLabel = {
         let label = TLLabel(font: TLFont.body2, color: TLColor.white)
         label.textAlignment = .center
         return label
     }()
-    
-    // MARK: - Properties
-    
-    private var hasImage: Bool {
-        imageView.image != nil
-    }
-    let width = Metric.viewWidth + Metric.buttonOffset
     
     // MARK: - initialize
     
@@ -86,7 +79,7 @@ final class SelectImageButton: UIView {
     
     // MARK: - Functions
     
-    func updateView() {
+    private func updateView(hasImage: Bool) {
         selectView.isHidden = hasImage
         imageView.isHidden = !hasImage
         cancelButton.isHidden = !hasImage
@@ -94,12 +87,12 @@ final class SelectImageButton: UIView {
     
     func setImage(_ image: UIImage?) {
         imageView.image = image
-        updateView()
+        updateView(hasImage: image != nil)
     }
     
     func setImage(urlString: String?, imagePath: String? = nil) {
         imageView.setImage(from: urlString, imagePath: imagePath)
-        updateView()
+        updateView(hasImage: urlString != nil)
     }
     
 }
@@ -111,7 +104,7 @@ private extension SelectImageButton {
     func setupAttributes() {
         selectViewLabel.setText(to: "선택")
         view.backgroundColor = TLColor.backgroundGray
-        updateView()
+        updateView(hasImage: false)
     }
     
     func setupLayout() {

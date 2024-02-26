@@ -22,11 +22,11 @@ final class ProfileLabel: UIView {
     
     private let imageView: UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(systemName: "person.fill")
         view.contentMode = .center
         view.layer.cornerRadius = Metric.imageWidth / 2
         view.backgroundColor = TLColor.backgroundGray
         view.clipsToBounds = true
+        view.contentMode = .scaleAspectFill
         return view
     }()
     
@@ -66,6 +66,10 @@ final class ProfileLabel: UIView {
     
     func updateProfile(_ profile: Profile) {
         idLabel.setText(to: profile.name)
+        guard profile.imageURL != Literal.empty else {
+            imageView.image = nil
+            return
+        }
         imageView.setImage(from: profile.imageURL, imagePath: profile.imagePath)
     }
 }

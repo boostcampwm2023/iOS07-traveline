@@ -11,4 +11,5 @@ import Foundation
 enum UserDefaultsList {
     @UserDefaultsWrapper<UserResponseDTO>(key: "userResponseDTO") static var userResponseDTO
     @UserDefaultsWrapper<[String]>(key: "recentSearchKeyword") static var recentSearchKeyword
+    @UserDefaultsWrapper<Bool>(key: "isFirstEntry") static var isFirstEntry
 }

@@ -19,6 +19,11 @@ final class TimelineDetailVC: UIViewController {
         static let belowLine: CGFloat = 4
     }
     
+    private enum Constants {
+        static let didFinishDeleteWithSuccess: String = "타임라인 삭제를 완료했어요 !"
+        static let didFinishDeleteWithFailure: String = "타임라인 삭제에 실패했어요."
+    }
+    
     // MARK: - UI Components
     
     private lazy var tlNavigationBar: TLNavigationBar = .init(vc: self)
@@ -65,6 +70,7 @@ final class TimelineDetailVC: UIViewController {
     
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: TimelineDetailViewModel
+    weak var delegate: ToastDelegate?
     
     // MARK: - Initialize
     
@@ -98,7 +104,12 @@ final class TimelineDetailVC: UIViewController {
         titleLabel.setText(to: info.title)
         dateLabel.setText(to: info.date)
         timeLabel.setText(to: info.time)
-        locationLabel.setText(to: info.location)
+        if let location = info.location {
+            locationLabel.setText(to: location)
+            locationLabel.isHidden = false
+        } else {
+            locationLabel.isHidden = true
+        }
         contentView.setText(to: info.description)
         guard let url = info.imageURL else {
             imageView.isHidden = true
@@ -113,11 +124,20 @@ final class TimelineDetailVC: UIViewController {
         
         if isOwner {
             menuItems = [
+                .init(title: Literal.Action.translate, handler: { [weak self] _ in
+                    self?.viewModel.sendAction(.translateTimeline)
+                }),
                 .init(title: Literal.Action.modify, handler: { [weak self] _ in
                     self?.viewModel.sendAction(.editTimeline)
                 }),
                 .init(title: Literal.Action.delete, attributes: .destructive, handler: {  [weak self] _ in
                     self?.viewModel.sendAction(.deleteTimeline)
+                })
+            ]
+        } else {
+            menuItems = [
+                .init(title: Literal.Action.translate, handler: { [weak self] _ in
+                    self?.viewModel.sendAction(.translateTimeline)
                 })
             ]
         }
@@ -216,17 +236,21 @@ private extension TimelineDetailVC {
         
         viewModel.state
             .map(\.isDeleteCompleted)
-            .filter { $0 }
+            .removeDuplicates()
+            .dropFirst()
             .withUnretained(self)
-            .sink { owner, _ in
+            .sink { owner, isSuccess in
                 owner.navigationController?.popViewController(animated: true)
+                owner.delegate?.viewControllerDidFinishAction(
+                    isSuccess: isSuccess,
+                    message: isSuccess ? Constants.didFinishDeleteWithSuccess : Constants.didFinishDeleteWithFailure
+                )
             }
             .store(in: &cancellables)
         
         viewModel.state
             .map(\.isEdit)
             .filter { $0 }
-            .removeDuplicates()
             .withUnretained(self)
             .sink { owner, _ in
                 let timelineDetailInfo = owner.viewModel.currentState.timelineDetailInfo
@@ -236,8 +260,30 @@ private extension TimelineDetailVC {
                     day: timelineDetailInfo.day,
                     timelineDetailInfo: timelineDetailInfo
                 )
+                timelineEditVC.delegate = owner
                 owner.navigationController?.pushViewController(timelineEditVC, animated: true)
+                owner.viewModel.sendAction(.movedToEdit)
             }
             .store(in: &cancellables)
+        
+        viewModel.state
+            .map(\.isTranslated)
+            .dropFirst()
+            .withUnretained(self)
+            .sink { owner, isTranslated in
+                let description = isTranslated
+                ? owner.viewModel.currentState.timelineTranslatedInfo.description
+                : owner.viewModel.currentState.timelineDetailInfo.description
+                owner.contentView.setText(to: description)
+            }
+            .store(in: &cancellables)
+    }
+}
+
+// MARK: - TimelineWriting Delegate
+
+extension TimelineDetailVC: ToastDelegate {
+    func viewControllerDidFinishAction(isSuccess: Bool, message: String) {
+        showToast(message: message, type: isSuccess ? .success : .failure)
     }
 }

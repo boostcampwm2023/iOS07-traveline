@@ -39,6 +39,7 @@ final class TLInfoView: UIView {
         imageView.backgroundColor = TLColor.gray
         imageView.layer.cornerRadius = Metric.radius
         imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     
@@ -62,6 +63,7 @@ final class TLInfoView: UIView {
         imageView.backgroundColor = TLColor.gray
         imageView.layer.cornerRadius = Metric.profileImageSize / 2
         imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFill
         return imageView
     }()
     

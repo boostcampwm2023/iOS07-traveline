@@ -13,6 +13,8 @@ enum TimelineDetailAction: BaseAction {
     case viewWillAppear
     case editTimeline
     case deleteTimeline
+    case translateTimeline
+    case movedToEdit
 }
 
 enum TimelineDetailSideEffect: BaseSideEffect {
@@ -32,13 +34,17 @@ enum TimelineDetailSideEffect: BaseSideEffect {
     case timelineDetailError(TimelineDetailError)
     case popToTimeline(Bool)
     case showTimelineDetailEditing
+    case loadTimelineTranslatedInfo(TimelineTranslatedInfo)
+    case resetIsEditStatus
 }
 
 struct TimelineDetailState: BaseState {
     var timelineDetailInfo: TimelineDetailInfo = .empty
+    var timelineTranslatedInfo: TimelineTranslatedInfo = .empty
     var isOwner: Bool = false
     var isDeleteCompleted: Bool = false
     var isEdit: Bool = false
+    var isTranslated: Bool = false
 }
 
 final class TimelineDetailViewModel: BaseViewModel<TimelineDetailAction, TimelineDetailSideEffect, TimelineDetailState> {
@@ -61,6 +67,12 @@ final class TimelineDetailViewModel: BaseViewModel<TimelineDetailAction, Timelin
             
         case .deleteTimeline:
             return deleteTimeline()
+            
+        case .translateTimeline:
+            return translateTimeline()
+        
+        case .movedToEdit:
+            return .just(.resetIsEditStatus)
         }
     }
 
@@ -78,8 +90,15 @@ final class TimelineDetailViewModel: BaseViewModel<TimelineDetailAction, Timelin
         case .showTimelineDetailEditing:
             newState.isEdit = true
             
+        case .loadTimelineTranslatedInfo(let translatedInfo):
+            newState.timelineTranslatedInfo = translatedInfo
+            newState.isTranslated.toggle()
+            
         case let .timelineDetailError(error):
             print(error)
+            
+        case .resetIsEditStatus:
+            newState.isEdit = false
         }
         
         return newState
@@ -102,6 +121,17 @@ private extension TimelineDetailViewModel {
         return timelineDetailUseCase.deleteTimeline(id: id)
             .map { isSuccess in
                 return .popToTimeline(isSuccess)
+            }
+            .catch { _ in
+                return Just(TimelineDetailSideEffect.timelineDetailError(.deleteFailed))
+            }
+            .eraseToAnyPublisher()
+    }
+    
+    func translateTimeline() -> SideEffectPublisher {
+        return timelineDetailUseCase.fetchTranslateTimelineDetail(with: id)
+            .map { translatedInfo in
+                return .loadTimelineTranslatedInfo(translatedInfo)
             }
             .catch { _ in
                 return Just(TimelineDetailSideEffect.timelineDetailError(.deleteFailed))

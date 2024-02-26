@@ -22,7 +22,7 @@ struct TimelineResponseDTO: Decodable {
     let imagePath: String?
     let coordX: Double?
     let coordY: Double?
-    let place: String
+    let place: String?
     let time: String
 }
 

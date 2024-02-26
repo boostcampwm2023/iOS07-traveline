@@ -15,7 +15,7 @@ struct TimelineCardInfo: Hashable {
     let thumbnailURL: String?
     let imagePath: String?
     let title: String
-    let place: String
+    let place: String?
     let content: String
     let time: String
     let latitude: Double?

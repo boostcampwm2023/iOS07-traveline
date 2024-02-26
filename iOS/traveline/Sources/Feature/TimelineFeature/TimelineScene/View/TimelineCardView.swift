@@ -53,7 +53,9 @@ final class TimelineCardView: UIView {
     
     func setData(cardInfo: TimelineCardInfo) {
         titleLabel.setText(to: cardInfo.title)
-        subtitleLabel.setText(to: cardInfo.place)
+        if let place = cardInfo.place {
+            subtitleLabel.setText(to: place)
+        }
         contentLabel.setText(to: cardInfo.content)
         thumbnailImageView.setImage(from: cardInfo.thumbnailURL, imagePath: cardInfo.imagePath)
         thumbnailImageView.isHidden = cardInfo.thumbnailURL == nil
@@ -76,6 +78,7 @@ private extension TimelineCardView {
         thumbnailImageView.backgroundColor = TLColor.disabledGray
         thumbnailImageView.layer.cornerRadius = 12.0
         thumbnailImageView.clipsToBounds = true
+        thumbnailImageView.contentMode = .scaleAspectFill
     }
     
     func setupLayout() {

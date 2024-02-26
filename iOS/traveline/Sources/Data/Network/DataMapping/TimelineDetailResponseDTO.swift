@@ -18,7 +18,7 @@ struct TimelineDetailResponseDTO: Decodable {
     let coordX: Double?
     let coordY: Double?
     let date: String
-    let place: String
+    let place: String?
     let time: String
     let isOwner: Bool
     let posting: PostingID

@@ -31,17 +31,11 @@ final class SettingUseCaseImpl: SettingUseCase {
         return repository.requestAppleId()
     }
     
-    func requestWithdrawal(_ reqeust: WithdrawRequest) -> AnyPublisher<Bool, Error> {
-        return Future<Bool, Error> { promise in
-            Task {
-                do {
-                    let result = try await self.repository.withdrawal(reqeust)
-                    KeychainList.allClear()
-                    promise(.success(result))
-                } catch {
-                    promise(.failure(error))
-                }
-            }
+    func requestWithdrawal(_ request: WithdrawRequest) -> AnyPublisher<Bool, Error> {
+        return Future {
+            let result = try await self.repository.withdrawal(request)
+            KeychainList.allClear()
+            return result
         }.eraseToAnyPublisher()
     }
     
