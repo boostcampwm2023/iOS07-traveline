@@ -13,7 +13,7 @@ protocol ImageCacheRepository {
     func store(_ data: Data, cacheKey: String)
 }
 
-final class ImageCacheRepositoryImpl: ImageCacheRepository {
+public final class ImageCacheRepositoryImpl: ImageCacheRepository {
     
     private enum Constants {
         static let cacheDataName: String = "cacheImageData"
@@ -22,13 +22,13 @@ final class ImageCacheRepositoryImpl: ImageCacheRepository {
     private let memoryCache: NSCache<NSString, NSData> = .init()
     private let fileManager: FileManager
     
-    init(fileManager: FileManager) {
+    public init(fileManager: FileManager) {
         self.fileManager = fileManager
     }
     
     // MARK: - Functions
     
-    func fetch(_ cacheKey: String) -> Data? {
+    public func fetch(_ cacheKey: String) -> Data? {
         if let memoryCachedData = fetchFromMemoryData(cacheKey) {
             return memoryCachedData
         }
@@ -40,7 +40,7 @@ final class ImageCacheRepositoryImpl: ImageCacheRepository {
         return nil
     }
     
-    func store(_ data: Data, cacheKey: String) {
+    public func store(_ data: Data, cacheKey: String) {
         storeToMemoryCache(data, cacheKey: cacheKey)
         storeToDiskCache(data, cacheKey: cacheKey)
     }

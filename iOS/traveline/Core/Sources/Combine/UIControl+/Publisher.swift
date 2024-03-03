@@ -9,7 +9,7 @@
 import UIKit
 
 extension UIControl {
-    func publisher(for event: Event) -> EventPublisher {
+    public func publisher(for event: Event) -> EventPublisher {
         .init(control: self, event: event)
     }
 }

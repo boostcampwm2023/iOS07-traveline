@@ -8,9 +8,9 @@
 
 import Foundation
 
-final class TLImageDownloader {
+public final class TLImageDownloader {
     
-    static let shared = TLImageDownloader()
+    public static let shared = TLImageDownloader()
     
     private let downloadTaskQueue = DispatchQueue(label: "TLImageDownloader")
     private var downloadTasks: [AnyHashable: Task<Data, Error>] = .init()
@@ -21,7 +21,7 @@ final class TLImageDownloader {
     
     /// 기존의 Download Task를 취소합니다.
     /// - Parameter key: 취소할 UIImageView
-    func cancelDownload(key: AnyHashable) {
+    public func cancelDownload(key: AnyHashable) {
         downloadTaskQueue.async { [weak self] in
             self?.downloadTasks[key]?.cancel()
             self?.downloadTasks.removeValue(forKey: key)
@@ -33,7 +33,7 @@ final class TLImageDownloader {
     ///   - key: 다운로드할 UIImageView
     ///   - urlString: 다운로드할 URL 문자열
     /// - Returns: 다운로드 받은 이미지 데이터
-    func download(key: AnyHashable, urlString: String) async -> Data? {
+    public func download(key: AnyHashable, urlString: String) async -> Data? {
         guard let url = URL(string: urlString) else { return nil }
         let downloadTask = Task {
             let (data, _) = try await URLSession.shared.data(from: url)

@@ -8,13 +8,13 @@
 
 import Foundation
 
-enum KeychainList {
-    @KeychainWrapper<String>(key: "accessToken") static var accessToken
-    @KeychainWrapper<String>(key: "refreshToken") static var refreshToken
-    @KeychainWrapper<String>(key: "identityToken") static var identityToken
-    @KeychainWrapper<String>(key: "authorizationCode") static var authorizationCode
+public enum KeychainList {
+    @KeychainWrapper<String>(key: "accessToken") public static var accessToken
+    @KeychainWrapper<String>(key: "refreshToken") public static var refreshToken
+    @KeychainWrapper<String>(key: "identityToken") public static var identityToken
+    @KeychainWrapper<String>(key: "authorizationCode") public static var authorizationCode
     
-    static func allClear() {
+    public static func allClear() {
         accessToken = nil
         refreshToken = nil
         identityToken = nil

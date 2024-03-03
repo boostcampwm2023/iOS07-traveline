@@ -8,13 +8,13 @@
 
 import Foundation
 
-enum FilterType: Equatable, CaseIterable, Hashable {
+public enum FilterType: Equatable, CaseIterable, Hashable {
     case empty
     case total
     case sort
     case tagtype(TagType)
     
-    var title: String {
+    public var title: String {
         switch self {
         case .empty, .total:
             Literal.empty
@@ -25,7 +25,7 @@ enum FilterType: Equatable, CaseIterable, Hashable {
         }
     }
     
-    var detailFilters: [DetailFilter] {
+    public var detailFilters: [DetailFilter] {
         switch self {
         case .empty, .total:
             []
@@ -53,7 +53,7 @@ enum FilterType: Equatable, CaseIterable, Hashable {
         }
     }
     
-    var isMultiple: Bool {
+    public var isMultiple: Bool {
         switch self {
         case .empty, .sort:
             false
@@ -69,7 +69,7 @@ enum FilterType: Equatable, CaseIterable, Hashable {
         }
     }
     
-    var id: Int {
+    public var id: Int {
         switch self {
         case .total: 1
         case .sort: 2
@@ -89,7 +89,7 @@ enum FilterType: Equatable, CaseIterable, Hashable {
         }
     }
     
-    static var allCases: [FilterType] {
+    public static var allCases: [FilterType] {
         return [.sort] + TagType.allCases.map { .tagtype($0) }
     }
 }

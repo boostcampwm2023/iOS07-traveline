@@ -13,7 +13,7 @@ extension Date {
     /// Date 타입을 "yyyy-MM-dd" 형식으로 변환합니다.
     /// 
     /// - Returns: 변환된 문자열
-    func toString(with format: String = "yyyy-MM-dd") -> String {
+    public func toString(with format: String = "yyyy-MM-dd") -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = format
         

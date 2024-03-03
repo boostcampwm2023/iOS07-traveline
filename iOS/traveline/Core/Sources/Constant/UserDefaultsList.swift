@@ -8,8 +8,8 @@
 
 import Foundation
 
-enum UserDefaultsList {
-    @UserDefaultsWrapper<UserResponseDTO>(key: "userResponseDTO") static var userResponseDTO
-    @UserDefaultsWrapper<[String]>(key: "recentSearchKeyword") static var recentSearchKeyword
-    @UserDefaultsWrapper<Bool>(key: "isFirstEntry") static var isFirstEntry
+public enum UserDefaultsList {
+    @UserDefaultsWrapper<UserResponseDTO>(key: "userResponseDTO") public static var userResponseDTO
+    @UserDefaultsWrapper<[String]>(key: "recentSearchKeyword") public static var recentSearchKeyword
+    @UserDefaultsWrapper<Bool>(key: "isFirstEntry") public static var isFirstEntry
 }

@@ -9,7 +9,7 @@
 import UIKit
 
 extension UILabel {
-    func setColor(to color: UIColor, range: NSRange) {
+    public func setColor(to color: UIColor, range: NSRange) {
         guard let mutableAttributedText = attributedText?.mutableCopy() as? NSMutableAttributedString else { return }
         
         mutableAttributedText.addAttribute(

@@ -16,7 +16,7 @@ extension UIImageView {
     /// - Parameters:
     ///   - urlString: 이미지 URL 문자열
     ///   - imagePath: 이미지 캐싱 키, nil 시에는 다운로드만 진행
-    func setImage(from urlString: String?, imagePath: String?) {
+    public func setImage(from urlString: String?, imagePath: String?) {
         guard let urlString else { return }
         
         if let imagePath,
@@ -36,7 +36,7 @@ extension UIImageView {
     }
     
     /// 재사용 시 기존 UIImageView의 Download Task를 취소합니다.
-    func cancel() {
+    public func cancel() {
         TLImageDownloader.shared.cancelDownload(key: self)
     }
     
@@ -48,7 +48,7 @@ extension UIImage {
     /// - Parameters:
     ///    - scale: 이미지 크기를 조절하는 비율. 기본값은 0.2로, 결과 이미지는 원본의 2/10 크기가 됩니다.
     /// - Returns: 작업이 성공하면 다운샘플링된 UIImage를 반환하고, 그렇지 않으면 nil을 반환합니다.
-    func downSampling(scale: CGFloat = 0.2) -> UIImage? {
+    public func downSampling(scale: CGFloat = 0.2) -> UIImage? {
         let imageSourceOption = [kCGImageSourceShouldCache: false] as CFDictionary
         
         guard let imageData = self.jpegData(compressionQuality: 1),

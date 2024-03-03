@@ -10,13 +10,13 @@ import UIKit
 
 extension UICollectionView {
     /// UICollectionViewCell 등록
-    func register<T: UICollectionViewCell>(cell: T.Type) {
+    public func register<T: UICollectionViewCell>(cell: T.Type) {
         let identifier = String(describing: cell)
         register(cell, forCellWithReuseIdentifier: identifier)
     }
     
     /// UICollectionView Header 등록
-    func registerHeader<T: UICollectionReusableView>(view: T.Type) {
+    public func registerHeader<T: UICollectionReusableView>(view: T.Type) {
         let identifier = String(describing: view)
         register(
             view,
@@ -26,7 +26,7 @@ extension UICollectionView {
     }
     
     /// 재사용 Cell dequeue
-    func dequeue<T: UICollectionViewCell>(cell: T.Type, for indexPath: IndexPath) -> T {
+    public func dequeue<T: UICollectionViewCell>(cell: T.Type, for indexPath: IndexPath) -> T {
         let identifier = String(describing: cell)
         guard let cell = dequeueReusableCell(
             withReuseIdentifier: identifier,
@@ -38,7 +38,7 @@ extension UICollectionView {
     }
     
     /// 재사용 Header View dequeue
-    func dequeHeader<T: UICollectionReusableView>(view: T.Type, for indexPath: IndexPath) -> T {
+    public func dequeHeader<T: UICollectionReusableView>(view: T.Type, for indexPath: IndexPath) -> T {
         let identifier = String(describing: view)
         guard let view = dequeueReusableSupplementaryView(
             ofKind: UICollectionView.elementKindSectionHeader,

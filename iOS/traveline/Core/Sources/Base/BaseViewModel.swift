@@ -9,14 +9,14 @@
 import Combine
 import Foundation
 
-class BaseViewModel<Action: BaseAction, SideEffect: BaseSideEffect, State: BaseState> {
+public class BaseViewModel<Action: BaseAction, SideEffect: BaseSideEffect, State: BaseState> {
     
     // MARK: - Types
     
-    typealias Action = Action
-    typealias SideEffect = SideEffect
-    typealias State = State
-    typealias SideEffectPublisher = AnyPublisher<SideEffect, Never>
+    public typealias Action = Action
+    public typealias SideEffect = SideEffect
+    public typealias State = State
+    public typealias SideEffectPublisher = AnyPublisher<SideEffect, Never>
     
     // MARK: - Properties
     
@@ -29,11 +29,11 @@ class BaseViewModel<Action: BaseAction, SideEffect: BaseSideEffect, State: BaseS
     
     private let stateSubject: CurrentValueSubject<State, Never> = .init(.init())
     
-    var state: AnyPublisher<State, Never> {
+    public var state: AnyPublisher<State, Never> {
         return stateSubject.eraseToAnyPublisher()
     }
     
-    var currentState: State {
+    public var currentState: State {
         return stateSubject.value
     }
     
@@ -58,15 +58,15 @@ class BaseViewModel<Action: BaseAction, SideEffect: BaseSideEffect, State: BaseS
             .store(in: &cancellables)
     }
     
-    func sendAction(_ action: Action) {
+    public func sendAction(_ action: Action) {
         actions.send(action)
     }
     
-    func transform(action: Action) -> SideEffectPublisher {
+    public func transform(action: Action) -> SideEffectPublisher {
         return Empty().eraseToAnyPublisher()
     }
     
-    func reduceState(state: State, effect: SideEffect) -> State {
+    public func reduceState(state: State, effect: SideEffect) -> State {
         return state
     }
 }

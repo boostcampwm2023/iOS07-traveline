@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct TagManager {
+public struct TagManager {
     private let tags: [Tag]
     
     init(tags: [Tag]) {
@@ -17,11 +17,11 @@ struct TagManager {
 }
 
 extension TagManager {
-    func toDTO(type: TagType) -> String? {
+    public func toDTO(type: TagType) -> String? {
         tags.filter { $0.type == type }.first?.title
     }
     
-    func toDTO(type: TagType) -> [String]? {
+    public func toDTO(type: TagType) -> [String]? {
         tags.filter { $0.type == type }.map(\.title)
     }
 }

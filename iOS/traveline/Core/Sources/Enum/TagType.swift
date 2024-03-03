@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum TagType: CaseIterable {
+public enum TagType: CaseIterable {
     case region
     case period
     case theme
@@ -18,7 +18,7 @@ enum TagType: CaseIterable {
     case with
     case transportation
     
-    var color: TravelineColors.Color {
+    public var color: TravelineColors.Color {
         switch self {
         case .region:
             TLColor.Tag.region
@@ -39,7 +39,7 @@ enum TagType: CaseIterable {
         }
     }
     
-    var title: String {
+    public var title: String {
         switch self {
         case .region:
             Literal.Tag.region
@@ -60,7 +60,7 @@ enum TagType: CaseIterable {
         }
     }
     
-    var subtitle: String? {
+    public var subtitle: String? {
         switch self {
         case .cost:
             Literal.Tag.costSubtitle
@@ -69,7 +69,7 @@ enum TagType: CaseIterable {
         }
     }
     
-    var detailTags: [String] {
+    public var detailTags: [String] {
         switch self {
         case .theme:
             ThemeTag.allCases.map { $0.title }
@@ -90,14 +90,14 @@ enum TagType: CaseIterable {
         }
     }
     
-    var isMultiple: Bool {
+    public var isMultiple: Bool {
         switch self {
         case .theme, .with: true
         default: false
         }
     }
     
-    var isBasic: Bool {
+    public var isBasic: Bool {
         switch self {
         case .region, .period, .season: true
         default: false

@@ -9,18 +9,18 @@
 import Combine
 import UIKit
 
-extension UIControl {
-    class EventSubscription<S: Subscriber>: Subscription where S.Input == Void {
+public extension UIControl {
+    public class EventSubscription<S: Subscriber>: Subscription where S.Input == Void {
         
-        var subscriber: S?
+        public var subscriber: S?
         
-        func request(_ demand: Subscribers.Demand) { }
+        public func request(_ demand: Subscribers.Demand) { }
         
-        func cancel() {
+        public func cancel() {
             subscriber = nil
         }
         
-        @objc func trigger() {
+        @objc public func trigger() {
             _ = subscriber?.receive(Void())
         }
     }

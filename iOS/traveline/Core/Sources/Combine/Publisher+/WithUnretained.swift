@@ -16,7 +16,7 @@ extension Publisher {
     /// - Returns: (object, output) 튜플
     ///    - object: 내부 [weak object] 및 guard let을 통해 약한 참조
     ///    - output: 현재 방출되는 값
-    func withUnretained<T: AnyObject>(_ object: T) -> Publishers.CompactMap<Self, (T, Self.Output)> {
+    public func withUnretained<T: AnyObject>(_ object: T) -> Publishers.CompactMap<Self, (T, Self.Output)> {
         compactMap { [weak object] output in
             guard let object = object else {
                 return nil

@@ -8,9 +8,9 @@
 
 import Foundation
 
-@propertyWrapper struct KeychainWrapper<T> {
+@propertyWrapper public struct KeychainWrapper<T> {
     
-    var wrappedValue: T? {
+    public var wrappedValue: T? {
         get {
            KeychainManager.read(forKey: key) as? T
         }

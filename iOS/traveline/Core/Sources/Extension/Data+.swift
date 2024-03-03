@@ -13,7 +13,7 @@ extension Data {
     /// 데이터의 크기를 MB로 반환합니다.
     ///
     /// - Returns: 데이터의 크기를 MB로 표현한 값.
-    func megabytes() -> Double {
+    public func megabytes() -> Double {
         return Double(self.count / (1024 * 1024))
     }
 }

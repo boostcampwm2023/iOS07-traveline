@@ -14,7 +14,7 @@ extension Publisher {
     /// - Parameters:
     ///    - data: 방출할 값
     /// - Returns: data 타입의 AnyPublisher
-    static func just<T>(_ data: T) -> AnyPublisher<T, Never> {
+    public static func just<T>(_ data: T) -> AnyPublisher<T, Never> {
         return Just(data).eraseToAnyPublisher()
     }
 }

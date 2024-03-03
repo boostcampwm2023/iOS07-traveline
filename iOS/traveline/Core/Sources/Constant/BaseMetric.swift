@@ -8,16 +8,16 @@
 
 import UIKit
 
-enum BaseMetric {
-    static let tlheight: CGFloat = 52.0
+public enum BaseMetric {
+    public static let tlheight: CGFloat = 52.0
     
-    enum ScreenSize {
-        static let width: CGFloat = UIScreen.main.bounds.width
-        static let height: CGFloat = UIScreen.main.bounds.height
+    public enum ScreenSize {
+        public static let width: CGFloat = UIScreen.main.bounds.width
+        public static let height: CGFloat = UIScreen.main.bounds.height
     }
     
-    enum Adjust {
-        static let width: CGFloat = ScreenSize.width / 375
-        static let height: CGFloat = ScreenSize.height / 812
+    public enum Adjust {
+        public static let width: CGFloat = ScreenSize.width / 375
+        public static let height: CGFloat = ScreenSize.height / 812
     }
 }

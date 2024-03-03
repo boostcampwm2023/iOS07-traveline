@@ -10,7 +10,7 @@ import Combine
 import UIKit
 
 extension UITextField {
-    var textPublisher: AnyPublisher<String, Never> {
+    public var textPublisher: AnyPublisher<String, Never> {
         publisher(for: .editingChanged)
             .compactMap { self.text }
             .eraseToAnyPublisher()

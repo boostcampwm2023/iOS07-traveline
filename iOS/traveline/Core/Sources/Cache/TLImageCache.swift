@@ -8,9 +8,9 @@
 
 import Foundation
 
-final class TLImageCache {
+public final class TLImageCache {
     
-    static let shared = TLImageCache()
+    public static let shared = TLImageCache()
     
     private let imageCacheRepository: ImageCacheRepository = ImageCacheRepositoryImpl(fileManager: FileManager.default)
     
@@ -18,11 +18,11 @@ final class TLImageCache {
     
     // MARK: - Functions
     
-    func fetch(_ urlString: String) -> Data? {
+    public func fetch(_ urlString: String) -> Data? {
         imageCacheRepository.fetch(urlString)
     }
     
-    func store(_ data: Data, imagePath: String) {
+    public func store(_ data: Data, imagePath: String) {
         imageCacheRepository.store(data, cacheKey: imagePath)
     }
     

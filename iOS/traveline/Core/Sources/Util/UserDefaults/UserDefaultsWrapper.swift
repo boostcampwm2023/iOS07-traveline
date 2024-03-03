@@ -8,9 +8,9 @@
 
 import Foundation
 
-@propertyWrapper struct UserDefaultsWrapper<T: Codable> {
+@propertyWrapper public struct UserDefaultsWrapper<T: Codable> {
     
-    var wrappedValue: T? {
+    public var wrappedValue: T? {
         get {
             if let data = UserDefaults.standard.object(forKey: key) as? Data {
                 if let value = try? JSONDecoder().decode(T.self, from: data) {

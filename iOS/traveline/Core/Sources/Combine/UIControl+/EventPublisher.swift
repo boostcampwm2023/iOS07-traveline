@@ -10,10 +10,10 @@ import Combine
 import UIKit
 
 extension UIControl {
-    struct EventPublisher: Publisher {
+    public struct EventPublisher: Publisher {
         
-        typealias Output = Void
-        typealias Failure = Never
+        public typealias Output = Void
+        public typealias Failure = Never
         
         private var control: UIControl
         private var event: Event
@@ -23,7 +23,7 @@ extension UIControl {
             self.event = event
         }
         
-        func receive<S>(subscriber: S) where S: Subscriber, Never == S.Failure, Void == S.Input {
+        public func receive<S>(subscriber: S) where S: Subscriber, Never == S.Failure, Void == S.Input {
             let subscription = EventSubscription<S>()
             subscription.subscriber = subscriber
             
