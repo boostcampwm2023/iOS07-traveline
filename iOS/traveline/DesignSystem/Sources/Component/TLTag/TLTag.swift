@@ -8,6 +8,8 @@
 
 import UIKit
 
+import Core
+
 final class TLTag: UIButton {
     
     enum Metric {

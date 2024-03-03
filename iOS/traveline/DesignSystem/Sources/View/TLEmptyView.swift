@@ -8,6 +8,8 @@
 
 import UIKit
 
+import Core
+
 class TLEmptyView: UIView {
 
     enum EmptyViewType {

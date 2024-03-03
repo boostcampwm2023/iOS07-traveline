@@ -8,6 +8,8 @@
 
 import UIKit
 
+import Core
+
 /*
  여행 생성 화면에서 태그 제목 및 태그 버튼들을 가지는 뷰입니다.
  ----

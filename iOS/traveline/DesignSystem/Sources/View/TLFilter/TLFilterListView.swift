@@ -8,6 +8,8 @@
 
 import UIKit
 
+import Core
+
 protocol TLFilterListViewDelegate: AnyObject {
     func filtersDidSelect(_ filter: Filter)
     func singleFilterDidUnSelected(_ filter: Filter)

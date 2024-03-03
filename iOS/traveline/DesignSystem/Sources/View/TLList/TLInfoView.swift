@@ -8,6 +8,8 @@
 
 import UIKit
 
+import Core
+
 final class TLInfoView: UIView {
     
     private enum Metric {

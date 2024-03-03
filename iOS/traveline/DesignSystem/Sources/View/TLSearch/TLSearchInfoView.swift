@@ -8,6 +8,8 @@
 
 import UIKit
 
+import Core
+
 final class TLSearchInfoView: UIView {
     
     private enum Metric {

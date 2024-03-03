@@ -8,6 +8,8 @@
 
 import UIKit
 
+import Core
+
 final class TLFilter: UIButton {
     
     private enum Metric {

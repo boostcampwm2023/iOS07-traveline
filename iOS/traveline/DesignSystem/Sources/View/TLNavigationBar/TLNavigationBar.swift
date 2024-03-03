@@ -9,6 +9,8 @@
 import UIKit
 import Combine
 
+import Core
+
 protocol TLNavigationBarDelegate: AnyObject {
     func rightButtonDidTapped()
 }

@@ -8,6 +8,8 @@
 
 import UIKit
 
+import Core
+
 final class TLFloatingButton: UIButton {
     
     // MARK: - UI Components
