@@ -8,6 +8,6 @@
 
 import Foundation
 
-protocol BaseState {
-    init()
+public protocol BaseState {
+    public init()
 }
