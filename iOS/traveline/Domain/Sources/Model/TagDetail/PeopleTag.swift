@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 enum PeopleTag: DetailTagType {
     case one
     case two

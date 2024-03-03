@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 enum SortFilter: CaseIterable {
     case recent
     case like

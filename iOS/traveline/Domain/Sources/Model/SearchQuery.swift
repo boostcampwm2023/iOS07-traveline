@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 protocol Query {
     func makeQuery() -> String
 }

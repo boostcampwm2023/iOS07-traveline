@@ -9,6 +9,8 @@
 import Combine
 import Foundation
 
+import Core
+
 protocol LoginUseCase {
     func requestLogin(with info: AppleLoginRequest) -> AnyPublisher<Bool, Error>
 }

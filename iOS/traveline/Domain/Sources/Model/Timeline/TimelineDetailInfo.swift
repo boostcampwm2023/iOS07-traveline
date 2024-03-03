@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 struct TimelineDetailInfo: Hashable {
     let postingID: String
     let id: String

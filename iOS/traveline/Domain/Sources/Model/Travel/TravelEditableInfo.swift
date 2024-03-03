@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 struct TravelEditableInfo: Hashable {
     let travelTitle: String
     let region: RegionFilter?

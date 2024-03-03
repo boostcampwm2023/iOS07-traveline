@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 struct TimelineDetailRequest {
     var title: String
     var day: Int

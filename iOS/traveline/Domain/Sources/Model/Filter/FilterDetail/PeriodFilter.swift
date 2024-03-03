@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 enum PeriodFilter: DetailFilterType {
     case one
     case two

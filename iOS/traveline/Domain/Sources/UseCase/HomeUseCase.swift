@@ -9,6 +9,8 @@
 import Combine
 import Foundation
 
+import Core
+
 protocol HomeUseCase {
     func fetchSearchList(with query: SearchQuery) -> AnyPublisher<TravelList, Error>
     func fetchRecentKeyword() -> AnyPublisher<SearchKeywordList, Never>

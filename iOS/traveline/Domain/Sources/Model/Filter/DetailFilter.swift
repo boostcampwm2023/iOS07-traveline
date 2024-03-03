@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 enum DetailFilter: Hashable {
     case sort(SortFilter)
     case theme(ThemeTag)

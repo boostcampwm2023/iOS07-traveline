@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 // TODO: - 서버 연동시 지우기
 enum TimelineSample {
     static func makeTravelInfo() -> TimelineTravelInfo {

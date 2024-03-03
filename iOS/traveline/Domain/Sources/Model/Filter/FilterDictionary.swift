@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 typealias FilterDictionary = [FilterType: Filter]
 
 extension FilterDictionary {

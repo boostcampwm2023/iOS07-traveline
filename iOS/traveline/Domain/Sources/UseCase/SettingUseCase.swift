@@ -9,6 +9,8 @@
 import Combine
 import Foundation
 
+import Core
+
 protocol SettingUseCase {
     func requestAppleId() -> AppleIDRequest
     func requestWithdrawal(_ request: WithdrawRequest) -> AnyPublisher<Bool, Error>

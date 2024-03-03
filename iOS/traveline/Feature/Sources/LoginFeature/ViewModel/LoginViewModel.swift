@@ -10,7 +10,8 @@ import AuthenticationServices
 import Combine
 import Foundation
 
-typealias AppleIDRequest = ASAuthorizationAppleIDRequest
+import Core
+
 typealias Auth = ASAuthorization
 
 enum LoginAction: BaseAction {

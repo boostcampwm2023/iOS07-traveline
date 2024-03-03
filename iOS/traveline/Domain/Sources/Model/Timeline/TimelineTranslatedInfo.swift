@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 struct TimelineTranslatedInfo {
     let description: String
     

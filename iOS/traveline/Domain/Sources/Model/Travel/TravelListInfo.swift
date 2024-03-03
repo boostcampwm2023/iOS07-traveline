@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 typealias TravelList = [TravelListInfo]
 
 struct TravelListInfo: Hashable {

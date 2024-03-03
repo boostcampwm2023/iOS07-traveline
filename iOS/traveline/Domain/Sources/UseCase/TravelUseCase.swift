@@ -9,6 +9,8 @@
 import Combine
 import Foundation
 
+import Core
+
 enum TitleValidation {
     case valid
     case invalidate

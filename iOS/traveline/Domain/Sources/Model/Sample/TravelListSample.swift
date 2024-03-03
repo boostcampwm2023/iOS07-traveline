@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 // TODO: - 추후에 서버 연동시 지우기
 enum TravelListSample {
     static func makeTags() -> [Tag] {

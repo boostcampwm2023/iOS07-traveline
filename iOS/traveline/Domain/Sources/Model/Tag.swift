@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 struct Tag: Hashable {
     let title: String
     let type: TagType

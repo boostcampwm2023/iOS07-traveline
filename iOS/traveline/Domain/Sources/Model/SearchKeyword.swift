@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 typealias SearchKeywordList = [SearchKeyword]
 
 struct SearchKeyword: Hashable {
