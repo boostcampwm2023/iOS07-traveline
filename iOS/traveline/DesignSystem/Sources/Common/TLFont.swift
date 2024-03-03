@@ -26,27 +26,27 @@ extension TLFont {
     var font: UIFont {
         switch self {
         case .heading1:
-            return TravelineFontFamily.Pretendard.semiBold.font(size: 24.0)
+            return DesignSystemFontFamily.Pretendard.semiBold.font(size: 24.0)
         case .heading2:
-            return TravelineFontFamily.Pretendard.semiBold.font(size: 20.0)
+            return DesignSystemFontFamily.Pretendard.semiBold.font(size: 20.0)
         case .subtitle1:
-            return TravelineFontFamily.Pretendard.semiBold.font(size: 18.0)
+            return DesignSystemFontFamily.Pretendard.semiBold.font(size: 18.0)
         case .subtitle2:
-            return TravelineFontFamily.Pretendard.semiBold.font(size: 16.0)
+            return DesignSystemFontFamily.Pretendard.semiBold.font(size: 16.0)
         case .subtitle3:
-            return TravelineFontFamily.Pretendard.regular.font(size: 18.0)
+            return DesignSystemFontFamily.Pretendard.regular.font(size: 18.0)
         case .body1:
-            return TravelineFontFamily.Pretendard.regular.font(size: 16.0)
+            return DesignSystemFontFamily.Pretendard.regular.font(size: 16.0)
         case .body2:
-            return TravelineFontFamily.Pretendard.semiBold.font(size: 14.0)
+            return DesignSystemFontFamily.Pretendard.semiBold.font(size: 14.0)
         case .body3:
-            return TravelineFontFamily.Pretendard.regular.font(size: 14.0)
+            return DesignSystemFontFamily.Pretendard.regular.font(size: 14.0)
         case .body4:
-            return TravelineFontFamily.Pretendard.semiBold.font(size: 12.0)
+            return DesignSystemFontFamily.Pretendard.semiBold.font(size: 12.0)
         case .caption:
-            return TravelineFontFamily.Pretendard.medium.font(size: 12.0)
+            return DesignSystemFontFamily.Pretendard.medium.font(size: 12.0)
         case .toolTip:
-            return TravelineFontFamily.Pretendard.regular.font(size: 12.0)
+            return DesignSystemFontFamily.Pretendard.regular.font(size: 12.0)
         }
     }
 

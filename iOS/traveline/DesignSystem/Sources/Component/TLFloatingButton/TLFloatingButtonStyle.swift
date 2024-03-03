@@ -15,7 +15,7 @@ enum TLFloatingButtonStyle {
         52.0
     }
     
-    var floatingImage: TravelineImages.Image {
+    var floatingImage: DesignSystemImages.Image {
         TLImage.Common.plus
     }
 }
