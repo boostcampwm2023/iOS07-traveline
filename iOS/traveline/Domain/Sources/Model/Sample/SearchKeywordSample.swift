@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 enum SearchKeywordSample {
     static func makeRecentList() -> SearchKeywordList {
         return [

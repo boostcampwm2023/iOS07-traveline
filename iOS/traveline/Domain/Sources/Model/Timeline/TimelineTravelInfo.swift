@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 struct TimelineTravelInfo: Hashable {
     let travelTitle: String
     let startDate: String

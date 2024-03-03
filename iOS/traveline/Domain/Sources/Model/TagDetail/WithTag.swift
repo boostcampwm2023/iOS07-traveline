@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 enum WithTag: DetailTagType {
     case family
     case friend

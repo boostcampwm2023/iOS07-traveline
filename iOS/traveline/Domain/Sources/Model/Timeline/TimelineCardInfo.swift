@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 typealias TimelineCardList = [TimelineCardInfo]
 
 struct TimelineCardInfo: Hashable {

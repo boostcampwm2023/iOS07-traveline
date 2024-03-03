@@ -9,6 +9,8 @@
 import Combine
 import Foundation
 
+import Core
+
 protocol AutoLoginUseCase {
     func requestLogin() -> AnyPublisher<Bool, Error>
 }

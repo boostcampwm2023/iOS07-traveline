@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 struct TravelRequest {
     let title, region: String
     let startDate, endDate: Date

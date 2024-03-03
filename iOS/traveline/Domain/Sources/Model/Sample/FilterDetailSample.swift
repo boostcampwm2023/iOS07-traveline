@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 enum FilterSample {
     static func makeRegion() -> Filter {
         .init(

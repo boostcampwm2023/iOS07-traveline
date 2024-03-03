@@ -9,10 +9,7 @@
 import Combine
 import UIKit
 
-enum SearchViewType {
-    case recent
-    case related
-}
+import Core
 
 final class HomeSearchView: UIView {
     

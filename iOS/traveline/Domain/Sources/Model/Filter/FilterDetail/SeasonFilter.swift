@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 enum SeasonFilter: CaseIterable {
     case spring
     case summer

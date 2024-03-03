@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 typealias TimelinePlaceList = [TimelinePlace]
 
 struct TimelinePlace: Hashable {

@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 struct Profile: Hashable {
     let imageURL: String
     let imagePath: String

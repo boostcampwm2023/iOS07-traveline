@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 enum TransportationTag: DetailTagType {
     case publicTransport
     case drive

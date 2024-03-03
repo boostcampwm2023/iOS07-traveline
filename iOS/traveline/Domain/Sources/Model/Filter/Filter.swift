@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 typealias FilterList = [Filter]
 
 extension FilterList {

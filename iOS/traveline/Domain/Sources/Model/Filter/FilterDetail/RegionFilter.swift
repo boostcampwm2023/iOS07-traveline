@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 enum RegionFilter: DetailFilterType {
     case none
     case seoul

@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 enum CostTag: DetailTagType {
     case under10
     case under50

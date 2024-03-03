@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 enum ThemeTag: DetailTagType {
     case healing
     case activity
