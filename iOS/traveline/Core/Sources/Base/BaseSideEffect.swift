@@ -8,4 +8,4 @@
 
 import Foundation
 
-protocol BaseSideEffect { }
+public protocol BaseSideEffect { }
