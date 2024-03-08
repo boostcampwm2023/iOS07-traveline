@@ -25,7 +25,7 @@ import Foundation
     
     private let key: String
     
-    init(key: String) {
+    public init(key: String) {
         self.key = key
     }
 }
