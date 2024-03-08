@@ -10,7 +10,7 @@ import Foundation
 
 import Core
 
-enum WithTag: DetailTagType {
+public enum WithTag: DetailTagType {
     case family
     case friend
     case couple

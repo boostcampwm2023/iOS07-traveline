@@ -10,7 +10,7 @@ import Foundation
 
 import Core
 
-enum ThemeTag: DetailTagType {
+public enum ThemeTag: DetailTagType {
     case healing
     case activity
     case camping

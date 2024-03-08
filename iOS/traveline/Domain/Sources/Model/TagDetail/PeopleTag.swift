@@ -10,7 +10,7 @@ import Foundation
 
 import Core
 
-enum PeopleTag: DetailTagType {
+public enum PeopleTag: DetailTagType {
     case one
     case two
     case three
