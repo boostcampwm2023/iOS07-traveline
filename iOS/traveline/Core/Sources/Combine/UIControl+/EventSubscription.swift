@@ -9,7 +9,7 @@
 import Combine
 import UIKit
 
-public extension UIControl {
+extension UIControl {
     public class EventSubscription<S: Subscriber>: Subscription where S.Input == Void {
         
         public var subscriber: S?
