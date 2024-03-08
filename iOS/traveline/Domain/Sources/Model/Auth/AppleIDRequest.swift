@@ -1,6 +1,6 @@
 //
 //  AppleIDRequest.swift
-//  Core
+//  Domain
 //
 //  Created by 김영인 on 2024/03/03.
 //
