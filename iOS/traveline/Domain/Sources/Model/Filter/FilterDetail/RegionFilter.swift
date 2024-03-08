@@ -10,7 +10,7 @@ import Foundation
 
 import Core
 
-enum RegionFilter: DetailFilterType {
+public enum RegionFilter: DetailFilterType {
     case none
     case seoul
     case busan
