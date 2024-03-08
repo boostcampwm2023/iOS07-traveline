@@ -1,12 +1,14 @@
 //
 //  TagType.swift
-//  traveline
+//  Domain
 //
 //  Created by 김영인 on 2023/11/17.
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
 import Foundation
+
+import Core
 
 public enum TagType: CaseIterable {
     case region
@@ -18,7 +20,7 @@ public enum TagType: CaseIterable {
     case with
     case transportation
     
-    public var color: TravelineColors.Color {
+    public var color: DesignSystemColors.Color {
         switch self {
         case .region:
             TLColor.Tag.region
