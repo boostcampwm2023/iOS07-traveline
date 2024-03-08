@@ -1,12 +1,14 @@
 //
 //  UserDefaultsList.swift
-//  traveline
+//  Domain
 //
 //  Created by 김영인 on 2023/11/30.
 //  Copyright © 2023 traveline. All rights reserved.
 //
 
 import Foundation
+
+import Core
 
 public enum UserDefaultsList {
     @UserDefaultsWrapper<UserResponseDTO>(key: "userResponseDTO") public static var userResponseDTO
