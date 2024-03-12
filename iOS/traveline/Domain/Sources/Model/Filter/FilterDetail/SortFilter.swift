@@ -10,7 +10,7 @@ import Foundation
 
 import Core
 
-enum SortFilter: CaseIterable {
+public enum SortFilter: CaseIterable {
     case recent
     case like
     

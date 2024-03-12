@@ -10,7 +10,7 @@ import Foundation
 
 import Core
 
-enum PeriodFilter: DetailFilterType {
+public enum PeriodFilter: DetailFilterType {
     case one
     case two
     case three

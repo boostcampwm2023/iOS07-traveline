@@ -10,7 +10,7 @@ import Foundation
 
 import Core
 
-enum DetailFilter: Hashable {
+public enum DetailFilter: Hashable {
     case sort(SortFilter)
     case theme(ThemeTag)
     case region(RegionFilter)

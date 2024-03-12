@@ -9,6 +9,8 @@
 import Combine
 import Foundation
 
+import Core
+
 protocol ProfileEditingUseCase {
     func fetchProfile() -> AnyPublisher<Profile, Error>
     func validate(nickname: String) -> AnyPublisher<NicknameValidationState, Error>
@@ -35,6 +37,7 @@ final class ProfileEditingUseCaseImpl: ProfileEditingUseCase {
     func fetchProfile() -> AnyPublisher<Profile, Error> {
         return Future {
             self.profile = try await self.repository.fetchUserInfo()
+            UserDefaultsList.profile = self.profile
             return self.profile
         }.eraseToAnyPublisher()
     }
@@ -64,6 +67,7 @@ final class ProfileEditingUseCaseImpl: ProfileEditingUseCase {
     func update(name: String, imageData: Data?) -> AnyPublisher<Profile, Error> {
         return Future {
             let profile = try await self.repository.updateUserInfo(name: name, imageData: imageData)
+            UserDefaultsList.profile = profile
             return profile
         }.eraseToAnyPublisher()
     }

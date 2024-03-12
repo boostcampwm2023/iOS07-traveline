@@ -9,6 +9,11 @@
 import UIKit
 
 extension UILabel {
+    
+    /// 해당 범위의 색상을 변경합니다.
+    /// - Parameters:
+    ///   - color: 변경할 색상
+    ///   - range: 변경할 범위
     public func setColor(to color: UIColor, range: NSRange) {
         guard let mutableAttributedText = attributedText?.mutableCopy() as? NSMutableAttributedString else { return }
         
@@ -20,4 +25,5 @@ extension UILabel {
         
         attributedText = mutableAttributedText
     }
+    
 }

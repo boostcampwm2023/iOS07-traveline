@@ -10,9 +10,9 @@ import UIKit
 
 import Core
 
-final class TLToastView: UIView {
+public final class TLToastView: UIView {
     
-    enum ToastType: String {
+    public enum ToastType: String {
         case success = "Success"
         case failure = "Failure"
         

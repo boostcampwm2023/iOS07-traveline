@@ -34,7 +34,7 @@ import Foundation
     private let key: String
     private let defaultValue: T?
     
-    init(key: String, defaultValue: T? = nil) {
+    public init(key: String, defaultValue: T? = nil) {
         self.key = key
         self.defaultValue = defaultValue
     }

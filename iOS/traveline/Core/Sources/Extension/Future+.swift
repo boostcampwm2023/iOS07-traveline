@@ -13,7 +13,7 @@ extension Future where Failure == Error {
     
     /// async 응답 결과를 Future publisher로 변환합니다.
     /// - Parameter asyncFulfill: 변환할 async 응답
-    convenience init(_ asyncFulfill: @escaping () async throws -> Output) {
+    public convenience init(_ asyncFulfill: @escaping () async throws -> Output) {
         self.init { promise in
             Task {
                 do {
@@ -31,7 +31,7 @@ extension Future where Failure == Never {
     
     /// async 응답 결과를 Future publisher로 변환합니다.
     /// - Parameter asyncFulfill: 변환할 async 응답
-    convenience init(_ asyncFulfill: @escaping () async -> Output) {
+    public convenience init(_ asyncFulfill: @escaping () async -> Output) {
         self.init { promise in
             Task {
                 let result = await asyncFulfill()

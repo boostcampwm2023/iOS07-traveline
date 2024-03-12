@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Domain
+
 final class UserRepositoryImpl: UserRepository {
     
     private let network: NetworkType
@@ -17,16 +19,14 @@ final class UserRepositoryImpl: UserRepository {
     }
     
     func fetchUserInfo() async throws -> Profile {
-        if let userResponseDTO = UserDefaultsList.userResponseDTO {
-            return userResponseDTO.toDomain()
+        if let profile = UserDefaultsList.profile {
+            return profile
         }
         
         let userResponseDTO = try await network.request(
             endPoint: UserEndPoint.requestUserInfo,
             type: UserResponseDTO.self
         )
-        
-        UserDefaultsList.userResponseDTO = userResponseDTO
         
         return userResponseDTO.toDomain()
     }
@@ -38,8 +38,6 @@ final class UserRepositoryImpl: UserRepository {
             endPoint: UserEndPoint.updateUserInfo(userRequestDTO),
             type: UserResponseDTO.self
         )
-        
-        UserDefaultsList.userResponseDTO = userResponseDTO
         
         return userResponseDTO.toDomain()
     }

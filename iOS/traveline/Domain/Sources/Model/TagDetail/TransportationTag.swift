@@ -10,7 +10,7 @@ import Foundation
 
 import Core
 
-enum TransportationTag: DetailTagType {
+public enum TransportationTag: DetailTagType {
     case publicTransport
     case drive
     

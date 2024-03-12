@@ -8,6 +8,6 @@
 
 import Foundation
 
-protocol ToastDelegate: AnyObject {
+public protocol ToastDelegate: AnyObject {
     func viewControllerDidFinishAction(isSuccess: Bool, message: String)
 }

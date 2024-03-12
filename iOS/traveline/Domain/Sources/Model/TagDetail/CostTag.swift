@@ -10,7 +10,7 @@ import Foundation
 
 import Core
 
-enum CostTag: DetailTagType {
+public enum CostTag: DetailTagType {
     case under10
     case under50
     case under100

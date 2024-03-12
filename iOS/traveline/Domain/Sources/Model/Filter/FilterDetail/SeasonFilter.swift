@@ -10,7 +10,7 @@ import Foundation
 
 import Core
 
-enum SeasonFilter: CaseIterable {
+public enum SeasonFilter: CaseIterable {
     case spring
     case summer
     case fall

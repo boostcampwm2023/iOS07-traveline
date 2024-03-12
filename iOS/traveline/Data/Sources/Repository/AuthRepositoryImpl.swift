@@ -9,6 +9,8 @@
 import AuthenticationServices
 import Foundation
 
+import Domain
+
 final class AuthRepositoryImpl: AuthRepository {
     
     private let network: NetworkType

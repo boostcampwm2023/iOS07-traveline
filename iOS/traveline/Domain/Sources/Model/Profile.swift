@@ -10,7 +10,7 @@ import Foundation
 
 import Core
 
-struct Profile: Hashable {
+public struct Profile: Hashable, Codable {
     let imageURL: String
     let imagePath: String
     let name: String

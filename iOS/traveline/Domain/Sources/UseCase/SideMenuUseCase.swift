@@ -24,6 +24,7 @@ final class SideMenuUseCaseImpl: SideMenuUseCase {
     func fetchProfile() -> AnyPublisher<Profile, Error> {
         return Future {
             let profile = try await self.repository.fetchUserInfo()
+            UserDefaultsList.profile = profile
             return profile
         }.eraseToAnyPublisher()
     }
