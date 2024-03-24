@@ -8,6 +8,8 @@
 
 import UIKit
 
+import DesignSystem
+
 final class RecentHeaderView: UICollectionReusableView {
     
     private enum Metric {

@@ -8,6 +8,8 @@
 
 import UIKit
 
+import DesignSystem
+
 final class TimelineCardView: UIView {
     
     private enum Metric {

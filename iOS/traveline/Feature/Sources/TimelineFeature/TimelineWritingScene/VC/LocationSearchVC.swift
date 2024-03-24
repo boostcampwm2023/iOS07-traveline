@@ -9,6 +9,8 @@
 import Combine
 import UIKit
 
+import DesignSystem
+
 protocol LocationSearchDelegate: AnyObject {
     func selectedLocation(result: TimelinePlace)
     func editingChagnedLocation(text: String)

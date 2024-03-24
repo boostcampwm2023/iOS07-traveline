@@ -8,6 +8,8 @@
 
 import UIKit
 
+import DesignSystem
+
 final class SelectPeriodView: UIView {
     
     private enum Constants {

@@ -8,6 +8,8 @@
 
 import UIKit
 
+import DesignSystem
+
 final class SelectTagView: UIView {
     
     private enum Metric {

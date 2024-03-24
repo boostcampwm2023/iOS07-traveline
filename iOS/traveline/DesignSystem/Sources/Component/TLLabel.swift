@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class TLLabel: UILabel {
+public final class TLLabel: UILabel {
 
     private var travelineFont: TLFont
     private let alignment: NSTextAlignment
@@ -17,7 +17,7 @@ final class TLLabel: UILabel {
 
     // MARK: - Initialize
     
-    init(
+    public init(
         frame: CGRect = .zero,
         font: TLFont,
         text: String = "",
@@ -75,17 +75,17 @@ final class TLLabel: UILabel {
         attributedText = attributedString
     }
 
-    func setText(to text: String) {
+    public func setText(to text: String) {
         labelText = text
         setupAttributes()
     }
     
-    func setColor(to color: UIColor) {
+    public func setColor(to color: UIColor) {
         travelineColor = color
         setupAttributes()
     }
 
-    func setFont(to font: TLFont) {
+    public func setFont(to font: TLFont) {
         travelineFont = font
         setupAttributes()
     }

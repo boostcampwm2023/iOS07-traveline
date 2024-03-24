@@ -8,6 +8,8 @@
 
 import UIKit
 
+import DesignSystem
+
 final class PlaceTVC: UITableViewCell {
     
     static let identifier = String(describing: type(of: PlaceTVC.self))

@@ -10,6 +10,8 @@ import Combine
 import PhotosUI
 import UIKit
 
+import DesignSystem
+
 final class ProfileEditingVC: UIViewController {
     
     private enum Metric {
