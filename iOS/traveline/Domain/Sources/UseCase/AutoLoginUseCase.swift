@@ -11,7 +11,7 @@ import Foundation
 
 import Core
 
-protocol AutoLoginUseCase {
+public protocol AutoLoginUseCase {
     func requestLogin() -> AnyPublisher<Bool, Error>
 }
 
