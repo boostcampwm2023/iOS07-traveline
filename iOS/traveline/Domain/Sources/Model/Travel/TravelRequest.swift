@@ -10,8 +10,8 @@ import Foundation
 
 import Core
 
-struct TravelRequest {
-    let title, region: String
-    let startDate, endDate: Date
-    let tags: [Tag]
+public struct TravelRequest {
+    public let title, region: String
+    public let startDate, endDate: Date
+    public let tags: [Tag]
 }

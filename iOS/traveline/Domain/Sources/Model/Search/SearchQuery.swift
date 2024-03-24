@@ -14,7 +14,7 @@ protocol Query {
     func makeQuery() -> String
 }
 
-struct SearchQuery: Query {
+public struct SearchQuery: Query {
     var keyword: String?
     var offset: Int = 1
     var limit: Int = 20

@@ -8,8 +8,12 @@
 
 import Foundation
 
-struct TravelID: Equatable, Hashable {
-    let value: String
+public struct TravelID: Equatable, Hashable {
+    public let value: String
     
-    static let empty: Self = .init(value: "")
+    public static let empty: Self = .init(value: "")
+    
+    public init(value: String) {
+        self.value = value
+    }
 }
