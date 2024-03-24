@@ -11,4 +11,9 @@ import Foundation
 public struct AppleLoginRequest {
     public let idToken: String
     public let email: String?
+    
+    public init(idToken: String, email: String?) {
+        self.idToken = idToken
+        self.email = email
+    }
 }
