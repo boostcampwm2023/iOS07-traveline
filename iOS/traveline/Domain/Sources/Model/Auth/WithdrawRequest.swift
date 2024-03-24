@@ -11,4 +11,9 @@ import Foundation
 public struct WithdrawRequest {
     public let idToken: String
     public let authorizationCode: String
+    
+    public init(idToken: String, authorizationCode: String) {
+        self.idToken = idToken
+        self.authorizationCode = authorizationCode
+    }
 }

@@ -9,6 +9,9 @@
 import Combine
 import Foundation
 
+import DesignSystem
+import Domain
+
 enum TimelineAction: BaseAction {
     case viewWillAppear
     case enterToTimeline

@@ -11,12 +11,12 @@ import Foundation
 
 import Core
 
-enum TitleValidation {
+public enum TitleValidation {
     case valid
     case invalidate
 }
 
-protocol TravelUseCase {
+public protocol TravelUseCase {
     func toEditable(info: TimelineTravelInfo) -> TravelEditableInfo
     func validate(title: String) -> TitleValidation
     func createTravel(data: TravelRequest) -> AnyPublisher<TravelID, Error>
