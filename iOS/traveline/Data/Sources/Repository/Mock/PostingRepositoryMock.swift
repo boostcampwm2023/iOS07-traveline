@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Domain
+
 final class PostingRepositoryMock: PostingRepository {
 
     func fetchMyPostingList() async throws -> TravelList {

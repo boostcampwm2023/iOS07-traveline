@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Domain
+
 final class TimelineRepositoryImpl: TimelineRepository {
     
     private let network: NetworkType

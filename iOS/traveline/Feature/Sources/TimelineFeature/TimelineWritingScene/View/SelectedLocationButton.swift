@@ -8,6 +8,8 @@
 
 import UIKit
 
+import DesignSystem
+
 final class SelectLocationButton: UIView {
     
     private enum Constants {

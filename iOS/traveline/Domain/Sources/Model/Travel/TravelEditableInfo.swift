@@ -10,14 +10,14 @@ import Foundation
 
 import Core
 
-struct TravelEditableInfo: Hashable {
-    let travelTitle: String
-    let region: RegionFilter?
-    let startDate: Date?
-    let endDate: Date?
-    let tags: [Tag]
+public struct TravelEditableInfo: Hashable {
+    public let travelTitle: String
+    public let region: RegionFilter?
+    public let startDate: Date?
+    public let endDate: Date?
+    public let tags: [Tag]
     
-    static let empty: Self = .init(
+    public static let empty: Self = .init(
         travelTitle: Literal.empty,
         region: nil,
         startDate: .now,

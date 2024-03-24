@@ -10,10 +10,16 @@ import Foundation
 
 import Core
 
-typealias SearchKeywordList = [SearchKeyword]
+public typealias SearchKeywordList = [SearchKeyword]
 
-struct SearchKeyword: Hashable {
-    let type: SearchViewType
-    let title: String
-    var searchedKeyword: String?
+public struct SearchKeyword: Hashable {
+    public let type: SearchViewType
+    public let title: String
+    public var searchedKeyword: String?
+    
+    public init(type: SearchViewType, title: String, searchedKeyword: String? = nil) {
+        self.type = type
+        self.title = title
+        self.searchedKeyword = searchedKeyword
+    }
 }

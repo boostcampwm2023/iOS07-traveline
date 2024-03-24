@@ -10,7 +10,7 @@ import UIKit
 
 import Core
 
-final class TLFloatingButton: UIButton {
+public final class TLFloatingButton: UIButton {
     
     // MARK: - UI Components
     
@@ -27,7 +27,7 @@ final class TLFloatingButton: UIButton {
     
     // MARK: - Properties
     
-    override var isHighlighted: Bool {
+    public override var isHighlighted: Bool {
         didSet {
             innerView.backgroundColor = isHighlighted ? TLColor.pressedMain : TLColor.main
         }
@@ -37,7 +37,7 @@ final class TLFloatingButton: UIButton {
     
     // MARK: - Initializer
     
-    init(style: TLFloatingButtonStyle) {
+    public init(style: TLFloatingButtonStyle) {
         self.style = style
         
         super.init(frame: .zero)

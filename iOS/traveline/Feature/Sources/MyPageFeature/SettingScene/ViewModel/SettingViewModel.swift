@@ -10,6 +10,9 @@ import AuthenticationServices
 import Combine
 import Foundation
 
+import DesignSystem
+import Domain
+
 enum SettingAction: BaseAction {
     case logoutButtonTapped
     case withdrawalButtonTapped

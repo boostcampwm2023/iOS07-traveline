@@ -8,6 +8,8 @@
 
 import UIKit
 
+import DesignSystem
+
 final class TimelineCardCVC: UICollectionViewCell {
     
     private enum Metric {

@@ -9,7 +9,7 @@
 import Combine
 import Foundation
 
-protocol MyPostListUseCase {
+public protocol MyPostListUseCase {
     func fetchMyPostList() -> AnyPublisher<TravelList, Error>
 }
 

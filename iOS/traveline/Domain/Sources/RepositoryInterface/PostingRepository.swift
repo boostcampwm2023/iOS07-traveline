@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol PostingRepository {
+public protocol PostingRepository {
     func fetchPostingList(with query: SearchQuery) async throws -> TravelList
     func fetchMyPostingList() async throws -> TravelList
     func fetchRecentKeyword() -> [String]?

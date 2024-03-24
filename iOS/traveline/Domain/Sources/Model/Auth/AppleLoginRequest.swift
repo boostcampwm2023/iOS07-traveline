@@ -8,7 +8,12 @@
 
 import Foundation
 
-struct AppleLoginRequest {
-    let idToken: String
-    let email: String?
+public struct AppleLoginRequest {
+    public let idToken: String
+    public let email: String?
+    
+    public init(idToken: String, email: String?) {
+        self.idToken = idToken
+        self.email = email
+    }
 }

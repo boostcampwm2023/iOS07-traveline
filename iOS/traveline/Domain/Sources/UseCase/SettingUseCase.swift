@@ -11,7 +11,7 @@ import Foundation
 
 import Core
 
-protocol SettingUseCase {
+public protocol SettingUseCase {
     func requestAppleId() -> AppleIDRequest
     func requestWithdrawal(_ request: WithdrawRequest) -> AnyPublisher<Bool, Error>
     func logout()

@@ -10,17 +10,17 @@ import Foundation
 
 import Core
 
-struct TimelineTravelInfo: Hashable {
-    let travelTitle: String
-    let startDate: String
-    let endDate: String
-    var isLiked: Bool
-    let isOwner: Bool
-    let tags: [Tag]
-    let days: [String]
-    var day: Int
+public struct TimelineTravelInfo: Hashable {
+    public let travelTitle: String
+    public let startDate: String
+    public let endDate: String
+    public var isLiked: Bool
+    public let isOwner: Bool
+    public let tags: [Tag]
+    public let days: [String]
+    public var day: Int
     
-    static let empty: Self = .init(
+    public static let empty: Self = .init(
         travelTitle: Literal.empty,
         startDate: Literal.empty,
         endDate: Literal.empty,

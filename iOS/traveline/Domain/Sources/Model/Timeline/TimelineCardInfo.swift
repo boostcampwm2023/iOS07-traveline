@@ -10,20 +10,20 @@ import Foundation
 
 import Core
 
-typealias TimelineCardList = [TimelineCardInfo]
+public typealias TimelineCardList = [TimelineCardInfo]
 
-struct TimelineCardInfo: Hashable {
-    let detailId: String
-    let thumbnailURL: String?
-    let imagePath: String?
-    let title: String
-    let place: String?
-    let content: String
-    let time: String
-    let latitude: Double?
-    let longitude: Double?
+public struct TimelineCardInfo: Hashable {
+    public let detailId: String
+    public let thumbnailURL: String?
+    public let imagePath: String?
+    public let title: String
+    public let place: String?
+    public let content: String
+    public let time: String
+    public let latitude: Double?
+    public let longitude: Double?
     
-    static let empty: Self = .init(
+    public static let empty: Self = .init(
         detailId: Literal.empty,
         thumbnailURL: Literal.empty,
         imagePath: Literal.empty,
@@ -34,4 +34,26 @@ struct TimelineCardInfo: Hashable {
         latitude: 0,
         longitude: 0
     )
+    
+    public init(
+        detailId: String,
+        thumbnailURL: String?,
+        imagePath: String?,
+        title: String,
+        place: String?,
+        content: String,
+        time: String,
+        latitude: Double?,
+        longitude: Double?
+    ) {
+        self.detailId = detailId
+        self.thumbnailURL = thumbnailURL
+        self.imagePath = imagePath
+        self.title = title
+        self.place = place
+        self.content = content
+        self.time = time
+        self.latitude = latitude
+        self.longitude = longitude
+    }
 }

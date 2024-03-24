@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Domain
+
 struct TravelRequestDTO: Encodable {
     let title, location, startDate, endDate: String
     let headcount, budget, vehicle: String?

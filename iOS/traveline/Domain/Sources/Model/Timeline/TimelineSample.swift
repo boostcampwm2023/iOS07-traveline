@@ -11,8 +11,8 @@ import Foundation
 import Core
 
 // TODO: - 서버 연동시 지우기
-enum TimelineSample {
-    static func makeTravelInfo() -> TimelineTravelInfo {
+public enum TimelineSample {
+    public static func makeTravelInfo() -> TimelineTravelInfo {
         return .init(
             travelTitle: "부산 여행 ~",
             startDate: "2023.11.21",
@@ -33,7 +33,7 @@ enum TimelineSample {
         )
     }
     
-    static func makeCardList() -> TimelineCardList {
+    public static func makeCardList() -> TimelineCardList {
         return [
             .init(
                 detailId: "1",
@@ -137,7 +137,7 @@ enum TimelineSample {
         ]
     }
     
-    static func makeCard() -> TimelineCardInfo {
+    public static func makeCard() -> TimelineCardInfo {
         .init(
             detailId: "",
             thumbnailURL: "",

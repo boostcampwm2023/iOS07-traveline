@@ -9,7 +9,7 @@
 import Combine
 import Foundation
 
-protocol TimelineDetailUseCase {
+public protocol TimelineDetailUseCase {
     func fetchTimelineDetail(with id: String) -> AnyPublisher<TimelineDetailInfo, Error>
     func deleteTimeline(id: String) -> AnyPublisher<Bool, Error>
     func fetchTranslateTimelineDetail(with id: String) -> AnyPublisher<TimelineTranslatedInfo, Error>

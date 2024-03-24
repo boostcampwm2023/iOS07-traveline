@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Domain
+
 final class PostingRepositoryImpl: PostingRepository {
     
     private let network: NetworkType

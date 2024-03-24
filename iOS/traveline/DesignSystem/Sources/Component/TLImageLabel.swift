@@ -10,7 +10,7 @@ import UIKit
 
 import Core
 
-final class TLImageLabel: UIView {
+public final class TLImageLabel: UIView {
     
     private enum Constants {
         static let spacing: CGFloat = 6.0
@@ -27,7 +27,7 @@ final class TLImageLabel: UIView {
     
     // MARK: - Initialize
     
-    init(image: UIImage? = nil, text: String = "") {
+    public init(image: UIImage? = nil, text: String = "") {
         super.init(frame: .zero)
         
         label.setText(to: text)
@@ -42,11 +42,11 @@ final class TLImageLabel: UIView {
     
     // MARK: - Functions
     
-    func setText(to text: String) {
+    public func setText(to text: String) {
         label.setText(to: text)
     }
     
-    func setImage(to image: UIImage) {
+    public func setImage(to image: UIImage) {
         imageView.image = image
     }
     

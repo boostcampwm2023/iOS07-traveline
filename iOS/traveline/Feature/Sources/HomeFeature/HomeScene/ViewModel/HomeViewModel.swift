@@ -9,6 +9,9 @@
 import Foundation
 import Combine
 
+import DesignSystem
+import Domain
+
 final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> {
     
     private let homeUseCase: HomeUseCase

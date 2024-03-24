@@ -9,6 +9,9 @@
 import Combine
 import Foundation
 
+import DesignSystem
+import Domain
+
 enum TravelAction: BaseAction {
     case configTravelInfo(TimelineTravelInfo)
     case titleEdited(String)

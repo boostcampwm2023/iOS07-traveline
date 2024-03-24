@@ -11,12 +11,12 @@ import Foundation
 public struct TagManager {
     private let tags: [Tag]
     
-    init(tags: [Tag]) {
+    public init(tags: [Tag]) {
         self.tags = tags
     }
 }
 
-extension TagManager {
+public extension TagManager {
     public func toDTO(type: TagType) -> String? {
         tags.filter { $0.type == type }.first?.title
     }

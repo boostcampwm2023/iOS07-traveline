@@ -10,15 +10,15 @@ import Foundation
 
 import Core
 
-struct Tag: Hashable {
-    let title: String
-    let type: TagType
+public struct Tag: Hashable {
+    public let title: String
+    public let type: TagType
     
-    static func makeDefaultTag(_ type: TagType) -> Self {
+    public static func makeDefaultTag(_ type: TagType) -> Self {
         .init(title: type.title, type: type)
     }
     
-    func toRegionFilter() -> RegionFilter? {
+    public func toRegionFilter() -> RegionFilter? {
         return RegionFilter.allCases.first { $0.title == title }
     }
 }

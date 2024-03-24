@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum TLFloatingButtonStyle {
+public enum TLFloatingButtonStyle {
     case create
     
     var height: CGFloat {

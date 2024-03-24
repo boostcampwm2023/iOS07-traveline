@@ -9,6 +9,8 @@
 import Combine
 import UIKit
 
+import DesignSystem
+
 final class TimelineVC: UIViewController {
     
     private enum Metric {

@@ -9,6 +9,9 @@
 import Combine
 import Foundation
 
+import DesignSystem
+import Domain
+
 enum MyPostListAction: BaseAction {
     case viewDidLoad
 }

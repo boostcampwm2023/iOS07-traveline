@@ -11,6 +11,8 @@ import Combine
 import Foundation
 
 import Core
+import DesignSystem
+import Domain
 
 typealias Auth = ASAuthorization
 

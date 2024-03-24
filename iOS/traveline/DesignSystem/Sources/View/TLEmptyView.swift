@@ -10,9 +10,9 @@ import UIKit
 
 import Core
 
-class TLEmptyView: UIView {
+public class TLEmptyView: UIView {
 
-    enum EmptyViewType {
+    public enum EmptyViewType {
         case search
         case timeline
         
@@ -97,7 +97,7 @@ class TLEmptyView: UIView {
     
     // MARK: - initialize
     
-    init(type: EmptyViewType) {
+    public init(type: EmptyViewType) {
         self.emptyViewType = type
         super.init(frame: .zero)
         

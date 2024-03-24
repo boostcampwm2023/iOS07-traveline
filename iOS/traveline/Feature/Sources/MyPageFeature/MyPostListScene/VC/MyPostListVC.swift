@@ -9,6 +9,8 @@
 import Combine
 import UIKit
 
+import DesignSystem
+
 final class MyPostListVC: UIViewController {
     
     private enum Metric {

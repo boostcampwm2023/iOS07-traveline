@@ -8,6 +8,6 @@
 
 import Foundation
 
-protocol TimelineRepository {
+public protocol TimelineRepository {
     func fetchTimelineList(id: TravelID, day: Int) async throws -> TimelineCardList
 }

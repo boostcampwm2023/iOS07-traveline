@@ -10,8 +10,8 @@ import Foundation
 
 import Core
 
-struct TimelineTranslatedInfo {
-    let description: String
+public struct TimelineTranslatedInfo {
+    public let description: String
     
-    static let empty: TimelineTranslatedInfo = .init(description: Literal.empty)
+    public static let empty: TimelineTranslatedInfo = .init(description: Literal.empty)
 }

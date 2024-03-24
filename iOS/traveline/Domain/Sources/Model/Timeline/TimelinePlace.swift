@@ -10,18 +10,30 @@ import Foundation
 
 import Core
 
-typealias TimelinePlaceList = [TimelinePlace]
+public typealias TimelinePlaceList = [TimelinePlace]
 
-struct TimelinePlace: Hashable {
-    let title: String
-    let address: String
-    let latitude: Double
-    let longitude: Double
+public struct TimelinePlace: Hashable {
+    public let title: String
+    public let address: String
+    public let latitude: Double
+    public let longitude: Double
     
-    static let emtpy: Self = .init(
+    public static let emtpy: Self = .init(
         title: Literal.empty, 
         address: Literal.empty,
         latitude: 0.0,
         longitude: 0.0
     )
+    
+    public init(
+        title: String,
+        address: String,
+        latitude: Double,
+        longitude: Double
+    ) {
+        self.title = title
+        self.address = address
+        self.latitude = latitude
+        self.longitude = longitude
+    }
 }

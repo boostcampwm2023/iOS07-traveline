@@ -11,8 +11,8 @@ import Foundation
 import Core
 
 // TODO: - 추후에 서버 연동시 지우기
-enum TravelListSample {
-    static func makeTags() -> [Tag] {
+public enum TravelListSample {
+    public static func makeTags() -> [Tag] {
         return [
             .init(title: "부산", type: .region),
             .init(title: "1박 2일", type: .period),
@@ -20,7 +20,7 @@ enum TravelListSample {
         ]
     }
     
-    static func makeInfo() -> TravelListInfo {
+    public static func makeInfo() -> TravelListInfo {
         return
             .init(id: "1",
                   imageURL: "",
@@ -33,7 +33,7 @@ enum TravelListSample {
             )
     }
     
-    static func make() -> TravelList {
+    public static func make() -> TravelList {
         return [
             .init(id: "1",
                   imageURL: "",

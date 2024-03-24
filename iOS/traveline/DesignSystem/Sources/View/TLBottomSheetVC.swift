@@ -8,11 +8,11 @@
 
 import UIKit
 
-protocol TLBottomSheetDelegate: AnyObject {
+public protocol TLBottomSheetDelegate: AnyObject {
     func bottomSheetDidDisappear(data: Any)
 }
 
-class TLBottomSheetVC: UIViewController {
+open class TLBottomSheetVC: UIViewController {
     
     // MARK: - UI Components
     
@@ -36,29 +36,29 @@ class TLBottomSheetVC: UIViewController {
         color: TLColor.white
     )
     /// 상속받은 ViewController에서 사용할 뷰를 여기에 추가합니다.
-    let main: UIView = .init()
+    public let main: UIView = .init()
     
     // MARK: - Properties
     
     private let titleText: String
     private var hasCompleteButton: Bool
     private var detentHeight: CGFloat?
-    weak var delegate: TLBottomSheetDelegate?
+    public weak var delegate: TLBottomSheetDelegate?
     
     // MARK: - Life Cycle
     
-    init(title: String, hasCompleteButton: Bool = true, detentHeight: CGFloat? = nil) {
+    public init(title: String, hasCompleteButton: Bool = true, detentHeight: CGFloat? = nil) {
         self.titleText = title
         self.hasCompleteButton = hasCompleteButton
         self.detentHeight = detentHeight
         super.init(nibName: nil, bundle: nil)
     }
     
-    required init?(coder: NSCoder) {
+    required public init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
+    open override func viewDidLoad() {
         super.viewDidLoad()
         
         setupBotomSheet()
@@ -84,7 +84,7 @@ class TLBottomSheetVC: UIViewController {
     }
     
     /// 상속받은 ViewController에서 완료 버튼이 탭될 때 액션을 정의합니다.
-    func completeAction() { }
+    open func completeAction() { }
     
 }
 

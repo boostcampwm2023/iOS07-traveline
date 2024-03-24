@@ -8,6 +8,8 @@
 
 import UIKit
 
+import DesignSystem
+
 protocol TimelineDateHeaderDelegate: AnyObject {
     func goToMapView()
     func changeDay(to index: Int)

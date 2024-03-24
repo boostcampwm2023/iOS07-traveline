@@ -11,13 +11,23 @@ import Foundation
 import Core
 
 public struct Profile: Hashable, Codable {
-    let imageURL: String
-    let imagePath: String
-    let name: String
+    public let imageURL: String
+    public let imagePath: String
+    public let name: String
     
-    static let empty: Profile = .init(
+    public static let empty: Profile = .init(
         imageURL: Literal.empty,
         imagePath: Literal.empty,
         name: Literal.empty
     )
+    
+    public init(
+        imageURL: String,
+        imagePath: String,
+        name: String
+    ) {
+        self.imageURL = imageURL
+        self.imagePath = imagePath
+        self.name = name
+    }
 }

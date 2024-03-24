@@ -10,15 +10,15 @@ import Foundation
 
 import Core
 
-typealias TravelList = [TravelListInfo]
+public typealias TravelList = [TravelListInfo]
 
-struct TravelListInfo: Hashable {
-    let id: String
-    let imageURL: String
-    let imagePath: String
-    let title: String
-    let profile: Profile
-    let like: Int
-    let isLiked: Bool
-    let tags: [Tag]
+public struct TravelListInfo: Hashable {
+    public let id: String
+    public let imageURL: String
+    public let imagePath: String
+    public let title: String
+    public let profile: Profile
+    public let like: Int
+    public let isLiked: Bool
+    public let tags: [Tag]
 }

@@ -8,6 +8,9 @@
 
 import UIKit
 
+import DesignSystem
+import Domain
+
 final class FilterBottomSheet: TLBottomSheetVC {
     
     // MARK: - UI Components

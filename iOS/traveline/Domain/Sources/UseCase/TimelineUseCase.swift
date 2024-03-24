@@ -9,7 +9,7 @@
 import Foundation
 import Combine
 
-protocol TimelineUseCase {
+public protocol TimelineUseCase {
     func fetchTimelineInfo(id: TravelID) -> AnyPublisher<TimelineTravelInfo, Error>
     func fetchTimelineList(id: TravelID, day: Int) -> AnyPublisher<TimelineCardList, Error>
     func calculateDate(from startDate: String, with day: Int) -> String?

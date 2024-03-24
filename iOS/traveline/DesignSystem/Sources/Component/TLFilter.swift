@@ -10,7 +10,7 @@ import UIKit
 
 import Core
 
-final class TLFilter: UIButton {
+public final class TLFilter: UIButton {
     
     private enum Metric {
         static let leftRightInset: CGFloat = 10
@@ -53,17 +53,12 @@ final class TLFilter: UIButton {
     
     // MARK: - Properties
     
-    private var filterType: FilterType?
-    
-    override var isSelected: Bool {
+    public override var isSelected: Bool {
         didSet {
             updateFilterSelected()
         }
     }
-    
-    private var isTotal: Bool {
-        return filterType == .total
-    }
+    public var isTotal: Bool = false
     
     private var filterImage: UIImage {
         return isTotal ? TLImage.Filter.total : TLImage.Filter.down
@@ -101,11 +96,12 @@ final class TLFilter: UIButton {
         }
     }
     
-    func setupFilter(type: FilterType) {
-        setupAttributes(type: type)
+    public func setupFilter(text: String, isTotal: Bool) {
+        setupAttributes(text: text)
+        self.isTotal = isTotal
     }
     
-    func resetFilter() {
+    public func resetFilter() {
         filterTitleLabel.text = ""
         filterImageView.image = nil
         isSelected = false
@@ -115,9 +111,9 @@ final class TLFilter: UIButton {
 // MARK: - Setup Functions
 
 private extension TLFilter {
-    func setupAttributes(type: FilterType) {
-        self.filterType = type
-        filterTitleLabel.setText(to: type.title)
+    
+    func setupAttributes(text: String) {
+        filterTitleLabel.setText(to: text)
         filterTitleLabel.setColor(to: isSelected ? TLColor.main :  TLColor.unselectedGray)
         stackView.spacing = isTotal ? Metric.zero : Metric.spacing
         filterImageView.image = isSelected ? filterSelectedImage : filterImage
@@ -154,7 +150,7 @@ private extension TLFilter {
 @available(iOS 17, *)
 #Preview("TLFilter") {
     let tlFilter = TLFilter.init()
-    tlFilter.setupFilter(type: .total)
+    tlFilter.setupFilter(text: "hoho", isTotal: false)
     tlFilter.isSelected = false
     return tlFilter
 }

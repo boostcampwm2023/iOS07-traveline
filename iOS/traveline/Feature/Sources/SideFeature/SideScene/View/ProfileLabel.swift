@@ -8,6 +8,8 @@
 
 import UIKit
 
+import DesignSystem
+
 final class ProfileLabel: UIView {
     
     private enum Metric {

@@ -9,7 +9,7 @@
 import Combine
 import Foundation
 
-protocol SideMenuUseCase {
+public protocol SideMenuUseCase {
     func fetchProfile() -> AnyPublisher<Profile, Error>
 }
 

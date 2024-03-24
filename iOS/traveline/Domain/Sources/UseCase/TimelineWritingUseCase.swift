@@ -11,7 +11,7 @@ import Foundation
 
 import Core
 
-protocol TimelineWritingUseCase {
+public protocol TimelineWritingUseCase {
     func requestCreateTimeline(with info: TimelineDetailRequest) -> AnyPublisher<Void, Error>
     func fetchPlaceList(keyword: String, offset: Int) -> AnyPublisher<TimelinePlaceList, Error>
     func putTimeline(id: String, info: TimelineDetailRequest) -> AnyPublisher<Bool, Error>

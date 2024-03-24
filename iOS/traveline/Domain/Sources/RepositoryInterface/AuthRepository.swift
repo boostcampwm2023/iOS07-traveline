@@ -10,7 +10,7 @@ import Foundation
 
 import Core
 
-protocol AuthRepository {
+public protocol AuthRepository {
     func refresh() async throws -> String
     func appleLogin(with info: AppleLoginRequest) async throws -> TLToken
     func withdrawal(_ request: WithdrawRequest) async throws -> Bool

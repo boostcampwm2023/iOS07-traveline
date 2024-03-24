@@ -11,13 +11,13 @@ import Foundation
 
 import Core
 
-protocol ProfileEditingUseCase {
+public protocol ProfileEditingUseCase {
     func fetchProfile() -> AnyPublisher<Profile, Error>
     func validate(nickname: String) -> AnyPublisher<NicknameValidationState, Error>
     func update(name: String, imageData: Data?) -> AnyPublisher<Profile, Error>
 }
 
-enum NicknameValidationState {
+public enum NicknameValidationState {
     case unchanged
     case tooShort
     case available

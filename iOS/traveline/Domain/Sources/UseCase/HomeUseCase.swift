@@ -11,7 +11,7 @@ import Foundation
 
 import Core
 
-protocol HomeUseCase {
+public protocol HomeUseCase {
     func fetchSearchList(with query: SearchQuery) -> AnyPublisher<TravelList, Error>
     func fetchRecentKeyword() -> AnyPublisher<SearchKeywordList, Never>
     func saveRecentKeyword(_ keyword: String)

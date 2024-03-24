@@ -59,12 +59,12 @@ public final class TLToastView: UIView {
     
     // MARK: - Functions
     
-    func setMessage(_ message: String) {
+    public func setMessage(_ message: String) {
         self.message = message
         contentLabel.setText(to: message)
     }
     
-    func show(in view: UIView) {
+    public func show(in view: UIView) {
         view.addSubview(self)
         translatesAutoresizingMaskIntoConstraints = false
         alpha = 1.0
