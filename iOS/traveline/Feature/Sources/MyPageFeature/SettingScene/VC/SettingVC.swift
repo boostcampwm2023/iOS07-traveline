@@ -11,6 +11,8 @@ import Combine
 import SafariServices
 import UIKit
 
+import DesignSystem
+
 enum ServiceGuideType: String, CaseIterable {
     case termsOfService = "이용약관"
     case privacyPolicy = "개인정보 처리방침"
