@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct TLToken {
-    let accessToken: String
-    let refreshToken: String
+public struct TLToken {
+    public let accessToken: String
+    public let refreshToken: String
 }

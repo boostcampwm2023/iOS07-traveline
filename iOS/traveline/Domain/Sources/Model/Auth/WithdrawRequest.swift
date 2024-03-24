@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct WithdrawRequest {
-    let idToken: String
-    let authorizationCode: String
+public struct WithdrawRequest {
+    public let idToken: String
+    public let authorizationCode: String
 }
