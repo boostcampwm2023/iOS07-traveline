@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Domain
+
 final class UserRepositoryMock: UserRepository {
     
     private let alreadyNames: [String] = [
