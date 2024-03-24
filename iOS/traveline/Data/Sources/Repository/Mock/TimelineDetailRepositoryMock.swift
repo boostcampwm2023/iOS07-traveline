@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Domain
+
 final class TimelineDetailRepositoryMock: TimelineDetailRepository {
     
     func createTimelineDetail(with timelineRequest: TimelineDetailRequest) async throws {

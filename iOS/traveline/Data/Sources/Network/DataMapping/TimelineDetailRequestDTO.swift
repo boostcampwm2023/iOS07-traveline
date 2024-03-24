@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Domain
+
 struct TimelineDetailRequestDTO: MultipartData {
     let title: String
     let day: Int
