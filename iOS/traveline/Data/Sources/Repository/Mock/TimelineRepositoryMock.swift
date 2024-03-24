@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Domain
+
 final class TimelineRepositoryMock: TimelineRepository {
     
     func fetchTimelineList(id: TravelID, day: Int) async throws -> TimelineCardList {
