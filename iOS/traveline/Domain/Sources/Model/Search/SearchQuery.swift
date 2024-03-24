@@ -15,12 +15,19 @@ protocol Query {
 }
 
 public struct SearchQuery: Query {
-    var keyword: String?
-    var offset: Int = 1
-    var limit: Int = 20
-    var selectedFilter: [DetailFilter]?
+    public var keyword: String?
+    public var offset: Int = 1
+    public var limit: Int = 20
+    public var selectedFilter: [DetailFilter]?
     
-    func makeQuery() -> String {
+    public init(keyword: String? = nil, offset: Int = 1, limit: Int = 20, selectedFilter: [DetailFilter]? = nil) {
+        self.keyword = keyword
+        self.offset = offset
+        self.limit = limit
+        self.selectedFilter = selectedFilter
+    }
+    
+    public func makeQuery() -> String {
         let baseQuery = "?"
         var queries: [String] = []
         queries.append("offset=\(offset)")
