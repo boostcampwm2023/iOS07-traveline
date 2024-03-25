@@ -1,8 +1,12 @@
-import { LoginRequestDto } from 'src/auth/dto/login-request.dto.interface';
+import { SocialWithdrawRequestDto } from './dto/social-withdraw-request.dto';
+import { SocialLoginRequestDto } from './dto/social-login-request.dto';
 
 export interface SocialLoginStrategy {
   login(
-    loginRequestDto: LoginRequestDto
+    socialLoginRequestDto: SocialLoginRequestDto
   ): Promise<{ resourceId: string; email: string }>;
-  withdraw(resourceId: string): Promise<void>;
+  withdraw(
+    resourceId: string,
+    socialWithdrawRequestDto: SocialWithdrawRequestDto
+  ): Promise<void>;
 }

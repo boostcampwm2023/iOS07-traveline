@@ -1,8 +1,9 @@
+import { SocialWithdrawRequestDto } from './dto/social-withdraw-request.dto';
 import { SocialLoginStrategy } from './social-login-strategy.interface';
+import { SocialLoginRequestDto } from './dto/social-login-request.dto';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import * as jwt from 'jsonwebtoken';
-import { LoginRequestDto } from 'src/auth/dto/login-request.dto.interface';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
@@ -10,10 +11,10 @@ export class KakaoLoginStrategy implements SocialLoginStrategy {
   constructor(private readonly httpService: HttpService) {}
 
   async login(
-    loginRequestDto: LoginRequestDto
+    socialLoginRequestDto: SocialLoginRequestDto
   ): Promise<{ resourceId: string; email: string }> {
     try {
-      const { idToken } = loginRequestDto;
+      const { idToken } = socialLoginRequestDto;
       const { sub, email } = jwt.decode(idToken) as {
         sub: string;
         email: string;
@@ -24,7 +25,10 @@ export class KakaoLoginStrategy implements SocialLoginStrategy {
     }
   }
 
-  async withdraw(resourceId: string): Promise<void> {
+  async withdraw(
+    resourceId: string,
+    socialWithdrawRequestDto: SocialWithdrawRequestDto
+  ): Promise<void> {
     const payload = {
       target_id_type: 'user_id',
       target_id: resourceId,
