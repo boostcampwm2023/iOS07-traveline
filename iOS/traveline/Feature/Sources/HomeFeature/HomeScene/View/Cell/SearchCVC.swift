@@ -9,6 +9,9 @@
 import Combine
 import UIKit
 
+import DesignSystem
+import Domain
+
 protocol SearchCVCDelegate: AnyObject {
     func deleteKeyword(_ keyword: String)
 }
@@ -40,8 +43,16 @@ final class SearchCVC: UICollectionViewCell {
     
     // MARK: - Functions
     
+    //   titleLabel.setText(to: item.title)
+    //   closeButton.isHidden = (item.type == .related)
+    //   searchIcon.isHidden = (item.type == .recent)
     func setupData(item: SearchKeyword) {
-        tlSearchInfoView.setupData(item: item)
+        tlSearchInfoView.setupDate(
+            title: item.title,
+            searchedKeyword: item.searchedKeyword,
+            isCloseButton: item.type == .related,
+            isSearchIcon: item.type == .recent
+        )
     }
 }
 

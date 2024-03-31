@@ -10,7 +10,7 @@ import UIKit
 
 import Core
 
-final class TLSearchInfoView: UIView {
+public final class TLSearchInfoView: UIView {
     
     private enum Metric {
         static let spacing: CGFloat = 5
@@ -38,7 +38,7 @@ final class TLSearchInfoView: UIView {
         color: TLColor.white
     )
     
-    let closeButton: UIButton = {
+    public let closeButton: UIButton = {
         let button = UIButton()
         button.setImage(TLImage.Common.close, for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
@@ -47,13 +47,13 @@ final class TLSearchInfoView: UIView {
     
     // MARK: - Properties
     
-    var keyword: String? {
+    public var keyword: String? {
         titleLabel.text
     }
     
     // MARK: - Initializer
     
-    init() {
+    public init() {
         super.init(frame: .zero)
         
         setupLayout()
@@ -65,15 +65,24 @@ final class TLSearchInfoView: UIView {
     
     // MARK: - Functions
     
-    func setupData(item: SearchKeyword) {
-        titleLabel.setText(to: item.title)
-        closeButton.isHidden = (item.type == .related)
-        searchIcon.isHidden = (item.type == .recent)
+    public func setupDate(
+        title: String,
+        searchedKeyword: String?,
+        isCloseButton: Bool,
+        isSearchIcon: Bool
+    ) {
+     //   titleLabel.setText(to: item.title)
+     //   closeButton.isHidden = (item.type == .related)
+     //   searchIcon.isHidden = (item.type == .recent)
         
-        if let searchedKeyword = item.searchedKeyword {
+        titleLabel.setText(to: title)
+        closeButton.isHidden = !isCloseButton
+        searchIcon.isHidden = !isSearchIcon
+        
+        if let searchedKeyword {
             titleLabel.setColor(
                 to: TLColor.main,
-                range: item.title.findCommonWordRange(searchedKeyword)
+                range: title.findCommonWordRange(searchedKeyword)
             )
         }
     }
@@ -101,14 +110,3 @@ private extension TLSearchInfoView {
     }
 }
 
-@available(iOS 17, *)
-#Preview("TLSearchInfoView") {
-    let view = TLSearchInfoView()
-    view.setupData(
-        item: SearchKeyword(
-            type: .recent,
-            title: "여행"
-        )
-    )
-    return view
-}
