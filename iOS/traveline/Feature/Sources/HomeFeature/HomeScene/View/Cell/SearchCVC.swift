@@ -43,9 +43,6 @@ final class SearchCVC: UICollectionViewCell {
     
     // MARK: - Functions
     
-    //   titleLabel.setText(to: item.title)
-    //   closeButton.isHidden = (item.type == .related)
-    //   searchIcon.isHidden = (item.type == .recent)
     func setupData(item: SearchKeyword) {
         tlSearchInfoView.setupDate(
             title: item.title,

@@ -71,10 +71,6 @@ public final class TLSearchInfoView: UIView {
         isCloseButton: Bool,
         isSearchIcon: Bool
     ) {
-     //   titleLabel.setText(to: item.title)
-     //   closeButton.isHidden = (item.type == .related)
-     //   searchIcon.isHidden = (item.type == .recent)
-        
         titleLabel.setText(to: title)
         closeButton.isHidden = !isCloseButton
         searchIcon.isHidden = !isSearchIcon
