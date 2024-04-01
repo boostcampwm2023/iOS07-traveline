@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Domain
+
 struct WithdrawRequestDTO: Encodable {
     let idToken: String
     let authorizationCode: String

@@ -10,6 +10,8 @@ import Combine
 import UIKit
 import OSLog
 
+import DesignSystem
+
 protocol HomeViewDelegate: AnyObject {
     func sideMenuTapped()
 }

@@ -8,6 +8,8 @@
 
 import UIKit
 
+import DesignSystem
+
 final class SelectImageButton: UIView {
     
     private enum Metric {

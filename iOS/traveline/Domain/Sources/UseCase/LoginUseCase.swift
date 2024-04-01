@@ -11,7 +11,7 @@ import Foundation
 
 import Core
 
-protocol LoginUseCase {
+public protocol LoginUseCase {
     func requestLogin(with info: AppleLoginRequest) -> AnyPublisher<Bool, Error>
 }
 

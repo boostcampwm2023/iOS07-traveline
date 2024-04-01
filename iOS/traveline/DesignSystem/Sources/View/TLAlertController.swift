@@ -8,11 +8,11 @@
 
 import UIKit
 
-final class TLAlertController: UIAlertController {
+public final class TLAlertController: UIAlertController {
     
     // MARK: - Life Cycle
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
         setupAttributes()
@@ -20,7 +20,7 @@ final class TLAlertController: UIAlertController {
     
     // MARK: - Functions
     
-    override func addAction(_ action: UIAlertAction) {
+    public override func addAction(_ action: UIAlertAction) {
         switch action.style {
         case .cancel:
             action.setValue(TLColor.gray, forKey: "titleTextColor")
@@ -34,7 +34,7 @@ final class TLAlertController: UIAlertController {
         super.addAction(action)
     }
     
-    func addActions(_ actions: [UIAlertAction]) {
+    public func addActions(_ actions: [UIAlertAction]) {
         actions.forEach {
             self.addAction($0)
         }

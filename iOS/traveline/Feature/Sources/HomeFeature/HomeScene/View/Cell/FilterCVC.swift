@@ -9,6 +9,9 @@
 import Combine
 import UIKit
 
+import DesignSystem
+import Domain
+
 protocol FilterCVCDelegate: AnyObject {
     func filterTypeDidSelect(type: FilterType)
 }
@@ -52,7 +55,7 @@ final class FilterCVC: UICollectionViewCell {
     
     func setupData(item: Filter) {
         filterType = item.type
-        filter.setupFilter(type: item.type)
+        filter.setupFilter(text: item.type.title, isTotal: item.type == FilterType.total)
         filter.isSelected = item.isSelected
     }
     

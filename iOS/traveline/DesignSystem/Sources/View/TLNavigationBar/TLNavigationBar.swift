@@ -11,11 +11,11 @@ import Combine
 
 import Core
 
-protocol TLNavigationBarDelegate: AnyObject {
+public protocol TLNavigationBarDelegate: AnyObject {
     func rightButtonDidTapped()
 }
 
-final class TLNavigationBar: UIView {
+public final class TLNavigationBar: UIView {
     
     private enum Metric {
         static let inset: CGFloat = 16
@@ -46,11 +46,11 @@ final class TLNavigationBar: UIView {
     private let title: String
     private weak var vc: UIViewController?
     
-    weak var delegate: TLNavigationBarDelegate?
+    public weak var delegate: TLNavigationBarDelegate?
     
     // MARK: - Initializer
     
-    init(title: String = "", vc: UIViewController) {
+    public init(title: String = "", vc: UIViewController) {
         self.title = title
         self.vc = vc
         
@@ -71,7 +71,7 @@ final class TLNavigationBar: UIView {
     ///   - image: 추가할 버튼 이미지
     ///   - menu:  추가할 UIMenu (옵셔널)
     @discardableResult
-    func addRightButton(image: UIImage, menu: UIMenu?) -> Self {
+    public func addRightButton(image: UIImage, menu: UIMenu?) -> Self {
         setupRightButton()
         
         rightBarButton.setImage(image, for: .normal)
@@ -85,7 +85,7 @@ final class TLNavigationBar: UIView {
     
     /// 네비게이션 바 우측에 [완료] 버튼을 추가합니다.
     @discardableResult
-    func addCompleteButton() -> Self {
+    public func addCompleteButton() -> Self {
         setupRightButton()
         
         rightBarButton.setTitle(Constants.complete, for: .normal)
@@ -98,12 +98,12 @@ final class TLNavigationBar: UIView {
     }
     
     /// 네비게이션 바 우측 버튼의 isEnabled 여부를 업데이트합니다.
-    func isRightButtonEnabled(_ isEnabled: Bool) {
+    public func isRightButtonEnabled(_ isEnabled: Bool) {
         rightBarButton.isEnabled = isEnabled
     }
     
     /// 네비게이션 바 타이틀을 설정합니다.
-    func setupTitle(to text: String) {
+    public func setupTitle(to text: String) {
         titleLabel.setText(to: text)
     }
     

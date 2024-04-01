@@ -10,17 +10,17 @@ import Foundation
 
 import Core
 
-struct TimelineDetailRequest {
-    var title: String
-    var day: Int
-    var time: String
-    var date: String
-    var place: TimelinePlace?
-    var image: Data?
-    var content: String
-    var posting: String
+public struct TimelineDetailRequest {
+    public var title: String
+    public var day: Int
+    public var time: String
+    public var date: String
+    public var place: TimelinePlace?
+    public var image: Data?
+    public var content: String
+    public var posting: String
     
-    static let empty: TimelineDetailRequest = .init(
+    public static let empty: TimelineDetailRequest = .init(
         title: Literal.empty,
         day: 0,
         time: Literal.empty,

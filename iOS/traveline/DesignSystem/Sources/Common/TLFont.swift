@@ -7,7 +7,7 @@
 //
 import UIKit
 
-enum TLFont {
+public enum TLFont {
     case heading1
     case heading2
     case subtitle1
@@ -21,7 +21,7 @@ enum TLFont {
     case toolTip
 }
 
-extension TLFont {
+public extension TLFont {
 
     var font: UIFont {
         switch self {

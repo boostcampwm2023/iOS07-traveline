@@ -9,6 +9,8 @@
 import Combine
 import UIKit
 
+import DesignSystem
+
 protocol SideMenuDelegate: AnyObject {
     func didSelect(menuItem: SideMenuVC.Options)
 }

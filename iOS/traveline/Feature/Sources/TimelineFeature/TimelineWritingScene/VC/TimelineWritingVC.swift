@@ -10,6 +10,8 @@ import Combine
 import PhotosUI
 import UIKit
 
+import DesignSystem
+
 final class TimelineWritingVC: UIViewController {
     
     private enum Metric {

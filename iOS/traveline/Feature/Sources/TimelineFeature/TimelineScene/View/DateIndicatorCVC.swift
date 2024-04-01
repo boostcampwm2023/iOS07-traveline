@@ -8,6 +8,8 @@
 
 import UIKit
 
+import DesignSystem
+
 final class DateIndicatorCVC: UICollectionViewCell {
     
     private enum Metric {

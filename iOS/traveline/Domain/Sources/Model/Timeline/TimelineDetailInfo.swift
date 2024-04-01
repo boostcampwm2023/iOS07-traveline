@@ -10,22 +10,22 @@ import Foundation
 
 import Core
 
-struct TimelineDetailInfo: Hashable {
-    let postingID: String
-    let id: String
-    let title: String
-    let day: Int
-    let description: String
-    let imageURL: String?
-    let imagePath: String?
-    let coordX: Double?
-    let coordY: Double?
-    let date: String
-    let location: String?
-    let time: String
-    let isOwner: Bool
+public struct TimelineDetailInfo: Hashable {
+    public let postingID: String
+    public let id: String
+    public let title: String
+    public let day: Int
+    public let description: String
+    public let imageURL: String?
+    public let imagePath: String?
+    public let coordX: Double?
+    public let coordY: Double?
+    public let date: String
+    public let location: String?
+    public let time: String
+    public let isOwner: Bool
     
-    static let empty: TimelineDetailInfo = .init(
+    public static let empty: TimelineDetailInfo = .init(
         postingID: Literal.empty,
         id: Literal.empty,
         title: Literal.empty,
@@ -41,7 +41,7 @@ struct TimelineDetailInfo: Hashable {
         isOwner: false
     )
     
-    static let sample: TimelineDetailInfo = .init(
+    public static let sample: TimelineDetailInfo = .init(
         postingID: "9a0396ba-4892-436a-a97c-58be59b59327",
         id: "ae12a997-159c-40d1-b3c6-62af7fd981d1",
         title: "두근두근 출발 날 😍",
