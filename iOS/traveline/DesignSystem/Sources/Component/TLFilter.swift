@@ -58,7 +58,7 @@ public final class TLFilter: UIButton {
             updateFilterSelected()
         }
     }
-    public var isTotal: Bool = false
+    private var isTotal: Bool = false
     
     private var filterImage: UIImage {
         return isTotal ? TLImage.Filter.total : TLImage.Filter.down
@@ -97,8 +97,7 @@ public final class TLFilter: UIButton {
     }
     
     public func setupFilter(text: String, isTotal: Bool) {
-        setupAttributes(text: text)
-        self.isTotal = isTotal
+        setupAttributes(text: text, isTotal: isTotal)
     }
     
     public func resetFilter() {
@@ -112,11 +111,12 @@ public final class TLFilter: UIButton {
 
 private extension TLFilter {
     
-    func setupAttributes(text: String) {
+    func setupAttributes(text: String, isTotal: Bool) {
         filterTitleLabel.setText(to: text)
         filterTitleLabel.setColor(to: isSelected ? TLColor.main :  TLColor.unselectedGray)
         stackView.spacing = isTotal ? Metric.zero : Metric.spacing
         filterImageView.image = isSelected ? filterSelectedImage : filterImage
+        self.isTotal = isTotal
     }
     
     func setupLayout() {
