@@ -9,7 +9,12 @@ import {
   Param,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
 import { AuthGuard } from './auth.guard';
 import { login, refresh, withdrawal } from './auth.swagger';
@@ -46,6 +51,11 @@ export class AuthController {
   }
 
   @Post('login/:social')
+  @ApiParam({
+    name: 'social',
+    enum: ['apple', 'kakao'],
+    description: '소셜 로그인 종류',
+  })
   @ApiOperation({
     summary: '로그인 또는 회원가입 API',
     description:
@@ -63,6 +73,11 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Delete('withdraw/:social')
+  @ApiParam({
+    name: 'social',
+    enum: ['apple', 'kakao'],
+    description: '소셜 로그인 종류',
+  })
   @ApiOperation({
     summary: '탈퇴 API',
     description:
