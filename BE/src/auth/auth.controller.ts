@@ -32,6 +32,19 @@ export class AuthController {
     return this.authService.refresh(headerMap);
   }
 
+  @Post('login/dev')
+  @ApiOperation({
+    summary: '개발용 로그인 API',
+    description:
+      '전달받은 회원 id를 확인하고 존재하는 회원이면 로그인을 진행합니다.' +
+      '개발 테스트용 API에서는 회원가입이 불가합니다.' +
+      '회원 생성이 필요한 경우 백엔드 팀원에게 요청해주세요.',
+  })
+  @ApiOkResponse({ description: 'OK', schema: { example: login } })
+  loginForDev(@Body() createAuthForDevDto: CreateAuthRequestForDevDto) {
+    return this.authService.loginForDev(createAuthForDevDto);
+  }
+
   @Post('login/:social')
   @ApiOperation({
     summary: '로그인 또는 회원가입 API',
@@ -46,19 +59,6 @@ export class AuthController {
   ) {
     const headerMap: Map<string, string> = this.makeHeaderMap(request);
     return this.authService.login(social, headerMap, socialLoginRequestDto);
-  }
-
-  @Post('login/dev')
-  @ApiOperation({
-    summary: '개발용 로그인 API',
-    description:
-      '전달받은 회원 id를 확인하고 존재하는 회원이면 로그인을 진행합니다.' +
-      '개발 테스트용 API에서는 회원가입이 불가합니다.' +
-      '회원 생성이 필요한 경우 백엔드 팀원에게 요청해주세요.',
-  })
-  @ApiOkResponse({ description: 'OK', schema: { example: login } })
-  loginForDev(@Body() createAuthForDevDto: CreateAuthRequestForDevDto) {
-    return this.authService.loginForDev(createAuthForDevDto);
   }
 
   @UseGuards(AuthGuard)
