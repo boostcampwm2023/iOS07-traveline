@@ -192,7 +192,7 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
             )
             
         case let .timelineError(error):
-            break
+            newState.errorMsg = error.errorDescription
             
         case .popToTimeline:
             newState.timelineWritingInfo = nil

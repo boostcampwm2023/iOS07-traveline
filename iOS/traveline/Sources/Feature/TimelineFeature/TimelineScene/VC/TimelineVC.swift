@@ -249,15 +249,27 @@ private extension TimelineVC {
             .store(in: &cancellables)
         
         viewModel.state
-            .map(\.isDeleteCompleted)
+            .map(\.timelineManageType)
             .removeDuplicates()
             .dropFirst()
             .withUnretained(self)
-            .sink { owner, isSuccess in
+            .sink { owner, type in
                 owner.navigationController?.popViewController(animated: true)
                 owner.delegate?.viewControllerDidFinishAction(
-                    isSuccess: isSuccess,
-                    message: isSuccess ? Constants.didFinishDeleteWithSuccess : Constants.didFinishDeleteWithFailure
+                    isSuccess: true,
+                    message: type.description
+                )
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .compactMap(\.errorMsg)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, message in
+                owner.viewControllerDidFinishAction(
+                    isSuccess: false,
+                    message: message
                 )
             }
             .store(in: &cancellables)
