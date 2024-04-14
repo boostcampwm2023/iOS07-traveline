@@ -22,11 +22,6 @@ final class TimelineVC: UIViewController {
         }
     }
     
-    private enum Constants {
-        static let didFinishDeleteWithSuccess: String = "여행 삭제를 완료했어요 !"
-        static let didFinishDeleteWithFailure: String = "여행 삭제에 실패했어요."
-    }
-    
     private enum TimelineSection: Int {
         case travelInfo
         case timeline
@@ -135,6 +130,9 @@ final class TimelineVC: UIViewController {
             ]
         } else {
             menuItems = [
+                .init(title: Literal.Action.block, attributes: .destructive, handler: { [weak self] _ in
+                    self?.viewModel.sendAction(.blockTravel)
+                }),
                 .init(title: Literal.Action.report, attributes: .destructive, handler: { [weak self] _ in
                     self?.viewModel.sendAction(.reportTravel)
                 })
@@ -251,15 +249,27 @@ private extension TimelineVC {
             .store(in: &cancellables)
         
         viewModel.state
-            .map(\.isDeleteCompleted)
+            .map(\.timelineManageType)
             .removeDuplicates()
             .dropFirst()
             .withUnretained(self)
-            .sink { owner, isSuccess in
+            .sink { owner, type in
                 owner.navigationController?.popViewController(animated: true)
                 owner.delegate?.viewControllerDidFinishAction(
-                    isSuccess: isSuccess,
-                    message: isSuccess ? Constants.didFinishDeleteWithSuccess : Constants.didFinishDeleteWithFailure
+                    isSuccess: true,
+                    message: type.description
+                )
+            }
+            .store(in: &cancellables)
+        
+        viewModel.state
+            .compactMap(\.errorMsg)
+            .removeDuplicates()
+            .withUnretained(self)
+            .sink { owner, message in
+                owner.viewControllerDidFinishAction(
+                    isSuccess: false,
+                    message: message
                 )
             }
             .store(in: &cancellables)

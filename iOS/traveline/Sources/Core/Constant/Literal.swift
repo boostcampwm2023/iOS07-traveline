@@ -118,6 +118,7 @@ enum Literal {
         static let modify: String = "수정하기"
         static let delete: String = "삭제하기"
         static let report: String = "신고하기"
+        static let block: String = "차단하기"
         static let translate: String = "번역하기"
     }
     

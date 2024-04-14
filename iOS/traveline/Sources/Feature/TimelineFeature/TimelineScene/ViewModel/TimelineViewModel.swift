@@ -9,6 +9,29 @@
 import Combine
 import Foundation
 
+enum TimelineManageType {
+    case none
+    case delete
+    case block
+    case report
+    
+    private enum Constants {
+        static let didFinishDeleteWithSuccess: String = "여행 삭제를 완료했어요 !"
+        static let didFinishDeleteWithFailure: String = "여행 삭제에 실패했어요."
+        static let didFinishBlock: String = "해당 사용자를 차단했어요."
+        static let didFinishReport: String = "해당 게시글을 신고했어요."
+    }
+    
+    var description: String {
+        switch self {
+        case .delete: Constants.didFinishDeleteWithSuccess
+        case .block: Constants.didFinishBlock
+        case .report: Constants.didFinishReport
+        default: ""
+        }
+    }
+}
+
 enum TimelineAction: BaseAction {
     case viewWillAppear
     case enterToTimeline
@@ -19,6 +42,7 @@ enum TimelineAction: BaseAction {
     case editTravel
     case deleteTravel
     case reportTravel
+    case blockTravel
 }
 
 enum TimelineSideEffect: BaseSideEffect {
@@ -27,13 +51,15 @@ enum TimelineSideEffect: BaseSideEffect {
         case deleteFailed
         case reportFailed
         case likeFailed
+        case blockFailed
         
-        var errorDescription: String {
+        var errorDescription: String? {
             switch self {
             case .loadFailed: "서버 통신에 실패했습니다."
             case .deleteFailed: "여행 삭제에 실패했습니다."
             case .reportFailed: "여행 신고에 실패했습니다."
             case .likeFailed: "여행 좋아요에 실패했습니다."
+            case .blockFailed: "사용자 차단에 실패했습니다."
             }
         }
     }
@@ -46,7 +72,7 @@ enum TimelineSideEffect: BaseSideEffect {
     case showTimelineWriting
     case showTimelineEditing
     case popToTimeline
-    case popToHome
+    case popToHome(TimelineManageType)
     case timelineError(TimelineError)
     case resetState
     case none
@@ -66,7 +92,7 @@ struct TimelineState: BaseState {
     var date: String?
     var timelineWritingInfo: TimelineWritingInfo?
     var isEdit: Bool = false
-    var isDeleteCompleted: Bool = false
+    var timelineManageType: TimelineManageType = .none
     var errorMsg: String?
     var isEmptyList: Bool = false
 }
@@ -118,6 +144,9 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
             
         case .reportTravel:
             return reportTravel()
+            
+        case .blockTravel:
+            return blockTravel()
         }
     }
     
@@ -130,7 +159,7 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
             
         case .resetState:
             newState.isEdit = false
-            newState.isDeleteCompleted = false
+            newState.timelineManageType = .none
             newState.timelineWritingInfo = nil
             
         case let .loadTimeline(travelInfo):
@@ -163,13 +192,13 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
             )
             
         case let .timelineError(error):
-            break
+            newState.errorMsg = error.errorDescription
             
         case .popToTimeline:
             newState.timelineWritingInfo = nil
             
-        case .popToHome:
-            newState.isDeleteCompleted = true
+        case .popToHome(let type):
+            newState.timelineManageType = type
             
         case let .updateCurDate(date):
             newState.date = date
@@ -222,7 +251,7 @@ private extension TimelineViewModel {
     func deleteTravel() -> SideEffectPublisher {
         return timelineUseCase.deleteTravel(id: id)
             .map { _ in
-                return .popToHome
+                return .popToHome(.delete)
             }
             .catch { _ in
                 return Just(.timelineError(.deleteFailed))
@@ -230,10 +259,22 @@ private extension TimelineViewModel {
             .eraseToAnyPublisher()
     }
     
+    // TODO: 서버 연동 필요
+    func blockTravel() -> SideEffectPublisher {
+        return timelineUseCase.reportTravel(id: id)
+            .map { _ in
+                return .popToHome(.block)
+            }
+            .catch { _ in
+                return Just(.timelineError(.blockFailed))
+            }
+            .eraseToAnyPublisher()
+    }
+    
     func reportTravel() -> SideEffectPublisher {
         return timelineUseCase.reportTravel(id: id)
             .map { _ in
-                return .popToHome
+                return .popToHome(.report)
             }
             .catch { _ in
                 return Just(.timelineError(.reportFailed))
