@@ -8,9 +8,9 @@ export class Block {
 
   @ManyToOne(() => User, (user) => user.blockers, { nullable: false })
   @JoinColumn({ name: 'blocker', referencedColumnName: 'id' })
-  blocker: string;
+  blocker: User;
 
   @ManyToOne(() => User, (user) => user.blockeds, { nullable: false })
   @JoinColumn({ name: 'blocked', referencedColumnName: 'id' })
-  blocked: string;
+  blocked: User;
 }
