@@ -15,6 +15,15 @@ export class BlockRepository {
     return this.blockRepository.save({ blocker, blocked });
   }
 
+  findByBlocker(blocker: string) {
+    return this.blockRepository
+      .createQueryBuilder('b')
+      .leftJoinAndSelect('b.blocker', 'x')
+      .leftJoinAndSelect('b.blocked', 'y')
+      .where('b.blocker = :blocker', { blocker })
+      .getMany();
+  }
+
   findByBlockerAndBlocked(blocker: string, blocked: string) {
     return this.blockRepository
       .createQueryBuilder('b')
