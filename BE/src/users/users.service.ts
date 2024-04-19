@@ -128,7 +128,7 @@ export class UsersService {
 
     const block = await this.blockRepository.findByBlocker(blocker, blocked);
     if (block) {
-      throw new BadRequestException('이미 신고한 회원입니다.');
+      throw new BadRequestException('이미 차단한 회원입니다.');
     }
 
     const blockerUser = await this.userRepository.findById(blocker);
