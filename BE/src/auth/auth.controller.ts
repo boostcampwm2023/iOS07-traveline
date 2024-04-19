@@ -6,17 +6,20 @@ import {
   Get,
   Req,
   UseGuards,
-  Query,
-  ParseBoolPipe,
-  Res,
+  Param,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CreateAuthRequestDto } from './dto/create-auth-request.dto';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateAuthRequestForDevDto } from './dto/create-auth-request-for-dev.dto';
-import { DeleteAuthDto } from './dto/delete-auth.dto';
 import { AuthGuard } from './auth.guard';
 import { login, refresh, withdrawal } from './auth.swagger';
+import { SocialLoginRequestDto } from 'src/socialLogin/dto/social-login-request.dto';
+import { SocialWithdrawRequestDto } from 'src/socialLogin/dto/social-withdraw-request.dto';
 
 @Controller('auth')
 @ApiTags('Auth API')
@@ -30,18 +33,8 @@ export class AuthController {
   })
   @ApiOkResponse({ description: 'OK', schema: { example: refresh } })
   refresh(@Req() request) {
-    return this.authService.refresh(request);
-  }
-
-  @Post('login')
-  @ApiOperation({
-    summary: '로그인 또는 회원가입 API',
-    description:
-      '전달받은 idToken 내의 회원 정보를 확인하고 존재하는 회원이면 로그인을, 존재하지 않는 회원이면 회원가입을 진행합니다.',
-  })
-  @ApiOkResponse({ description: 'OK', schema: { example: login } })
-  login(@Req() request, @Body() createAuthDto: CreateAuthRequestDto) {
-    return this.authService.login(request, createAuthDto);
+    const headerMap: Map<string, string> = this.makeHeaderMap(request);
+    return this.authService.refresh(headerMap);
   }
 
   @Post('login/dev')
@@ -57,8 +50,34 @@ export class AuthController {
     return this.authService.loginForDev(createAuthForDevDto);
   }
 
+  @Post('login/:social')
+  @ApiParam({
+    name: 'social',
+    enum: ['apple', 'kakao'],
+    description: '소셜 로그인 종류',
+  })
+  @ApiOperation({
+    summary: '로그인 또는 회원가입 API',
+    description:
+      '전달받은 idToken 내의 회원 정보를 확인하고 존재하는 회원이면 로그인을, 존재하지 않는 회원이면 회원가입을 진행합니다.',
+  })
+  @ApiOkResponse({ description: 'OK', schema: { example: login } })
+  socialLogin(
+    @Req() request,
+    @Param('social') social: string,
+    @Body() socialLoginRequestDto: SocialLoginRequestDto
+  ) {
+    const headerMap: Map<string, string> = this.makeHeaderMap(request);
+    return this.authService.login(social, headerMap, socialLoginRequestDto);
+  }
+
   @UseGuards(AuthGuard)
-  @Delete('withdrawal')
+  @Delete('withdraw/:social')
+  @ApiParam({
+    name: 'social',
+    enum: ['apple', 'kakao'],
+    description: '소셜 로그인 종류',
+  })
   @ApiOperation({
     summary: '탈퇴 API',
     description:
@@ -68,19 +87,55 @@ export class AuthController {
     description: 'OK',
     schema: { example: withdrawal },
   })
-  withdrawal(@Req() request, @Body() deleteAuthDto: DeleteAuthDto) {
-    return this.authService.withdrawal(request, deleteAuthDto);
+  socialWithdraw(
+    @Req() request,
+    @Param('social') social: string,
+    @Body() socialWithdrawRequestDto: SocialWithdrawRequestDto
+  ) {
+    const userId = request['user'].id;
+    return this.authService.withdraw(social, userId, socialWithdrawRequestDto);
   }
 
-  @Get('ip')
-  async manageIp(
-    @Res() response,
-    @Query('id') id: string,
-    @Query('ip') ip: string,
-    @Query('allow', ParseBoolPipe) allow: boolean
-  ) {
-    if (await this.authService.manageIp(id, ip, allow)) {
-      response.redirect('/ip-process-result');
-    }
+  private makeHeaderMap(request): Map<string, string> {
+    return Object.keys(request.headers).reduce((m, key) => {
+      m.set(key, request.headers[key]);
+      return m;
+    }, new Map<string, string>());
   }
+
+  // @UseGuards(AuthGuard)
+  // @Delete('withdrawal')
+  // @ApiOperation({
+  //   summary: '탈퇴 API',
+  //   description:
+  //     '전달받은 idToken과 authorizationCode를 이용해 탈퇴를 진행합니다.',
+  // })
+  // @ApiOkResponse({
+  //   description: 'OK',
+  //   schema: { example: withdrawal },
+  // })
+  // withdrawal(
+  //   @Req() request,
+  //   @Body() socialWithdrawRequestDto: SocialWithdrawRequestDto
+  // ) {
+  //   const userId = request['user'].id;
+  //   return this.authService.withdrawalApple(
+  //     'apple',
+  //     userId,
+  //     socialWithdrawRequestDto
+  //   );
+  // }
+
+  // 추후 수정 예정
+  // @Get('ip')
+  // async manageIp(
+  //   @Res() response,
+  //   @Query('id') id: string,
+  //   @Query('ip') ip: string,
+  //   @Query('allow', ParseBoolPipe) allow: boolean
+  // ) {
+  //   if (await this.authService.manageIp(id, ip, allow)) {
+  //     response.redirect('/ip-process-result');
+  //   }
+  // }
 }

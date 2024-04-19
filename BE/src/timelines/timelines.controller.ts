@@ -218,12 +218,13 @@ export class TimelinesController {
 
   @Get(':id/translate')
   @ApiOperation({
-    summary: 'Papago API 번역',
+    summary: 'Papago API 번역 (outdated)',
     description:
       'Papago API를 사용하여 타임라인 세부 내용을 영어로 번역하고, 그 결과를 반환합니다.',
   })
   @ApiOkResponse({ schema: { example: translate_OK } })
   async translate(@Param('id', ParseUUIDPipe) id: string) {
-    return this.timelinesService.translate(id);
+    return 'Translation Service has ended';
+    // return this.timelinesService.translate(id);
   }
 }

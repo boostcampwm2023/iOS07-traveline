@@ -31,30 +31,41 @@ export class TimelinesService {
     file: Express.Multer.File,
     createTimelineDto: CreateTimelineDto
   ) {
-    const posting = await this.postingsService.findOne(
-      createTimelineDto.posting
-    );
+    let imagePath: string;
 
-    if (posting.writer.id !== userId) {
-      throw new ForbiddenException(
-        '본인이 작성한 게시글에 대해서만 타임라인을 생성할 수 있습니다.'
+    try {
+      const posting = await this.postingsService.findOne(
+        createTimelineDto.posting
       );
-    }
 
-    const timeline = await this.initialize(createTimelineDto);
-    timeline.posting = posting;
-
-    if (file) {
-      const filePath = `${userId}/${posting.id}/`;
-      const { path } = await this.storageService.upload(filePath, file);
-      timeline.image = path;
-
-      if (!posting.thumbnail) {
-        await this.postingsRepository.updateThumbnail(posting.id, path);
+      if (posting.writer.id !== userId) {
+        throw new ForbiddenException(
+          '본인이 작성한 게시글에 대해서만 타임라인을 생성할 수 있습니다.'
+        );
       }
-    }
 
-    return this.timelinesRepository.save(timeline);
+      const timeline = await this.initialize(createTimelineDto);
+      timeline.posting = posting;
+
+      if (file) {
+        const filePath = `${userId}/${posting.id}/`;
+        const { path } = await this.storageService.upload(filePath, file);
+        imagePath = path;
+        timeline.image = imagePath;
+
+        if (!posting.thumbnail) {
+          await this.postingsRepository.updateThumbnail(posting.id, imagePath);
+        }
+      }
+
+      return this.timelinesRepository.save(timeline);
+    } catch (error) {
+      if (imagePath) {
+        await this.storageService.delete(imagePath);
+      }
+
+      throw error;
+    }
   }
 
   async findAll(postingId: string, day: number) {
@@ -92,31 +103,47 @@ export class TimelinesService {
     image: Express.Multer.File,
     updateTimelineDto: UpdateTimelineDto
   ) {
-    const timeline = await this.findOne(id);
-    const isThumbnail = timeline.image === timeline.posting.thumbnail;
-    if (timeline.image) {
-      await this.storageService.delete(timeline.image);
+    let imagePath: string;
+
+    try {
+      const timeline = await this.findOne(id);
+      const isThumbnail = timeline.image === timeline.posting.thumbnail;
+      const updatedTimeline = await this.initialize(updateTimelineDto);
+      updatedTimeline.id = id;
+
+      if (image) {
+        const imagePlainPath = `${userId}/${timeline.posting.id}/`;
+        const { path } = await this.storageService.upload(
+          imagePlainPath,
+          image
+        );
+        imagePath = path;
+        updatedTimeline.image = imagePath;
+      } else {
+        updatedTimeline.image = null;
+      }
+
+      const updatedResult = await this.timelinesRepository.update(
+        id,
+        updatedTimeline
+      );
+
+      if (isThumbnail) {
+        await this.findOneAndUpdateThumbnail(timeline.posting.id);
+      }
+
+      if (timeline.image) {
+        await this.storageService.delete(timeline.image);
+      }
+
+      return updatedResult;
+    } catch (error) {
+      if (imagePath) {
+        await this.storageService.delete(imagePath);
+      }
+
+      throw error;
     }
-
-    const updatedTimeline = await this.initialize(updateTimelineDto);
-    updatedTimeline.id = id;
-
-    if (image) {
-      const imagePath = `${userId}/${timeline.posting.id}/`;
-      const { path } = await this.storageService.upload(imagePath, image);
-      updatedTimeline.image = path;
-    }
-
-    const updatedResult = await this.timelinesRepository.update(
-      id,
-      updatedTimeline
-    );
-
-    if (isThumbnail) {
-      await this.findOneAndUpdateThumbnail(timeline.posting.id);
-    }
-
-    return updatedResult;
   }
 
   @Transactional()
@@ -166,29 +193,29 @@ export class TimelinesService {
     return documents;
   }
 
-  async translate(id: string) {
-    const { description } = await this.findOne(id);
-    const body = {
-      source: 'ko',
-      target: 'en',
-      text: description,
-    };
-    const {
-      data: {
-        message: { result },
-      },
-    } = await firstValueFrom(
-      this.httpService.post(PAPAGO_URL, body, {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-NCP-APIGW-API-KEY-ID': process.env.X_NCP_APIGW_API_KEY_ID,
-          'X-NCP-APIGW-API-KEY': process.env.X_NCP_APIGW_API_KEY,
-        },
-      })
-    );
+  // async translate(id: string) {
+  //   const { description } = await this.findOne(id);
+  //   const body = {
+  //     source: 'ko',
+  //     target: 'en',
+  //     text: description,
+  //   };
+  //   const {
+  //     data: {
+  //       message: { result },
+  //     },
+  //   } = await firstValueFrom(
+  //     this.httpService.post(PAPAGO_URL, body, {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'X-NCP-APIGW-API-KEY-ID': process.env.X_NCP_APIGW_API_KEY_ID,
+  //         'X-NCP-APIGW-API-KEY': process.env.X_NCP_APIGW_API_KEY,
+  //       },
+  //     })
+  //   );
 
-    return { description: result.translatedText };
-  }
+  //   return { description: result.translatedText };
+  // }
 
   private async findOneAndUpdateThumbnail(postingId: string) {
     const result =

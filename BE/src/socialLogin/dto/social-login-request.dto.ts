@@ -7,14 +7,12 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class CreateAuthRequestDto {
-  @ApiProperty()
+export class SocialLoginRequestDto {
+  @ApiProperty({ required: false })
   @IsString()
-  idToken: string;
+  idToken?: string;
 
-  @ApiProperty({
-    required: false,
-  })
+  @ApiProperty({ required: false })
   @IsEmail()
   @MinLength(4)
   @MaxLength(35)

@@ -15,6 +15,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const request = context.getRequest();
 
     if (!(exception instanceof HttpException)) {
+      winstonLogger.log(
+        `**Only Server: Response from ${request.method} ${request.url}\nresponse: ${exception.name} - ${exception.message}`
+      );
       exception = new InternalServerErrorException();
     }
 
