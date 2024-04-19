@@ -126,7 +126,10 @@ export class UsersService {
       throw new BadRequestException('존재하지 않는 회원을 차단할 수 없습니다.');
     }
 
-    const block = await this.blockRepository.findByBlocker(blocker, blocked);
+    const block = await this.blockRepository.findByBlockerAndBlocked(
+      blocker,
+      blocked
+    );
     if (block) {
       throw new BadRequestException('이미 차단한 회원입니다.');
     }

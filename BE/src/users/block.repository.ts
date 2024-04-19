@@ -15,7 +15,7 @@ export class BlockRepository {
     return this.blockRepository.save({ blocker, blocked });
   }
 
-  findByBlocker(blocker: string, blocked: string) {
+  findByBlockerAndBlocked(blocker: string, blocked: string) {
     return this.blockRepository
       .createQueryBuilder('b')
       .leftJoinAndSelect('b.blocker', 'x')
