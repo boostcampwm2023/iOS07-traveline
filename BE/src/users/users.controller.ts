@@ -8,6 +8,9 @@ import {
   UploadedFile,
   UseGuards,
   Req,
+  Post,
+  Param,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
@@ -109,5 +112,15 @@ export class UsersController {
   })
   checkDuplicatedName(@Query('name') name: string) {
     return this.usersService.checkDuplicatedName(name);
+  }
+
+  @Post(':id/block')
+  @ApiOperation({
+    summary: '특정 회원 차단',
+    description: '현재 유저가 id에 해당하는 회원을 차단합니다.',
+  })
+  blockUser(@Req() request, @Param('id', ParseUUIDPipe) id: string) {
+    const userId = request['user'].id;
+    return this.usersService.blockUser(userId, id);
   }
 }
