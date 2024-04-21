@@ -26,6 +26,17 @@ public enum Module: CaseIterable {
         }
     }
     
+    public var bundleSuffix: String {
+        switch self {
+        case .data: return ".data"
+        case .core: return ".core"
+        case .designSystem: return ".designSystem"
+        case .domain: return ".domain"
+        case .feature: return ".feature"
+        default: return ""
+        }
+    }
+    
     public var hasResource: Bool {
         switch self {
         case .app, .designSystem: return true
