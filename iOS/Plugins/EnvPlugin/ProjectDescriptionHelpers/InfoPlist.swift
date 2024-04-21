@@ -25,6 +25,7 @@ public extension Project {
                 ]
             ]
         ],
+        "ITSAppUsesNonExemptEncryption": "false",
         "ProdURL": "$(PROD_URL)",
         "DevURL": "$(DEV_URL)"
     ]

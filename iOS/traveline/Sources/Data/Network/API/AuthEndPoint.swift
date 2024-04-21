@@ -18,7 +18,7 @@ extension AuthEndPoint: EndPoint {
     var path: String? {
         switch self {
         case .withdrawal:
-            return "/auth/withdrawal/apple"
+            return "/auth/withdraw/apple"
         case .appleLogin:
             return "/auth/login/apple"
         case .refresh:
