@@ -11,7 +11,7 @@ import UIKit
 
 import DesignSystem
 
-final class TimelineVC: UIViewController {
+public final class TimelineVC: UIViewController {
     
     private enum Metric {
         static let travelInfoEstimatedHeight: CGFloat = 170.0
@@ -76,7 +76,7 @@ final class TimelineVC: UIViewController {
     
     // MARK: - Initializer
     
-    init(viewModel: TimelineViewModel) {
+    public init(viewModel: TimelineViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -87,7 +87,7 @@ final class TimelineVC: UIViewController {
     
     // MARK: - Life Cycle
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
         setupAttributes()
@@ -98,14 +98,14 @@ final class TimelineVC: UIViewController {
         bind()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = true
         viewModel.sendAction(.viewWillAppear)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         viewModel.sendAction(.enterToTimeline)
@@ -152,7 +152,7 @@ final class TimelineVC: UIViewController {
 
 // MARK: - Setup Functions
 
-private extension TimelineVC {
+public extension TimelineVC {
     func setupAttributes() {
         view.backgroundColor = TLColor.black
         timelineCollectionView.backgroundView = emptyView

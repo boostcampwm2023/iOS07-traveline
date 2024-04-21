@@ -10,11 +10,11 @@ import Foundation
 
 import Domain
 
-final class TimelineRepositoryImpl: TimelineRepository {
+public final class TimelineRepositoryImpl: TimelineRepository {
     
     private let network: NetworkType
     
-    init(network: NetworkType) {
+    public init(network: NetworkType) {
         self.network = network
     }
     

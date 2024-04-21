@@ -12,11 +12,11 @@ import Combine
 import DesignSystem
 import Domain
 
-final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> {
+public final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, HomeState> {
     
     private let homeUseCase: HomeUseCase
     
-    init(homeUseCase: HomeUseCase) {
+    public init(homeUseCase: HomeUseCase) {
         self.homeUseCase = homeUseCase
     }
     

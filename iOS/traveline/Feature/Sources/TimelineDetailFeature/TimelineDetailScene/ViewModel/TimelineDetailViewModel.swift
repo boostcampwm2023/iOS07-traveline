@@ -50,12 +50,12 @@ struct TimelineDetailState: BaseState {
     var isTranslated: Bool = false
 }
 
-final class TimelineDetailViewModel: BaseViewModel<TimelineDetailAction, TimelineDetailSideEffect, TimelineDetailState> {
+public final class TimelineDetailViewModel: BaseViewModel<TimelineDetailAction, TimelineDetailSideEffect, TimelineDetailState> {
     
     private let timelineDetailUseCase: TimelineDetailUseCase
     private let id: String
     
-    init(timelineDetailUseCase: TimelineDetailUseCase, timelineId: String) {
+    public init(timelineDetailUseCase: TimelineDetailUseCase, timelineId: String) {
         self.timelineDetailUseCase = timelineDetailUseCase
         self.id = timelineId
     }

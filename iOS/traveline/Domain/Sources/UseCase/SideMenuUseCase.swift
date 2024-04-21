@@ -13,11 +13,11 @@ public protocol SideMenuUseCase {
     func fetchProfile() -> AnyPublisher<Profile, Error>
 }
 
-final class SideMenuUseCaseImpl: SideMenuUseCase {
+public final class SideMenuUseCaseImpl: SideMenuUseCase {
     
     private let repository: UserRepository
     
-    init(repository: UserRepository) {
+    public init(repository: UserRepository) {
         self.repository = repository
     }
     

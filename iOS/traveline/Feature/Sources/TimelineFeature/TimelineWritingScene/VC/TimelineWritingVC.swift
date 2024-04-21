@@ -12,7 +12,7 @@ import UIKit
 
 import DesignSystem
 
-final class TimelineWritingVC: UIViewController {
+public final class TimelineWritingVC: UIViewController {
     
     private enum Metric {
         static let topInset: CGFloat = 24
@@ -82,7 +82,7 @@ final class TimelineWritingVC: UIViewController {
     
     // MARK: - Initialize
     
-    init(viewModel: TimelineWritingViewModel) {
+    public init(viewModel: TimelineWritingViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         

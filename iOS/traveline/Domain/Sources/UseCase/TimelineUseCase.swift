@@ -18,12 +18,12 @@ public protocol TimelineUseCase {
     func likeTravel(id: TravelID) -> AnyPublisher<Bool, Error>
 }
 
-final class TimelineUseCaseImpl: TimelineUseCase {
+public final class TimelineUseCaseImpl: TimelineUseCase {
 
     private let postingRepository: PostingRepository
     private let timelineRepository: TimelineRepository
     
-    init(postingRepository: PostingRepository, timelineRepository: TimelineRepository) {
+    public init(postingRepository: PostingRepository, timelineRepository: TimelineRepository) {
         self.postingRepository = postingRepository
         self.timelineRepository = timelineRepository
     }

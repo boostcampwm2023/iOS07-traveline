@@ -14,34 +14,36 @@ import Core
 import DesignSystem
 import Domain
 
-typealias Auth = ASAuthorization
+public typealias Auth = ASAuthorization
 
-enum LoginAction: BaseAction {
+public enum LoginAction: BaseAction {
     case startAppleLogin
     case successAppleLogin(Auth)
     case failAppleLogin
 }
 
-enum LoginSideEffect: BaseSideEffect {
+public enum LoginSideEffect: BaseSideEffect {
     case requestAppleLogin(AppleIDRequest)
     case completeAppleLogin(Bool)
     case loginFailed(Error)
 }
 
-struct LoginState: BaseState {
+public struct LoginState: BaseState {
     var appleIDRequests: [AppleIDRequest]?
     var isSuccessLogin: Bool = false
+    
+    public init() {}
 }
 
-final class LoginViewModel: BaseViewModel<LoginAction, LoginSideEffect, LoginState> {
+public final class LoginViewModel: BaseViewModel<LoginAction, LoginSideEffect, LoginState> {
     
     private let useCase: LoginUseCase
     
-    init(useCase: LoginUseCase) {
+    public init(useCase: LoginUseCase) {
         self.useCase = useCase
     }
     
-    override func transform(action: LoginAction) -> SideEffectPublisher {
+    public override func transform(action: LoginAction) -> SideEffectPublisher {
         switch action {
         case .startAppleLogin:
             return requestAppleLogin()
@@ -54,7 +56,7 @@ final class LoginViewModel: BaseViewModel<LoginAction, LoginSideEffect, LoginSta
         }
     }
     
-    override func reduceState(state: LoginState, effect: LoginSideEffect) -> LoginState {
+    public override func reduceState(state: LoginState, effect: LoginSideEffect) -> LoginState {
         var newState = state
         
         switch effect {

@@ -13,11 +13,11 @@ public protocol MyPostListUseCase {
     func fetchMyPostList() -> AnyPublisher<TravelList, Error>
 }
 
-final class MyPostListUseCaseImpl: MyPostListUseCase {
+public final class MyPostListUseCaseImpl: MyPostListUseCase {
     
     private let repository: PostingRepository
     
-    init(repository: PostingRepository) {
+    public init(repository: PostingRepository) {
         self.repository = repository
     }
     

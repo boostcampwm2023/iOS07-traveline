@@ -56,13 +56,13 @@ struct CaptionOptions {
     }
 }
 
-final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, ProfileEditingSideEffect, ProfileEditingState> {
+public final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, ProfileEditingSideEffect, ProfileEditingState> {
     
     private var isChangedImage: Bool = false
     private var changedNickname: String = ""
     private let useCase: ProfileEditingUseCase
     
-    init(useCase: ProfileEditingUseCase) {
+    public init(useCase: ProfileEditingUseCase) {
         self.useCase = useCase
         super.init()
     }

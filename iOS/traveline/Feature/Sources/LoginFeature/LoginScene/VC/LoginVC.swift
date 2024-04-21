@@ -10,7 +10,10 @@ import AuthenticationServices
 import Combine
 import UIKit
 
-final class LoginVC: UIViewController {
+import DesignSystem
+import Core
+
+public final class LoginVC: UIViewController {
     
     private enum Metric {
         static let topInset: CGFloat = 200 * BaseMetric.Adjust.height
@@ -37,7 +40,7 @@ final class LoginVC: UIViewController {
     
     // MARK: - Initialzier
     
-    init(viewModel: LoginViewModel) {
+    public init(viewModel: LoginViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -48,7 +51,7 @@ final class LoginVC: UIViewController {
     
     // MARK: - Life Cycle
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
         setupAttributes()
@@ -59,7 +62,7 @@ final class LoginVC: UIViewController {
 
 // MARK: - Setup Functions
 
-private extension LoginVC {
+public extension LoginVC {
     func setupAttributes() {
         view.backgroundColor = TLColor.black
     }
@@ -120,11 +123,11 @@ private extension LoginVC {
 
 extension LoginVC: ASAuthorizationControllerDelegate {
     
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+    public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         viewModel.sendAction(.successAppleLogin(authorization))
     }
     
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+    public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         viewModel.sendAction(.failAppleLogin)
     }
 }

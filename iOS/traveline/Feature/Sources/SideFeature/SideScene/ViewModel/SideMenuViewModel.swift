@@ -26,11 +26,11 @@ struct SideMenuState: BaseState {
     var profile: Profile = .empty
 }
 
-final class SideMenuViewModel: BaseViewModel<SideMenuAction, SideMenuSideEffect, SideMenuState> {
+public final class SideMenuViewModel: BaseViewModel<SideMenuAction, SideMenuSideEffect, SideMenuState> {
     
     private let useCase: SideMenuUseCase
     
-    init(useCase: SideMenuUseCase) {
+    public init(useCase: SideMenuUseCase) {
         self.useCase = useCase
         super.init()
     }

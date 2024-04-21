@@ -15,15 +15,15 @@ public protocol LoginUseCase {
     func requestLogin(with info: AppleLoginRequest) -> AnyPublisher<Bool, Error>
 }
 
-final class LoginUseCaseImpl: LoginUseCase {
+public final class LoginUseCaseImpl: LoginUseCase {
     
     private let repository: AuthRepository
     
-    init(repository: AuthRepository) {
+    public init(repository: AuthRepository) {
         self.repository = repository
     }
     
-    func requestLogin(with info: AppleLoginRequest) -> AnyPublisher<Bool, Error> {
+    public func requestLogin(with info: AppleLoginRequest) -> AnyPublisher<Bool, Error> {
         return Future {
             UserDefaultsList.profile = nil
             let tlToken = try await self.repository.appleLogin(with: info)

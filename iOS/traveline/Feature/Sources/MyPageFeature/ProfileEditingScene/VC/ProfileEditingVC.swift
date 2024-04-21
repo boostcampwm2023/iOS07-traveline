@@ -12,7 +12,7 @@ import UIKit
 
 import DesignSystem
 
-final class ProfileEditingVC: UIViewController {
+public final class ProfileEditingVC: UIViewController {
     
     private enum Metric {
         static let topInset: CGFloat = 24
@@ -101,7 +101,7 @@ final class ProfileEditingVC: UIViewController {
     
     // MARK: - Initialize
     
-    init(viewModel: ProfileEditingViewModel) {
+    public init(viewModel: ProfileEditingViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }

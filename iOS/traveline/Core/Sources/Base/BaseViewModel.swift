@@ -9,7 +9,7 @@
 import Combine
 import Foundation
 
-public class BaseViewModel<Action: BaseAction, SideEffect: BaseSideEffect, State: BaseState> {
+open class BaseViewModel<Action: BaseAction, SideEffect: BaseSideEffect, State: BaseState> {
     
     // MARK: - Types
     
@@ -39,7 +39,7 @@ public class BaseViewModel<Action: BaseAction, SideEffect: BaseSideEffect, State
     
     // MARK: - Initializer
     
-    init() {
+    public init() {
         self.actions
             .flatMap { [weak owner = self] action -> SideEffectPublisher in
                 guard let owner else { return Empty().eraseToAnyPublisher() }
@@ -62,11 +62,11 @@ public class BaseViewModel<Action: BaseAction, SideEffect: BaseSideEffect, State
         actions.send(action)
     }
     
-    public func transform(action: Action) -> SideEffectPublisher {
+    open func transform(action: Action) -> SideEffectPublisher {
         return Empty().eraseToAnyPublisher()
     }
     
-    public func reduceState(state: State, effect: SideEffect) -> State {
+    open func reduceState(state: State, effect: SideEffect) -> State {
         return state
     }
 }

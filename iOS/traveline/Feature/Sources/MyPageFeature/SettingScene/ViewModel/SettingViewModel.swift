@@ -32,11 +32,11 @@ struct SettingState: BaseState {
     var appleIDRequests: [AppleIDRequest]?
 }
 
-final class SettingViewModel: BaseViewModel<SettingAction, SettingSideEffect, SettingState> {
+public final class SettingViewModel: BaseViewModel<SettingAction, SettingSideEffect, SettingState> {
     
     private let useCase: SettingUseCase
     
-    init(useCase: SettingUseCase) {
+    public init(useCase: SettingUseCase) {
         self.useCase = useCase
     }
     

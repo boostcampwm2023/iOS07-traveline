@@ -23,11 +23,11 @@ public protocol TravelUseCase {
     func putTravel(id: TravelID, data: TravelRequest) -> AnyPublisher<TravelID, Error>
 }
 
-final class TravelUseCaseImpl: TravelUseCase {
+public final class TravelUseCaseImpl: TravelUseCase {
     
     private let repository: PostingRepository
     
-    init(repository: PostingRepository) {
+    public init(repository: PostingRepository) {
         self.repository = repository
     }
     

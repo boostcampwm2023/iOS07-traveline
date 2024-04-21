@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class RootContainerVC: UIViewController {
+public final class RootContainerVC: UIViewController {
     
     enum SideMenuState {
         case opened
@@ -29,7 +29,7 @@ final class RootContainerVC: UIViewController {
     
     // MARK: - Initialize
     
-    init() {
+    public init() {
         super.init(nibName: nil, bundle: nil)
         
         setupChildVC()

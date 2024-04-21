@@ -74,12 +74,12 @@ struct TimelineState: BaseState {
     var isEmptyList: Bool = false
 }
 
-final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect, TimelineState> {
+public final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect, TimelineState> {
     
     private(set) var id: TravelID
     private let timelineUseCase: TimelineUseCase
     
-    init(
+    public init(
         id: TravelID,
         fetchTravelInfoUseCase: TimelineUseCase
     ) {

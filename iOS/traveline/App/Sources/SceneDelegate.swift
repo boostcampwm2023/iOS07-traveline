@@ -8,6 +8,8 @@
 
 import UIKit
 
+import DesignSystem
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?

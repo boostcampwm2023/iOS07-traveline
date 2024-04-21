@@ -15,11 +15,11 @@ public protocol TimelineDetailUseCase {
     func fetchTranslateTimelineDetail(with id: String) -> AnyPublisher<TimelineTranslatedInfo, Error>
 }
 
-final class TimelineDetailUseCaseImpl: TimelineDetailUseCase {
+public final class TimelineDetailUseCaseImpl: TimelineDetailUseCase {
     
     private let repository: TimelineDetailRepository
     
-    init(repository: TimelineDetailRepository) {
+    public init(repository: TimelineDetailRepository) {
         self.repository = repository
     }
     

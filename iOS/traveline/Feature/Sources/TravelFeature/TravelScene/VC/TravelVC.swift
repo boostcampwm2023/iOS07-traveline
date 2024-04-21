@@ -11,7 +11,7 @@ import UIKit
 
 import DesignSystem
 
-final class TravelVC: UIViewController {
+public final class TravelVC: UIViewController {
     
     private enum Metric {
         static let horizontalInset: CGFloat = 16.0
@@ -91,7 +91,7 @@ final class TravelVC: UIViewController {
     
     // MARK: - Initializer
     
-    init(viewModel: TravelViewModel) {
+    public init(viewModel: TravelViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }

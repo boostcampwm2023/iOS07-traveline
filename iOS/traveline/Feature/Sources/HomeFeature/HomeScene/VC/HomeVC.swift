@@ -16,7 +16,7 @@ protocol HomeViewDelegate: AnyObject {
     func sideMenuTapped()
 }
 
-final class HomeVC: UIViewController {
+public final class HomeVC: UIViewController {
     
     private enum Metric {
         static let topInset: CGFloat = 12
@@ -47,7 +47,7 @@ final class HomeVC: UIViewController {
     
     // MARK: - Initializer
     
-    init(viewModel: HomeViewModel) {
+    public init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -58,7 +58,7 @@ final class HomeVC: UIViewController {
     
     // MARK: - Life Cycle
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
         setupAttributes()
@@ -66,14 +66,14 @@ final class HomeVC: UIViewController {
         bind()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = false
         viewModel.sendAction(.viewWillAppear)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         viewModel.sendAction(.viewDidAppear)
@@ -88,7 +88,7 @@ final class HomeVC: UIViewController {
 
 // MARK: - Setup Functions
 
-private extension HomeVC {
+extension HomeVC {
     func setupAttributes() {
         searchController.searchBar.delegate = self
         

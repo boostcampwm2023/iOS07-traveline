@@ -8,29 +8,34 @@
 
 import Foundation
 
-public enum VCFactory {
+import Data
+import Domain
+import Feature
+
+public final class VCFactory: FactoryInterface {
     
-    public static let network: NetworkType = NetworkManager(urlSession: URLSession.shared)
+    public let network: NetworkType = NetworkManager(urlSession: URLSession.shared)
     
-    public static func makeAutoLoginVC() -> AutoLoginVC {
+    public func makeAutoLoginVC() -> AutoLoginVC {
         let repository = AuthRepositoryImpl(network: network)
         let useCase = AutoLoginUseCaseImpl(repository: repository)
         let viewModel = AutoLoginViewModel(useCase: useCase)
-        return AutoLoginVC(viewModel: viewModel)
+        let vc = AutoLoginVC(viewModel: viewModel, factory: self)
+        return vc
     }
     
-    public static func makeLoginVC() -> LoginVC {
+    public func makeLoginVC() -> LoginVC {
         let repository = AuthRepositoryImpl(network: network)
         let useCase = LoginUseCaseImpl(repository: repository)
         let viewModel = LoginViewModel(useCase: useCase)
         return LoginVC(viewModel: viewModel)
     }
     
-    public static func makeRootContainerVC() -> RootContainerVC {
+    public func makeRootContainerVC() -> RootContainerVC {
         return RootContainerVC()
     }
     
-    public static func makeTimelineVC(id: TravelID) -> TimelineVC {
+    public func makeTimelineVC(id: TravelID) -> TimelineVC {
         let postingRepository = PostingRepositoryImpl(network: network)
         let timelineRepository = TimelineRepositoryImpl(network: network)
         let useCase = TimelineUseCaseImpl(
@@ -44,42 +49,45 @@ public enum VCFactory {
         return TimelineVC(viewModel: viewModel)
     }
     
-    public static func makeHomeVC() -> HomeVC {
+    public func makeHomeVC() -> HomeVC {
         let repository = PostingRepositoryImpl(network: network)
         let useCase = HomeUseCaseImpl(repository: repository)
         let viewModel = HomeViewModel(homeUseCase: useCase)
         return HomeVC(viewModel: viewModel)
     }
     
-    public static func makeTimelineDetailVC(with id: String) -> TimelineDetailVC {
+    public func makeTimelineDetailVC(with id: String) -> TimelineDetailVC {
         let repository = TimelineDetailRepositoryImpl(network: network)
         let useCase = TimelineDetailUseCaseImpl(repository: repository)
-        let viewModel = TimelineDetailViewModel(timelineDetailUseCase: useCase, timelineId: id)
+        let viewModel = TimelineDetailViewModel(
+            timelineDetailUseCase: useCase,
+            timelineId: id
+        )
         return TimelineDetailVC(viewModel: viewModel)
     }
     
-    public static func makeMyPostListVC() -> MyPostListVC {
+    public func makeMyPostListVC() -> MyPostListVC {
         let repository = PostingRepositoryImpl(network: network)
         let useCase = MyPostListUseCaseImpl(repository: repository)
         let viewModel = MyPostListViewModel(myPostListUseCase: useCase)
         return MyPostListVC(viewModel: viewModel)
     }
     
-    public static func makeTravelVC(
+    public func makeTravelVC(
         id: TravelID? = nil,
         travelInfo: TimelineTravelInfo? = nil
     ) -> TravelVC {
         let repository = PostingRepositoryImpl(network: network)
         let useCase = TravelUseCaseImpl(repository: repository)
         let viewModel = TravelViewModel(
-            id: id, 
+            id: id,
             travelInfo: travelInfo,
             travelUseCase: useCase
         )
         return TravelVC(viewModel: viewModel)
     }
     
-    public static func makeTimelineWritingVC(
+    public func makeTimelineWritingVC(
         id: TravelID,
         date: String,
         day: Int,
@@ -97,21 +105,21 @@ public enum VCFactory {
         return TimelineWritingVC(viewModel: viewModel)
     }
     
-    public static func makeSideMenuVC() -> SideMenuVC {
+    public func makeSideMenuVC() -> SideMenuVC {
         let repository = UserRepositoryImpl(network: network)
         let useCase = SideMenuUseCaseImpl(repository: repository)
         let viewModel = SideMenuViewModel(useCase: useCase)
         return SideMenuVC(viewModel: viewModel)
     }
     
-    public static func makeSettingVC() -> SettingVC {
+    public func makeSettingVC() -> SettingVC {
         let repository = AuthRepositoryImpl(network: network)
         let useCase = SettingUseCaseImpl(repository: repository)
         let viewModel = SettingViewModel(useCase: useCase)
         return SettingVC(viewModel: viewModel)
     }
     
-    public static func makeProfileEditingVC() -> ProfileEditingVC {
+    public func makeProfileEditingVC() -> ProfileEditingVC {
         let repository = UserRepositoryImpl(network: network)
         let useCase = ProfileEditingUseCaseImpl(repository: repository)
         let viewModel = ProfileEditingViewModel(useCase: useCase)

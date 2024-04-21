@@ -10,11 +10,11 @@ import Foundation
 
 import Domain
 
-final class PostingRepositoryImpl: PostingRepository {
+public final class PostingRepositoryImpl: PostingRepository {
     
     private let network: NetworkType
     
-    init(network: NetworkType) {
+    public init(network: NetworkType) {
         self.network = network
     }
     

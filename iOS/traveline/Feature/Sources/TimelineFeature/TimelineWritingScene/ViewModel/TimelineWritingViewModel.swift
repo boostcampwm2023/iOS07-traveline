@@ -71,7 +71,7 @@ struct TimelineWritingState: BaseState {
     var isEditCompleted: Bool = false
 }
 
-final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, TimelineWritingSideEffect, TimelineWritingState> {
+public final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, TimelineWritingSideEffect, TimelineWritingState> {
     
     private var useCase: TimelineWritingUseCase
     private let id: TravelID
@@ -79,7 +79,7 @@ final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, Timel
     private let day: Int
     private let timelineID: String?
     
-    init(
+    public init(
         useCase: TimelineWritingUseCase,
         id: TravelID,
         date: String,

@@ -25,12 +25,12 @@ public enum NicknameValidationState {
     case exceededStringLength
 }
 
-final class ProfileEditingUseCaseImpl: ProfileEditingUseCase {
+public final class ProfileEditingUseCaseImpl: ProfileEditingUseCase {
     
     private let repository: UserRepository
     private var profile: Profile = .empty
     
-    init(repository: UserRepository) {
+    public init(repository: UserRepository) {
         self.repository = repository
     }
     

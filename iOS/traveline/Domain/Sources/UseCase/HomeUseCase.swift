@@ -19,11 +19,11 @@ public protocol HomeUseCase {
     func fetchRelatedKeyword(_ keyword: String) -> AnyPublisher<SearchKeywordList, Error>
 }
 
-final class HomeUseCaseImpl: HomeUseCase {
+public final class HomeUseCaseImpl: HomeUseCase {
     
     private let repository: PostingRepository
     
-    init(repository: PostingRepository) {
+    public init(repository: PostingRepository) {
         self.repository = repository
     }
     

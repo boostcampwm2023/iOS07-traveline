@@ -59,12 +59,12 @@ struct TravelState: BaseState {
     }
 }
 
-final class TravelViewModel: BaseViewModel<TravelAction, TravelSideEffect, TravelState> {
+public final class TravelViewModel: BaseViewModel<TravelAction, TravelSideEffect, TravelState> {
     
     private let id: TravelID?
     private let travelUseCase: TravelUseCase
     
-    init(
+    public init(
         id: TravelID?,
         travelInfo: TimelineTravelInfo?,
         travelUseCase: TravelUseCase

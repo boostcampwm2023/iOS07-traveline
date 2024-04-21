@@ -11,7 +11,7 @@ import UIKit
 
 import DesignSystem
 
-final class MyPostListVC: UIViewController {
+public final class MyPostListVC: UIViewController {
     
     private enum Metric {
         enum TravelList {
@@ -58,7 +58,7 @@ final class MyPostListVC: UIViewController {
     
     // MARK: - Initialize
     
-    init(viewModel: MyPostListViewModel) {
+    public init(viewModel: MyPostListViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         

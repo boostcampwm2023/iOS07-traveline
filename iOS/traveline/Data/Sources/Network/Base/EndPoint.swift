@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol EndPoint {
+public protocol EndPoint {
     var path: String? { get }
     var httpMethod: HTTPMethod { get }
     var body: Encodable? { get }

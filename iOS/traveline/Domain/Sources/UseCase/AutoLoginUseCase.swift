@@ -15,27 +15,27 @@ public protocol AutoLoginUseCase {
     func requestLogin() -> AnyPublisher<Bool, Error>
 }
 
-final class AutoLoginUseCaseImpl: AutoLoginUseCase {
-    
+public final class AutoLoginUseCaseImpl: AutoLoginUseCase {
+
     private let repository: AuthRepository
-    
-    init(repository: AuthRepository) {
+
+    public init(repository: AuthRepository) {
         self.repository = repository
     }
-    
-    func requestLogin() -> AnyPublisher<Bool, Error> {
+
+    public func requestLogin() -> AnyPublisher<Bool, Error> {
         guard let isFirstEntry = UserDefaultsList.isFirstEntry,
               !isFirstEntry else {
             return Just(false)
                 .setFailureType(to: Error.self)
                 .eraseToAnyPublisher()
         }
-        
+
         return Future {
             let accessToken = try await self.repository.refresh()
             KeychainList.accessToken = accessToken
             return true
         }.eraseToAnyPublisher()
     }
-    
+
 }

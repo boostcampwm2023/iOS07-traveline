@@ -11,7 +11,7 @@ import UIKit
 
 import DesignSystem
 
-final class TimelineDetailVC: UIViewController {
+public final class TimelineDetailVC: UIViewController {
     
     private enum Metric {
         static let topInset: CGFloat = 24
@@ -76,7 +76,7 @@ final class TimelineDetailVC: UIViewController {
     
     // MARK: - Initialize
     
-    init(viewModel: TimelineDetailViewModel) {
+    public init(viewModel: TimelineDetailViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         

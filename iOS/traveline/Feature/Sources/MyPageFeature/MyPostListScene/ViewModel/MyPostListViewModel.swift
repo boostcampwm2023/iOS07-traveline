@@ -25,11 +25,11 @@ struct MyPostListState: BaseState {
     var travelList: TravelList = .init()
 }
 
-final class MyPostListViewModel: BaseViewModel<MyPostListAction, MyPostListSideEffect, MyPostListState> {
+public final class MyPostListViewModel: BaseViewModel<MyPostListAction, MyPostListSideEffect, MyPostListState> {
     
     private let myPostListUseCase: MyPostListUseCase
     
-    init(myPostListUseCase: MyPostListUseCase) {
+    public init(myPostListUseCase: MyPostListUseCase) {
         self.myPostListUseCase = myPostListUseCase
     }
     

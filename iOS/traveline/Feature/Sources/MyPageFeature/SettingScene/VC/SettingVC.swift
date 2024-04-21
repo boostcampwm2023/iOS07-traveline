@@ -39,7 +39,7 @@ enum ServiceGuideType: String, CaseIterable {
 
 // MARK: - Setting VC
 
-final class SettingVC: UIViewController {
+public final class SettingVC: UIViewController {
     
     // MARK: - UI Components
     
@@ -94,7 +94,7 @@ final class SettingVC: UIViewController {
     
     // MARK: - Initialize
     
-    init(viewModel: SettingViewModel) {
+    public init(viewModel: SettingViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }

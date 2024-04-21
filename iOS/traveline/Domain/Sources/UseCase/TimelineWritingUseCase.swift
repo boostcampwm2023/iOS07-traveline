@@ -18,11 +18,11 @@ public protocol TimelineWritingUseCase {
     func toTimelineDetailRequest(from info: TimelineDetailInfo) -> TimelineDetailRequest
 }
 
-final class TimelineWritingUseCaseImpl: TimelineWritingUseCase {
+public final class TimelineWritingUseCaseImpl: TimelineWritingUseCase {
     
     private let repository: TimelineDetailRepository
     
-    init(repository: TimelineDetailRepository) {
+    public init(repository: TimelineDetailRepository) {
         self.repository = repository
     }
     

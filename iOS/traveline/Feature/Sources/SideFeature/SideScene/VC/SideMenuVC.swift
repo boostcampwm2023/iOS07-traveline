@@ -15,7 +15,7 @@ protocol SideMenuDelegate: AnyObject {
     func didSelect(menuItem: SideMenuVC.Options)
 }
 
-final class SideMenuVC: UIViewController {
+public final class SideMenuVC: UIViewController {
     
     enum Options {
         case profileEdit
@@ -80,7 +80,7 @@ final class SideMenuVC: UIViewController {
     
     // MARK: - Initializer
     
-    init(viewModel: SideMenuViewModel) {
+    public init(viewModel: SideMenuViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }

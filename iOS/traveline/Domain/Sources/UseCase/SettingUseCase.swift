@@ -17,11 +17,11 @@ public protocol SettingUseCase {
     func logout()
 }
 
-final class SettingUseCaseImpl: SettingUseCase {
+public final class SettingUseCaseImpl: SettingUseCase {
     
     private let repository: AuthRepository
     
-    init(repository: AuthRepository) {
+    public init(repository: AuthRepository) {
         self.repository = repository
     }
     
