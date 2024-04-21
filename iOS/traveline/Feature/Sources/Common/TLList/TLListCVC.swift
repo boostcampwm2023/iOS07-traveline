@@ -8,6 +8,8 @@
 
 import UIKit
 
+import Domain
+
 final class TLListCVC: UICollectionViewCell {
     
     static let identifier = String(describing: type(of: TLListCVC.self))

@@ -28,21 +28,21 @@ public final class TimelineUseCaseImpl: TimelineUseCase {
         self.timelineRepository = timelineRepository
     }
 
-    func fetchTimelineInfo(id: TravelID) -> AnyPublisher<TimelineTravelInfo, Error> {
+    public func fetchTimelineInfo(id: TravelID) -> AnyPublisher<TimelineTravelInfo, Error> {
         return Future {
             let travelInfo = try await self.postingRepository.fetchTimelineInfo(id: id)
             return travelInfo
         }.eraseToAnyPublisher()
     }
     
-    func fetchTimelineList(id: TravelID, day: Int) -> AnyPublisher<TimelineCardList, Error> {
+    public func fetchTimelineList(id: TravelID, day: Int) -> AnyPublisher<TimelineCardList, Error> {
         return Future {
             let timelineList = try await self.timelineRepository.fetchTimelineList(id: id, day: day)
             return timelineList
         }.eraseToAnyPublisher()
     }
     
-    func calculateDate(from startDate: String, with day: Int) -> String? {
+    public func calculateDate(from startDate: String, with day: Int) -> String? {
         guard let date = startDate.toDate(),
               let curDate = Calendar.current.date(byAdding: .day, value: day, to: date) else { return nil }
         
@@ -50,21 +50,21 @@ public final class TimelineUseCaseImpl: TimelineUseCase {
 
     }
     
-    func deleteTravel(id: TravelID) -> AnyPublisher<Bool, Error> {
+    public func deleteTravel(id: TravelID) -> AnyPublisher<Bool, Error> {
         return Future {
             let result = try await self.postingRepository.deletePosting(id: id)
             return result
         }.eraseToAnyPublisher()
     }
     
-    func reportTravel(id: TravelID) -> AnyPublisher<Bool, Error> {
+    public func reportTravel(id: TravelID) -> AnyPublisher<Bool, Error> {
         return Future {
             let result = try await self.postingRepository.postReport(id: id)
             return result
         }.eraseToAnyPublisher()
     }
     
-    func likeTravel(id: TravelID) -> AnyPublisher<Bool, Error> {
+    public func likeTravel(id: TravelID) -> AnyPublisher<Bool, Error> {
         return Future {
             let result = try await self.postingRepository.postLike(id: id)
             return result

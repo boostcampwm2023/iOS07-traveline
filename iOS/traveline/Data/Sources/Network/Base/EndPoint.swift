@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Core
+
 public protocol EndPoint {
     var path: String? { get }
     var httpMethod: HTTPMethod { get }

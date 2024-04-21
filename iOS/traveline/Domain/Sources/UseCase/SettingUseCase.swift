@@ -25,15 +25,15 @@ public final class SettingUseCaseImpl: SettingUseCase {
         self.repository = repository
     }
     
-    func logout() {
+    public func logout() {
         repository.logout()
     }
     
-    func requestAppleId() -> AppleIDRequest {
+    public func requestAppleId() -> AppleIDRequest {
         return repository.requestAppleId()
     }
     
-    func requestWithdrawal(_ request: WithdrawRequest) -> AnyPublisher<Bool, Error> {
+    public func requestWithdrawal(_ request: WithdrawRequest) -> AnyPublisher<Bool, Error> {
         return Future {
             let result = try await self.repository.withdrawal(request)
             KeychainList.allClear()

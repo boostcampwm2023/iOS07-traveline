@@ -56,4 +56,20 @@ public struct TimelineDetailInfo: Hashable {
         time: "07:30",
         isOwner: false
     )
+    
+    public init(postingID: String, id: String, title: String, day: Int, description: String, imageURL: String?, imagePath: String?, coordX: Double?, coordY: Double?, date: String, location: String?, time: String, isOwner: Bool) {
+        self.postingID = postingID
+        self.id = id
+        self.title = title
+        self.day = day
+        self.description = description
+        self.imageURL = imageURL
+        self.imagePath = imagePath
+        self.coordX = coordX
+        self.coordY = coordY
+        self.date = date
+        self.location = location
+        self.time = time
+        self.isOwner = isOwner
+    }
 }

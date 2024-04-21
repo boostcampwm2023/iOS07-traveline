@@ -28,11 +28,11 @@ public final class VCFactory: FactoryInterface {
         let repository = AuthRepositoryImpl(network: network)
         let useCase = LoginUseCaseImpl(repository: repository)
         let viewModel = LoginViewModel(useCase: useCase)
-        return LoginVC(viewModel: viewModel)
+        return LoginVC(viewModel: viewModel, factory: self)
     }
     
     public func makeRootContainerVC() -> RootContainerVC {
-        return RootContainerVC()
+        return RootContainerVC(factory: self)
     }
     
     public func makeTimelineVC(id: TravelID) -> TimelineVC {
@@ -46,14 +46,14 @@ public final class VCFactory: FactoryInterface {
             id: id,
             fetchTravelInfoUseCase: useCase
         )
-        return TimelineVC(viewModel: viewModel)
+        return TimelineVC(viewModel: viewModel, factory: self)
     }
     
     public func makeHomeVC() -> HomeVC {
         let repository = PostingRepositoryImpl(network: network)
         let useCase = HomeUseCaseImpl(repository: repository)
         let viewModel = HomeViewModel(homeUseCase: useCase)
-        return HomeVC(viewModel: viewModel)
+        return HomeVC(viewModel: viewModel, factory: self)
     }
     
     public func makeTimelineDetailVC(with id: String) -> TimelineDetailVC {
@@ -63,14 +63,14 @@ public final class VCFactory: FactoryInterface {
             timelineDetailUseCase: useCase,
             timelineId: id
         )
-        return TimelineDetailVC(viewModel: viewModel)
+        return TimelineDetailVC(viewModel: viewModel, factory: self)
     }
     
     public func makeMyPostListVC() -> MyPostListVC {
         let repository = PostingRepositoryImpl(network: network)
         let useCase = MyPostListUseCaseImpl(repository: repository)
         let viewModel = MyPostListViewModel(myPostListUseCase: useCase)
-        return MyPostListVC(viewModel: viewModel)
+        return MyPostListVC(viewModel: viewModel, factory: self)
     }
     
     public func makeTravelVC(
@@ -84,7 +84,7 @@ public final class VCFactory: FactoryInterface {
             travelInfo: travelInfo,
             travelUseCase: useCase
         )
-        return TravelVC(viewModel: viewModel)
+        return TravelVC(viewModel: viewModel, factory: self)
     }
     
     public func makeTimelineWritingVC(

@@ -9,6 +9,8 @@
 import UIKit
 
 import Core
+import DesignSystem
+import Domain
 
 protocol TLFilterListViewDelegate: AnyObject {
     func filtersDidSelect(_ filter: Filter)

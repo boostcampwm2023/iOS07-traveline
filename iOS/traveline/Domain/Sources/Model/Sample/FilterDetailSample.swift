@@ -10,8 +10,8 @@ import Foundation
 
 import Core
 
-enum FilterSample {
-    static func makeRegion() -> Filter {
+public enum FilterSample {
+    public static func makeRegion() -> Filter {
         .init(
             type: .tagtype(.region),
             selected: [DetailFilter.region(RegionFilter.busan), DetailFilter.region(RegionFilter.daejeon)]

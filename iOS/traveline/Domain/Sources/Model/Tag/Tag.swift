@@ -21,4 +21,9 @@ public struct Tag: Hashable {
     public func toRegionFilter() -> RegionFilter? {
         return RegionFilter.allCases.first { $0.title == title }
     }
+    
+    public init(title: String, type: TagType) {
+        self.title = title
+        self.type = type
+    }
 }

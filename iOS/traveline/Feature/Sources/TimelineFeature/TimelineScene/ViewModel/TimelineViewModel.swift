@@ -9,10 +9,11 @@
 import Combine
 import Foundation
 
+import Core
 import DesignSystem
 import Domain
 
-enum TimelineAction: BaseAction {
+public enum TimelineAction: BaseAction {
     case viewWillAppear
     case enterToTimeline
     case fetchTimelineCard(Int)
@@ -24,8 +25,8 @@ enum TimelineAction: BaseAction {
     case reportTravel
 }
 
-enum TimelineSideEffect: BaseSideEffect {
-    enum TimelineError: LocalizedError {
+public enum TimelineSideEffect: BaseSideEffect {
+    public enum TimelineError: LocalizedError {
         case loadFailed
         case deleteFailed
         case reportFailed
@@ -55,7 +56,7 @@ enum TimelineSideEffect: BaseSideEffect {
     case none
 }
 
-struct TimelineState: BaseState {
+public struct TimelineState: BaseState {
     struct TimelineWritingInfo: Hashable {
         let id: TravelID
         var date: String
@@ -72,6 +73,8 @@ struct TimelineState: BaseState {
     var isDeleteCompleted: Bool = false
     var errorMsg: String?
     var isEmptyList: Bool = false
+    
+    public init() { }
 }
 
 public final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect, TimelineState> {
@@ -89,7 +92,7 @@ public final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSide
     
     // MARK: - Transform
     
-    override func transform(action: TimelineAction) -> SideEffectPublisher {
+    public override func transform(action: TimelineAction) -> SideEffectPublisher {
         switch action {
         case .viewWillAppear:
             return .just(.resetState)
@@ -124,7 +127,7 @@ public final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSide
         }
     }
     
-    override func reduceState(state: TimelineState, effect: TimelineSideEffect) -> TimelineState {
+    public override func reduceState(state: TimelineState, effect: TimelineSideEffect) -> TimelineState {
         var newState = state
         
         switch effect {

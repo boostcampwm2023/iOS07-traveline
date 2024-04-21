@@ -21,7 +21,7 @@ public final class SideMenuUseCaseImpl: SideMenuUseCase {
         self.repository = repository
     }
     
-    func fetchProfile() -> AnyPublisher<Profile, Error> {
+    public func fetchProfile() -> AnyPublisher<Profile, Error> {
         return Future {
             let profile = try await self.repository.fetchUserInfo()
             UserDefaultsList.profile = profile

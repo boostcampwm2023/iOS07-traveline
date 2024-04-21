@@ -10,26 +10,29 @@ import AuthenticationServices
 import Combine
 import Foundation
 
+import Core
 import DesignSystem
 import Domain
 
-enum SettingAction: BaseAction {
+public enum SettingAction: BaseAction {
     case logoutButtonTapped
     case withdrawalButtonTapped
     case didCompleteWithAppleAuth(ASAuthorization)
     case didCompleteWithError
 }
 
-enum SettingSideEffect: BaseSideEffect {
+public enum SettingSideEffect: BaseSideEffect {
     case logout
     case requestAppleId(AppleIDRequest)
     case requestWithdraw(Bool)
     case error(String)
 }
 
-struct SettingState: BaseState {
+public struct SettingState: BaseState {
     var moveToLogin: Bool = false
     var appleIDRequests: [AppleIDRequest]?
+    
+    public init() { }
 }
 
 public final class SettingViewModel: BaseViewModel<SettingAction, SettingSideEffect, SettingState> {
@@ -40,7 +43,7 @@ public final class SettingViewModel: BaseViewModel<SettingAction, SettingSideEff
         self.useCase = useCase
     }
     
-    override func transform(action: Action) -> SideEffectPublisher {
+    public override func transform(action: Action) -> SideEffectPublisher {
         switch action {
         case .logoutButtonTapped:
             return reqeustLogout()
@@ -56,7 +59,7 @@ public final class SettingViewModel: BaseViewModel<SettingAction, SettingSideEff
         }
     }
     
-    override func reduceState(state: SettingState, effect: SettingSideEffect) -> SettingState {
+    public override func reduceState(state: SettingState, effect: SettingSideEffect) -> SettingState {
         var newState = state
         
         switch effect {

@@ -21,7 +21,7 @@ public final class MyPostListUseCaseImpl: MyPostListUseCase {
         self.repository = repository
     }
     
-    func fetchMyPostList() -> AnyPublisher<TravelList, Error> {
+    public func fetchMyPostList() -> AnyPublisher<TravelList, Error> {
         return Future {
             let travelList = try await self.repository.fetchMyPostingList()
             return travelList

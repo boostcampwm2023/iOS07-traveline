@@ -31,7 +31,7 @@ public final class AutoLoginVC: UIViewController {
     
     private let viewModel: AutoLoginViewModel
     private var cancellabels: Set<AnyCancellable> = .init()
-    public var factory: FactoryInterface
+    private var factory: FactoryInterface
     
     // MARK: - Initializer
     

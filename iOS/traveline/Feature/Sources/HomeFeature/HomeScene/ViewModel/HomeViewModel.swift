@@ -9,6 +9,7 @@
 import Foundation
 import Combine
 
+import Core
 import DesignSystem
 import Domain
 
@@ -20,7 +21,7 @@ public final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, Home
         self.homeUseCase = homeUseCase
     }
     
-    override func transform(action: Action) -> SideEffectPublisher {
+    public override func transform(action: Action) -> SideEffectPublisher {
         switch action {
         case .viewWillAppear:
             return .just(HomeSideEffect.showPrevious)
@@ -66,7 +67,7 @@ public final class HomeViewModel: BaseViewModel<HomeAction, HomeSideEffect, Home
         }
     }
     
-    override func reduceState(state: State, effect: SideEffect) -> State {
+    public override func reduceState(state: State, effect: SideEffect) -> State {
         var newState = state
         
         switch effect {

@@ -9,10 +9,11 @@
 import Combine
 import Foundation
 
+import Core
 import DesignSystem
 import Domain
 
-enum TimelineDetailAction: BaseAction {
+public enum TimelineDetailAction: BaseAction {
     case viewWillAppear
     case editTimeline
     case deleteTimeline
@@ -20,12 +21,12 @@ enum TimelineDetailAction: BaseAction {
     case movedToEdit
 }
 
-enum TimelineDetailSideEffect: BaseSideEffect {
-    enum TimelineDetailError: LocalizedError {
+public enum TimelineDetailSideEffect: BaseSideEffect {
+    public enum TimelineDetailError: LocalizedError {
         case loadFailed
         case deleteFailed
         
-        var errorDescription: String? {
+        public var errorDescription: String? {
             switch self {
             case .loadFailed: "서버 통신에 실패했습니다."
             case .deleteFailed: "타임라인 삭제에 실패했습니다."
@@ -41,13 +42,15 @@ enum TimelineDetailSideEffect: BaseSideEffect {
     case resetIsEditStatus
 }
 
-struct TimelineDetailState: BaseState {
+public struct TimelineDetailState: BaseState {
     var timelineDetailInfo: TimelineDetailInfo = .empty
     var timelineTranslatedInfo: TimelineTranslatedInfo = .empty
     var isOwner: Bool = false
     var isDeleteCompleted: Bool = false
     var isEdit: Bool = false
     var isTranslated: Bool = false
+    
+    public init() { }
 }
 
 public final class TimelineDetailViewModel: BaseViewModel<TimelineDetailAction, TimelineDetailSideEffect, TimelineDetailState> {
@@ -60,7 +63,7 @@ public final class TimelineDetailViewModel: BaseViewModel<TimelineDetailAction, 
         self.id = timelineId
     }
     
-    override func transform(action: Action) -> SideEffectPublisher {
+    public override func transform(action: Action) -> SideEffectPublisher {
         switch action {
         case .viewWillAppear:
             return loadTimelineDetailInfo()
@@ -79,7 +82,7 @@ public final class TimelineDetailViewModel: BaseViewModel<TimelineDetailAction, 
         }
     }
 
-    override func reduceState(state: State, effect: SideEffect) -> State {
+    public override func reduceState(state: State, effect: SideEffect) -> State {
         var newState = state
         
         switch effect {

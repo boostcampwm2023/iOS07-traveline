@@ -8,6 +8,8 @@
 
 import UIKit
 
+import DesignSystem
+
 final class SelectRegionButton: UIButton {
     
     // MARK: - Initialize

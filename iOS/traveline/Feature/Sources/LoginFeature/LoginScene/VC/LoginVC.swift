@@ -37,11 +37,13 @@ public final class LoginVC: UIViewController {
     
     private let viewModel: LoginViewModel
     private var cancellabels: Set<AnyCancellable> = .init()
+    private let factory: FactoryInterface
     
     // MARK: - Initialzier
     
-    public init(viewModel: LoginViewModel) {
+    public init(viewModel: LoginViewModel, factory: FactoryInterface) {
         self.viewModel = viewModel
+        self.factory = factory
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -111,7 +113,7 @@ public extension LoginVC {
             .filter { $0 }
             .withUnretained(self)
             .sink { owner, _ in
-                let rootContainerVC = VCFactory.makeRootContainerVC()
+                let rootContainerVC = owner.factory.makeRootContainerVC()
                 rootContainerVC.modalPresentationStyle = .overFullScreen
                 owner.present(rootContainerVC, animated: false)
             }
@@ -130,10 +132,4 @@ extension LoginVC: ASAuthorizationControllerDelegate {
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         viewModel.sendAction(.failAppleLogin)
     }
-}
-
-@available(iOS 17, *)
-#Preview("LoginVC") {
-    let view = VCFactory.makeLoginVC()
-    return view
 }

@@ -9,16 +9,19 @@
 import UIKit
 
 import DesignSystem
+import Feature
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
+    
+    private let factory: FactoryInterface = VCFactory()
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
             
         window = UIWindow(windowScene: windowScene)
-        let autoLoginVC = VCFactory.makeAutoLoginVC()
+        let autoLoginVC = factory.makeAutoLoginVC()
         window?.rootViewController = autoLoginVC
         window?.tintColor = TLColor.main
         window?.makeKeyAndVisible()
@@ -31,7 +34,7 @@ extension SceneDelegate {
     /// 로그인 화면으로 이동, ViewController 스택 초기화
     func changeRootViewControllerToLogin() {
         guard let window = self.window else { return }
-        window.rootViewController = VCFactory.makeLoginVC()
+        window.rootViewController = factory.makeLoginVC()
         
         UIView.transition(
             with: window,

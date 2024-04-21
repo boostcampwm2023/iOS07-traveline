@@ -9,10 +9,11 @@
 import Combine
 import Foundation
 
+import Core
 import DesignSystem
 import Domain
 
-enum TimelineWritingAction: BaseAction {
+public enum TimelineWritingAction: BaseAction {
     case viewDidLoad
     case titleDidChange(String)
     case contentDidChange(String)
@@ -26,13 +27,13 @@ enum TimelineWritingAction: BaseAction {
     case configTimelineDetailInfo(TimelineDetailInfo)
 }
 
-enum TimelineWritingSideEffect: BaseSideEffect {
-    enum TimelineWritingError: LocalizedError {
+public enum TimelineWritingSideEffect: BaseSideEffect {
+    public enum TimelineWritingError: LocalizedError {
         case createError
         case placeError
         case putError
         
-        var errorDescription: String {
+        public var errorDescription: String {
             switch self {
             case .createError: "타임라인 생성에 실패했습니다."
             case .placeError: "장소 검색에 실패했습니다."
@@ -57,7 +58,7 @@ enum TimelineWritingSideEffect: BaseSideEffect {
     case error(TimelineWritingError)
 }
 
-struct TimelineWritingState: BaseState {
+public struct TimelineWritingState: BaseState {
     var isOriginImage: Bool = false
     var isCompletable: Bool = false
     var timelineDetailRequest: TimelineDetailRequest = .empty
@@ -69,6 +70,8 @@ struct TimelineWritingState: BaseState {
     var imageURLString: String?
     var isEdit: Bool = false
     var isEditCompleted: Bool = false
+    
+    public init() { }
 }
 
 public final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction, TimelineWritingSideEffect, TimelineWritingState> {
@@ -97,7 +100,7 @@ public final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction
         sendAction(.configTimelineDetailInfo(timelineDetailInfo))
     }
     
-    override func transform(action: TimelineWritingAction) -> SideEffectPublisher {
+    public override func transform(action: TimelineWritingAction) -> SideEffectPublisher {
         switch action {
         case .viewDidLoad:
             return .just(.updateBasicInfo)
@@ -139,7 +142,7 @@ public final class TimelineWritingViewModel: BaseViewModel<TimelineWritingAction
         }
     }
     
-    override func reduceState(state: TimelineWritingState, effect: TimelineWritingSideEffect) -> TimelineWritingState {
+    public override func reduceState(state: TimelineWritingState, effect: TimelineWritingSideEffect) -> TimelineWritingState {
         var newState = state
         
         switch effect {

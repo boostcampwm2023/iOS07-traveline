@@ -30,4 +30,15 @@ public struct TimelineTravelInfo: Hashable {
         days: [],
         day: 1
     )
+    
+    public init(travelTitle: String, startDate: String, endDate: String, isLiked: Bool, isOwner: Bool, tags: [Tag], days: [String], day: Int) {
+        self.travelTitle = travelTitle
+        self.startDate = startDate
+        self.endDate = endDate
+        self.isLiked = isLiked
+        self.isOwner = isOwner
+        self.tags = tags
+        self.days = days
+        self.day = day
+    }
 }

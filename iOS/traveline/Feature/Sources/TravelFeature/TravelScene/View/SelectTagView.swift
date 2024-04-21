@@ -9,6 +9,7 @@
 import UIKit
 
 import DesignSystem
+import Domain
 
 final class SelectTagView: UIView {
     

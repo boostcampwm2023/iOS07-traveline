@@ -10,22 +10,27 @@ import Foundation
 
 import Core
 
-typealias FilterList = [Filter]
+public typealias FilterList = [Filter]
 
 extension FilterList {
-    static func sortFilters(_ filters: FilterDictionary) -> FilterList {
+    public static func sortFilters(_ filters: FilterDictionary) -> FilterList {
         filters.map { $0.value }.sorted { $0.type.id < $1.type.id }
     }
 }
 
-struct Filter: Hashable {
-    let type: FilterType
-    let selected: [DetailFilter]
-    var isSelected: Bool {
+public struct Filter: Hashable {
+    public let type: FilterType
+    public let selected: [DetailFilter]
+    public var isSelected: Bool {
         !selected.isEmpty
     }
     
-    static var emtpy: Self {
+    public static var emtpy: Self {
         .init(type: .empty, selected: [])
+    }
+    
+    public init(type: FilterType, selected: [DetailFilter]) {
+        self.type = type
+        self.selected = selected
     }
 }

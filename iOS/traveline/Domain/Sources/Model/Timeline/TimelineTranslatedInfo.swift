@@ -14,4 +14,8 @@ public struct TimelineTranslatedInfo {
     public let description: String
     
     public static let empty: TimelineTranslatedInfo = .init(description: Literal.empty)
+    
+    public init(description: String) {
+        self.description = description
+    }
 }

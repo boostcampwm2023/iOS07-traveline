@@ -18,7 +18,7 @@ public final class TimelineRepositoryImpl: TimelineRepository {
         self.network = network
     }
     
-    func fetchTimelineList(id: TravelID, day: Int) async throws -> TimelineCardList {
+    public func fetchTimelineList(id: TravelID, day: Int) async throws -> TimelineCardList {
         let request = FetchTimelineRequestDTO(
             id: id.value,
             day: day

@@ -9,20 +9,23 @@
 import Combine
 import Foundation
 
+import Core
 import DesignSystem
 import Domain
 
-enum MyPostListAction: BaseAction {
+public enum MyPostListAction: BaseAction {
     case viewDidLoad
 }
 
-enum MyPostListSideEffect: BaseSideEffect {
+public enum MyPostListSideEffect: BaseSideEffect {
     case loadMyPostList(TravelList)
     case loadFailed
 }
 
-struct MyPostListState: BaseState {
+public struct MyPostListState: BaseState {
     var travelList: TravelList = .init()
+    
+    public init() { }
 }
 
 public final class MyPostListViewModel: BaseViewModel<MyPostListAction, MyPostListSideEffect, MyPostListState> {
@@ -33,14 +36,14 @@ public final class MyPostListViewModel: BaseViewModel<MyPostListAction, MyPostLi
         self.myPostListUseCase = myPostListUseCase
     }
     
-    override func transform(action: Action) -> SideEffectPublisher {
+    public override func transform(action: Action) -> SideEffectPublisher {
         switch action {
         case .viewDidLoad:
             return loadMyPostList()
         }
     }
     
-    override func reduceState(state: State, effect: SideEffect) -> State {
+    public override func reduceState(state: State, effect: SideEffect) -> State {
         var newState = state
         
         switch effect {

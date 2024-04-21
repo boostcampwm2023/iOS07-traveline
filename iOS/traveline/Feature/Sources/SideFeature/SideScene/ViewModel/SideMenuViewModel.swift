@@ -9,21 +9,23 @@
 import Combine
 import Foundation
 
+import Core
 import DesignSystem
 import Domain
 
-enum SideMenuAction: BaseAction {
+public enum SideMenuAction: BaseAction {
     case viewWillAppear
 }
 
-enum SideMenuSideEffect: BaseSideEffect {
+public enum SideMenuSideEffect: BaseSideEffect {
     case loadProfile(Profile)
     case error(String)
 }
 
-struct SideMenuState: BaseState {
-    
+public struct SideMenuState: BaseState {
     var profile: Profile = .empty
+    
+    public init() { }
 }
 
 public final class SideMenuViewModel: BaseViewModel<SideMenuAction, SideMenuSideEffect, SideMenuState> {
@@ -35,14 +37,14 @@ public final class SideMenuViewModel: BaseViewModel<SideMenuAction, SideMenuSide
         super.init()
     }
     
-    override func transform(action: Action) -> SideEffectPublisher {
+    public override func transform(action: Action) -> SideEffectPublisher {
         switch action {
         case .viewWillAppear:
             return loadProfile()
         }
     }
 
-    override func reduceState(state: State, effect: SideEffect) -> State {
+    public override func reduceState(state: State, effect: SideEffect) -> State {
         var newState = state
         
         switch effect {

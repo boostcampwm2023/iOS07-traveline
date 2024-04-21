@@ -8,7 +8,7 @@
 
 import UIKit
 
-final class TLSearchController: UISearchController {
+public final class TLSearchController: UISearchController {
     
     private enum Constants {
         static let cancel: String = "취소"
@@ -17,7 +17,7 @@ final class TLSearchController: UISearchController {
     
     private let placeholder: String
     
-    init(
+    public init(
         placeholder: String,
         searchResultsController: UIViewController? = nil
     ) {

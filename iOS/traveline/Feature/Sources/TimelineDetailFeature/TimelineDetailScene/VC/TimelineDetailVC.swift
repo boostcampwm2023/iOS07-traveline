@@ -9,7 +9,9 @@
 import Combine
 import UIKit
 
+import Core
 import DesignSystem
+import Domain
 
 public final class TimelineDetailVC: UIViewController {
     
@@ -73,11 +75,13 @@ public final class TimelineDetailVC: UIViewController {
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: TimelineDetailViewModel
     weak var delegate: ToastDelegate?
+    private var factory: FactoryInterface
     
     // MARK: - Initialize
     
-    public init(viewModel: TimelineDetailViewModel) {
+    public init(viewModel: TimelineDetailViewModel, factory: FactoryInterface) {
         self.viewModel = viewModel
+        self.factory = factory
         super.init(nibName: nil, bundle: nil)
         
         setupAttributes()
@@ -89,7 +93,7 @@ public final class TimelineDetailVC: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         viewModel.sendAction(.viewWillAppear)
@@ -256,7 +260,7 @@ private extension TimelineDetailVC {
             .withUnretained(self)
             .sink { owner, _ in
                 let timelineDetailInfo = owner.viewModel.currentState.timelineDetailInfo
-                let timelineEditVC = VCFactory.makeTimelineWritingVC(
+                let timelineEditVC = owner.factory.makeTimelineWritingVC(
                     id: .init(value: timelineDetailInfo.postingID),
                     date: timelineDetailInfo.date,
                     day: timelineDetailInfo.day,
@@ -285,7 +289,7 @@ private extension TimelineDetailVC {
 // MARK: - TimelineWriting Delegate
 
 extension TimelineDetailVC: ToastDelegate {
-    func viewControllerDidFinishAction(isSuccess: Bool, message: String) {
+    public func viewControllerDidFinishAction(isSuccess: Bool, message: String) {
         showToast(message: message, type: isSuccess ? .success : .failure)
     }
 }

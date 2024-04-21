@@ -8,6 +8,6 @@
 
 import Foundation
 
-protocol MultipartData {
+public protocol MultipartData {
     var image: Data? { get }
 }

@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Domain
+
 struct LoginResponseDTO: Decodable {
     let accessToken: String
     let refreshToken: String

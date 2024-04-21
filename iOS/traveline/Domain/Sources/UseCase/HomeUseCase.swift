@@ -27,14 +27,14 @@ public final class HomeUseCaseImpl: HomeUseCase {
         self.repository = repository
     }
     
-    func fetchSearchList(with query: SearchQuery) -> AnyPublisher<TravelList, Error> {
+    public func fetchSearchList(with query: SearchQuery) -> AnyPublisher<TravelList, Error> {
         return Future {
             let travelList = try await self.repository.fetchPostingList(with: query)
             return travelList
         }.eraseToAnyPublisher()
     }
     
-    func fetchRecentKeyword() -> AnyPublisher<SearchKeywordList, Never> {
+    public func fetchRecentKeyword() -> AnyPublisher<SearchKeywordList, Never> {
         if let keywordList = repository.fetchRecentKeyword()?.reversed() {
             let recentKeywordList = keywordList.map { SearchKeyword(type: .recent, title: $0) }
             return .just(recentKeywordList)
@@ -42,7 +42,7 @@ public final class HomeUseCaseImpl: HomeUseCase {
         return .just([])
     }
     
-    func saveRecentKeyword(_ keyword: String) {
+    public func saveRecentKeyword(_ keyword: String) {
         if let savedKeywordList = repository.fetchRecentKeyword() {
             let deDuplicationList = savedKeywordList.filter({ $0 != keyword })
             
@@ -57,12 +57,12 @@ public final class HomeUseCaseImpl: HomeUseCase {
         }
     }
     
-    func deleteRecentKeyword(_ keyword: String) -> AnyPublisher<SearchKeywordList, Never> {
+    public func deleteRecentKeyword(_ keyword: String) -> AnyPublisher<SearchKeywordList, Never> {
         repository.deleteRecentKeyword(keyword)
         return fetchRecentKeyword()
     }
     
-    func fetchRelatedKeyword(_ keyword: String) -> AnyPublisher<SearchKeywordList, Error> {
+    public func fetchRelatedKeyword(_ keyword: String) -> AnyPublisher<SearchKeywordList, Error> {
         return Future {
             let relatedKeyword = try await self.repository.fetchPostingTitleList(keyword)
             return relatedKeyword

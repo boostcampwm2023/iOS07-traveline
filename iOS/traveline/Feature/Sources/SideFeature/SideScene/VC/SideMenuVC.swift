@@ -91,7 +91,7 @@ public final class SideMenuVC: UIViewController {
     
     // MARK: - Life Cycle
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
         setupAttributes()
@@ -99,7 +99,7 @@ public final class SideMenuVC: UIViewController {
         bind()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         viewModel.sendAction(.viewWillAppear)
     }
     // MARK: - Functions

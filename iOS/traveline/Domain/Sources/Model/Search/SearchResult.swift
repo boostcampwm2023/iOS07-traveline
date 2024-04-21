@@ -8,7 +8,12 @@
 
 import Foundation
 
-struct SearchResult {
-    let keyword: String
-    let travelList: TravelList
+public struct SearchResult {
+    public let keyword: String
+    public let travelList: TravelList
+    
+    public init(keyword: String, travelList: TravelList) {
+        self.keyword = keyword
+        self.travelList = travelList
+    }
 }

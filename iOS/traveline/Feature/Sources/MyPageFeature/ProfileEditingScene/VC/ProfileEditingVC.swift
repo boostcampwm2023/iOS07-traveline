@@ -10,6 +10,7 @@ import Combine
 import PhotosUI
 import UIKit
 
+import Core
 import DesignSystem
 
 public final class ProfileEditingVC: UIViewController {
@@ -112,7 +113,7 @@ public final class ProfileEditingVC: UIViewController {
     
     // MARK: - Life Cycle
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
         setupAttributes()
@@ -121,7 +122,7 @@ public final class ProfileEditingVC: UIViewController {
         viewModel.sendAction(.viewDidLoad)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = true
@@ -271,7 +272,7 @@ extension ProfileEditingVC {
 // MARK: - PHPickerViewControllerDelegate
 
 extension ProfileEditingVC: PHPickerViewControllerDelegate {
-    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         
         picker.dismiss(animated: true, completion: nil)
         
@@ -295,7 +296,7 @@ extension ProfileEditingVC: PHPickerViewControllerDelegate {
 // MARK: - TLNavigationBarDelegate
 
 extension ProfileEditingVC: TLNavigationBarDelegate {
-    func rightButtonDidTapped() {
+    public func rightButtonDidTapped() {
         viewModel.sendAction(.tapCompleteButton(imageView.image?.jpegData(compressionQuality: 1)))
     }
 }

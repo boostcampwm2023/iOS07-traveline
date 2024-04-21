@@ -9,6 +9,8 @@
 import Foundation
 import OSLog
 
+import Core
+
 public protocol NetworkType {
     func request<T: Decodable>(endPoint: EndPoint, type: T.Type) async throws -> T
     func requestWithNoResult(endPoint: EndPoint) async throws -> Bool

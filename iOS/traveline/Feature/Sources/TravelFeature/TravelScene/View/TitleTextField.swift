@@ -8,6 +8,9 @@
 
 import UIKit
 
+import Core
+import DesignSystem
+
 final class TitleTextField: UITextField {
     
     // MARK: - UI Components

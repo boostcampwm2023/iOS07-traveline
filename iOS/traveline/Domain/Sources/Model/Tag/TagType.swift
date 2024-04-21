@@ -20,27 +20,6 @@ public enum TagType: CaseIterable {
     case with
     case transportation
     
-    public var color: DesignSystemColors.Color {
-        switch self {
-        case .region:
-            TLColor.Tag.region
-        case .period:
-            TLColor.Tag.period
-        case .season:
-            TLColor.Tag.season
-        case .theme:
-            TLColor.Tag.theme
-        case .cost:
-            TLColor.Tag.cost
-        case .people:
-            TLColor.Tag.people
-        case .with:
-            TLColor.Tag.with
-        case .transportation:
-            TLColor.Tag.transportation
-        }
-    }
-    
     public var title: String {
         switch self {
         case .region:

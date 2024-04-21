@@ -10,8 +10,8 @@ import Foundation
 
 import Core
 
-enum SearchKeywordSample {
-    static func makeRecentList() -> SearchKeywordList {
+public enum SearchKeywordSample {
+    public static func makeRecentList() -> SearchKeywordList {
         return [
             .init(type: .recent, title: "여행간당"),
             .init(type: .recent, title: "얏호"),
@@ -22,7 +22,7 @@ enum SearchKeywordSample {
         ]
     }
     
-    static func makeRelatedList() -> SearchKeywordList {
+    public static func makeRelatedList() -> SearchKeywordList {
         return [
             .init(type: .related, title: "안"),
             .init(type: .related, title: "안녕"),
