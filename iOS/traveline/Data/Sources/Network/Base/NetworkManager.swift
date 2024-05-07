@@ -9,20 +9,22 @@
 import Foundation
 import OSLog
 
-protocol NetworkType {
+import Core
+
+public protocol NetworkType {
     func request<T: Decodable>(endPoint: EndPoint, type: T.Type) async throws -> T
     func requestWithNoResult(endPoint: EndPoint) async throws -> Bool
 }
 
-final class NetworkManager: NetworkType {
+public final class NetworkManager: NetworkType {
     
     private let urlSession: URLSession
     
-    init(urlSession: URLSession) {
+    public init(urlSession: URLSession) {
         self.urlSession = urlSession
     }
     
-    func request<T: Decodable>(endPoint: EndPoint, type: T.Type) async throws -> T {
+    public func request<T: Decodable>(endPoint: EndPoint, type: T.Type) async throws -> T {
         os_log("networking start")
         
         let urlRequest = try makeURLRequest(endPoint: endPoint)
@@ -56,7 +58,7 @@ final class NetworkManager: NetworkType {
         }
     }
     
-    func requestWithNoResult(endPoint: EndPoint) async throws -> Bool {
+    public func requestWithNoResult(endPoint: EndPoint) async throws -> Bool {
         let urlRequest = try makeURLRequest(endPoint: endPoint)
         let (_, response) = try await urlSession.data(for: urlRequest)
         

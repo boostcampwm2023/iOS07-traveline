@@ -8,6 +8,9 @@
 
 import Foundation
 
+import Core
+import Domain
+
 typealias PostingListResponseDTO = [PostingResponseDTO]
 
 struct PostingResponseDTO: Decodable {

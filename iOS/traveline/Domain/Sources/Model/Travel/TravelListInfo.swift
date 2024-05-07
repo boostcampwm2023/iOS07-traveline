@@ -21,4 +21,15 @@ public struct TravelListInfo: Hashable {
     public let like: Int
     public let isLiked: Bool
     public let tags: [Tag]
+    
+    public init(id: String, imageURL: String, imagePath: String, title: String, profile: Profile, like: Int, isLiked: Bool, tags: [Tag]) {
+        self.id = id
+        self.imageURL = imageURL
+        self.imagePath = imagePath
+        self.title = title
+        self.profile = profile
+        self.like = like
+        self.isLiked = isLiked
+        self.tags = tags
+    }
 }

@@ -10,6 +10,7 @@ import Combine
 import UIKit
 
 import DesignSystem
+import Domain
 
 protocol LocationSearchDelegate: AnyObject {
     func selectedLocation(result: TimelinePlace)

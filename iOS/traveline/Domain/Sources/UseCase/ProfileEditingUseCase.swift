@@ -25,16 +25,16 @@ public enum NicknameValidationState {
     case exceededStringLength
 }
 
-final class ProfileEditingUseCaseImpl: ProfileEditingUseCase {
+public final class ProfileEditingUseCaseImpl: ProfileEditingUseCase {
     
     private let repository: UserRepository
     private var profile: Profile = .empty
     
-    init(repository: UserRepository) {
+    public init(repository: UserRepository) {
         self.repository = repository
     }
     
-    func fetchProfile() -> AnyPublisher<Profile, Error> {
+    public func fetchProfile() -> AnyPublisher<Profile, Error> {
         return Future {
             self.profile = try await self.repository.fetchUserInfo()
             UserDefaultsList.profile = self.profile
@@ -42,7 +42,7 @@ final class ProfileEditingUseCaseImpl: ProfileEditingUseCase {
         }.eraseToAnyPublisher()
     }
     
-    func validate(nickname: String) -> AnyPublisher<NicknameValidationState, Error> {
+    public func validate(nickname: String) -> AnyPublisher<NicknameValidationState, Error> {
         return Future {
             guard self.isTooShort(nickname) == false else { return .tooShort }
             guard self.isValidStringLength(nickname) else { return .exceededStringLength }
@@ -64,7 +64,7 @@ final class ProfileEditingUseCaseImpl: ProfileEditingUseCase {
         return nickname.count < 11
     }
     
-    func update(name: String, imageData: Data?) -> AnyPublisher<Profile, Error> {
+    public func update(name: String, imageData: Data?) -> AnyPublisher<Profile, Error> {
         return Future {
             let profile = try await self.repository.updateUserInfo(name: name, imageData: imageData)
             UserDefaultsList.profile = profile

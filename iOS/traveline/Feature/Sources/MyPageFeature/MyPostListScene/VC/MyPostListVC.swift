@@ -9,9 +9,11 @@
 import Combine
 import UIKit
 
+import Core
 import DesignSystem
+import Domain
 
-final class MyPostListVC: UIViewController {
+public final class MyPostListVC: UIViewController {
     
     private enum Metric {
         enum TravelList {
@@ -50,6 +52,7 @@ final class MyPostListVC: UIViewController {
     
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: MyPostListViewModel
+    private var factory: FactoryInterface
     
     private typealias DataSource = UICollectionViewDiffableDataSource<Section, TravelListInfo>
     private typealias Snapshot = NSDiffableDataSourceSnapshot<Section, TravelListInfo>
@@ -58,8 +61,9 @@ final class MyPostListVC: UIViewController {
     
     // MARK: - Initialize
     
-    init(viewModel: MyPostListViewModel) {
+    public init(viewModel: MyPostListViewModel, factory: FactoryInterface) {
         self.viewModel = viewModel
+        self.factory = factory
         super.init(nibName: nil, bundle: nil)
         
         setupAttributes()
@@ -74,13 +78,13 @@ final class MyPostListVC: UIViewController {
     
     // MARK: - Life Cycle
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
         viewModel.sendAction(.viewDidLoad)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         self.navigationController?.navigationBar.isHidden = true
@@ -172,9 +176,9 @@ private extension MyPostListVC {
 // MARK: - extension UICollectionViewDelegate
 
 extension MyPostListVC: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let id = TravelID(value: viewModel.currentState.travelList[indexPath.row].id)
-        let timelineVC = VCFactory.makeTimelineVC(id: id)
+        let timelineVC = factory.makeTimelineVC(id: id)
         self.navigationController?.pushViewController(timelineVC, animated: true)
     }
 }

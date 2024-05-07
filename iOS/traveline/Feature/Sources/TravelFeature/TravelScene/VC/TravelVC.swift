@@ -9,9 +9,11 @@
 import Combine
 import UIKit
 
+import Core
 import DesignSystem
+import Domain
 
-final class TravelVC: UIViewController {
+public final class TravelVC: UIViewController {
     
     private enum Metric {
         static let horizontalInset: CGFloat = 16.0
@@ -83,6 +85,7 @@ final class TravelVC: UIViewController {
     
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: TravelViewModel
+    private let factory: FactoryInterface
     private let regionBottomSheetVC = RegionBottomSheetVC(
         title: Constants.bottomSheetTitle,
         hasCompleteButton: false,
@@ -91,8 +94,9 @@ final class TravelVC: UIViewController {
     
     // MARK: - Initializer
     
-    init(viewModel: TravelViewModel) {
+    public init(viewModel: TravelViewModel, factory: FactoryInterface) {
         self.viewModel = viewModel
+        self.factory = factory
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -102,7 +106,7 @@ final class TravelVC: UIViewController {
     
     // MARK: - Life Cycle
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
         setupAttributes()
@@ -111,7 +115,7 @@ final class TravelVC: UIViewController {
         bind()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = true
@@ -314,7 +318,7 @@ private extension TravelVC {
                     return
                 }
                 
-                let timelineVC = VCFactory.makeTimelineVC(id: id)
+                let timelineVC = owner.factory.makeTimelineVC(id: id)
                 guard var vcs = owner.navigationController?.viewControllers else { return }
                 vcs.removeLast()
                 vcs.append(timelineVC)
@@ -347,7 +351,7 @@ private extension TravelVC {
 // MARK: - UIScrollView Delegate
 
 extension TravelVC: UIScrollViewDelegate {
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
         dismissKeyboard()
     }
 }
@@ -355,12 +359,12 @@ extension TravelVC: UIScrollViewDelegate {
 // MARK: - UITextField Delegate
 
 extension TravelVC: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         dismissKeyboard()
         return true
     }
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let text = textField.text ?? ""
         if text.count + string.count > Constants.titleLimit {
             let textLimitToast = TLToastView(type: .failure, message: Constants.titleLimitToastMessage, followsUndockedKeyboard: true)
@@ -374,7 +378,7 @@ extension TravelVC: UITextFieldDelegate {
 // MARK: - TLBottomSheetDelegate
 
 extension TravelVC: TLBottomSheetDelegate {
-    func bottomSheetDidDisappear(data: Any) {
+    public func bottomSheetDidDisappear(data: Any) {
         guard let region = data as? RegionFilter else { return }
         selectRegionButton.setSelectedTitle(region.title)
         viewModel.sendAction(.regionSelected(region.query))
@@ -384,7 +388,7 @@ extension TravelVC: TLBottomSheetDelegate {
 // MARK: - TLNavigationBarDelegate
 
 extension TravelVC: TLNavigationBarDelegate {
-    func rightButtonDidTapped() {
+    public func rightButtonDidTapped() {
         let selectedTags = [
             peopleTagView.selectedTags.map { Tag(title: $0, type: .people) },
             transportationTagView.selectedTags.map { Tag(title: $0, type: .transportation) },
@@ -395,9 +399,4 @@ extension TravelVC: TLNavigationBarDelegate {
         
         viewModel.sendAction(.donePressed(selectedTags))
     }
-}
-
-@available(iOS 17, *)
-#Preview {
-    return UINavigationController(rootViewController: VCFactory.makeTravelVC())
 }

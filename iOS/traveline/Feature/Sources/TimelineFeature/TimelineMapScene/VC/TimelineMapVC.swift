@@ -9,7 +9,9 @@
 import MapKit
 import UIKit
 
+import Core
 import DesignSystem
+import Domain
 
 final class TimelineMapVC: UIViewController {
     
@@ -31,6 +33,18 @@ final class TimelineMapVC: UIViewController {
     // MARK: - Properties
     
     private var selectedAnnotation: MKAnnotation?
+    private var factory: FactoryInterface
+    
+    // MARK: - Initializer
+    
+    public init(factory: FactoryInterface) {
+        self.factory = factory
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Life Cycle
     
@@ -66,7 +80,7 @@ final class TimelineMapVC: UIViewController {
     @objc private func showTimelineDetail() {
         if let selected = selectedAnnotation as? TLMarkerAnnotation {
             let id = selected.cardInfo.detailId
-            let timelineDetailVC = VCFactory.makeTimelineDetailVC(with: String(id))
+            let timelineDetailVC = factory.makeTimelineDetailVC(with: String(id))
             navigationController?.pushViewController(timelineDetailVC, animated: true)
         }
         
@@ -172,11 +186,4 @@ extension TimelineMapVC: MKMapViewDelegate {
         view.image = TLImage.Travel.marker
         timelineCardView.isHidden = true
     }
-}
-
-@available(iOS 17, *)
-#Preview {
-    let view = TimelineMapVC()
-    view.setMarker(by: TimelineSample.makeCardList(), day: 1)
-    return view
 }

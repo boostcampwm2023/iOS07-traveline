@@ -11,6 +11,7 @@ import Combine
 import SafariServices
 import UIKit
 
+import Core
 import DesignSystem
 
 enum ServiceGuideType: String, CaseIterable {
@@ -39,7 +40,7 @@ enum ServiceGuideType: String, CaseIterable {
 
 // MARK: - Setting VC
 
-final class SettingVC: UIViewController {
+public final class SettingVC: UIViewController {
     
     // MARK: - UI Components
     
@@ -94,7 +95,7 @@ final class SettingVC: UIViewController {
     
     // MARK: - Initialize
     
-    init(viewModel: SettingViewModel) {
+    public init(viewModel: SettingViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -105,7 +106,7 @@ final class SettingVC: UIViewController {
     
     // MARK: - Life Cycle
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
         setupAttributes()
@@ -113,7 +114,7 @@ final class SettingVC: UIViewController {
         bind()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = true
@@ -231,10 +232,10 @@ extension SettingVC {
             .filter { $0 }
             .removeDuplicates()
             .sink { _ in
-                guard let firstScene = UIApplication.shared.connectedScenes.first,
-                      let sceneDelegate = firstScene.delegate as? SceneDelegate else { return }
-                
-                sceneDelegate.changeRootViewControllerToLogin()
+//                guard let firstScene = UIApplication.shared.connectedScenes.first,
+//                      let sceneDelegate = firstScene.delegate as? SceneDelegate else { return }
+//                
+//                sceneDelegate.changeRootViewControllerToLogin()
             }
             .store(in: &cancellabels)
         
@@ -256,11 +257,11 @@ extension SettingVC {
 
 extension SettingVC: ASAuthorizationControllerDelegate {
     
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+    public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         viewModel.sendAction(.didCompleteWithAppleAuth(authorization))
     }
     
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+    public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         viewModel.sendAction(.didCompleteWithError)
     }
 }

@@ -10,15 +10,15 @@ import Foundation
 
 import Domain
 
-final class UserRepositoryImpl: UserRepository {
+public final class UserRepositoryImpl: UserRepository {
     
     private let network: NetworkType
     
-    init(network: NetworkType) {
+    public init(network: NetworkType) {
         self.network = network
     }
     
-    func fetchUserInfo() async throws -> Profile {
+    public func fetchUserInfo() async throws -> Profile {
         if let profile = UserDefaultsList.profile {
             return profile
         }
@@ -31,7 +31,7 @@ final class UserRepositoryImpl: UserRepository {
         return userResponseDTO.toDomain()
     }
     
-    func updateUserInfo(name: String, imageData: Data?) async throws -> Profile {
+    public func updateUserInfo(name: String, imageData: Data?) async throws -> Profile {
         let userRequestDTO: UserRequestDTO = .init(name: name, image: imageData)
         
         let userResponseDTO = try await network.request(
@@ -42,7 +42,7 @@ final class UserRepositoryImpl: UserRepository {
         return userResponseDTO.toDomain()
     }
     
-    func checkDuplication(name: String) async throws -> Bool {
+    public func checkDuplication(name: String) async throws -> Bool {
         let duplicatedNameResponseDTO = try await network.request(
             endPoint: UserEndPoint.checkDuplicatedName(name),
             type: DuplicatedNameResponseDTO.self

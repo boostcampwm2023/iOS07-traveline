@@ -9,7 +9,10 @@
 import Combine
 import UIKit
 
-final class AutoLoginVC: UIViewController {
+import DesignSystem
+import Core
+
+public final class AutoLoginVC: UIViewController {
     
     private enum Metric {
         static let topInset: CGFloat = 200 * BaseMetric.Adjust.height
@@ -28,11 +31,13 @@ final class AutoLoginVC: UIViewController {
     
     private let viewModel: AutoLoginViewModel
     private var cancellabels: Set<AnyCancellable> = .init()
+    private var factory: FactoryInterface
     
     // MARK: - Initializer
     
-    init(viewModel: AutoLoginViewModel) {
+    public init(viewModel: AutoLoginViewModel, factory: FactoryInterface) {
         self.viewModel = viewModel
+        self.factory = factory
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -42,7 +47,7 @@ final class AutoLoginVC: UIViewController {
     
     // MARK: - Life Cycle
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
         setupAttributes()
@@ -55,7 +60,7 @@ final class AutoLoginVC: UIViewController {
 
 // MARK: - Setup Functions
 
-private extension AutoLoginVC {
+public extension AutoLoginVC {
     func setupAttributes() {
         view.backgroundColor = TLColor.black
     }
@@ -80,7 +85,7 @@ private extension AutoLoginVC {
             .removeDuplicates()
             .withUnretained(self)
             .sink { owner, _ in
-                let loginVC = VCFactory.makeLoginVC()
+                let loginVC = owner.factory.makeLoginVC()
                 loginVC.modalPresentationStyle = .overFullScreen
                 owner.present(loginVC, animated: false)
             }
@@ -92,7 +97,7 @@ private extension AutoLoginVC {
             .removeDuplicates()
             .withUnretained(self)
             .sink { owner, _ in
-                let rootContainerVC = VCFactory.makeRootContainerVC()
+                let rootContainerVC = owner.factory.makeRootContainerVC()
                 rootContainerVC.modalPresentationStyle = .overFullScreen
                 owner.present(rootContainerVC, animated: false)
             }

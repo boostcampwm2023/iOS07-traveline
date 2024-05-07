@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Domain
+
 typealias TimelinePlaceListResponseDTO = [TimelinePlaceResponseDTO]
 
 struct TimelinePlaceResponseDTO: Decodable {

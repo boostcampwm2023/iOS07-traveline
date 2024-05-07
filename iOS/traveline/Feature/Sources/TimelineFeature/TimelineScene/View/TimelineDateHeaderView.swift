@@ -9,6 +9,7 @@
 import UIKit
 
 import DesignSystem
+import Domain
 
 protocol TimelineDateHeaderDelegate: AnyObject {
     func goToMapView()

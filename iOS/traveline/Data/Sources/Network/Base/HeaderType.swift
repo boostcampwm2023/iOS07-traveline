@@ -8,7 +8,10 @@
 
 import Foundation
 
-enum HeaderType {
+import Core
+import Domain
+
+public enum HeaderType {
     case json
     case authorization
     case refresh

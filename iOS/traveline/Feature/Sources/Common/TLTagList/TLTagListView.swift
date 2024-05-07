@@ -9,6 +9,8 @@
 import UIKit
 
 import Core
+import DesignSystem
+import Domain
 
 /*
  여행 생성 화면에서 태그 제목 및 태그 버튼들을 가지는 뷰입니다.
@@ -16,6 +18,29 @@ import Core
  인원
  [1인] [2인] [3인] [4인] [5인 이상]
  */
+
+extension TagType {
+    var color: DesignSystemColors.Color {
+        switch self {
+        case .region:
+            TLColor.Tag.region
+        case .period:
+            TLColor.Tag.period
+        case .season:
+            TLColor.Tag.season
+        case .theme:
+            TLColor.Tag.theme
+        case .cost:
+            TLColor.Tag.cost
+        case .people:
+            TLColor.Tag.people
+        case .with:
+            TLColor.Tag.with
+        case .transportation:
+            TLColor.Tag.transportation
+        }
+    }
+}
 
 final class TLTagListView: UIView {
     

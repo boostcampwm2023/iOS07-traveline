@@ -8,7 +8,10 @@
 
 import Foundation
 
-enum HomeSideEffect: BaseSideEffect {
+import Core
+import Domain
+
+public enum HomeSideEffect: BaseSideEffect {
     case showHome
     case showPrevious
     case showRecent(SearchKeywordList)

@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Domain
+
 struct TimelineTranslatedResponseDTO: Decodable {
     let description: String
 }

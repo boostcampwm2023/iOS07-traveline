@@ -8,7 +8,10 @@
 
 import UIKit
 
-final class RootContainerVC: UIViewController {
+import Core
+import DesignSystem
+
+public final class RootContainerVC: UIViewController {
     
     enum SideMenuState {
         case opened
@@ -17,8 +20,8 @@ final class RootContainerVC: UIViewController {
     
     // MARK: - UI Components
     
-    private let sideMenuVC: SideMenuVC = VCFactory.makeSideMenuVC()
-    private let homeVC: HomeVC = VCFactory.makeHomeVC()
+    private lazy var sideMenuVC: SideMenuVC = factory.makeSideMenuVC()
+    private lazy var homeVC: HomeVC = factory.makeHomeVC()
     private let shadowView: UIView = .init()
     private var navigationVC: UINavigationController?
     private var selectedVC: UIViewController?
@@ -26,10 +29,12 @@ final class RootContainerVC: UIViewController {
     // MARK: - Properties
     
     private var sideMenuState: SideMenuState = .closed
+    private var factory: FactoryInterface
     
     // MARK: - Initialize
     
-    init() {
+    public init(factory: FactoryInterface) {
+        self.factory = factory
         super.init(nibName: nil, bundle: nil)
         
         setupChildVC()
@@ -174,14 +179,14 @@ extension RootContainerVC: SideMenuDelegate {
         
         switch menuItem {
         case .profileEdit:
-            let profileEditingVC = VCFactory.makeProfileEditingVC()
+            let profileEditingVC = factory.makeProfileEditingVC()
             profileEditingVC.delegate = self
             navigationVC?.pushViewController(profileEditingVC, animated: true)
         case .myPostList:
-            let myPostListVC = VCFactory.makeMyPostListVC()
+            let myPostListVC = factory.makeMyPostListVC()
             navigationVC?.pushViewController(myPostListVC, animated: true)
         case .setting:
-            let settingVC = VCFactory.makeSettingVC()
+            let settingVC = factory.makeSettingVC()
             navigationVC?.pushViewController(settingVC, animated: true)
         }
     }
@@ -203,7 +208,7 @@ extension RootContainerVC: HomeViewDelegate {
 // MARK: - extension UIGestureRecognizerDelegate
 
 extension RootContainerVC: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         guard let view = touch.view else { return false }
         if view == shadowView {
             return true
@@ -215,7 +220,7 @@ extension RootContainerVC: UIGestureRecognizerDelegate {
 // MARK: - TimelineWriting Delegate
 
 extension RootContainerVC: ToastDelegate {
-    func viewControllerDidFinishAction(isSuccess: Bool, message: String) {
+    public func viewControllerDidFinishAction(isSuccess: Bool, message: String) {
         showToast(message: message, type: isSuccess ? .success : .failure)
     }
 }

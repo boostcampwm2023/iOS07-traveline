@@ -10,7 +10,7 @@ import UIKit
 
 import Core
 
-final class TLTag: UIButton {
+public final class TLTag: UIButton {
     
     enum Metric {
         static let borderWidth: CGFloat = 0.5
@@ -61,13 +61,13 @@ final class TLTag: UIButton {
     
     // MARK: - Properties
     
-    override var isSelected: Bool {
+    public override var isSelected: Bool {
         didSet {
             updateTagSelected()
         }
     }
     
-    override var intrinsicContentSize: CGSize {
+    public override var intrinsicContentSize: CGSize {
         var size = CGSize()
         
         size.height += style.verticalInset * 2 + tagTitleLabel.intrinsicContentSize.height
@@ -82,11 +82,11 @@ final class TLTag: UIButton {
     private var style: TLTagStyle
     private let tagColor: UIColor
     private let defaultColor: UIColor = TLColor.mediumGray
-    let name: String
+    public let name: String
 
     // MARK: - Initialize
     
-    init(
+    public init(
         frame: CGRect = .zero,
         style: TLTagStyle,
         name: String,
@@ -109,7 +109,7 @@ final class TLTag: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {        
+    public override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {        
         if style == .cancellable {
             let width = bounds.width
             let touchArea = bounds.inset(by: UIEdgeInsets(top: 0, left: width - 30, bottom: 0, right: 0))
@@ -134,7 +134,7 @@ final class TLTag: UIButton {
         }
     }
     
-    func updateTag(text: String) {
+    public func updateTag(text: String) {
         tagTitleLabel.setText(to: text)
         invalidateIntrinsicContentSize()
     }

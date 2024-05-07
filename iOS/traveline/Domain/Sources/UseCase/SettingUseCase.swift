@@ -17,23 +17,23 @@ public protocol SettingUseCase {
     func logout()
 }
 
-final class SettingUseCaseImpl: SettingUseCase {
+public final class SettingUseCaseImpl: SettingUseCase {
     
     private let repository: AuthRepository
     
-    init(repository: AuthRepository) {
+    public init(repository: AuthRepository) {
         self.repository = repository
     }
     
-    func logout() {
+    public func logout() {
         repository.logout()
     }
     
-    func requestAppleId() -> AppleIDRequest {
+    public func requestAppleId() -> AppleIDRequest {
         return repository.requestAppleId()
     }
     
-    func requestWithdrawal(_ request: WithdrawRequest) -> AnyPublisher<Bool, Error> {
+    public func requestWithdrawal(_ request: WithdrawRequest) -> AnyPublisher<Bool, Error> {
         return Future {
             let result = try await self.repository.withdrawal(request)
             KeychainList.allClear()

@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum TLTagStyle {
+public enum TLTagStyle {
     case normal
     case cancellable
     case selectable

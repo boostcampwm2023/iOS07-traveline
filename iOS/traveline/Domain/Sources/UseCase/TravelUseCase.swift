@@ -23,15 +23,15 @@ public protocol TravelUseCase {
     func putTravel(id: TravelID, data: TravelRequest) -> AnyPublisher<TravelID, Error>
 }
 
-final class TravelUseCaseImpl: TravelUseCase {
+public final class TravelUseCaseImpl: TravelUseCase {
     
     private let repository: PostingRepository
     
-    init(repository: PostingRepository) {
+    public init(repository: PostingRepository) {
         self.repository = repository
     }
     
-    func toEditable(info: TimelineTravelInfo) -> TravelEditableInfo {
+    public func toEditable(info: TimelineTravelInfo) -> TravelEditableInfo {
         return .init(
             travelTitle: info.travelTitle,
             region: info.tags.filter { $0.type == .region }.first?.toRegionFilter(),
@@ -41,18 +41,18 @@ final class TravelUseCaseImpl: TravelUseCase {
         )
     }
     
-    func validate(title: String) -> TitleValidation {
+    public func validate(title: String) -> TitleValidation {
         return 1...14 ~= title.count ? .valid : .invalidate
     }
     
-    func createTravel(data: TravelRequest) -> AnyPublisher<TravelID, Error> {
+    public func createTravel(data: TravelRequest) -> AnyPublisher<TravelID, Error> {
         return Future {
             let id = try await self.repository.postPosting(data: data)
             return id
         }.eraseToAnyPublisher()
     }
     
-    func putTravel(id: TravelID, data: TravelRequest) -> AnyPublisher<TravelID, Error> {
+    public func putTravel(id: TravelID, data: TravelRequest) -> AnyPublisher<TravelID, Error> {
         return Future {
             let id = try await self.repository.putPosting(id: id, data: data)
             return id

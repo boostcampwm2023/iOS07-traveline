@@ -8,7 +8,10 @@
 
 import Foundation
 
-enum HomeAction: BaseAction {
+import Core
+import Domain
+
+public enum HomeAction: BaseAction {
     case viewWillAppear
     case viewDidAppear
     case startSearch

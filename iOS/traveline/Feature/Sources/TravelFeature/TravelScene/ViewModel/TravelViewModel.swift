@@ -9,10 +9,11 @@
 import Combine
 import Foundation
 
+import Core
 import DesignSystem
 import Domain
 
-enum TravelAction: BaseAction {
+public enum TravelAction: BaseAction {
     case configTravelInfo(TimelineTravelInfo)
     case titleEdited(String)
     case regionSelected(String)
@@ -21,7 +22,7 @@ enum TravelAction: BaseAction {
     case donePressed([Tag])
 }
 
-enum TravelSideEffect: BaseSideEffect {
+public enum TravelSideEffect: BaseSideEffect {
     case showTravelInfo(TravelEditableInfo)
     case saveTitle(String)
     case saveRegion(String)
@@ -32,7 +33,7 @@ enum TravelSideEffect: BaseSideEffect {
     case error(String)
 }
 
-struct TravelState: BaseState {
+public struct TravelState: BaseState {
     var titleText: String = Literal.empty
     var region: String = Literal.empty
     var startDate: Date = .now
@@ -57,14 +58,16 @@ struct TravelState: BaseState {
     var isEdit: Bool {
         travelInfo != nil
     }
+    
+    public init() { }
 }
 
-final class TravelViewModel: BaseViewModel<TravelAction, TravelSideEffect, TravelState> {
+public final class TravelViewModel: BaseViewModel<TravelAction, TravelSideEffect, TravelState> {
     
     private let id: TravelID?
     private let travelUseCase: TravelUseCase
     
-    init(
+    public init(
         id: TravelID?,
         travelInfo: TimelineTravelInfo?,
         travelUseCase: TravelUseCase
@@ -79,7 +82,7 @@ final class TravelViewModel: BaseViewModel<TravelAction, TravelSideEffect, Trave
     
     // MARK: - Transform
     
-    override func transform(action: TravelAction) -> SideEffectPublisher {
+    public override func transform(action: TravelAction) -> SideEffectPublisher {
         switch action {
         case let .configTravelInfo(travelInfo):
             return toTravelEditableInfo(travelInfo)
@@ -103,7 +106,7 @@ final class TravelViewModel: BaseViewModel<TravelAction, TravelSideEffect, Trave
     
     // MARK: - ReduceState
     
-    override func reduceState(state: TravelState, effect: TravelSideEffect) -> TravelState {
+    public override func reduceState(state: TravelState, effect: TravelSideEffect) -> TravelState {
         
         var newState = state
         

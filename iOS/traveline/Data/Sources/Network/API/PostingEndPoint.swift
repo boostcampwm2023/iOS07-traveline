@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Domain
+
 enum PostingEndPoint {
     case postingList(SearchQuery)
     case myPostingList

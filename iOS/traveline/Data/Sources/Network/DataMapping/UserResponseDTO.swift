@@ -8,6 +8,8 @@
 
 import Foundation
 
+import Domain
+
 struct UserResponseDTO: Codable {
     let name: String
     let avatar: String?

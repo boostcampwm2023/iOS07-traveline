@@ -9,6 +9,8 @@
 import MapKit
 import UIKit
 
+import Domain
+
 final class TLMarkerAnnotation: NSObject, MKAnnotation {
     
     let cardInfo: TimelineCardInfo

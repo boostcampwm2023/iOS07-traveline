@@ -11,15 +11,15 @@ import Foundation
 
 import Domain
 
-final class AuthRepositoryImpl: AuthRepository {
+public final class AuthRepositoryImpl: AuthRepository {
     
     private let network: NetworkType
     
-    init(network: NetworkType) {
+    public init(network: NetworkType) {
         self.network = network
     }
     
-    func appleLogin(with info: AppleLoginRequest) async throws -> TLToken {
+    public func appleLogin(with info: AppleLoginRequest) async throws -> TLToken {
         let loginResponseDTO = try await network.request(
             endPoint: AuthEndPoint.appleLogin(info.toDTO()),
             type: LoginResponseDTO.self
@@ -28,7 +28,7 @@ final class AuthRepositoryImpl: AuthRepository {
         return loginResponseDTO.toDomain()
     }
     
-    func refresh() async throws -> String {
+    public func refresh() async throws -> String {
         let refreshResponseDTO = try await network.request(
             endPoint: AuthEndPoint.refresh,
             type: RefreshResponseDTO.self
@@ -37,19 +37,19 @@ final class AuthRepositoryImpl: AuthRepository {
         return refreshResponseDTO.toDomain()
     }
     
-    func logout() {
+    public func logout() {
         KeychainList.accessToken = nil
         KeychainList.refreshToken = nil
     }
     
-    func requestAppleId() -> AppleIDRequest {
+    public func requestAppleId() -> AppleIDRequest {
         let appleIDProvider = ASAuthorizationAppleIDProvider()
         let request = appleIDProvider.createRequest()
         
         return request
     }
     
-    func withdrawal(_ request: WithdrawRequest) async throws -> Bool {
+    public func withdrawal(_ request: WithdrawRequest) async throws -> Bool {
         
         let result = try await network.request(
             endPoint: AuthEndPoint.withdrawal(request.toDTO()),

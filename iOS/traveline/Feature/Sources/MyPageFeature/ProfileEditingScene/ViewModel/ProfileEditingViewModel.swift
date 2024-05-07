@@ -10,17 +10,18 @@ import Combine
 import Foundation
 import OSLog
 
+import Core
 import DesignSystem
 import Domain
 
-enum ProfileEditingAction: BaseAction {
+public enum ProfileEditingAction: BaseAction {
     case viewDidLoad
     case imageDidChange(Bool)
     case nicknameDidChange(String)
     case tapCompleteButton(Data?)
 }
 
-enum ProfileEditingSideEffect: BaseSideEffect {
+public enum ProfileEditingSideEffect: BaseSideEffect {
     case fetchProfile(Profile)
     case error(String)
     case updateImageState(Bool)
@@ -28,14 +29,16 @@ enum ProfileEditingSideEffect: BaseSideEffect {
     case updateProfile
 }
 
-struct ProfileEditingState: BaseState {
+public struct ProfileEditingState: BaseState {
     var isCompletable: Bool = false
     var profile: Profile = .empty
     var caption: CaptionOptions = .init(validateType: .unchanged)
     var isSuccessEditProfile: Bool = false
+    
+    public init() { }
 }
 
-struct CaptionOptions {
+public struct CaptionOptions {
     var validateType: NicknameValidationState
     
     var text: String {
@@ -56,18 +59,18 @@ struct CaptionOptions {
     }
 }
 
-final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, ProfileEditingSideEffect, ProfileEditingState> {
+public final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, ProfileEditingSideEffect, ProfileEditingState> {
     
     private var isChangedImage: Bool = false
     private var changedNickname: String = ""
     private let useCase: ProfileEditingUseCase
     
-    init(useCase: ProfileEditingUseCase) {
+    public init(useCase: ProfileEditingUseCase) {
         self.useCase = useCase
         super.init()
     }
     
-    override func transform(action: Action) -> SideEffectPublisher {
+    public override func transform(action: Action) -> SideEffectPublisher {
         switch action {
         case .viewDidLoad:
             return fetchProfile()
@@ -83,7 +86,7 @@ final class ProfileEditingViewModel: BaseViewModel<ProfileEditingAction, Profile
         }
     }
     
-    override func reduceState(state: State, effect: SideEffect) -> State {
+    public override func reduceState(state: State, effect: SideEffect) -> State {
         var newState = state
         
         switch effect {

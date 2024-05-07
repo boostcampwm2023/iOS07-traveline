@@ -10,10 +10,10 @@ import Foundation
 
 import Core
 
-typealias FilterDictionary = [FilterType: Filter]
+public typealias FilterDictionary = [FilterType: Filter]
 
 extension FilterDictionary {
-    static func make() -> Self {
+    public static func make() -> Self {
         FilterType.allCases.reduce(into: [:]) { filters, type in
             filters[type] = .init(type: type, selected: [])
         }

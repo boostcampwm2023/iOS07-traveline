@@ -10,15 +10,15 @@ import Foundation
 
 import Domain
 
-final class TimelineRepositoryImpl: TimelineRepository {
+public final class TimelineRepositoryImpl: TimelineRepository {
     
     private let network: NetworkType
     
-    init(network: NetworkType) {
+    public init(network: NetworkType) {
         self.network = network
     }
     
-    func fetchTimelineList(id: TravelID, day: Int) async throws -> TimelineCardList {
+    public func fetchTimelineList(id: TravelID, day: Int) async throws -> TimelineCardList {
         let request = FetchTimelineRequestDTO(
             id: id.value,
             day: day

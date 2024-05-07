@@ -10,6 +10,8 @@ import Combine
 import UIKit
 
 import Core
+import DesignSystem
+import Domain
 
 final class HomeSearchView: UIView {
     

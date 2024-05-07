@@ -9,6 +9,8 @@
 import UIKit
 
 import Core
+import DesignSystem
+import Domain
 
 final class TLInfoView: UIView {
     

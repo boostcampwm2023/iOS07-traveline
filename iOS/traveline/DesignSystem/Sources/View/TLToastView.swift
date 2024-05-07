@@ -43,7 +43,7 @@ public final class TLToastView: UIView {
     
     // MARK: - initialize
     
-    init(type: ToastType = .success, message: String = "", followsUndockedKeyboard: Bool = false) {
+    public init(type: ToastType = .success, message: String = "", followsUndockedKeyboard: Bool = false) {
         self.toastType = type
         self.message = message
         self.followsUndockedKeyboard = followsUndockedKeyboard

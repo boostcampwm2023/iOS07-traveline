@@ -10,9 +10,11 @@ import Combine
 import PhotosUI
 import UIKit
 
+import Core
 import DesignSystem
+import Domain
 
-final class TimelineWritingVC: UIViewController {
+public final class TimelineWritingVC: UIViewController {
     
     private enum Metric {
         static let topInset: CGFloat = 24
@@ -82,7 +84,7 @@ final class TimelineWritingVC: UIViewController {
     
     // MARK: - Initialize
     
-    init(viewModel: TimelineWritingViewModel) {
+    public init(viewModel: TimelineWritingViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         
@@ -97,7 +99,7 @@ final class TimelineWritingVC: UIViewController {
     
     // MARK: - Life Cycle
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
         viewModel.sendAction(.viewDidLoad)
@@ -394,21 +396,21 @@ private extension TimelineWritingVC {
 
 extension TimelineWritingVC: UITextViewDelegate {
     
-    func textViewDidBeginEditing(_ textView: UITextView) {
+    public func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.textColor == TLColor.disabledGray {
             textView.text = nil
             textView.textColor = TLColor.white
         }
     }
     
-    func textViewDidEndEditing(_ textView: UITextView) {
+    public func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.isEmpty {
             textView.text = Constants.contentPlaceholder
             textView.textColor = TLColor.disabledGray
         }
     }
     
-    func textViewDidChange(_ textView: UITextView) {
+    public func textViewDidChange(_ textView: UITextView) {
         guard let text = textView.text else { return }
         viewModel.sendAction(.contentDidChange(text))
     }
@@ -419,7 +421,7 @@ extension TimelineWritingVC: UITextViewDelegate {
 
 extension TimelineWritingVC: PHPickerViewControllerDelegate {
     
-    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         guard let imageResult = results.first else { return }
         
         if imageResult.itemProvider.hasItemConformingToTypeIdentifier(UTType.image.identifier) {
@@ -467,7 +469,7 @@ extension TimelineWritingVC: LocationSearchDelegate {
 // MARK: - TLNavigationBarDelegate
 
 extension TimelineWritingVC: TLNavigationBarDelegate {
-    func rightButtonDidTapped() {
+    public func rightButtonDidTapped() {
         if let selectedImage = selectImageButton.imageView.image {
             let image = viewModel.currentState.isOriginImage ? selectedImage : selectedImage.downSampling()
             let imageData = image?.jpegData(compressionQuality: 1)
@@ -481,7 +483,7 @@ extension TimelineWritingVC: TLNavigationBarDelegate {
 // MARK: - UIGestureRecognizerDelegate
 
 extension TimelineWritingVC: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
         guard let view = touch.view else { return false }
         if view == scrollView {
             return true

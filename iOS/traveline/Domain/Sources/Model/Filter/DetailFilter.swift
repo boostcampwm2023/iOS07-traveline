@@ -21,7 +21,7 @@ public enum DetailFilter: Hashable {
     case period(PeriodFilter)
     case season(SeasonFilter)
     
-    var title: String {
+    public var title: String {
         switch self {
         case let .sort(sortFilter):
             sortFilter.title

@@ -10,13 +10,15 @@ import Combine
 import UIKit
 import OSLog
 
+import Core
 import DesignSystem
+import Domain
 
 protocol HomeViewDelegate: AnyObject {
     func sideMenuTapped()
 }
 
-final class HomeVC: UIViewController {
+public final class HomeVC: UIViewController {
     
     private enum Metric {
         static let topInset: CGFloat = 12
@@ -43,12 +45,14 @@ final class HomeVC: UIViewController {
     
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: HomeViewModel
+    private var factory: FactoryInterface
     weak var delegate: HomeViewDelegate?
     
     // MARK: - Initializer
     
-    init(viewModel: HomeViewModel) {
+    public init(viewModel: HomeViewModel, factory: FactoryInterface) {
         self.viewModel = viewModel
+        self.factory = factory
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -58,7 +62,7 @@ final class HomeVC: UIViewController {
     
     // MARK: - Life Cycle
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
         setupAttributes()
@@ -66,14 +70,14 @@ final class HomeVC: UIViewController {
         bind()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = false
         viewModel.sendAction(.viewWillAppear)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         viewModel.sendAction(.viewDidAppear)
@@ -88,7 +92,7 @@ final class HomeVC: UIViewController {
 
 // MARK: - Setup Functions
 
-private extension HomeVC {
+extension HomeVC {
     func setupAttributes() {
         searchController.searchBar.delegate = self
         
@@ -247,7 +251,7 @@ private extension HomeVC {
             .filter { $0 }
             .withUnretained(self)
             .sink { owner, _ in
-                let travelVC = VCFactory.makeTravelVC()
+                let travelVC = owner.factory.makeTravelVC(id: nil, travelInfo: nil)
                 owner.navigationController?.pushViewController(travelVC, animated: true)
             }
             .store(in: &cancellables)
@@ -270,7 +274,7 @@ private extension HomeVC {
             .withUnretained(self)
             .sink { owner, idx  in
                 let id = owner.viewModel.currentState.travelList[idx].id
-                let timelineVC = VCFactory.makeTimelineVC(id: TravelID(value: id))
+                let timelineVC = owner.factory.makeTimelineVC(id: TravelID(value: id))
                 timelineVC.delegate = owner
                 owner.navigationController?.pushViewController(
                     timelineVC,
@@ -324,24 +328,24 @@ private extension HomeVC {
 // MARK: - UISearchBarDelegate
 
 extension HomeVC: UISearchBarDelegate {
-    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+    public func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         // 최근 검색어
         viewModel.sendAction(.startSearch)
     }
     
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    public func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         // 관련 검색어
         viewModel.sendAction(.searching(searchText))
     }
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    public func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         // 검색 결과
         guard let text = searchBar.text else { return }
         viewModel.sendAction(.searchDone(text))
         homeSearchView.isHidden = true
     }
     
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+    public func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         // 홈 리스트
         viewModel.sendAction(.cancelSearch)
         homeSearchView.isHidden = true
@@ -351,7 +355,7 @@ extension HomeVC: UISearchBarDelegate {
 // MARK: - TLBottomSheetDelegate
 
 extension HomeVC: TLBottomSheetDelegate {
-    func bottomSheetDidDisappear(data: Any) {
+    public func bottomSheetDidDisappear(data: Any) {
         guard let filters = data as? [Filter] else { return }
         viewModel.sendAction(.addFilter(filters))
     }
@@ -360,14 +364,7 @@ extension HomeVC: TLBottomSheetDelegate {
 // MARK: - Timeline Delegate
 
 extension HomeVC: ToastDelegate {
-    func viewControllerDidFinishAction(isSuccess: Bool, message: String) {
+    public func viewControllerDidFinishAction(isSuccess: Bool, message: String) {
         showToast(message: message, type: isSuccess ? .success : .failure)
     }
-}
-
-@available(iOS 17, *)
-#Preview("HomeVC") {
-    let homeVC = VCFactory.makeHomeVC()
-    let homeNV = UINavigationController(rootViewController: homeVC)
-    return homeNV
 }

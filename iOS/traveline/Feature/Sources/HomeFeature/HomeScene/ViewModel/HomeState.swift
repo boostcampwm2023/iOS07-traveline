@@ -8,7 +8,10 @@
 
 import Foundation
 
-struct HomeState: BaseState {
+import Core
+import Domain
+
+public struct HomeState: BaseState {
     enum HomeViewType {
         case home
         case recent
@@ -32,4 +35,6 @@ struct HomeState: BaseState {
     var isSearching: Bool {
         homeViewType == .recent || homeViewType == .related
     }
+    
+    public init() { }
 }

@@ -8,6 +8,7 @@
 
 import Foundation
 
+import Core
 import Domain
 
 struct TravelRequestDTO: Encodable {

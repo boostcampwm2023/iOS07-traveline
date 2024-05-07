@@ -18,21 +18,21 @@ public protocol TimelineWritingUseCase {
     func toTimelineDetailRequest(from info: TimelineDetailInfo) -> TimelineDetailRequest
 }
 
-final class TimelineWritingUseCaseImpl: TimelineWritingUseCase {
+public final class TimelineWritingUseCaseImpl: TimelineWritingUseCase {
     
     private let repository: TimelineDetailRepository
     
-    init(repository: TimelineDetailRepository) {
+    public init(repository: TimelineDetailRepository) {
         self.repository = repository
     }
     
-    func requestCreateTimeline(with info: TimelineDetailRequest) -> AnyPublisher<Void, Error> {
+    public func requestCreateTimeline(with info: TimelineDetailRequest) -> AnyPublisher<Void, Error> {
         return Future {
             try await self.repository.createTimelineDetail(with: info)
         }.eraseToAnyPublisher()
     }
     
-    func fetchPlaceList(keyword: String, offset: Int) -> AnyPublisher<TimelinePlaceList, Error> {
+    public func fetchPlaceList(keyword: String, offset: Int) -> AnyPublisher<TimelinePlaceList, Error> {
         if keyword.isEmpty {
             return .just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
         }
@@ -43,14 +43,14 @@ final class TimelineWritingUseCaseImpl: TimelineWritingUseCase {
         }.eraseToAnyPublisher()
     }
     
-    func putTimeline(id: String, info: TimelineDetailRequest) -> AnyPublisher<Bool, Error> {
+    public func putTimeline(id: String, info: TimelineDetailRequest) -> AnyPublisher<Bool, Error> {
         return Future {
             let result = try await self.repository.putTimeline(id: id, info: info)
             return result
         }.eraseToAnyPublisher()
     }
     
-    func toTimelineDetailRequest(from info: TimelineDetailInfo) -> TimelineDetailRequest {
+    public func toTimelineDetailRequest(from info: TimelineDetailInfo) -> TimelineDetailRequest {
         return .init(
             title: info.title,
             day: info.day,

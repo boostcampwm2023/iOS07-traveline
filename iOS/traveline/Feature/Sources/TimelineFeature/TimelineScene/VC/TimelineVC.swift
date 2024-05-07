@@ -9,9 +9,11 @@
 import Combine
 import UIKit
 
+import Core
 import DesignSystem
+import Domain
 
-final class TimelineVC: UIViewController {
+public final class TimelineVC: UIViewController {
     
     private enum Metric {
         static let travelInfoEstimatedHeight: CGFloat = 170.0
@@ -73,11 +75,13 @@ final class TimelineVC: UIViewController {
     private var cancellables: Set<AnyCancellable> = .init()
     private let viewModel: TimelineViewModel
     weak var delegate: ToastDelegate?
+    private var factory: FactoryInterface
     
     // MARK: - Initializer
     
-    init(viewModel: TimelineViewModel) {
+    public init(viewModel: TimelineViewModel, factory: FactoryInterface) {
         self.viewModel = viewModel
+        self.factory = factory
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -87,7 +91,7 @@ final class TimelineVC: UIViewController {
     
     // MARK: - Life Cycle
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
         setupAttributes()
@@ -98,14 +102,14 @@ final class TimelineVC: UIViewController {
         bind()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.isHidden = true
         viewModel.sendAction(.viewWillAppear)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         viewModel.sendAction(.enterToTimeline)
@@ -114,7 +118,7 @@ final class TimelineVC: UIViewController {
     // MARK: - Functions
     
     @objc func showMapView() {
-        let mapVC = TimelineMapVC()
+        let mapVC = TimelineMapVC(factory: self.factory)
         mapVC.setMarker(
             by: viewModel.currentState.timelineCardList,
             day: viewModel.currentState.day
@@ -152,7 +156,7 @@ final class TimelineVC: UIViewController {
 
 // MARK: - Setup Functions
 
-private extension TimelineVC {
+public extension TimelineVC {
     func setupAttributes() {
         view.backgroundColor = TLColor.black
         timelineCollectionView.backgroundView = emptyView
@@ -227,10 +231,11 @@ private extension TimelineVC {
             .compactMap(\.timelineWritingInfo)
             .withUnretained(self)
             .sink { owner, info in
-                let timelineWritingVC = VCFactory.makeTimelineWritingVC(
+                let timelineWritingVC = owner.factory.makeTimelineWritingVC(
                     id: info.id,
                     date: info.date,
-                    day: info.day
+                    day: info.day, 
+                    timelineDetailInfo: nil
                 )
                 
                 timelineWritingVC.delegate = owner
@@ -244,7 +249,7 @@ private extension TimelineVC {
             .filter { $0 }
             .withUnretained(self)
             .sink { owner, _ in
-                let travelEditVC = VCFactory.makeTravelVC(
+                let travelEditVC = owner.factory.makeTravelVC(
                     id: owner.viewModel.id,
                     travelInfo: owner.viewModel.currentState.travelInfo
                 )
@@ -425,10 +430,10 @@ extension TimelineVC {
 // MARK: - UICollectionView Delegate, DataSource
 
 extension TimelineVC: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if indexPath.section == 0 { return }
         
-        let timelineDetailVC = VCFactory.makeTimelineDetailVC(with: viewModel.currentState.timelineCardList[indexPath.row].detailId)
+        let timelineDetailVC = factory.makeTimelineDetailVC(with: viewModel.currentState.timelineCardList[indexPath.row].detailId)
         timelineDetailVC.delegate = self
         
         navigationController?.pushViewController(timelineDetailVC, animated: true)
@@ -458,12 +463,7 @@ extension TimelineVC: TimelineDateHeaderDelegate {
 // MARK: - TimelineWriting, TimelineDetail Delegate
 
 extension TimelineVC: ToastDelegate {
-    func viewControllerDidFinishAction(isSuccess: Bool, message: String) {
+    public func viewControllerDidFinishAction(isSuccess: Bool, message: String) {
         showToast(message: message, type: isSuccess ? .success : .failure)
     }
-}
-
-@available(iOS 17, *)
-#Preview {
-    UINavigationController(rootViewController: VCFactory.makeTimelineVC(id: .empty))
 }

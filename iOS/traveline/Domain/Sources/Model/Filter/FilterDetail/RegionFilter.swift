@@ -30,7 +30,7 @@ public enum RegionFilter: DetailFilterType {
     case gyeongnam
     case jeju
     
-    var title: String {
+    public var title: String {
         switch self {
         case .seoul:
             return Literal.Filter.RegionDetail.seoul
@@ -71,7 +71,7 @@ public enum RegionFilter: DetailFilterType {
         }
     }
     
-    var query: String {
+    public var query: String {
         switch self {
         case .seoul:
             return Literal.Query.RegionDetail.seoul

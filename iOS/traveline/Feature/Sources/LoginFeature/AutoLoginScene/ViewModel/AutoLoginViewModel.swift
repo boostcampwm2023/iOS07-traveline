@@ -11,18 +11,19 @@ import Foundation
 
 import DesignSystem
 import Domain
+import Core
 
-enum AutoLoginAction: BaseAction {
+public enum AutoLoginAction: BaseAction {
     case startAutoLogin
 }
 
-enum AutoLoginSideEffect: BaseSideEffect {
+public enum AutoLoginSideEffect: BaseSideEffect {
     case finishDelay
     case finishLogin(Bool)
     case loginFailed(Error)
 }
 
-struct AutoLoginState: BaseState {
+public struct AutoLoginState: BaseState {
     var isFinishDelay: Bool = false
     var isSuccessLogin: Bool = false
     
@@ -33,17 +34,19 @@ struct AutoLoginState: BaseState {
     var moveToMain: Bool {
         isFinishDelay && isSuccessLogin
     }
+    
+    public init() {}
 }
 
-final class AutoLoginViewModel: BaseViewModel<AutoLoginAction, AutoLoginSideEffect, AutoLoginState> {
+public final class AutoLoginViewModel: BaseViewModel<AutoLoginAction, AutoLoginSideEffect, AutoLoginState> {
     
     private let useCase: AutoLoginUseCase
     
-    init(useCase: AutoLoginUseCase) {
+    public init(useCase: AutoLoginUseCase) {
         self.useCase = useCase
     }
     
-    override func transform(action: AutoLoginAction) -> BaseViewModel<AutoLoginAction, AutoLoginSideEffect, AutoLoginState>.SideEffectPublisher {
+    public override func transform(action: AutoLoginAction) -> BaseViewModel<AutoLoginAction, AutoLoginSideEffect, AutoLoginState>.SideEffectPublisher {
         switch action {
         case .startAutoLogin:
             return Publishers.Merge(
@@ -53,7 +56,7 @@ final class AutoLoginViewModel: BaseViewModel<AutoLoginAction, AutoLoginSideEffe
         }
     }
     
-    override func reduceState(state: AutoLoginState, effect: AutoLoginSideEffect) -> AutoLoginState {
+    public override func reduceState(state: AutoLoginState, effect: AutoLoginSideEffect) -> AutoLoginState {
         var newState = state
         
         switch effect {

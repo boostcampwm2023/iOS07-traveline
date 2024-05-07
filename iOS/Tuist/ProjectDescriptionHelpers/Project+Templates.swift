@@ -16,7 +16,7 @@ extension Project {
                     name: module.name,
                     platform: .iOS,
                     product: product,
-                    bundleId: Environmnet.bundleName,
+                    bundleId: Environmnet.bundleName + module.bundleSuffix,
                     deploymentTarget: Environmnet.deploymentTarget,
                     infoPlist: .extendingDefault(with: infoPlist),
                     sources: ["Sources/**"],

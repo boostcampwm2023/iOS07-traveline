@@ -9,10 +9,11 @@
 import Combine
 import Foundation
 
+import Core
 import DesignSystem
 import Domain
 
-enum TimelineAction: BaseAction {
+public enum TimelineAction: BaseAction {
     case viewWillAppear
     case enterToTimeline
     case fetchTimelineCard(Int)
@@ -24,8 +25,8 @@ enum TimelineAction: BaseAction {
     case reportTravel
 }
 
-enum TimelineSideEffect: BaseSideEffect {
-    enum TimelineError: LocalizedError {
+public enum TimelineSideEffect: BaseSideEffect {
+    public enum TimelineError: LocalizedError {
         case loadFailed
         case deleteFailed
         case reportFailed
@@ -55,7 +56,7 @@ enum TimelineSideEffect: BaseSideEffect {
     case none
 }
 
-struct TimelineState: BaseState {
+public struct TimelineState: BaseState {
     struct TimelineWritingInfo: Hashable {
         let id: TravelID
         var date: String
@@ -72,14 +73,16 @@ struct TimelineState: BaseState {
     var isDeleteCompleted: Bool = false
     var errorMsg: String?
     var isEmptyList: Bool = false
+    
+    public init() { }
 }
 
-final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect, TimelineState> {
+public final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect, TimelineState> {
     
     private(set) var id: TravelID
     private let timelineUseCase: TimelineUseCase
     
-    init(
+    public init(
         id: TravelID,
         fetchTravelInfoUseCase: TimelineUseCase
     ) {
@@ -89,7 +92,7 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
     
     // MARK: - Transform
     
-    override func transform(action: TimelineAction) -> SideEffectPublisher {
+    public override func transform(action: TimelineAction) -> SideEffectPublisher {
         switch action {
         case .viewWillAppear:
             return .just(.resetState)
@@ -124,7 +127,7 @@ final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect,
         }
     }
     
-    override func reduceState(state: TimelineState, effect: TimelineSideEffect) -> TimelineState {
+    public override func reduceState(state: TimelineState, effect: TimelineSideEffect) -> TimelineState {
         var newState = state
         
         switch effect {
