@@ -17,10 +17,13 @@ export class AppleLoginStrategy implements SocialLoginStrategy {
 
   async login(
     socialLoginRequestDto: SocialLoginRequestDto
-  ): Promise<{ resourceId: string; email: string }> {
+  ): Promise<{ resourceId: string; email?: string }> {
     try {
       const { idToken, email } = socialLoginRequestDto;
       const resourceId = (await this.decodeIdToken(idToken)).sub;
+      if (!email) {
+        return { resourceId };
+      }
       return { resourceId, email };
     } catch (error) {
       throw new UnauthorizedException('유효하지 않은 형식의 토큰입니다.');
