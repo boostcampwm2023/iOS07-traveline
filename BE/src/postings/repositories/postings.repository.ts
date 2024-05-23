@@ -36,6 +36,7 @@ export class PostingsRepository {
   }
 
   async findAll(
+    blockedIds: string[],
     keyword: string,
     sorting: Sorting,
     offset: number,
@@ -50,7 +51,14 @@ export class PostingsRepository {
     withWhos: WithWho[]
   ) {
     const conditions = ['p.title LIKE :keyword'];
-    let params: { [key: string]: string } = { keyword: `%${keyword}%` };
+    let params: { [key: string]: string | string[] } = {
+      keyword: `%${keyword}%`,
+    };
+
+    if (blockedIds.length > 0) {
+      conditions.push('p.writer NOT IN (:...blockedIds)');
+      params = { ...params, blockedIds };
+    }
 
     if (budget) {
       conditions.push('p.budget = :budget');

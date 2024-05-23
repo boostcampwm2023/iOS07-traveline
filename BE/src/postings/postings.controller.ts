@@ -96,8 +96,9 @@ export class PostingsController {
     description: '검색어와 선택 태그의 교집합에 해당하는 게시글을 반환합니다.',
   })
   @ApiOkResponse({ schema: { example: search_OK } })
-  async search(@Query() searchPostingDto: SearchPostingDto) {
-    return this.postingsService.findAll(searchPostingDto);
+  async search(@Req() request, @Query() searchPostingDto: SearchPostingDto) {
+    const userId = request['user'].id;
+    return this.postingsService.findAll(userId, searchPostingDto);
   }
 
   @Get('titles')
