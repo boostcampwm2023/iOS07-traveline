@@ -268,7 +268,11 @@ private extension HomeVC {
             .withUnretained(self)
             .sink { owner, idx  in
                 let id = owner.viewModel.currentState.travelList[idx].id
-                let timelineVC = VCFactory.makeTimelineVC(id: TravelID(value: id))
+                let userID = owner.viewModel.currentState.travelList[idx].profile.id
+                let timelineVC = VCFactory.makeTimelineVC(
+                    id: TravelID(value: id),
+                    userID: UserID(value: userID)
+                )
                 timelineVC.delegate = owner
                 owner.navigationController?.pushViewController(
                     timelineVC,

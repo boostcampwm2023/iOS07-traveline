@@ -172,7 +172,8 @@ private extension MyPostListVC {
 extension MyPostListVC: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let id = TravelID(value: viewModel.currentState.travelList[indexPath.row].id)
-        let timelineVC = VCFactory.makeTimelineVC(id: id)
+        let userID = UserID(value: viewModel.currentState.travelList[indexPath.row].profile.id)
+        let timelineVC = VCFactory.makeTimelineVC(id: id, userID: userID)
         self.navigationController?.pushViewController(timelineVC, animated: true)
     }
 }

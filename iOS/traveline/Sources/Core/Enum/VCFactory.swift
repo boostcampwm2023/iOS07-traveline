@@ -30,15 +30,18 @@ enum VCFactory {
         return RootContainerVC()
     }
     
-    static func makeTimelineVC(id: TravelID) -> TimelineVC {
+    static func makeTimelineVC(id: TravelID, userID: UserID? = nil) -> TimelineVC {
         let postingRepository = PostingRepositoryImpl(network: network)
         let timelineRepository = TimelineRepositoryImpl(network: network)
+        let userRepository = UserRepositoryImpl(network: network)
         let useCase = TimelineUseCaseImpl(
             postingRepository: postingRepository,
-            timelineRepository: timelineRepository
+            timelineRepository: timelineRepository,
+            userRepository: userRepository
         )
         let viewModel = TimelineViewModel(
             id: id,
+            userID: userID,
             fetchTravelInfoUseCase: useCase
         )
         return TimelineVC(viewModel: viewModel)
@@ -72,7 +75,7 @@ enum VCFactory {
         let repository = PostingRepositoryImpl(network: network)
         let useCase = TravelUseCaseImpl(repository: repository)
         let viewModel = TravelViewModel(
-            id: id, 
+            id: id,
             travelInfo: travelInfo,
             travelUseCase: useCase
         )

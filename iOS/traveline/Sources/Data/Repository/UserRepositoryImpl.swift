@@ -52,4 +52,10 @@ final class UserRepositoryImpl: UserRepository {
         
         return duplicatedNameResponseDTO.isDuplicated
     }
+    
+    func blockUser(id: UserID) async throws -> Bool {
+        let blockUserResponseDTO = try await network.requestWithNoResult(endPoint: UserEndPoint.blockUser(id.value))
+        
+        return blockUserResponseDTO
+    }
 }

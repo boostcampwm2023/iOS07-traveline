@@ -100,13 +100,16 @@ struct TimelineState: BaseState {
 final class TimelineViewModel: BaseViewModel<TimelineAction, TimelineSideEffect, TimelineState> {
     
     private(set) var id: TravelID
+    private(set) var userID: UserID?
     private let timelineUseCase: TimelineUseCase
     
     init(
         id: TravelID,
+        userID: UserID?,
         fetchTravelInfoUseCase: TimelineUseCase
     ) {
         self.id = id
+        self.userID = userID
         self.timelineUseCase = fetchTravelInfoUseCase
     }
     
@@ -259,9 +262,12 @@ private extension TimelineViewModel {
             .eraseToAnyPublisher()
     }
     
-    // TODO: 서버 연동 필요
     func blockTravel() -> SideEffectPublisher {
-        return timelineUseCase.reportTravel(id: id)
+        guard let userID else {
+            return .just(.none)
+        }
+        
+        return timelineUseCase.blockUser(id: userID)
             .map { _ in
                 return .popToHome(.block)
             }

@@ -43,6 +43,7 @@ extension PostingResponseDTO {
             imagePath: thumbnailPath ?? Literal.empty,
             title: title,
             profile: .init(
+                id: writer.id ?? Literal.empty,
                 imageURL: writer.avatar ?? Literal.empty,
                 imagePath: writer.avatarPath ?? Literal.empty,
                 name: writer.name
