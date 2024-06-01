@@ -15,19 +15,26 @@ protocol TimelineUseCase {
     func calculateDate(from startDate: String, with day: Int) -> String?
     func deleteTravel(id: TravelID) -> AnyPublisher<Bool, Error>
     func reportTravel(id: TravelID) -> AnyPublisher<Bool, Error>
+    func blockUser(id: UserID) -> AnyPublisher<Bool, Error>
     func likeTravel(id: TravelID) -> AnyPublisher<Bool, Error>
 }
 
 final class TimelineUseCaseImpl: TimelineUseCase {
-
+    
     private let postingRepository: PostingRepository
     private let timelineRepository: TimelineRepository
+    private let userRepository: UserRepository
     
-    init(postingRepository: PostingRepository, timelineRepository: TimelineRepository) {
+    init(
+        postingRepository: PostingRepository,
+        timelineRepository: TimelineRepository,
+        userRepository: UserRepository
+    ) {
         self.postingRepository = postingRepository
         self.timelineRepository = timelineRepository
+        self.userRepository = userRepository
     }
-
+    
     func fetchTimelineInfo(id: TravelID) -> AnyPublisher<TimelineTravelInfo, Error> {
         return Future {
             let travelInfo = try await self.postingRepository.fetchTimelineInfo(id: id)
@@ -47,7 +54,7 @@ final class TimelineUseCaseImpl: TimelineUseCase {
               let curDate = Calendar.current.date(byAdding: .day, value: day, to: date) else { return nil }
         
         return curDate.toString(with: "yyyy년 MM월 dd일")
-
+        
     }
     
     func deleteTravel(id: TravelID) -> AnyPublisher<Bool, Error> {
@@ -60,6 +67,13 @@ final class TimelineUseCaseImpl: TimelineUseCase {
     func reportTravel(id: TravelID) -> AnyPublisher<Bool, Error> {
         return Future {
             let result = try await self.postingRepository.postReport(id: id)
+            return result
+        }.eraseToAnyPublisher()
+    }
+    
+    func blockUser(id: UserID) -> AnyPublisher<Bool, any Error> {
+        return Future {
+            let result = try await self.userRepository.blockUser(id: id)
             return result
         }.eraseToAnyPublisher()
     }
