@@ -12,6 +12,7 @@ enum UserEndPoint {
     case requestUserInfo
     case updateUserInfo(UserRequestDTO)
     case checkDuplicatedName(String)
+    case blockUser(String)
 }
 
 extension UserEndPoint: EndPoint {
@@ -21,6 +22,8 @@ extension UserEndPoint: EndPoint {
             return "/users/duplicate?name=\(name)"
         case .requestUserInfo:
             return "/users"
+        case .blockUser(let id):
+            return "/users/\(id)/block"
         default:
             return "/users"
         }
@@ -32,6 +35,8 @@ extension UserEndPoint: EndPoint {
             return .PUT
         case .requestUserInfo:
             return .GET
+        case .blockUser:
+            return .POST
         default:
             return .GET
         }

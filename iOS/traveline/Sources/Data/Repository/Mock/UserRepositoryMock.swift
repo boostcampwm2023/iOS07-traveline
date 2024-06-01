@@ -17,10 +17,12 @@ final class UserRepositoryMock: UserRepository {
         "kmi0817",
         "yaongmeow"
     ]
+    
     func fetchUserInfo() async throws -> Profile {
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
         let mockData: Profile = .init(
+            id: "",
             imageURL: "https://avatars.githubusercontent.com/u/91725382?s=400&u=29b8023a56a09685aaab53d4eb0dd556254cd902&v=4",
             imagePath: "https://avatars.githubusercontent.com/u/91725382?s=400&u=29b8023a56a09685aaab53d4eb0dd556254cd902&v=4",
             name: "hongki"
@@ -32,6 +34,7 @@ final class UserRepositoryMock: UserRepository {
         try await Task.sleep(nanoseconds: 1_000_000_000)
         
         return .init(
+            id: "",
             imageURL: "https://avatars.githubusercontent.com/u/91725382?s=400&u=29b8023a56a09685aaab53d4eb0dd556254cd902&v=4",
             imagePath: "https://avatars.githubusercontent.com/u/91725382?s=400&u=29b8023a56a09685aaab53d4eb0dd556254cd902&v=4",
             name: "hongki"
@@ -42,5 +45,11 @@ final class UserRepositoryMock: UserRepository {
         try await Task.sleep(nanoseconds: 1_000_000)
         
         return alreadyNames.contains(name)
+    }
+    
+    func blockUser(id: UserID) async throws -> Bool {
+        try await Task.sleep(nanoseconds: 1_000_000)
+        
+        return true
     }
 }
