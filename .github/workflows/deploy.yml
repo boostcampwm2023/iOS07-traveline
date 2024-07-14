@@ -42,11 +42,11 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            docker login --username ${{ secrets.DOCKER_ID }} --password ${{ secrets.DOCKER_PASSWORD }}
-            docker pull traveline/traveline-docker
-            docker stop traveline-container || true
-            docker rm traveline-container || true
-            docker run -e DB_HOST=${{ secrets.DB_HOST }} \
+            sudo docker login --username ${{ secrets.DOCKER_ID }} --password ${{ secrets.DOCKER_PASSWORD }}
+            sudo docker pull traveline/traveline-docker
+            sudo docker stop traveline-container || true
+            sudo docker rm traveline-container || true
+            sudo docker run -e DB_HOST=${{ secrets.DB_HOST }} \
             -e DB_PORT=${{ secrets.DB_PORT }} \
             -e DB_USER=${{ secrets.DB_USER }} \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
