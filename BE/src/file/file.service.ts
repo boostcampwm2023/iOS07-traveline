@@ -1,5 +1,5 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { unlink, writeFile } from 'fs/promises';
+import { Injectable } from '@nestjs/common';
+import { mkdir, unlink, writeFile } from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -17,6 +17,7 @@ export class FileService {
   async upload(path: string, file: Express.Multer.File) {
     const filePath =
       this.basePath + path + this.generateFilename(file.originalname);
+    await mkdir(this.basePath + path, { recursive: true });
     await writeFile(filePath, file.buffer);
 
     return {
