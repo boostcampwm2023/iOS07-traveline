@@ -1,5 +1,7 @@
 FROM node:18
 
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+
 WORKDIR /app
 
 COPY package.json package-lock.json ./

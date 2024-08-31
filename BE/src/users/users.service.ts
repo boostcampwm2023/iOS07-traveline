@@ -5,11 +5,13 @@ import { UserRepository } from './users.repository';
 import { CheckDuplicatedNameResponseDto } from './dto/check-duplicated-name-response.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UpdateUserIpDto } from './dto/update-user-ip.dto';
+import { BlockRepository } from './block.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
     private userRepository: UserRepository,
+    private blockRepository: BlockRepository,
     private readonly storageService: StorageService
   ) {}
 
@@ -112,5 +114,27 @@ export class UsersService {
 
   async updateUserIp(id: string, updateUserIpDto: UpdateUserIpDto) {
     return this.userRepository.update(id, updateUserIpDto);
+  }
+
+  async blockUser(blocker: string, blocked: string) {
+    if (blocker === blocked) {
+      throw new BadRequestException('자기 자신을 차단할 수 없습니다.');
+    }
+
+    const blockedUser = await this.userRepository.findById(blocked);
+    if (!blockedUser) {
+      throw new BadRequestException('존재하지 않는 회원을 차단할 수 없습니다.');
+    }
+
+    const block = await this.blockRepository.findByBlockerAndBlocked(
+      blocker,
+      blocked
+    );
+    if (block) {
+      throw new BadRequestException('이미 차단한 회원입니다.');
+    }
+
+    const blockerUser = await this.userRepository.findById(blocker);
+    return this.blockRepository.save(blockerUser, blockedUser);
   }
 }

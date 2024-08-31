@@ -1,6 +1,7 @@
 import { Liked } from 'src/postings/entities/liked.entity';
 import { Posting } from 'src/postings/entities/posting.entity';
 import { Report } from 'src/postings/entities/report.entity';
+import { Block } from './block.entity';
 import {
   Entity,
   Column,
@@ -49,4 +50,10 @@ export class User {
   @ManyToOne(() => SocialLogin, (socialLogin) => socialLogin.users)
   @JoinColumn({ name: 'social_type', referencedColumnName: 'id' })
   socials: SocialLogin;
+
+  @OneToMany(() => Block, (block) => block.blocker)
+  blockers: Block[];
+
+  @OneToMany(() => Block, (block) => block.blocked)
+  blockeds: Block[];
 }

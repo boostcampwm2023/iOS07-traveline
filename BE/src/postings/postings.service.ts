@@ -18,11 +18,13 @@ import { Report } from './entities/report.entity';
 import { Period, Season } from './postings.types';
 import { BLOCKING_LIMIT } from './postings.constants';
 import { StorageService } from 'src/storage/storage.service';
+import { BlockRepository } from 'src/users/block.repository';
 
 @Injectable()
 export class PostingsService {
   constructor(
     private readonly userRepository: UserRepository,
+    private readonly blockRepository: BlockRepository,
     private readonly postingsRepository: PostingsRepository,
     private readonly likedsRepository: LikedsRepository,
     private readonly reportsRepository: ReportsRepository,
@@ -44,8 +46,10 @@ export class PostingsService {
     return this.postingsRepository.save(posting);
   }
 
-  async findAll(dto: SearchPostingDto) {
+  async findAll(userId: string, dto: SearchPostingDto) {
+    const blockedIds = await this.findBlockedIds(userId);
     const postings = await this.postingsRepository.findAll(
+      blockedIds,
       dto.keyword,
       dto.sorting,
       dto.offset,
@@ -225,5 +229,10 @@ export class PostingsService {
       likeds: posting.likeds,
       reports: posting.reports,
     };
+  }
+
+  private async findBlockedIds(blocker: string) {
+    const blocks = await this.blockRepository.findByBlocker(blocker);
+    return blocks.map((block) => block.blocked.id);
   }
 }

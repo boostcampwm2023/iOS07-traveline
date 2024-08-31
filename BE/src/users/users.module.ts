@@ -5,11 +5,12 @@ import { usersProvider } from './users.providers';
 import { UserRepository } from './users.repository';
 import { StorageModule } from '../storage/storage.module';
 import { DatabaseModule } from '../database/database.module';
+import { BlockRepository } from './block.repository';
 
 @Module({
   imports: [DatabaseModule, StorageModule],
   controllers: [UsersController],
-  providers: [UsersService, ...usersProvider, UserRepository],
-  exports: [UserRepository, UsersService],
+  providers: [UsersService, ...usersProvider, UserRepository, BlockRepository],
+  exports: [UserRepository, UsersService, BlockRepository],
 })
 export class UsersModule {}
