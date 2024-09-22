@@ -394,8 +394,3 @@ extension TravelVC: TLNavigationBarDelegate {
         viewModel.sendAction(.donePressed(selectedTags))
     }
 }
-
-@available(iOS 17, *)
-#Preview {
-    return UINavigationController(rootViewController: VCFactory.makeTravelVC())
-}

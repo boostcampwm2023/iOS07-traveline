@@ -12,4 +12,5 @@ protocol UserRepository {
     func fetchUserInfo() async throws -> Profile
     func updateUserInfo(name: String, imageData: Data?) async throws -> Profile
     func checkDuplication(name: String) async throws -> Bool
+    func blockUser(id: UserID) async throws -> Bool
 }

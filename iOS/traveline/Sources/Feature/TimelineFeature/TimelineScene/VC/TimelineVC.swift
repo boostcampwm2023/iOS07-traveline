@@ -470,8 +470,3 @@ extension TimelineVC: ToastDelegate {
         showToast(message: message, type: isSuccess ? .success : .failure)
     }
 }
-
-@available(iOS 17, *)
-#Preview {
-    UINavigationController(rootViewController: VCFactory.makeTimelineVC(id: .empty))
-}
