@@ -1,10 +1,9 @@
-// import { StorageService } from './storage/storage.service';
-import { FileService } from './file/file.service';
+import { StorageService } from './storage/storage.service';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly storageService: FileService) {}
+  constructor(private readonly storageService: StorageService) {}
 
   getHello(): string {
     return `

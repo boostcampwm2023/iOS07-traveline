@@ -7,11 +7,10 @@ import { PostingsRepository } from './repositories/postings.repository';
 import { LikedsRepository } from './repositories/likeds.repository';
 import { ReportsRepository } from './repositories/reports.repository';
 import { UsersModule } from '../users/users.module';
-// import { StorageModule } from 'src/storage/storage.module';
-import { FileModule } from 'src/file/file.module';
+import { StorageModule } from 'src/storage/storage.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, FileModule],
+  imports: [DatabaseModule, UsersModule, StorageModule],
   controllers: [PostingsController],
   providers: [
     ...postingsProviders,

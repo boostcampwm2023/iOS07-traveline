@@ -12,16 +12,14 @@ import { PostingsRepository } from '../postings/repositories/postings.repository
 import { LikedsRepository } from '../postings/repositories/likeds.repository';
 import { ReportsRepository } from '../postings/repositories/reports.repository';
 import { postingsProviders } from '../postings/postings.providers';
-// import { StorageModule } from '../storage/storage.module';
-import { FileModule } from '../file/file.module';
+import { StorageModule } from '../storage/storage.module';
 
 @Module({
   imports: [
     DatabaseModule,
     PostingsModule,
     UsersModule,
-    // StorageModule,
-    FileModule,
+    StorageModule,
     HttpModule,
   ],
   controllers: [TimelinesController],
