@@ -17,8 +17,7 @@ import { Liked } from './entities/liked.entity';
 import { Report } from './entities/report.entity';
 import { Period, Season } from './postings.types';
 import { BLOCKING_LIMIT } from './postings.constants';
-// import { StorageService } from 'src/storage/storage.service';
-import { FileService } from 'src/file/file.service';
+import { StorageService } from 'src/storage/storage.service';
 import { BlockRepository } from 'src/users/block.repository';
 
 @Injectable()
@@ -29,7 +28,7 @@ export class PostingsService {
     private readonly postingsRepository: PostingsRepository,
     private readonly likedsRepository: LikedsRepository,
     private readonly reportsRepository: ReportsRepository,
-    private readonly storageService: FileService
+    private readonly storageService: StorageService
   ) {}
 
   async create(userId: string, createPostingDto: CreatePostingDto) {

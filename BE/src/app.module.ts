@@ -7,8 +7,7 @@ import { TimelinesModule } from './timelines/timelines.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
-// import { StorageModule } from './storage/storage.module';
-import { FileModule } from './file/file.module';
+import { StorageModule } from './storage/storage.module';
 import { JwtModule } from '@nestjs/jwt';
 import { EmailModule } from './email/email.module';
 
@@ -23,8 +22,7 @@ import { EmailModule } from './email/email.module';
       secret: process.env.JWT_SECRET_ACCESS,
       signOptions: { expiresIn: '30d' },
     }),
-    // StorageModule,
-    FileModule,
+    StorageModule,
     UsersModule,
     PostingsModule,
     TimelinesModule,
