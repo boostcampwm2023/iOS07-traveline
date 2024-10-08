@@ -47,7 +47,7 @@ jobs:
             docker rm traveline-container || true
             docker image prune -a --force
             docker pull traveline/traveline-docker
-            docker run -e DB_HOST=${{ secrets.DB_HOST }} \
+            docker run --cpus="0.7" -e DB_HOST=${{ secrets.DB_HOST }} \
             -e DB_PORT=${{ secrets.DB_PORT }} \
             -e DB_USER=${{ secrets.DB_USER }} \
             -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
