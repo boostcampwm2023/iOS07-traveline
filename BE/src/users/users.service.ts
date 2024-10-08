@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserInfoDto } from './dto/user-info.dto';
-import { StorageService } from 'src/storage/storage.service';
+// import { StorageService } from 'src/storage/storage.service';
+import { FileService } from 'src/file/file.service';
 import { UserRepository } from './users.repository';
 import { CheckDuplicatedNameResponseDto } from './dto/check-duplicated-name-response.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -12,7 +13,7 @@ export class UsersService {
   constructor(
     private userRepository: UserRepository,
     private blockRepository: BlockRepository,
-    private readonly storageService: StorageService
+    private readonly storageService: FileService
   ) {}
 
   nameGenerator() {

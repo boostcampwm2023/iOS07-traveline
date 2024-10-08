@@ -10,7 +10,8 @@ import { CreateTimelineDto } from './dto/create-timeline.dto';
 import { UpdateTimelineDto } from './dto/update-timeline.dto';
 import { TimelinesRepository } from './timelines.repository';
 import { Timeline } from './entities/timeline.entity';
-import { StorageService } from '../storage/storage.service';
+// import { StorageService } from '../storage/storage.service';
+import { FileService } from '../file/file.service';
 import { PostingsService } from '../postings/postings.service';
 import { KAKAO_KEYWORD_SEARCH, PAPAGO_URL } from './timelines.constants';
 import { PostingsRepository } from '../postings/repositories/postings.repository';
@@ -21,7 +22,7 @@ export class TimelinesService {
     private readonly timelinesRepository: TimelinesRepository,
     private readonly postingsRepository: PostingsRepository,
     private readonly postingsService: PostingsService,
-    private readonly storageService: StorageService,
+    private readonly storageService: FileService,
     private readonly httpService: HttpService
   ) {}
 
