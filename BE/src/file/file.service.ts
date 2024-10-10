@@ -27,10 +27,10 @@ export class FileService {
   }
 
   async getImageUrl(key: string): Promise<string> {
-    return this.basePath + key;
+    return key;
   }
 
   async delete(path: string) {
-    await unlink(this.basePath + path);
+    await unlink(path);
   }
 }
